@@ -21,6 +21,12 @@ ext.s3Version = "1.11.333"
 dependencies {
 	// Spring
 	compile("org.springframework.boot:spring-boot-starter-web")
+	compile("org.springframework.boot:spring-boot-starter-security")
+	compile("org.springframework.boot:spring-boot-starter-data-mongodb")
+
+	// OAuth
+	compile("org.springframework.security:spring-security-oauth2-client")
+	compile("org.springframework.security:spring-security-oauth2-jose")
 
     //Web3
     compile ("org.web3j:core:3.4.0")
