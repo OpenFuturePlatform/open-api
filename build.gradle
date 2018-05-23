@@ -14,6 +14,9 @@ sourceCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
 	mavenCentral()
+	maven {
+		url "https://dl.bintray.com/ethereum/maven/"
+	}
 }
 
 ext.s3Version = "1.11.333"
@@ -21,6 +24,7 @@ ext.s3Version = "1.11.333"
 dependencies {
 	// Spring
 	compile("org.springframework.boot:spring-boot-starter-web")
+	compile('org.springframework.boot:spring-boot-starter-freemarker')
 	compile("org.springframework.boot:spring-boot-starter-security")
 	compile("org.springframework.boot:spring-boot-starter-data-mongodb")
 
@@ -28,8 +32,10 @@ dependencies {
 	compile("org.springframework.security:spring-security-oauth2-client")
 	compile("org.springframework.security:spring-security-oauth2-jose")
 
-    //Web3
+    //Ethereum
     compile ("org.web3j:core:3.4.0")
+	compile ("org.ethereum:solcJ-all:0.4.19")
+	compile ("org.ethereum:ethereumj-core:1.7.2-RELEASE")
 
     //AWS
     compile("com.amazonaws:aws-java-sdk-s3:${s3Version}")
@@ -38,6 +44,9 @@ dependencies {
 	compile("com.fasterxml.jackson.module:jackson-module-kotlin")
 	compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 	compile("org.jetbrains.kotlin:kotlin-reflect")
+
+	// Utils
+	compile('commons-io:commons-io:2.6')
 
 	//Test
 	testCompile("org.springframework.boot:spring-boot-starter-test")
