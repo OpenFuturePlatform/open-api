@@ -24,7 +24,7 @@ class AuthenticationSuccessHandler(
             repository.save(User(principal))
         }
 
-        super.onAuthenticationSuccess(request, response, authentication)
+        response.sendRedirect("/scaffolds")
     }
 
 }

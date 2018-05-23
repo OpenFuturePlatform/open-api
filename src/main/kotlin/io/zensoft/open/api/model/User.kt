@@ -1,18 +1,29 @@
 package io.zensoft.open.api.model
 
-import org.springframework.data.annotation.Id
-import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.security.oauth2.core.oidc.user.OidcUser
 import java.util.*
+import javax.persistence.Column
+import javax.persistence.Entity
+import javax.persistence.Id
+import javax.persistence.Table
 
 /**
  * @author Kadach Alexey
  */
-@Document(collection = "users")
+@Entity
+@Table(name = "users")
 class User(
-        @Id val googleId: String,
-        val openPublicKey: String = "op_pk_${UUID.randomUUID()}",
+
+        @Id
+        @Column(name = "id", nullable = false, unique = true)
+        val id: String,
+
+        @Column(name = "public_key", nullable = false, unique = true)
+        val publicKey: String = "op_pk_${UUID.randomUUID()}",
+
+        @Column(name = "credits", nullable = false)
         val credits: Int = 0
+
 ) {
 
     constructor(user: OidcUser) : this(user.subject)

@@ -1,0 +1,5 @@
+CREATE TABLE users(
+  id VARCHAR PRIMARY KEY,
+  public_key VARCHAR UNIQUE NOT NULL,
+  credits INT NOT NULL
+)
