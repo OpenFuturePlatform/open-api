@@ -1,8 +1,10 @@
 package io.zensoft.open.api.controller.api
 
+import io.zensoft.open.api.annotation.CurrentUser
 import io.zensoft.open.api.domain.PageRequest
 import io.zensoft.open.api.domain.PageResponse
 import io.zensoft.open.api.domain.scaffold.ScaffoldDto
+import io.zensoft.open.api.model.User
 import io.zensoft.open.api.service.ScaffoldService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -19,8 +21,8 @@ class ScaffoldApiController(
 ) {
 
     @GetMapping
-    fun getAll(pageRequest: PageRequest): PageResponse<ScaffoldDto> {
-        val scaffolds = scaffoldService.getAll(pageRequest).map { ScaffoldDto(it) }
+    fun getAll(@CurrentUser user: User, pageRequest: PageRequest): PageResponse<ScaffoldDto> {
+        val scaffolds = scaffoldService.getAll(user, pageRequest).map { ScaffoldDto(it) }
         return PageResponse(scaffolds)
     }
 
