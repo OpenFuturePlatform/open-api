@@ -13,7 +13,7 @@ class AuthController {
     @GetMapping("/logout")
     fun get(): String {
         SecurityContextHolder.getContext().authentication = null
-        return "redirect:/login"
+        return "redirect:/"
     }
 
 }

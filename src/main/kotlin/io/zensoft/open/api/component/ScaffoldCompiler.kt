@@ -1,6 +1,6 @@
 package io.zensoft.open.api.component
 
-import io.zensoft.open.api.domain.ScaffoldPropertyDto
+import io.zensoft.open.api.domain.scaffold.ScaffoldPropertyDto
 import io.zensoft.open.api.exception.CompiledException
 import org.apache.commons.io.FileUtils
 import org.ethereum.solidity.compiler.CompilationResult

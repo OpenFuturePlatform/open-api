@@ -18,9 +18,9 @@ class AuthenticationSuccessHandler(
     override fun onAuthenticationSuccess(request: HttpServletRequest, response: HttpServletResponse,
                                          authentication: Authentication) {
         val principal = authentication.principal as OidcUser
-        val persistUser = repository.findById(principal.subject)
+        val persistUser = repository.findByGoogleId(principal.subject)
 
-        if (!persistUser.isPresent) {
+        if (null == persistUser) {
             repository.save(User(principal))
         }
 

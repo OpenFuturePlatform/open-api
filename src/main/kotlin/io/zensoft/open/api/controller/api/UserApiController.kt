@@ -1,6 +1,7 @@
 package io.zensoft.open.api.controller.api
 
 import io.zensoft.open.api.annotation.CurrentUser
+import io.zensoft.open.api.domain.auth.UserDto
 import io.zensoft.open.api.model.User
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -14,6 +15,6 @@ import org.springframework.web.bind.annotation.RestController
 class UserApiController {
 
     @GetMapping("/current")
-    fun getCurrent(@CurrentUser user: User) = user
+    fun getCurrent(@CurrentUser user: User): UserDto = UserDto(user)
 
 }
