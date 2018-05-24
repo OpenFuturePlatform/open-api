@@ -1,4 +1,4 @@
-package io.zensoft.open.api.controller
+package io.zensoft.open.api.controller.api
 
 import io.zensoft.open.api.annotation.CurrentUser
 import io.zensoft.open.api.model.User
