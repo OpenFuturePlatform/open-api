@@ -17,4 +17,8 @@ interface UserRepository: BaseRepository<User> {
 }
 
 @Repository
-interface ScaffoldRepository: BaseRepository<Scaffold>
+interface ScaffoldRepository: BaseRepository<Scaffold> {
+
+    fun findByAddress(address: String): Scaffold?
+
+}

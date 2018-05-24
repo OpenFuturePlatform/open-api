@@ -11,4 +11,6 @@ interface ScaffoldService {
 
     fun getAll(pageRequest: Pageable): Page<Scaffold>
 
+    fun get(address: String): Scaffold
+
 }
