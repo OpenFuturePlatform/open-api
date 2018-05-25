@@ -24,8 +24,13 @@ class CurrentUserArgumentResolver(
                                  mavContainer: ModelAndViewContainer?,
                                  webRequest: NativeWebRequest,
                                  binderFactory: WebDataBinderFactory?): Any? {
-        val principal = SecurityContextHolder.getContext().authentication.principal as OidcUser
-        return userRepository.findById(principal.subject).orElseGet(null)
+        val principal = SecurityContextHolder.getContext().authentication.principal
+
+        if (principal is OidcUser) {
+            return userRepository.findByGoogleId(principal.subject)
+        }
+
+        return null
     }
 
 }

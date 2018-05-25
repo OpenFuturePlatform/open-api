@@ -1,7 +1,7 @@
 package io.zensoft.open.api.config
 
 import io.zensoft.open.api.config.handler.AuthenticationSuccessHandler
-import io.zensoft.open.api.repository.UserRepository
+import io.zensoft.open.api.service.UserService
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
@@ -12,7 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
  */
 @Configuration
 class SecurityConfig(
-        private val repository: UserRepository
+        private val service: UserService
 ) : WebSecurityConfigurerAdapter() {
 
     override fun configure(http: HttpSecurity) {
@@ -23,7 +23,7 @@ class SecurityConfig(
                 .and()
 
                 .oauth2Login()
-                .successHandler(AuthenticationSuccessHandler(repository))
+                .successHandler(AuthenticationSuccessHandler(service))
     }
 
 }

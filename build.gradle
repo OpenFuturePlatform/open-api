@@ -39,7 +39,6 @@ dependencies {
 
     //Ethereum
     compile ("org.web3j:core:3.4.0")
-	compile ("org.ethereum:solcJ-all:0.4.19")
 	compile ("org.ethereum:ethereumj-core:1.7.2-RELEASE")
 
     //AWS

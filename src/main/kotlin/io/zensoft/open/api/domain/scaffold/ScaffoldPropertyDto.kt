@@ -1,4 +1,4 @@
-package io.zensoft.open.api.domain
+package io.zensoft.open.api.domain.scaffold
 
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull

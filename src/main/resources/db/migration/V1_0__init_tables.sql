@@ -1,5 +1,21 @@
 CREATE TABLE users(
-  id VARCHAR PRIMARY KEY,
-  public_key VARCHAR UNIQUE NOT NULL,
+  id BIGSERIAL PRIMARY KEY,
+  google_id VARCHAR UNIQUE NOT NULL,
   credits INT NOT NULL
-)
+);
+
+CREATE TABLE open_keys(
+  id BIGSERIAL PRIMARY KEY,
+  value VARCHAR UNIQUE NOT NULL,
+  user_id BIGINT REFERENCES users,
+  enabled BOOLEAN NOT NULL,
+  expired_date TIMESTAMP
+);
+
+CREATE TABLE scaffolds(
+  id BIGSERIAL PRIMARY KEY,
+  address VARCHAR UNIQUE NOT NULL,
+  user_id BIGINT REFERENCES users,
+  open_key_id BIGINT NOT NULL REFERENCES open_keys,
+  abi VARCHAR NOT NULL
+);
