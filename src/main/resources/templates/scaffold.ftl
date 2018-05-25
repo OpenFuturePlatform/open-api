@@ -1,14 +1,14 @@
-pragma solidity ^0.4.17;
+pragma solidity ^0.4.21;
 
 contract OpenScaffold {
-    // on-chain transaction stroage
+    // on-chain transaction storage
     struct OpenScaffoldTransaction {
         address customerAddress;
         ${SCAFFOLD_STRUCT_PROPERTIES}
     }
 
     // events
-    event paymentComplete(address customerAddress, uint trasactionAmount, uint scaffoldTransactionIndex, ${CUSTOM_SCAFFOLD_PARAMETERS});
+    event paymentComplete(address customerAddress, uint transactionAmount, uint scaffoldTransactionIndex, ${CUSTOM_SCAFFOLD_PARAMETERS});
     event fundsDeposited(uint _amount);
     event incorrectDeveloperAddress(address scaffoldDeveloperAddress);
 
@@ -31,7 +31,7 @@ contract OpenScaffold {
         _;
     }
 
-    function OpenScaffold(address _vendorAddress, string _description, uint _fiatAmount, string _fiatCurrency, uint _scaffoldAmount) public {
+    constructor(address _vendorAddress, string _description, uint _fiatAmount, string _fiatCurrency, uint _scaffoldAmount) public {
         vendorAddress = _vendorAddress;
         scaffoldDescription = _description;
         fiatAmount = _fiatAmount;
@@ -44,7 +44,7 @@ contract OpenScaffold {
         scaffoldTransactionIndex++;
 
         address customerAddress = msg.sender;
-        uint trasactionAmount = msg.value;
+        uint transactionAmount = msg.value;
 
         OpenScaffoldTransaction memory newTransaction = OpenScaffoldTransaction({
             customerAddress: customerAddress,
@@ -53,25 +53,23 @@ contract OpenScaffold {
 
         openScaffoldTransactions.push(newTransaction);
 
-        paymentComplete(customerAddress, trasactionAmount, scaffoldTransactionIndex, ${CUSTOM_RETURN_VARIABLES});
+        emit paymentComplete(customerAddress, transactionAmount, scaffoldTransactionIndex, ${CUSTOM_RETURN_VARIABLES});
     }
 
-    function withdrawFunds(uint amount)  public returns(bool) {
-            if(msg.sender != vendorAddress){
-                incorrectDeveloperAddress(vendorAddress);
+    function withdrawFunds(uint amount) public returns(bool) {
+            if(msg.sender != vendorAddress) {
+                emit incorrectDeveloperAddress(vendorAddress);
                 return false;
             }
 
-            if(msg.sender == vendorAddress){
+            if(msg.sender == vendorAddress) {
                 vendorAddress.transfer(amount);
-                fundsDeposited(amount);
+                emit fundsDeposited(amount);
                 return true;
             }
     }
 
-    function getScaffoldSummary() public view returns (
-      string, uint, uint, string, uint, uint, address
-      ) {
+    function getScaffoldSummary() public view returns (string, uint, uint, string, uint, uint, address) {
         return (
           scaffoldDescription,
           scaffoldAddress.balance,
