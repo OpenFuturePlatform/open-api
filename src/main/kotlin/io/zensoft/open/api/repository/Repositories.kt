@@ -1,5 +1,6 @@
 package io.zensoft.open.api.repository
 
+import io.zensoft.open.api.model.OpenKey
 import io.zensoft.open.api.model.Scaffold
 import io.zensoft.open.api.model.User
 import org.springframework.data.domain.Page
@@ -24,5 +25,13 @@ interface ScaffoldRepository: BaseRepository<Scaffold> {
     fun findByAddress(address: String): Scaffold?
 
     fun findAllByUser(user: User, pageable: Pageable): Page<Scaffold>
+
+}
+
+interface OpenKeyRepository: BaseRepository<OpenKey> {
+
+    fun findByValue(value: String): OpenKey?
+
+    fun findAllByUser(user:User): List<OpenKey>
 
 }

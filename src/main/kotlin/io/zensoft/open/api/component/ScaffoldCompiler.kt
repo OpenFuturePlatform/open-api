@@ -1,7 +1,7 @@
 package io.zensoft.open.api.component
 
 import io.zensoft.open.api.domain.scaffold.ScaffoldPropertyDto
-import io.zensoft.open.api.exception.CompiledException
+import io.zensoft.open.api.exception.CompileException
 import org.apache.commons.io.FileUtils
 import org.ethereum.solidity.compiler.CompilationResult
 import org.ethereum.solidity.compiler.SolidityCompiler
@@ -29,10 +29,10 @@ class ScaffoldCompiler(
 
     fun compileScaffold(properties: List<ScaffoldPropertyDto>): CompilationResult.ContractMetadata {
         val scaffold = generateScaffold(properties)
-        val compiled = SolidityCompiler.compile(scaffold, true, ABI, BIN, INTERFACE, METADATA)
+        val compiled = SolidityCompiler.compile(scaffold, true, ABI, BIN, INTERFACE)
 
         if (compiled.isFailed) {
-            throw CompiledException(compiled.errors)
+            throw CompileException(compiled.errors)
         }
 
         return CompilationResult.parse(compiled.output).getContract(SCAFFOLD_KEY)

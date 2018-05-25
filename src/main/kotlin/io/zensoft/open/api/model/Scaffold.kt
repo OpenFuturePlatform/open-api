@@ -17,6 +17,10 @@ class Scaffold(
         @JoinColumn(name = "user_id", nullable = false)
         val user: User,
 
+        @ManyToOne
+        @JoinColumn(name = "open_key_id", nullable = false)
+        val openKey: OpenKey,
+
         @Column(name = "abi", nullable = false)
         val abi: String
 
