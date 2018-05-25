@@ -8,9 +8,14 @@ contract OpenScaffold {
     }
 
     // events
-    event paymentComplete(address customerAddress, uint transactionAmount, uint scaffoldTransactionIndex, ${CUSTOM_SCAFFOLD_PARAMETERS});
+    event paymentComplete(
+        address customerAddress,
+        uint transactionAmount,
+        uint scaffoldTransactionIndex,
+        ${CUSTOM_SCAFFOLD_PARAMETERS}
+        );
     event fundsDeposited(uint _amount);
-    event incorrectDeveloperAddress(address scaffoldDeveloperAddress);
+    event incorrectVendorAddress(address requestAddress, address vendorAddress);
 
     // custom dataTypes - array for storage of transactions
     OpenScaffoldTransaction[] public openScaffoldTransactions;
@@ -18,7 +23,7 @@ contract OpenScaffold {
     // constructor variables
     address public vendorAddress;
     string public scaffoldDescription;
-    uint public fiatAmount;
+    string public fiatAmount;
     string fiatCurrency;
     uint public scaffoldAmount;
 
@@ -26,12 +31,16 @@ contract OpenScaffold {
     uint public scaffoldTransactionIndex;
     address private scaffoldAddress = this;
 
-    modifier restricted() {
-        require(msg.sender == vendorAddress);
-        _;
-    }
 
-    constructor(address _vendorAddress, string _description, uint _fiatAmount, string _fiatCurrency, uint _scaffoldAmount) public {
+    function OpenScaffold(
+        address _vendorAddress,
+        string _description,
+        string _fiatAmount,
+        string _fiatCurrency,
+        uint _scaffoldAmount
+    )
+        public
+    {
         vendorAddress = _vendorAddress;
         scaffoldDescription = _description;
         fiatAmount = _fiatAmount;
@@ -53,23 +62,31 @@ contract OpenScaffold {
 
         openScaffoldTransactions.push(newTransaction);
 
-        emit paymentComplete(customerAddress, transactionAmount, scaffoldTransactionIndex, ${CUSTOM_RETURN_VARIABLES});
+        emit paymentComplete(
+            customerAddress,
+            transactionAmount,
+            scaffoldTransactionIndex,
+            ${CUSTOM_RETURN_VARIABLES}
+            );
     }
 
     function withdrawFunds(uint amount) public returns(bool) {
             if(msg.sender != vendorAddress) {
-                emit incorrectDeveloperAddress(vendorAddress);
+                emit incorrectVendorAddress(msg.sender, vendorAddress);
                 return false;
             }
 
-            if(msg.sender == vendorAddress) {
-                vendorAddress.transfer(amount);
-                emit fundsDeposited(amount);
-                return true;
+            if(amount > scaffoldAddress.balance) {
+                return false;
             }
+
+            // transfer amount
+            vendorAddress.transfer(amount);
+            emit fundsDeposited(amount);
+            return true;
     }
 
-    function getScaffoldSummary() public view returns (string, uint, uint, string, uint, uint, address) {
+    function getScaffoldSummary() public view returns (string, uint, string, string, uint, uint, address) {
         return (
           scaffoldDescription,
           scaffoldAddress.balance,
