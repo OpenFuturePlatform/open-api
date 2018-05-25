@@ -1,4 +1,4 @@
-pragma solidity ^0.4.21;
+pragma solidity ^0.4.24;
 
 contract OpenScaffold {
     // on-chain transaction storage
@@ -12,7 +12,7 @@ contract OpenScaffold {
     event fundsDeposited(uint _amount);
     event incorrectDeveloperAddress(address scaffoldDeveloperAddress);
 
-    // custom datatypes - array for storage of transactions
+    // custom dataTypes - array for storage of transactions
     OpenScaffoldTransaction[] public openScaffoldTransactions;
 
     // constructor variables
