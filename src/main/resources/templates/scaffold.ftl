@@ -1,4 +1,4 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.4.19;
 
 contract OpenScaffold {
     // on-chain transaction storage
@@ -62,7 +62,7 @@ contract OpenScaffold {
 
         openScaffoldTransactions.push(newTransaction);
 
-        emit paymentComplete(
+        paymentComplete(
             customerAddress,
             transactionAmount,
             scaffoldTransactionIndex,
@@ -72,7 +72,7 @@ contract OpenScaffold {
 
     function withdrawFunds(uint amount) public returns(bool) {
             if(msg.sender != vendorAddress) {
-                emit incorrectVendorAddress(msg.sender, vendorAddress);
+                incorrectVendorAddress(msg.sender, vendorAddress);
                 return false;
             }
 
@@ -82,7 +82,7 @@ contract OpenScaffold {
 
             // transfer amount
             vendorAddress.transfer(amount);
-            emit fundsDeposited(amount);
+            fundsDeposited(amount);
             return true;
     }
 
