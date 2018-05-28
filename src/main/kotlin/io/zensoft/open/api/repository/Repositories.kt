@@ -30,7 +30,7 @@ interface ScaffoldRepository: BaseRepository<Scaffold> {
 
 interface OpenKeyRepository: BaseRepository<OpenKey> {
 
-    fun findByValue(value: String): OpenKey?
+    fun findByValueAndUser(value: String, user: User): OpenKey?
 
     fun findAllByUser(user:User): List<OpenKey>
 

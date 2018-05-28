@@ -11,6 +11,6 @@ data class UserDto(
         val openKeys: List<OpenKeyDto>
 ) {
 
-    constructor(user: User): this(user.id , user.credits, user.openKeys.map { OpenKeyDto(it) })
+    constructor(user: User): this(user.id , user.credits, user.openKeys.filter { it.enabled }.map { OpenKeyDto(it) })
 
 }

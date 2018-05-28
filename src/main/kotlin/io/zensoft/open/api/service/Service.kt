@@ -1,5 +1,6 @@
 package io.zensoft.open.api.service
 
+import io.zensoft.open.api.domain.scaffold.DeployScaffoldRequest
 import io.zensoft.open.api.model.OpenKey
 import io.zensoft.open.api.model.Scaffold
 import io.zensoft.open.api.model.User
@@ -16,11 +17,13 @@ interface ScaffoldService {
 
     fun get(address: String): Scaffold
 
+    fun deploy(request: DeployScaffoldRequest, user: User): Scaffold
+
 }
 
 interface OpenKeyService {
 
-    fun get(key: String): OpenKey
+    fun get(key: String, user: User): OpenKey
 
     fun getByUser(user: User): List<OpenKey>
 

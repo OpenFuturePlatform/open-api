@@ -29,7 +29,7 @@ class ScaffoldCompiler(
 
     fun compileScaffold(properties: List<ScaffoldPropertyDto>): CompilationResult.ContractMetadata {
         val scaffold = generateScaffold(properties)
-        val compiled = SolidityCompiler.compile(scaffold, true, ABI, BIN, INTERFACE)
+        val compiled = SolidityCompiler.compile(scaffold, true, ABI, BIN, INTERFACE, METADATA)
 
         if (compiled.isFailed) {
             throw CompileException(compiled.errors)

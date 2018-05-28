@@ -16,7 +16,8 @@ enum class PropertyType(private val value: String) {
 
     STRING("string"),
     NUMBER("number"),
-    BOOLEAN("boolean");
+    BOOLEAN("boolean")
+    ;
 
     fun getValue(): String = value
 
