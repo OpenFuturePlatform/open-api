@@ -5,8 +5,8 @@ import io.zensoft.open.api.config.propety.BlockchainProperties
 import io.zensoft.open.api.domain.scaffold.DeployScaffoldRequest
 import io.zensoft.open.api.exception.DeployException
 import io.zensoft.open.api.exception.NotFoundException
-import io.zensoft.open.api.model.Scaffold
-import io.zensoft.open.api.model.User
+import io.zensoft.open.api.model.auth.User
+import io.zensoft.open.api.model.scaffold.Scaffold
 import io.zensoft.open.api.repository.ScaffoldRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -59,7 +59,6 @@ class DefaultScaffoldService(
                 Uint256(toWei(request.currencyConversionValue!!, WEI).toBigInteger()))
         )
         val web3 = Web3j.build(HttpService(properties.url))
-
 
         val nonce = web3.ethGetTransactionCount(properties.baseAccount, LATEST).send().transactionCount
         val deployResult = web3.ethSendTransaction(createContractTransaction(properties.baseAccount, nonce,

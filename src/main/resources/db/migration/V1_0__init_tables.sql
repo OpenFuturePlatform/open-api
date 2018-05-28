@@ -8,7 +8,7 @@ CREATE TABLE open_keys(
   id BIGSERIAL PRIMARY KEY,
   value VARCHAR UNIQUE NOT NULL,
   user_id BIGINT REFERENCES users,
-  enabled BOOLEAN NOT NULL,
+  enabled BOOLEAN NOT NULL DEFAULT TRUE,
   expired_date TIMESTAMP
 );
 
@@ -17,5 +17,6 @@ CREATE TABLE scaffolds(
   address VARCHAR UNIQUE NOT NULL,
   user_id BIGINT REFERENCES users,
   open_key_id BIGINT NOT NULL REFERENCES open_keys,
-  abi VARCHAR NOT NULL
+  abi VARCHAR NOT NULL,
+  enabled BOOLEAN NOT NULL DEFAULT FALSE
 );

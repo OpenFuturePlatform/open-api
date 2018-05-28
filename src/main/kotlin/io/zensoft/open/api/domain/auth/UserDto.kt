@@ -1,6 +1,6 @@
 package io.zensoft.open.api.domain.auth
 
-import io.zensoft.open.api.model.User
+import io.zensoft.open.api.model.auth.User
 
 /**
  * @author Kadach Alexey

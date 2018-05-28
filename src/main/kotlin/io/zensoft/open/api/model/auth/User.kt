@@ -1,4 +1,4 @@
-package io.zensoft.open.api.model
+package io.zensoft.open.api.model.auth
 
 import io.zensoft.open.api.model.base.BaseModel
 import org.springframework.security.oauth2.core.oidc.user.OidcUser

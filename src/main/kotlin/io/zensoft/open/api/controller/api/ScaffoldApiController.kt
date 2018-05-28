@@ -5,7 +5,7 @@ import io.zensoft.open.api.domain.PageRequest
 import io.zensoft.open.api.domain.PageResponse
 import io.zensoft.open.api.domain.scaffold.DeployScaffoldRequest
 import io.zensoft.open.api.domain.scaffold.ScaffoldDto
-import io.zensoft.open.api.model.User
+import io.zensoft.open.api.model.auth.User
 import io.zensoft.open.api.service.ScaffoldService
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid

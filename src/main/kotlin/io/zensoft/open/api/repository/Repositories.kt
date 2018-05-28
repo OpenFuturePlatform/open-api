@@ -1,8 +1,8 @@
 package io.zensoft.open.api.repository
 
-import io.zensoft.open.api.model.OpenKey
-import io.zensoft.open.api.model.Scaffold
-import io.zensoft.open.api.model.User
+import io.zensoft.open.api.model.auth.OpenKey
+import io.zensoft.open.api.model.auth.User
+import io.zensoft.open.api.model.scaffold.Scaffold
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
@@ -32,6 +32,6 @@ interface OpenKeyRepository: BaseRepository<OpenKey> {
 
     fun findByValueAndUser(value: String, user: User): OpenKey?
 
-    fun findAllByUser(user:User): List<OpenKey>
+    fun findAllByUser(user: User): List<OpenKey>
 
 }

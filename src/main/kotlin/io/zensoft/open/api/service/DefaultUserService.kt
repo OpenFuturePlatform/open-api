@@ -1,6 +1,6 @@
 package io.zensoft.open.api.service
 
-import io.zensoft.open.api.model.User
+import io.zensoft.open.api.model.auth.User
 import io.zensoft.open.api.repository.UserRepository
 import org.springframework.security.oauth2.core.oidc.user.OidcUser
 import org.springframework.stereotype.Service

@@ -1,5 +1,7 @@
-package io.zensoft.open.api.model
+package io.zensoft.open.api.model.scaffold
 
+import io.zensoft.open.api.model.auth.OpenKey
+import io.zensoft.open.api.model.auth.User
 import io.zensoft.open.api.model.base.BaseModel
 import javax.persistence.*
 
@@ -22,6 +24,9 @@ class Scaffold(
         val openKey: OpenKey,
 
         @Column(name = "abi", nullable = false)
-        val abi: String
+        val abi: String,
+
+        @Column(name = "enabled", nullable = false)
+        val enabled: Boolean = false
 
 ): BaseModel()

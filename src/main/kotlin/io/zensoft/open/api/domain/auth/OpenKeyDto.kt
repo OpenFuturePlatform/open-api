@@ -1,6 +1,6 @@
 package io.zensoft.open.api.domain.auth
 
-import io.zensoft.open.api.model.OpenKey
+import io.zensoft.open.api.model.auth.OpenKey
 import java.util.*
 
 /**

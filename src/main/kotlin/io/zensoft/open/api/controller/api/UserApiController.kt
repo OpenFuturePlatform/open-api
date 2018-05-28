@@ -2,7 +2,7 @@ package io.zensoft.open.api.controller.api
 
 import io.zensoft.open.api.annotation.CurrentUser
 import io.zensoft.open.api.domain.auth.UserDto
-import io.zensoft.open.api.model.User
+import io.zensoft.open.api.model.auth.User
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController

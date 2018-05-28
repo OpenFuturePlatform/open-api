@@ -1,8 +1,8 @@
 package io.zensoft.open.api.service
 
 import io.zensoft.open.api.exception.NotFoundException
-import io.zensoft.open.api.model.OpenKey
-import io.zensoft.open.api.model.User
+import io.zensoft.open.api.model.auth.OpenKey
+import io.zensoft.open.api.model.auth.User
 import io.zensoft.open.api.repository.OpenKeyRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional

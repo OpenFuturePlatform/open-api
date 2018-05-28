@@ -1,7 +1,7 @@
 package io.zensoft.open.api.domain.scaffold
 
 import io.zensoft.open.api.domain.auth.UserDto
-import io.zensoft.open.api.model.Scaffold
+import io.zensoft.open.api.model.scaffold.Scaffold
 
 /**
  * @author Kadach Alexey
@@ -9,9 +9,10 @@ import io.zensoft.open.api.model.Scaffold
 data class ScaffoldDto(
         val address: String,
         val user: UserDto,
-        val abi: String
+        val abi: String,
+        val enabled: Boolean
 ) {
 
-    constructor(scaffold: Scaffold): this(scaffold.address, UserDto(scaffold.user), scaffold.abi)
+    constructor(scaffold: Scaffold): this(scaffold.address, UserDto(scaffold.user), scaffold.abi, scaffold.enabled)
 
 }

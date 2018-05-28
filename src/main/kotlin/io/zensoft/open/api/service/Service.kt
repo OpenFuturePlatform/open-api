@@ -1,9 +1,9 @@
 package io.zensoft.open.api.service
 
 import io.zensoft.open.api.domain.scaffold.DeployScaffoldRequest
-import io.zensoft.open.api.model.OpenKey
-import io.zensoft.open.api.model.Scaffold
-import io.zensoft.open.api.model.User
+import io.zensoft.open.api.model.auth.OpenKey
+import io.zensoft.open.api.model.auth.User
+import io.zensoft.open.api.model.scaffold.Scaffold
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.security.oauth2.core.oidc.user.OidcUser
