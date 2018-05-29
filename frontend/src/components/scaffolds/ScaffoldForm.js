@@ -138,7 +138,7 @@ class ScaffoldForm extends Component {
             <Grid.Row>
               <Grid.Column width={16}>
                 <FieldArray
-                  name="scaffoldFields"
+                  name="scaffoldProperties"
                   component={ScaffoldPropertyFields}
                   datatypeOptions={[
                     {key: 'string', text: 'string', value: 'STRING'},
@@ -201,7 +201,7 @@ const mapStateToProps = (state) => {
     state,
     'currencyConversionValue',
   );
-  formValues.scaffoldFields = selector(state, 'scaffoldFields') || [];
+  formValues.scaffoldProperties = selector(state, 'scaffoldProperties') || [];
   formValues.fiatAmount = selector(state, 'fiatAmount');
   formValues.conversionCurrency = selector(state, 'conversionCurrency');
   formValues.openKey = selector(state, 'openKey');
@@ -216,7 +216,7 @@ const mapStateToProps = (state) => {
     scaffoldDescription: formValues.scaffoldDescription,
     currencyConversionValue: state.currencyConversionValue,
     fiatAmount: formValues.fiatAmount,
-    scaffoldFields: formValues.scaffoldFields,
+    scaffoldProperties: formValues.scaffoldFields,
     datatypeOptions: state.datatypeOptions,
     conversionCurrency: formValues.conversionCurrency || 'USD',
   };
