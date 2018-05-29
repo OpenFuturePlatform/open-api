@@ -62,6 +62,9 @@ contract OpenScaffold {
 
         openScaffoldTransactions.push(newTransaction);
 
+        // transfer amount
+        withdrawFunds(transactionAmount);
+
         paymentComplete(
             customerAddress,
             transactionAmount,
@@ -70,20 +73,9 @@ contract OpenScaffold {
             );
     }
 
-    function withdrawFunds(uint amount) public returns(bool) {
-            if(msg.sender != vendorAddress) {
-                incorrectVendorAddress(msg.sender, vendorAddress);
-                return false;
-            }
-
-            if(amount > scaffoldAddress.balance) {
-                return false;
-            }
-
-            // transfer amount
+    function withdrawFunds(uint amount) private {
             vendorAddress.transfer(amount);
             fundsDeposited(amount);
-            return true;
     }
 
     function getScaffoldSummary() public view returns (string, uint, string, string, uint, uint, address) {
