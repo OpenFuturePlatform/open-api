@@ -20,3 +20,9 @@ CREATE TABLE scaffolds(
   abi VARCHAR NOT NULL,
   enabled BOOLEAN NOT NULL DEFAULT FALSE
 );
+
+CREATE TABLE transactions(
+  id BIGSERIAL PRIMARY KEY,
+  scaffold_id BIGINT NOT NULL REFERENCES scaffolds,
+  type VARCHAR NOT NULL
+)

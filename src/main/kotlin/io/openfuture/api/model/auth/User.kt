@@ -1,7 +1,6 @@
 package io.openfuture.api.model.auth
 
 import io.openfuture.api.model.base.BaseModel
-import org.springframework.security.oauth2.core.oidc.user.OidcUser
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.OneToMany
@@ -23,8 +22,4 @@ class User(
         @OneToMany(mappedBy = "user")
         val openKeys: MutableSet<OpenKey> = mutableSetOf()
 
-): BaseModel() {
-
-    constructor(user: OidcUser) : this(user.subject)
-
-}
+): BaseModel()

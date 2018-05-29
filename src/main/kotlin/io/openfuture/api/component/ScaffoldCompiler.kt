@@ -4,6 +4,7 @@ import io.openfuture.api.domain.scaffold.ScaffoldPropertyDto
 import io.openfuture.api.exception.CompileException
 import org.apache.commons.io.FileUtils
 import org.ethereum.solidity.compiler.CompilationResult
+import org.ethereum.solidity.compiler.CompilationResult.ContractMetadata
 import org.ethereum.solidity.compiler.SolidityCompiler
 import org.ethereum.solidity.compiler.SolidityCompiler.Options.*
 import org.springframework.stereotype.Component
@@ -27,7 +28,7 @@ class ScaffoldCompiler(
         private const val RETURN_VARIABLES = "CUSTOM_RETURN_VARIABLES"
     }
 
-    fun compileScaffold(properties: List<ScaffoldPropertyDto>): CompilationResult.ContractMetadata {
+    fun compile(properties: List<ScaffoldPropertyDto>): ContractMetadata {
         val scaffold = generateScaffold(properties)
         val compiled = SolidityCompiler.compile(scaffold, true, ABI, BIN, INTERFACE, METADATA)
 

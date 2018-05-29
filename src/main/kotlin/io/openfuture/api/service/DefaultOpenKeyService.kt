@@ -13,14 +13,14 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class DefaultOpenKeyService(
         private val repository: OpenKeyRepository
-): OpenKeyService {
+) : OpenKeyService {
+
+    @Transactional(readOnly = true)
+    override fun getAllByUser(user: User): List<OpenKey> = repository.findAllByUser(user)
 
     @Transactional(readOnly = true)
     override fun get(key: String, user: User): OpenKey = repository.findByValueAndUser(key, user)
             ?: throw NotFoundException("Not found key $key")
-
-    @Transactional(readOnly = true)
-    override fun getByUser(user: User): List<OpenKey> = repository.findAllByUser(user)
 
     @Transactional
     override fun save(user: User): OpenKey = repository.save(OpenKey(user))
