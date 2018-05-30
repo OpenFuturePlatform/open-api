@@ -7,10 +7,11 @@ import {DropdownField} from 'react-semantic-redux-form';
 import {withRouter} from 'react-router-dom';
 // Actions
 import {withdrawFunds} from '../actions';
+import ScaffoldPropertyField from "./scaffolds/ScaffoldPropertyField";
 
 class WithdrawFundsForm extends Component {
   render() {
-    const {actions, currencyOptions, formValues, currentScaffoldInstance, history} = this.props;
+    const {actions, formValues, currentScaffoldInstance, history} = this.props;
     return (
       <Form>
         <Input className="ui fluid action input">
@@ -18,7 +19,7 @@ class WithdrawFundsForm extends Component {
             key={4}
             name="withdrawalAmount"
             placeholder="Amount in"
-            component={Input}
+            component={ScaffoldPropertyField}
             style={{maxHeight: '38px'}}
           />
           <Field
@@ -26,7 +27,13 @@ class WithdrawFundsForm extends Component {
             role="listbox"
             className="ui compact selection dropdown"
             name="withdrawalCurrency"
-            options={currencyOptions}
+            options={[
+              {key: 'dollars', text: '$', value: 'USD'},
+              {key: 'pounds', text: '£', value: 'GBP'},
+              {key: 'eruo', text: '€', value: 'EUR'},
+              {key: 'reminibi', text: '¥', value: 'CNY'},
+              {key: 'ether', text: '♦', value: 'ETH'},
+            ]}
             component={DropdownField}
             style={{maxHeight: '38px'}}
           />
@@ -56,9 +63,9 @@ const mapStateToProps = state => {
   formValues.withdrawalAmount = selector(state, 'withdrawalAmount');
   formValues.withdrawalCurrency = selector(state, 'withdrawalCurrency');
 
-  const {currentScaffoldInstance, currencyOptions} = state;
+  const {currentScaffoldInstance} = state;
 
-  return {formValues, currentScaffoldInstance, currencyOptions};
+  return {formValues, currentScaffoldInstance};
 };
 
 const mapDispatchToProps = dispatch => ({

@@ -9,16 +9,16 @@ export const validateScaffoldProperties = values => {
   values.forEach((field, fieldIndex) => {
     const scaffoldFieldsErrors = [];
 
-    if (field.property) {
-      if (field.property[0].match(/[a-z]/) === null) scaffoldFieldsErrors.push('A property should begin with a lowercase letter');
-      if (field.property.match(/[\s]/) !== null) scaffoldFieldsErrors.push('A property should not contain a space');
-      if (solidityReservedWords.includes(field.property)) scaffoldFieldsErrors.push(`${field.property} is a reserved word, pick another property name.`);
+    if (field.name) {
+      if (field.name[0].match(/[a-z]/) === null) scaffoldFieldsErrors.push('A property should begin with a lowercase letter');
+      if (field.name.match(/[\s]/) !== null) scaffoldFieldsErrors.push('A property should not contain a space');
+      if (solidityReservedWords.includes(field.name)) scaffoldFieldsErrors.push(`${field.name} is a reserved word, pick another property name.`);
     }
 
-    const ifUint = field.datatype === 'uint';
+    const ifNumber = field.type === 'NUMBER';
     const regexTest = field.defaultValue === undefined ? false : digitRegex.test(field.defaultValue);
 
-    if (ifUint && regexTest) {
+    if (ifNumber && regexTest) {
       scaffoldFieldsErrors.push('Only integers are allowed in number datatype');
     }
     scaffoldFieldsArrayErrors[fieldIndex] = scaffoldFieldsErrors;

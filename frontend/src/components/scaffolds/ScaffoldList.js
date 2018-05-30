@@ -12,33 +12,29 @@ class ScaffoldList extends Component {
   }
 
   renderScaffolds() {
-
-    console.log('>> ', this.props.scaffolds);
-
     return this.props.scaffolds.map((scaffold, index) => {
-      const scaffoldData = scaffold.scaffold;
+      const scaffoldData = scaffold;
       return (
         <Card fluid key={index}>
           <Card.Content>
             <Link
-              to={`scaffold/${scaffold.open_dev_id}/${
-                scaffold.contract_address
+              to={`scaffolds/${
+                scaffold.address
                 }`}
             >
               <Card.Header>
-                description
-                {/*{scaffoldData.scaffoldDescription}*/}
+                {scaffoldData.description}
               </Card.Header>
             </Link>
             <div className="meta">
               Scaffold Address:{' '}
               <a
                 href={`https://${ETHEREUM_NETWORK}/address/${
-                  scaffold.contract_address
+                  scaffold.address
                   }`}
                 target="_blank"
               >
-                {scaffold.contract_address}
+                {scaffold.address}
               </a>
             </div>
           </Card.Content>
@@ -47,25 +43,25 @@ class ScaffoldList extends Component {
               <Grid.Row>
                 <Grid.Column width={16}>
                   Developer Address:{' '}
-                  {scaffold.address}
+                  {scaffold.developerAddress}
                 </Grid.Column>
               </Grid.Row>
               <Grid.Row>
                 <Grid.Column width={4}>
-                  Fiat Amount: {'hello' || scaffoldData.fiatAmount}
+                  Fiat Amount: {scaffoldData.fiatAmount}
                 </Grid.Column>
                 <Grid.Column width={4}>
-                  Currecy: {'hello' || scaffoldData.conversionCurrency}
+                  Currecy: {scaffoldData.currency}
                 </Grid.Column>
                 <Grid.Column width={8}>
                   Scaffold Amount:{' '}
-                  {'hello' || scaffoldData.currencyConversionValue} Ether
+                  {scaffoldData.conversionAmount} Ether
                 </Grid.Column>
               </Grid.Row>
             </Grid>
             <Divider/>
             <Grid>
-              {JSON.parse(scaffold.abi).map((field, index) => {
+              {scaffold.properties.map((field, index) => {
                 return (
                   <Grid.Row key={'property-' + index}>
                     <Grid.Column width={8}>

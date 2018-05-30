@@ -36,7 +36,7 @@ class Scaffolds extends Component {
         <Switch>
           <Route exact path={`${url}/`} component={Dashboard}/>
           <Route path={`${url}/new`} component={ScaffoldForm}/>
-          <Route path={`${url}/:openDevId/:contractAddress`} component={ScaffoldSummary}/>
+          <Route path={`${url}/:contractAddress`} component={ScaffoldSummary}/>
         </Switch>
         <DeployingModal modalInfo={this.props.modalInfo}/>
         <WithdrawModal withdrawModalInfo={this.props.withdrawModalInfo}/>

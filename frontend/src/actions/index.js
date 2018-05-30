@@ -50,11 +50,11 @@ export const fetchSummaryOnchain = params => async dispatch => {
 
   try {
     res = await axios.get(
-      `/api/scaffold/${params.openDevId}/${params.contractAddress}`,
+      `/api/scaffolds/${params.contractAddress}`,
     );
 
     const scaffold = Scaffold(
-      JSON.stringify(res.data),
+      res.data.abi,
       params.contractAddress,
     );
 
@@ -109,6 +109,7 @@ export const withdrawFunds = (formValues, scaffold, history) => async dispatch =
       .send({from: accounts[0]});
 
     withdrawalResponse.showLoader = false;
+    withdrawalResponse.showModal = false;
 
     history.push('/scaffolds');
     dispatch({type: SHOW_WITHDRAWAL_MODAL, payload: withdrawalResponse});

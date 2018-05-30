@@ -6,6 +6,10 @@ import ScaffoldPropertyField from "./ScaffoldPropertyField";
 
 export default ({fields, datatypeOptions, scaffoldFieldsErrors, formValues}) => {
 
+  if (!fields.length) {
+    fields.push({});
+  }
+
   const renderProperties = fields.map((property, index) => {
     return (
       <div key={index}>
@@ -19,6 +23,7 @@ export default ({fields, datatypeOptions, scaffoldFieldsErrors, formValues}) => 
             className={'inputField'}
             labelPosition="right"
             placeholder="Scaffold Property Name"
+            fluid
           />
           <Field
             style={{
@@ -34,53 +39,51 @@ export default ({fields, datatypeOptions, scaffoldFieldsErrors, formValues}) => 
             options={datatypeOptions}
             className="ui selection"
           />
-          {formValues.properties[index].datatype === 'bool' ?
-            <div style={{width: '65%'}}>
+          {formValues.properties[index].type === 'BOOLEAN' ?
+            <div>
               <Field
-                style={{
-                  borderTopLeftRadius: '0px',
-                  borderTopRightRadius: '0px',
-                  borderBottomRightRadius: '0px',
-                  borderBottomLeftRadius: '0px',
-                  width: '65% !important'
-                }}
                 name={`${property}.defaultValue`}
                 component={DropdownField}
                 options={[
                   {key: 'true', text: 'true', value: 'true'},
                   {key: 'false', text: 'false', value: 'false'},
                 ]}
-                className="ui selection dropdown"
+                className="ui selection dropdown inputField"
                 placeholder="Default Value"
                 fluid
               />
             </div> :
-            <Field
-              inputStyle={{
+            <div>
+              <Field
+                inputStyle={{
+                  borderTopLeftRadius: '0px',
+                  borderTopRightRadius: '0px',
+                  borderBottomRightRadius: '0px',
+                  borderBottomLeftRadius: '0px'
+                }}
+                name={`${property}.defaultValue`}
+                component={ScaffoldPropertyField}
+                placeholder="Default Value"
+                labelPosition="right"
+                className={'inputField'}
+                fluid
+              />
+            </div>
+          }
+          {index === 0 && fields.length === 1 ? null :
+            <Button
+              style={{
                 borderTopLeftRadius: '0px',
-                borderTopRightRadius: '0px',
-                borderBottomRightRadius: '0px',
-                borderBottomLeftRadius: '0px'
+                borderBottomLeftRadius: '0px',
+                maxWidth: '40px'
               }}
-              name={`${property}.defaultValue`}
-              component={ScaffoldPropertyField}
-              placeholder="Default Value"
-              labelPosition="right"
-              className={'inputField'}
+              icon="remove circle"
+              type="button"
+              onClick={() => {
+                fields.remove(index);
+              }}
             />
           }
-          <Button
-            style={{
-              borderTopLeftRadius: '0px',
-              borderBottomLeftRadius: '0px',
-              maxWidth: '40px'
-            }}
-            icon="remove circle"
-            type="button"
-            onClick={() => {
-              fields.remove(index);
-            }}
-          />
         </Input>
         {((formValues && formValues.properties[index]) && (scaffoldFieldsErrors[index].length > 0)) ? (
           <Message style={{

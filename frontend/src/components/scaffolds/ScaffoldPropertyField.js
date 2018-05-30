@@ -16,7 +16,7 @@ export default ({
                 placeholder={placeholder}
                 {...input}
             >
-                <input style={inputStyle}/>
+                <input/>
             </Input>
         </div>
     );
