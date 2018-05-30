@@ -35,7 +35,6 @@ CREATE TABLE open_keys(
 CREATE TABLE scaffolds(
   id BIGSERIAL PRIMARY KEY,
   address VARCHAR UNIQUE NOT NULL,
-  user_id BIGINT REFERENCES users,
   open_key_id BIGINT NOT NULL REFERENCES open_keys,
   abi VARCHAR NOT NULL,
   developer_address VARCHAR NOT NULL,
