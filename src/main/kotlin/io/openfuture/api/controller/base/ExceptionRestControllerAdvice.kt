@@ -50,5 +50,10 @@ class ExceptionRestControllerAdvice {
     fun templateProcessionExceptionHandler(exception: TemplateProcessingException): ExceptionResponse =
             ExceptionResponse(BAD_REQUEST.value(), exception.message ?: "Template Processing Exception")
 
+    @ResponseStatus(code = BAD_REQUEST)
+    @ExceptionHandler(IllegalStateException::class)
+    fun illegalStateExceptionHandler(exception: IllegalStateException): ExceptionResponse =
+            ExceptionResponse(BAD_REQUEST.value(), exception.message ?: "Illegal State Exception")
+
 
 }
