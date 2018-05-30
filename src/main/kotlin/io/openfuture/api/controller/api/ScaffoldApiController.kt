@@ -5,7 +5,7 @@ import io.openfuture.api.domain.PageRequest
 import io.openfuture.api.domain.PageResponse
 import io.openfuture.api.domain.scaffold.DeployScaffoldRequest
 import io.openfuture.api.domain.scaffold.ScaffoldDto
-import io.openfuture.api.model.auth.User
+import io.openfuture.api.entity.auth.User
 import io.openfuture.api.service.ScaffoldService
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid

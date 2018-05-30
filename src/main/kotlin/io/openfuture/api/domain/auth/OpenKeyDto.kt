@@ -1,6 +1,6 @@
 package io.openfuture.api.domain.auth
 
-import io.openfuture.api.model.auth.OpenKey
+import io.openfuture.api.entity.auth.OpenKey
 import java.util.*
 
 /**
