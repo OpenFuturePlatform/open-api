@@ -25,7 +25,7 @@ export const validateScaffoldProperties = values => {
   });
 
   return scaffoldFieldsArrayErrors;
-}
+};
 
 export const warn = values => {
   const warnings = {};
@@ -41,11 +41,11 @@ export const warn = values => {
     warnings.fiatAmount = 'Fiat amount should be a number';
   }
   return warnings;
-}
+};
 
 export const validate = values => {
   const errors = {};
-  errors.scaffoldFields = [];
+  errors.properties = [];
 
   if (!values.developerAddress) {
     errors.developerAddress = 'A developer address is required.';
@@ -57,15 +57,15 @@ export const validate = values => {
     errors.fiatAmount = 'Fiat Amount is required.';
   }
 
-  if (values.scaffoldFields) {
+  if (values.properties) {
     const scaffoldFieldErrors = {};
-    values.scaffoldFields.forEach((field, fieldIndex) => {
+    values.properties.forEach((field, fieldIndex) => {
       if (!field.property) scaffoldFieldErrors.property = 'required';
       if (!field.datatype) scaffoldFieldErrors.datatype = 'required';
       if (!field.defaultValue) scaffoldFieldErrors.defaultValue = 'required';
-      errors.scaffoldFields[fieldIndex] = scaffoldFieldErrors;
+      errors.properties[fieldIndex] = scaffoldFieldErrors;
     });
   }
 
   return errors;
-}
+};

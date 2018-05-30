@@ -11,7 +11,7 @@ enum class PropertyType(
 ) : Dictionary {
 
     STRING(1, "string"),
-    NUMBER(2, "number"),
+    NUMBER(2, "uint"),
     BOOLEAN(3, "boolean")
     ;
 

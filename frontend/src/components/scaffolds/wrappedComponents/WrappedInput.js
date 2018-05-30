@@ -7,7 +7,7 @@ export default class WrappedInput extends React.Component {
   constructor(props) {
     super(props);
 
-    this.convertToEth = debounce(() => this.props.callback(this.props.formValues), 600);
+    this.convertToEth = debounce(() => this.props.callback(this.props.formValues), 300);
 
     this.onChange = (...args) => {
       this.props.input.onChange(...args);

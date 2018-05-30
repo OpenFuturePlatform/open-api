@@ -33,6 +33,7 @@ class ScaffoldForm extends Component {
     return (
       <div>
         <form>
+          <div>Your scaffold is created but is inactive. To activate your scaffold you need to transfer 10 open tokens to it.</div>
           <Grid style={{paddingLeft: '15px'}}>
             <Grid.Row>
               <Grid.Column width={16} style={{paddingTop: '10px'}}>
@@ -83,7 +84,7 @@ class ScaffoldForm extends Component {
                   placeholder="Title shown to customer at checkout"
                   component={ScaffoldField}
                   type="text"
-                  name="scaffoldDescription"
+                  name="description"
                 />
               </Grid.Column>
             </Grid.Row>
@@ -99,14 +100,14 @@ class ScaffoldForm extends Component {
                     callback={actions.convertCurrencies}
                     formValues={{
                       fromAmount: formValues.fiatAmount,
-                      fromCurrency: formValues.conversionCurrency,
+                      fromCurrency: formValues.currency,
                       toCurrency: 'eth'
                     }}
                   />
                   <Field
                     key={5}
                     className="ui compact selection dropdown"
-                    name="conversionCurrency"
+                    name="currency"
                     options={[
                       {key: 'dollars', text: '$', value: 'USD'},
                       {key: 'pounds', text: '£', value: 'GBP'},
@@ -131,14 +132,14 @@ class ScaffoldForm extends Component {
                   component={ScaffoldActionField}
                   disableInput={true}
                   type="text"
-                  name="currencyConversionValue"
+                  name="conversionAmount"
                 />
               </Grid.Column>
             </Grid.Row>
             <Grid.Row>
               <Grid.Column width={16}>
                 <FieldArray
-                  name="scaffoldFields"
+                  name="properties"
                   component={ScaffoldPropertyFields}
                   datatypeOptions={[
                     {key: 'string', text: 'string', value: 'STRING'},
@@ -180,7 +181,6 @@ class ScaffoldForm extends Component {
   }
 }
 
-
 ScaffoldForm = reduxForm({
   validate,
   warn,
@@ -197,28 +197,28 @@ const mapStateToProps = (state) => {
   const openKey = state.auth ? state.auth.openKeys : undefined;
   const formMetaData = formMeta(state);
 
-  formValues.currencyConversionValue = selector(
+  formValues.conversionAmount = selector(
     state,
-    'currencyConversionValue',
+    'conversionAmount',
   );
-  formValues.scaffoldFields = selector(state, 'scaffoldFields') || [];
+  formValues.properties = selector(state, 'properties') || [];
   formValues.fiatAmount = selector(state, 'fiatAmount');
-  formValues.conversionCurrency = selector(state, 'conversionCurrency');
+  formValues.currency = selector(state, 'currency');
   formValues.openKey = selector(state, 'openKey');
   formValues.developerAddress = selector(state, 'developerAddress');
-  formValues.scaffoldDescription = selector(state, 'scaffoldDescription');
+  formValues.description = selector(state, 'description');
 
-  const scaffoldFieldsErrors = validateScaffoldProperties(formValues.scaffoldFields);
+  const scaffoldFieldsErrors = validateScaffoldProperties(formValues.properties);
 
   const initialValues = {
     openKey: formValues.openKey,
     developerAddress: formValues.developerAddress,
-    scaffoldDescription: formValues.scaffoldDescription,
-    currencyConversionValue: state.currencyConversionValue,
+    description: formValues.description,
+    conversionAmount: state.currencyConversionValue,
     fiatAmount: formValues.fiatAmount,
-    scaffoldFields: formValues.scaffoldFields,
+    properties: formValues.properties,
     datatypeOptions: state.datatypeOptions,
-    conversionCurrency: formValues.conversionCurrency || 'USD',
+    currency: formValues.currency || 'USD',
   };
 
   const openKeyOptions = state.auth ? state.auth.openKeys
