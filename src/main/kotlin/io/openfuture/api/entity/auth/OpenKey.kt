@@ -1,6 +1,6 @@
-package io.openfuture.api.model.auth
+package io.openfuture.api.entity.auth
 
-import io.openfuture.api.model.base.BaseModel
+import io.openfuture.api.entity.base.BaseModel
 import java.util.*
 import javax.persistence.*
 

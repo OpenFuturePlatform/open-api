@@ -18,12 +18,12 @@ class SecurityConfig(
     override fun configure(http: HttpSecurity) {
         http
                 .authorizeRequests()
-                .anyRequest().authenticated()
+                    .anyRequest().authenticated()
 
                 .and()
 
                 .oauth2Login()
-                .successHandler(AuthenticationSuccessHandler(service))
+                    .successHandler(AuthenticationSuccessHandler(service))
     }
 
 }
