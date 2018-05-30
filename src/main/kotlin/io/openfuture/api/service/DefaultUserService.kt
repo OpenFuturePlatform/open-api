@@ -1,6 +1,6 @@
 package io.openfuture.api.service
 
-import io.openfuture.api.model.auth.User
+import io.openfuture.api.entity.auth.User
 import io.openfuture.api.repository.UserRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional

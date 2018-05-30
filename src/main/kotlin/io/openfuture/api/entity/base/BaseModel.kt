@@ -1,4 +1,4 @@
-package io.openfuture.api.model.base
+package io.openfuture.api.entity.base
 
 import java.io.Serializable
 import javax.persistence.GeneratedValue

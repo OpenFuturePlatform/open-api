@@ -1,6 +1,6 @@
-package io.openfuture.api.model.scaffold
+package io.openfuture.api.entity.scaffold
 
-import io.openfuture.api.model.base.BaseModel
+import io.openfuture.api.entity.base.BaseModel
 import org.web3j.protocol.core.methods.response.Log
 import javax.persistence.*
 
@@ -21,8 +21,10 @@ class Transaction(
         @Column(name = "type", nullable = false)
         val type: String
 
-): BaseModel() {
+) : BaseModel() {
 
-        constructor(scaffold: Scaffold, log: Log): this(scaffold, log.data, log.type)
+    companion object {
+        fun of(scaffold: Scaffold, log: Log): Transaction = Transaction(scaffold, log.data, log.type)
+    }
 
 }

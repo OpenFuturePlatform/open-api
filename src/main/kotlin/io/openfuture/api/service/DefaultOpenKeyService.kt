@@ -1,8 +1,8 @@
 package io.openfuture.api.service
 
+import io.openfuture.api.entity.auth.OpenKey
+import io.openfuture.api.entity.auth.User
 import io.openfuture.api.exception.NotFoundException
-import io.openfuture.api.model.auth.OpenKey
-import io.openfuture.api.model.auth.User
 import io.openfuture.api.repository.OpenKeyRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional

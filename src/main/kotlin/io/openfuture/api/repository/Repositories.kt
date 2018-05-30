@@ -1,9 +1,10 @@
 package io.openfuture.api.repository
 
-import io.openfuture.api.model.auth.OpenKey
-import io.openfuture.api.model.auth.User
-import io.openfuture.api.model.scaffold.Scaffold
-import io.openfuture.api.model.scaffold.Transaction
+import io.openfuture.api.entity.auth.OpenKey
+import io.openfuture.api.entity.auth.User
+import io.openfuture.api.entity.scaffold.Scaffold
+import io.openfuture.api.entity.scaffold.ScaffoldProperty
+import io.openfuture.api.entity.scaffold.Transaction
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
@@ -25,9 +26,12 @@ interface ScaffoldRepository : BaseRepository<Scaffold> {
 
     fun findByAddress(address: String): Scaffold?
 
-    fun findAllByUser(user: User, pageable: Pageable): Page<Scaffold>
+    fun findAllByOpenKeyUser(user: User, pageable: Pageable): Page<Scaffold>
 
 }
+
+@Repository
+interface ScaffoldPropertyRepository : BaseRepository<ScaffoldProperty>
 
 @Repository
 interface OpenKeyRepository : BaseRepository<OpenKey> {

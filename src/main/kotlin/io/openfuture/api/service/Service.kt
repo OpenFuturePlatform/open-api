@@ -1,10 +1,10 @@
 package io.openfuture.api.service
 
 import io.openfuture.api.domain.scaffold.DeployScaffoldRequest
-import io.openfuture.api.model.auth.OpenKey
-import io.openfuture.api.model.auth.User
-import io.openfuture.api.model.scaffold.Scaffold
-import io.openfuture.api.model.scaffold.Transaction
+import io.openfuture.api.entity.auth.OpenKey
+import io.openfuture.api.entity.auth.User
+import io.openfuture.api.entity.scaffold.Scaffold
+import io.openfuture.api.entity.scaffold.Transaction
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 

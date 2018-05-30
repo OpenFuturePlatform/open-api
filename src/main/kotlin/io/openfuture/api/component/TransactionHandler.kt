@@ -1,6 +1,6 @@
 package io.openfuture.api.component
 
-import io.openfuture.api.model.scaffold.Transaction
+import io.openfuture.api.entity.scaffold.Transaction
 import io.openfuture.api.repository.ScaffoldRepository
 import io.openfuture.api.service.TransactionService
 import org.slf4j.LoggerFactory
@@ -28,7 +28,7 @@ class TransactionHandler(
             return
         }
 
-        service.save(Transaction(scaffold, transactionLog))
+        service.save(Transaction.of(scaffold, transactionLog))
     }
 
 }

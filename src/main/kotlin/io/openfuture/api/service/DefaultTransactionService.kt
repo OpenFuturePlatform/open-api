@@ -1,6 +1,6 @@
 package io.openfuture.api.service
 
-import io.openfuture.api.model.scaffold.Transaction
+import io.openfuture.api.entity.scaffold.Transaction
 import io.openfuture.api.repository.TransactionRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional

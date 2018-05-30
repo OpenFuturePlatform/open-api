@@ -1,5 +1,7 @@
 package io.openfuture.api.domain.scaffold
 
+import io.openfuture.api.entity.scaffold.PropertyType
+import io.openfuture.api.entity.scaffold.ScaffoldProperty
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
 
@@ -10,15 +12,12 @@ data class ScaffoldPropertyDto(
         @field:NotBlank var name: String? = null,
         @field:NotNull var type: PropertyType? = null,
         @field:NotBlank var defaultValue: String? = null
-)
+) {
 
-enum class PropertyType(private val value: String) {
-
-    STRING("string"),
-    NUMBER("number"),
-    BOOLEAN("boolean")
-    ;
-
-    fun getValue(): String = value
+    constructor(property: ScaffoldProperty) : this(
+            property.name,
+            property.getType(),
+            property.defaultValue
+    )
 
 }

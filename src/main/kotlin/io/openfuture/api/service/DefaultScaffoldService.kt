@@ -4,10 +4,12 @@ import io.openfuture.api.component.ScaffoldCompiler
 import io.openfuture.api.component.TransactionHandler
 import io.openfuture.api.config.propety.BlockchainProperties
 import io.openfuture.api.domain.scaffold.DeployScaffoldRequest
+import io.openfuture.api.entity.auth.User
+import io.openfuture.api.entity.scaffold.Scaffold
+import io.openfuture.api.entity.scaffold.ScaffoldProperty
 import io.openfuture.api.exception.DeployException
 import io.openfuture.api.exception.NotFoundException
-import io.openfuture.api.model.auth.User
-import io.openfuture.api.model.scaffold.Scaffold
+import io.openfuture.api.repository.ScaffoldPropertyRepository
 import io.openfuture.api.repository.ScaffoldRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -39,6 +41,7 @@ import javax.annotation.PostConstruct
 @Service
 class DefaultScaffoldService(
         private val repository: ScaffoldRepository,
+        private val propertyRepository: ScaffoldPropertyRepository,
         private val compiler: ScaffoldCompiler,
         private val properties: BlockchainProperties,
         private val openKeyService: OpenKeyService,
@@ -60,7 +63,8 @@ class DefaultScaffoldService(
     }
 
     @Transactional(readOnly = true)
-    override fun getAll(user: User, pageRequest: Pageable): Page<Scaffold> = repository.findAllByUser(user, pageRequest)
+    override fun getAll(user: User, pageRequest: Pageable): Page<Scaffold> =
+            repository.findAllByOpenKeyUser(user, pageRequest)
 
     @Transactional(readOnly = true)
     override fun get(address: String): Scaffold = repository.findByAddress(address)
@@ -68,14 +72,14 @@ class DefaultScaffoldService(
 
     @Transactional
     override fun deploy(request: DeployScaffoldRequest, user: User): Scaffold {
-        val compiledScaffold = compiler.compile(request.scaffoldProperties)
+        val compiledScaffold = compiler.compile(request.properties)
         val openKey = openKeyService.get(request.openKey!!, user)
         val encodedConstructor = FunctionEncoder.encodeConstructor(asList<Type<*>>(
                 Address(request.developerAddress),
-                Utf8String(request.scaffoldDescription),
-                Utf8String(request.fiatAmount!!),
-                Utf8String(request.conversionCurrency!!.getValue()),
-                Uint256(toWei(request.currencyConversionValue!!, WEI).toBigInteger()))
+                Utf8String(request.description),
+                Utf8String(request.fiatAmount),
+                Utf8String(request.currency!!.getValue()),
+                Uint256(toWei(request.conversionAmount, WEI).toBigInteger()))
         )
 
         val nonce = web3.ethGetTransactionCount(properties.baseAccount, LATEST).send().transactionCount
@@ -96,7 +100,10 @@ class DefaultScaffoldService(
             transactionHandler.handle(it)
         }
 
-        return repository.save(Scaffold(contractAddress, user, openKey, compiledScaffold.abi))
+        val scaffold = repository.save(Scaffold.of(contractAddress, openKey, compiledScaffold.abi, request))
+        val properties = request.properties.map { propertyRepository.save(ScaffoldProperty.of(scaffold, it)) }
+        scaffold.property.addAll(properties)
+        return scaffold
     }
 
 }
