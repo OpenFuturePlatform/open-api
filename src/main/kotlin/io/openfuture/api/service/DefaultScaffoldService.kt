@@ -11,6 +11,7 @@ import io.openfuture.api.exception.DeployException
 import io.openfuture.api.exception.NotFoundException
 import io.openfuture.api.repository.ScaffoldPropertyRepository
 import io.openfuture.api.repository.ScaffoldRepository
+import io.openfuture.api.util.HexUtils
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -50,6 +51,10 @@ class DefaultScaffoldService(
 
     private lateinit var web3: Web3j
 
+    companion object {
+        private const val ALLOWED_DISABLED_SCAFFOLDS = 10
+    }
+
 
     @PostConstruct
     fun init() {
@@ -72,6 +77,9 @@ class DefaultScaffoldService(
 
     @Transactional
     override fun deploy(request: DeployScaffoldRequest, user: User): Scaffold {
+        if (repository.countByEnabledIsFalse() >= ALLOWED_DISABLED_SCAFFOLDS) {
+            throw IllegalStateException("Disabled scaffold count is more than allowed")
+        }
         val compiledScaffold = compiler.compile(request.properties)
         val openKey = openKeyService.get(request.openKey!!, user)
         val encodedConstructor = FunctionEncoder.encodeConstructor(asList<Type<*>>(
@@ -94,7 +102,7 @@ class DefaultScaffoldService(
             throw DeployException("Can't get contract address")
         }
 
-        val contractAddress = transaction.get().contractAddress.substring(2)
+        val contractAddress = HexUtils.decode(transaction.get().contractAddress)
         val filter = EthFilter(EARLIEST, LATEST, contractAddress)
         web3.ethLogObservable(filter).subscribe {
             transactionHandler.handle(it)
