@@ -1,6 +1,7 @@
 package io.openfuture.api.service
 
 import io.openfuture.api.component.ScaffoldCompiler
+import io.openfuture.api.component.TransactionHandler
 import io.openfuture.api.config.propety.BlockchainProperties
 import io.openfuture.api.domain.scaffold.DeployScaffoldRequest
 import io.openfuture.api.exception.DeployException
@@ -18,7 +19,9 @@ import org.web3j.abi.datatypes.Type
 import org.web3j.abi.datatypes.Utf8String
 import org.web3j.abi.datatypes.generated.Uint256
 import org.web3j.protocol.Web3j
+import org.web3j.protocol.core.DefaultBlockParameterName.EARLIEST
 import org.web3j.protocol.core.DefaultBlockParameterName.LATEST
+import org.web3j.protocol.core.methods.request.EthFilter
 import org.web3j.protocol.core.methods.request.Transaction.createContractTransaction
 import org.web3j.protocol.http.HttpService
 import org.web3j.tx.gas.DefaultGasProvider.GAS_LIMIT
@@ -38,7 +41,8 @@ class DefaultScaffoldService(
         private val repository: ScaffoldRepository,
         private val compiler: ScaffoldCompiler,
         private val properties: BlockchainProperties,
-        private val openKeyService: OpenKeyService
+        private val openKeyService: OpenKeyService,
+        private val transactionHandler: TransactionHandler
 ) : ScaffoldService {
 
     private lateinit var web3: Web3j
@@ -47,6 +51,12 @@ class DefaultScaffoldService(
     @PostConstruct
     fun init() {
         web3 = Web3j.build(HttpService(properties.url))
+        repository.findAll().forEach {
+            val filter = EthFilter(EARLIEST, LATEST, it.address)
+            web3.ethLogObservable(filter).subscribe {
+                transactionHandler.handle(it)
+            }
+        }
     }
 
     @Transactional(readOnly = true)
@@ -58,7 +68,7 @@ class DefaultScaffoldService(
 
     @Transactional
     override fun deploy(request: DeployScaffoldRequest, user: User): Scaffold {
-        val compiledScaffold = compiler.compileScaffold(request.scaffoldFields)
+        val compiledScaffold = compiler.compile(request.scaffoldProperties)
         val openKey = openKeyService.get(request.openKey!!, user)
         val encodedConstructor = FunctionEncoder.encodeConstructor(asList<Type<*>>(
                 Address(request.developerAddress),
@@ -80,7 +90,13 @@ class DefaultScaffoldService(
             throw DeployException("Can't get contract address")
         }
 
-        return repository.save(Scaffold(transaction.get().contractAddress, user, openKey, compiledScaffold.abi))
+        val contractAddress = transaction.get().contractAddress.substring(2)
+        val filter = EthFilter(EARLIEST, LATEST, contractAddress)
+        web3.ethLogObservable(filter).subscribe {
+            transactionHandler.handle(it)
+        }
+
+        return repository.save(Scaffold(contractAddress, user, openKey, compiledScaffold.abi))
     }
 
 }

@@ -1,5 +1,6 @@
 package io.openfuture.api.config.handler
 
+import io.openfuture.api.model.auth.User
 import io.openfuture.api.service.UserService
 import org.springframework.security.core.Authentication
 import org.springframework.security.oauth2.core.oidc.user.OidcUser
@@ -20,7 +21,7 @@ class AuthenticationSuccessHandler(
         val persistUser = service.findByGoogleId(principal.subject)
 
         if (null == persistUser) {
-            service.save(principal)
+            service.save(User(principal.subject))
         }
 
         response.sendRedirect("/scaffolds")

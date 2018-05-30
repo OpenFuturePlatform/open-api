@@ -14,7 +14,7 @@ data class DeployScaffoldRequest(
         @field:NotBlank @field:Digits(integer = Int.MAX_VALUE, fraction = Int.MAX_VALUE) var fiatAmount: String? = null,
         @field:NotNull var conversionCurrency: CurrencyType? = null,
         @field:NotBlank @field:Digits(integer = Int.MAX_VALUE, fraction = Int.MAX_VALUE) var currencyConversionValue: String? = null,
-        @field:NotNull var scaffoldFields: List<ScaffoldPropertyDto> = listOf()
+        @field:NotNull var scaffoldProperties: List<ScaffoldPropertyDto> = listOf()
 )
 
 enum class CurrencyType(private val value: String) {
