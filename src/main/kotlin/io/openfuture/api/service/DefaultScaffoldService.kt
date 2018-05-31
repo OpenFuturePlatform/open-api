@@ -60,7 +60,7 @@ class DefaultScaffoldService(
     fun init() {
         web3 = Web3j.build(HttpService(properties.url))
         repository.findAll().forEach {
-            val filter = EthFilter(EARLIEST, LATEST, it.address)
+            val filter = EthFilter(EARLIEST, LATEST, HexUtils.decode(it.address))
             web3.ethLogObservable(filter).subscribe {
                 transactionHandler.handle(it)
             }
@@ -102,8 +102,8 @@ class DefaultScaffoldService(
             throw DeployException("Can't get contract address")
         }
 
-        val contractAddress = HexUtils.decode(transaction.get().contractAddress)
-        val filter = EthFilter(EARLIEST, LATEST, contractAddress)
+        val contractAddress = transaction.get().contractAddress
+        val filter = EthFilter(EARLIEST, LATEST, HexUtils.decode(contractAddress))
         web3.ethLogObservable(filter).subscribe {
             transactionHandler.handle(it)
         }

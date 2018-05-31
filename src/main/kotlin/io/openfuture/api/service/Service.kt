@@ -27,7 +27,7 @@ interface OpenKeyService {
 
     fun get(key: String, user: User): OpenKey
 
-    fun save(user: User): OpenKey
+    fun generate(user: User): OpenKey
 
 }
 
