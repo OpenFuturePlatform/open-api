@@ -23,6 +23,6 @@ class DefaultOpenKeyService(
             ?: throw NotFoundException("Not found key $key")
 
     @Transactional
-    override fun save(user: User): OpenKey = repository.save(OpenKey(user))
+    override fun generate(user: User): OpenKey = repository.save(OpenKey(user))
 
 }
