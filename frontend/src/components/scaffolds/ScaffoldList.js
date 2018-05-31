@@ -1,18 +1,25 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {fetchScaffolds} from '../../actions';
-import {Card, Divider, Grid} from 'semantic-ui-react';
+import {Card, Divider, Grid, Pagination} from 'semantic-ui-react';
 import {Link} from 'react-router-dom';
 
 const ETHEREUM_NETWORK = process.env.REACT_APP_ETHEREUM_NETWORK;
+const LIMIT = 10;
 
 class ScaffoldList extends Component {
   componentDidMount() {
-    this.props.fetchScaffolds();
+    this.fetchScaffolds(1);
+  }
+
+  fetchScaffolds(page = 1, limit = LIMIT) {
+    this.props.fetchScaffolds(page, limit);
   }
 
   renderScaffolds() {
-    return this.props.scaffolds.map((scaffold, index) => {
+    const scaffolds = this.props.scaffolds;
+
+    return scaffolds.list.map((scaffold, index) => {
       const scaffoldData = scaffold;
       return (
         <Card fluid key={index}>
@@ -80,15 +87,35 @@ class ScaffoldList extends Component {
     });
   }
 
+  renderPagination() {
+    const scaffolds = this.props.scaffolds;
+    const totalPages = Math.ceil(scaffolds.totalCount / LIMIT);
+
+    if (totalPages <= 1) {
+      return null;
+    }
+
+    return (
+      <div style={{display: 'flex', justifyContent: 'center'}}>
+        <Pagination defaultActivePage={1}
+                    totalPages={totalPages}
+                    onPageChange={(e, {activePage}) => this.fetchScaffolds(activePage)}/>
+      </div>
+    );
+  }
+
   render() {
     return (
       <Grid.Row>
-        <Grid.Column width={16}>{this.renderScaffolds()}</Grid.Column>
+        <Grid.Column width={16}>
+          {this.renderScaffolds()}
+          {this.renderPagination()}
+        </Grid.Column>
       </Grid.Row>
     );
   }
 }
 
-const mapStateToProps = ({scaffolds}) => ({scaffolds: scaffolds.list});
+const mapStateToProps = ({scaffolds}) => ({scaffolds: scaffolds});
 
 export default connect(mapStateToProps, {fetchScaffolds})(ScaffoldList);
