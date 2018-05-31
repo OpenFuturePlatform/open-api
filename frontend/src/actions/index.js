@@ -25,11 +25,12 @@ export const fetchUser = () => async dispatch => {
   }
 };
 
-export const fetchScaffolds = () => async dispatch => {
-  let res = {};
+export const fetchScaffolds = (page = 1, limit = 10) => async dispatch => {
+  const offset = (Math.max(page, 1) - 1) * limit;
+  const params = {offset, limit};
 
   try {
-    res = await axios.get('/api/scaffolds');
+    const res = await axios.get('/api/scaffolds', {params});
     dispatch({type: FETCH_SCAFFOLDS, payload: res.data});
   } catch (err) {
     console.log('Error getting scaffolds', err);
