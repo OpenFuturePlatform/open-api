@@ -56,6 +56,10 @@ dependencies {
     testCompile("org.springframework.boot:spring-boot-starter-test")
 }
 
+sourceSets {
+    main.kotlin.srcDirs += 'src/main/kotlin'
+}
+
 compileKotlin {
     kotlinOptions {
         freeCompilerArgs = ["-Xjsr305=strict"]
