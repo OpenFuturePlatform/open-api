@@ -1,7 +1,5 @@
 import axios from 'axios';
 // files
-import Scaffold from '../utils/scaffold';
-import web3 from '../utils/web3';
 // actions
 import {
   CONVERT_CURRENCIES,
@@ -54,36 +52,36 @@ export const fetchSummaryOnchain = params => async dispatch => {
       `/api/scaffolds/${params.contractAddress}`,
     );
 
-    const scaffold = Scaffold(
-      res.data.abi,
-      params.contractAddress,
-    );
+    // const scaffold = Scaffold(
+    //   res.data.abi,
+    //   params.contractAddress,
+    // );
 
-    dispatch({
-      type: UPDATE_CURRENT_SCAFFOLD_INSTANCE,
-      payload: scaffold,
-    });
+    // dispatch({
+    //   type: UPDATE_CURRENT_SCAFFOLD_INSTANCE,
+    //   payload: scaffold,
+    // });
 
-    const scaffoldSummary = await scaffold.methods
-      .getScaffoldSummary()
-      .call();
+    // const scaffoldSummary = await scaffold.methods
+    //   .getScaffoldSummary()
+    //   .call();
 
-    const summaryObject = generateSummaryObject(
-      scaffoldSummary,
-      summaryPropertyNames,
-    );
+    // const summaryObject = generateSummaryObject(
+    //   scaffoldSummary,
+    //   summaryPropertyNames,
+    // );
 
-    dispatch({
-      type: FETCH_ONCHAIN_SCAFFOLD_SUMMARY,
-      payload: summaryObject,
-    });
+    // dispatch({
+    //   type: FETCH_ONCHAIN_SCAFFOLD_SUMMARY,
+    //   payload: summaryObject,
+    // });
   } catch (err) {
     console.log('Error getting on-chain summary:', err);
   }
 };
 
 export const withdrawFunds = (formValues, scaffold, history) => async dispatch => {
-  const accounts = await web3.eth.getAccounts();
+  // const accounts = await web3.eth.getAccounts();
   let withdrawalAmountInEther = 0;
 
   dispatch({type: SHOW_WITHDRAWAL_MODAL, payload: {showModal: true}});
@@ -101,19 +99,19 @@ export const withdrawFunds = (formValues, scaffold, history) => async dispatch =
 
     // Solidity always wants the amount of any transactions in wei, and web3 wants
     // numbers either as BN, or string.  Convert to wei from Ether, and to string
-    const withdrawalAmountInWei = web3.utils.toWei(withdrawalAmountInEther.toString(), 'ether');
+    // const withdrawalAmountInWei = web3.utils.toWei(withdrawalAmountInEther.toString(), 'ether');
 
     // create an instance of the scaffold and withdraw amount of ether
     // address must be developer address entered when scaffold originally created
-    const withdrawalResponse = await scaffold.methods
-      .withdrawFunds(withdrawalAmountInWei)
-      .send({from: accounts[0]});
+    // const withdrawalResponse = await scaffold.methods
+    //   .withdrawFunds(withdrawalAmountInWei)
+    //   .send({from: accounts[0]});
 
-    withdrawalResponse.showLoader = false;
-    withdrawalResponse.showModal = false;
-
-    history.push('/scaffolds');
-    dispatch({type: SHOW_WITHDRAWAL_MODAL, payload: withdrawalResponse});
+    // withdrawalResponse.showLoader = false;
+    // withdrawalResponse.showModal = false;
+    //
+    // history.push('/scaffolds');
+    // dispatch({type: SHOW_WITHDRAWAL_MODAL, payload: withdrawalResponse});
   } catch (err) {
     console.log('Error withdrawing funds', err);
   }

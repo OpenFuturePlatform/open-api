@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import {Card, Grid} from 'semantic-ui-react';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
-import web3 from '../../utils/web3';
 import WithdrawFundsForm from '../WithdrawFundsForm';
 // Actions
 import {convertCurrencies, fetchSummaryOnchain} from '../../actions';
@@ -21,23 +20,19 @@ class ScaffoldSummary extends Component {
     const fromCurrency = 'eth';
     const toCurrency = onchainScaffoldSummary.fiatCurrency;
 
-    this.props.actions.convertCurrencies({
-        fromAmount: web3.utils.fromWei(fromAmount, 'ether'),
-        fromCurrency,
-        toCurrency
-    });
+    // this.props.actions.convertCurrencies({
+    //     fromAmount: web3.utils.fromWei(fromAmount, 'ether'),
+    //     fromCurrency,
+    //     toCurrency
+    // });
   }
 
   render() {
     const {onchainScaffoldSummary, currencyConversionValue} = this.props;
     // convert scaffoldBalance from wei to Ether
-    const scaffoldBalance = onchainScaffoldSummary.balance
-      ? web3.utils.fromWei(onchainScaffoldSummary.balance, 'ether')
-      : 0;
+    const scaffoldBalance = 0;
     // convert scaffoldAmount from wei to Ether
-    const scaffoldAmount = onchainScaffoldSummary.scaffoldAmount
-      ? web3.utils.fromWei(onchainScaffoldSummary.scaffoldAmount, 'ether')
-      : 0;
+    const scaffoldAmount = 0;
 
     return (
       <div style={{marginTop: '20px'}}>
