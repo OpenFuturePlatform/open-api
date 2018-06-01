@@ -130,7 +130,7 @@ deploy-dev:
     GOOGLE_CLIENT_SECRET: $GOOGLE_CLIENT_SECRET_DEV
     INFURA_URL: $INFURA_URL_DEV
     ETHEREUM_PRIVATE_KEY: $ETHEREUM_PRIVATE_KEY_DEV
-    before_script: *prepare_key
+  before_script: *prepare_key
   script: *deploy_to_host
   only:
     - sprint
