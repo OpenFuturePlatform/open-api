@@ -19,7 +19,7 @@ class DefaultOpenKeyService(
     override fun getAllByUser(user: User): List<OpenKey> = repository.findAllByUser(user)
 
     @Transactional(readOnly = true)
-    override fun get(key: String, user: User): OpenKey = repository.findByValueAndUser(key, user)
+    override fun get(key: String): OpenKey = repository.findByValue(key)
             ?: throw NotFoundException("Not found key $key")
 
     @Transactional

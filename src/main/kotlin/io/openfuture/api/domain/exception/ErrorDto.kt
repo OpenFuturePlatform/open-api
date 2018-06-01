@@ -14,9 +14,11 @@ data class ErrorDto(
         val code: String,
         var field: String? = null
 ) {
+
     constructor(error: ObjectError) : this(error.code ?: "500") {
         if (error is FieldError) {
             field = error.field
         }
     }
+
 }

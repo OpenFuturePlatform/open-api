@@ -42,7 +42,8 @@ CREATE TABLE scaffolds(
   fiat_amount VARCHAR NOT NULL,
   currency_id INT NOT NULL REFERENCES currencies,
   conversion_amount VARCHAR NOT NULL,
-  enabled BOOLEAN NOT NULL DEFAULT FALSE
+  enabled BOOLEAN NOT NULL DEFAULT FALSE,
+  web_hook VARCHAR
 );
 
 CREATE TABLE scaffold_properties(

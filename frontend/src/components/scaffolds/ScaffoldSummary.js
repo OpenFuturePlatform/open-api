@@ -16,7 +16,7 @@ class ScaffoldSummary extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (this.props === nextProps) return;
-    const onchainScaffoldSummary = nextProps.onchainScaffoldSummary
+    const onchainScaffoldSummary = nextProps.onchainScaffoldSummary;
     const fromAmount = onchainScaffoldSummary.balance ? onchainScaffoldSummary.balance : '0';
     const fromCurrency = 'eth';
     const toCurrency = onchainScaffoldSummary.fiatCurrency;
@@ -39,10 +39,9 @@ class ScaffoldSummary extends Component {
       ? web3.utils.fromWei(onchainScaffoldSummary.scaffoldAmount, 'ether')
       : 0;
 
-    console.log('>> ', onchainScaffoldSummary);
-
     return (
       <div style={{marginTop: '20px'}}>
+        <div style={{marginBottom: '20px'}}>Your scaffold is created but is inactive. To activate your scaffold you need to transfer 10 open tokens to it.</div>
         <Grid>
           <Grid.Row>
             <Grid.Column width={9}>

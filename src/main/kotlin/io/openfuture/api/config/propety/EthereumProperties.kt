@@ -9,10 +9,10 @@ import javax.validation.constraints.NotNull
 /**
  * @author Kadach Alexey
  */
-@ConfigurationProperties(prefix = "blockchain")
+@ConfigurationProperties(prefix = "ethereum")
 @Validated
 @Component
-class BlockchainProperties(
-        @field:NotNull var url: String? = null,
-        @field:NotEmpty var baseAccount: String? = null
+class EthereumProperties(
+        @field:NotNull var infura: String? = null,
+        @field:NotEmpty var privateKey: String? = null
 )

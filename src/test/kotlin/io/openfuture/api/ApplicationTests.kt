@@ -1,4 +1,4 @@
-package io.zensoft.open.api
+package io.openfuture.api
 
 import org.junit.Test
 import org.junit.runner.RunWith

@@ -33,7 +33,6 @@ class ScaffoldForm extends Component {
     return (
       <div>
         <form>
-          <div>Your scaffold is created but is inactive. To activate your scaffold you need to transfer 10 open tokens to it.</div>
           <Grid style={{paddingLeft: '15px'}}>
             <Grid.Row>
               <Grid.Column width={16} style={{paddingTop: '10px'}}>
