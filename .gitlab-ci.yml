@@ -1,0 +1,159 @@
+image: docker:latest
+services:
+  - docker:dind
+
+
+stages:
+  - build
+  - test
+  - package
+  - deploy
+
+variables:
+    DOCKER_DRIVER: overlay2
+    IMAGE_NAME: gcr.io/zinc-computer-205115/apiopenfuture
+    IMAGE_TAG: ${CI_COMMIT_REF_NAME}-${CI_PIPELINE_ID}
+
+###########################
+# Building
+###########################
+build-jar:
+  stage: build
+  image: openjdk:8-jdk
+  before_script:
+    - export GRADLE_USER_HOME=`pwd`/.gradle
+  script: "./gradlew assemble"
+  artifacts:
+    paths:
+      - build/libs/*.jar
+    expire_in: 1 week
+  cache:
+    paths:
+      - .gradle/wrapper
+      - .gradle/caches
+
+unit-tests:
+  stage: test
+  image: openjdk:8-jdk
+  variables:
+    POSTGRES_HOST: "postgres"
+    POSTGRES_DB: "open-api"
+    POSTGRES_USER: "open-api"
+    POSTGRES_PASSWORD: "open-api"
+    GOOGLE_CLIENT_ID: $GOOGLE_CLIENT_ID_DEV
+    GOOGLE_CLIENT_SECRET: $GOOGLE_CLIENT_SECRET_DEV
+    INFURA_URL: $INFURA_URL_DEV
+    ETHEREUM_PRIVATE_KEY: $ETHEREUM_PRIVATE_KEY_DEV
+  services:
+    - name: postgres
+      alias: $POSTGRES_HOST
+  script:
+    - ./gradlew check
+    - cat build/reports/tests/test/index.html
+  cache:
+    paths:
+      - .gradle/wrapper
+      - .gradle/caches
+  artifacts:
+    when: always
+    paths:
+      - build/reports/tests/test/
+    expire_in: 1 week
+
+.registry-auth-script: &registry_auth
+  - docker login -u _json_key -p "${GOOGLE_JSON_TOKEN}" https://gcr.io 
+
+
+package-docker:
+  stage: package
+  before_script: *registry_auth
+  script:
+    - docker build -t ${IMAGE_NAME}:${IMAGE_TAG} -f docker/Dockerfile .
+    - docker push ${IMAGE_NAME}:${IMAGE_TAG}
+  only:
+    - sprint
+    - master
+
+###########################
+# Deployment
+###########################
+.prepare-key-script: &prepare_key
+  - apk add --no-cache openssh-client
+  - eval $(ssh-agent -s)
+  - echo "$DEPLOY_KEY" | tr -d '\r' | ssh-add - > /dev/null
+  - mkdir -p ~/.ssh
+  - chmod 700 ~/.ssh
+  - ssh-keyscan $DEPLOY_HOST >> ~/.ssh/known_hosts
+  - chmod 644 ~/.ssh/known_hosts
+
+
+.deploy-to-host-script: &deploy_to_host
+  - |
+    ssh ${DEPLOY_USER}@${DEPLOY_HOST} "docker login -u _json_key -p '${GOOGLE_JSON_TOKEN}' https://gcr.io"
+  - ssh ${DEPLOY_USER}@${DEPLOY_HOST} "docker pull ${IMAGE_NAME}:${IMAGE_TAG}"
+  - |
+    ssh ${DEPLOY_USER}@${DEPLOY_HOST} "
+      docker inspect ${CONTAINER_NAME} && \
+      IMG=\$(docker ps -a --filter='name=^/${CONTAINER_NAME}$' --format='{{.Image}}') &&  \
+      docker rm -f ${CONTAINER_NAME} && \
+      docker rmi \$IMG; \
+      exit 0
+    "
+  - |
+    ssh ${DEPLOY_USER}@${DEPLOY_HOST} "
+      docker run -d --name '${CONTAINER_NAME}' --restart=always \
+                 -p 8080:8080 \
+                 -e "POSTGRES_HOST=${POSTGRES_HOST}" \
+                 -e "POSTGRES_DB=${POSTGRES_DB}" \
+                 -e "POSTGRES_USER=${POSTGRES_USER}" \
+                 -e "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}" \
+                 -e "GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}" \
+                 -e "GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}" \
+                 -e "INFURA_URL=${INFURA_URL}" \
+                 -e "ETHEREUM_PRIVATE_KEY=${ETHEREUM_PRIVATE_KEY}" \
+                 ${IMAGE_NAME}:${IMAGE_TAG}
+    "
+
+deploy-dev:
+  stage: deploy
+  variables:
+    DEPLOY_USER: $DEPLOY_USER_DEV
+    DEPLOY_HOST: $DEPLOY_HOST_DEV
+    DEPLOY_KEY: $DEPLOY_KEY_DEV
+    CONTAINER_NAME: open-api
+    POSTGRES_HOST: $POSTGRES_HOST_DEV
+    POSTGRES_DB: $POSTGRES_DB_DEV
+    POSTGRES_USER: $POSTGRES_USER_DEV
+    POSTGRES_PASSWORD: $POSTGRES_PASSWORD_DEV
+    GOOGLE_CLIENT_ID: $GOOGLE_CLIENT_ID_DEV
+    GOOGLE_CLIENT_SECRET: $GOOGLE_CLIENT_SECRET_DEV
+    INFURA_URL: $INFURA_URL_DEV
+    ETHEREUM_PRIVATE_KEY: $ETHEREUM_PRIVATE_KEY_DEV
+  before_script: *prepare_key
+  script: *deploy_to_host
+  only:
+    - sprint
+  environment:
+    name: dev
+
+deploy-prod:
+  stage: deploy
+  variables:
+    DEPLOY_USER: $DEPLOY_USER_PROD
+    DEPLOY_HOST: $DEPLOY_HOST_PROD
+    DEPLOY_KEY: $DEPLOY_KEY_PROD
+    CONTAINER_NAME: open-api
+    POSTGRES_HOST: $POSTGRES_HOST_PROD
+    POSTGRES_DB: $POSTGRES_DB_PROD
+    POSTGRES_USER: $POSTGRES_USER_PROD
+    POSTGRES_PASSWORD: $POSTGRES_PASSWORD_PROD
+    GOOGLE_CLIENT_ID: $GOOGLE_CLIENT_ID_PROD
+    GOOGLE_CLIENT_SECRET: $GOOGLE_CLIENT_SECRET_PROD
+    INFURA_URL: $INFURA_URL_PROD
+    ETHEREUM_PRIVATE_KEY: $ETHEREUM_PRIVATE_KEY_PROD
+  before_script: *prepare_key
+  script: *deploy_to_host
+  only:
+    - master
+  environment:
+    name: prod            

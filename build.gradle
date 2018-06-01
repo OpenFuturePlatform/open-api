@@ -10,7 +10,7 @@ plugins {
 apply plugin: "io.spring.dependency-management"
 
 group = "io.openfuture.api"
-version = "0.0.1-SNAPSHOT"
+version = "1.0.0"
 sourceCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
