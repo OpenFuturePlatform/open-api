@@ -4,7 +4,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.stereotype.Component
 import org.springframework.validation.annotation.Validated
 import javax.validation.constraints.NotEmpty
-import javax.validation.constraints.NotNull
 
 /**
  * @author Kadach Alexey
@@ -13,6 +12,6 @@ import javax.validation.constraints.NotNull
 @Validated
 @Component
 class EthereumProperties(
-        @field:NotNull var infura: String? = null,
+        @field:NotEmpty var infura: String? = null,
         @field:NotEmpty var privateKey: String? = null
 )

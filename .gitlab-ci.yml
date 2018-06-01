@@ -25,15 +25,15 @@ build-jar:
   before_script:
     - export GRADLE_USER_HOME=`pwd`/.gradle
   script: "./gradlew assemble"
-  artifacts:
-    paths:
-      - build/libs/*.jar
-    expire_in: 1 week
   cache:
     paths:
       - .gradle/wrapper
       - .gradle/caches
       - frontend/.gradle/nodejs
+  artifacts:
+    paths:
+      - build/libs/*.jar
+    expire_in: 1 week
   only:
     - master
     - sprint
@@ -54,7 +54,7 @@ unit-tests:
     - name: postgres
       alias: $POSTGRES_HOST
   script:
-    - ./gradlew check
+    - ./gradlew build
     - cat build/reports/tests/test/index.html
   cache:
     paths:
@@ -64,6 +64,7 @@ unit-tests:
   artifacts:
     when: always
     paths:
+      - build/libs/*.jar
       - build/reports/tests/test/
     expire_in: 1 week
 

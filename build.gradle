@@ -56,6 +56,11 @@ dependencies {
     testCompile("org.springframework.boot:spring-boot-starter-test")
 }
 
+sourceSets {
+    main.kotlin.srcDirs += 'src/main/kotlin'
+    main.resources.srcDirs += 'frontend/build/resources'
+}
+
 compileKotlin {
     kotlinOptions {
         freeCompilerArgs = ["-Xjsr305=strict"]
@@ -69,3 +74,6 @@ compileTestKotlin {
         jvmTarget = "1.8"
     }
 }
+
+// Front
+processResources.dependsOn(':frontend:assemble')
