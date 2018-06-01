@@ -54,7 +54,7 @@ unit-tests:
     - name: postgres
       alias: $POSTGRES_HOST
   script:
-    - ./gradlew check
+    - ./gradlew build
     - cat build/reports/tests/test/index.html
   cache:
     paths:
