@@ -17,18 +17,20 @@ task assemble(type: NpmTask) {
 assemble.doLast {
     println "Merging frontend"
 
+    def destinationDir = mkdir "$project.buildDir/resources"
+
     // copying index.html
     copy {
         from project.buildDir
         include 'index.html'
         rename 'index.html', "frontend.ftl"
-        into "$project.parent.buildDir/resources/main/templates"
+        into "$destinationDir/templates"
     }
     // copying resources
     copy {
         from project.buildDir
-        exclude 'index.html'
-        into "$project.parent.buildDir/resources/main/static"
+        exclude 'index.html', 'resources'
+        into "$destinationDir/static"
     }
 }
 
