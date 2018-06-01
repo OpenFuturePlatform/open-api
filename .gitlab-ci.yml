@@ -36,14 +36,14 @@ unit-tests:
   stage: test
   image: openjdk:8-jdk
   variables:
-    POSTGRES_HOST: "postgres"$ETHEREUM_PRIVATE_KEY_DEV
+    POSTGRES_HOST: "postgres"
     POSTGRES_DB: "apiopenfuture"
     POSTGRES_USER: "apiopenfuture"
     POSTGRES_PASSWORD: "apiopenfuture"
     GOOGLE_CLIENT_ID: $GOOGLE_CLIENT_ID_DEV
-    GOOGLE_CLIENT_SECRET: jQG6K_J63
+    GOOGLE_CLIENT_SECRET: 6f2d5cd392ba9a
     INFURA_URL: $INFURA_URL_DEV
-    ETHEREUM_PRIVATE_KEY: 6f2d5cd392ba9a99
+    ETHEREUM_PRIVATE_KEY: 6f2d5cd392ba9a
   services:
     - name: postgres
       alias: $POSTGRES_HOST
