@@ -35,6 +35,7 @@ import org.web3j.protocol.http.HttpService
 import org.web3j.tx.gas.DefaultGasProvider.GAS_LIMIT
 import org.web3j.tx.gas.DefaultGasProvider.GAS_PRICE
 import org.web3j.utils.Convert.Unit.ETHER
+import org.web3j.utils.Convert.fromWei
 import org.web3j.utils.Convert.toWei
 import org.web3j.utils.Numeric
 import java.math.BigInteger
@@ -131,7 +132,6 @@ class DefaultScaffoldService(
                 asList(),
                 asList(
                         object : TypeReference<Utf8String>() {},
-                        object : TypeReference<Uint256>() {},
                         object : TypeReference<Utf8String>() {},
                         object : TypeReference<Utf8String>() {},
                         object : TypeReference<Uint256>() {},
@@ -149,12 +149,11 @@ class DefaultScaffoldService(
         val decodedResult = FunctionReturnDecoder.decode(result, function.outputParameters)
         return ScaffoldSummaryDto(
                 decodedResult[0].value as String,
-                decodedResult[1].value as BigInteger,
+                decodedResult[1].value as String,
                 decodedResult[2].value as String,
-                decodedResult[3].value as String,
+                fromWei((decodedResult[3].value as BigInteger).toBigDecimal(), ETHER),
                 decodedResult[4].value as BigInteger,
-                decodedResult[5].value as BigInteger,
-                decodedResult[6].value as String
+                decodedResult[5].value as String
         )
     }
 
