@@ -40,7 +40,7 @@ unit-tests:
     POSTGRES_DB: "apiopenfuture"
     POSTGRES_USER: "apiopenfuture"
     POSTGRES_PASSWORD: "apiopenfuture"
-    GOOGLE_CLIENT_ID: $GOOGLE_CLIENT_ID_DEV
+    GOOGLE_CLIENT_ID: 6f2d5cd392ba9a.apps.googleusercontent.com
     GOOGLE_CLIENT_SECRET: 6f2d5cd392ba9a
     INFURA_URL: $INFURA_URL_DEV
     ETHEREUM_PRIVATE_KEY: 6f2d5cd392ba9a
