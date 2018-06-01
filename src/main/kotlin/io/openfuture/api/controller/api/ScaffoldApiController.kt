@@ -5,6 +5,7 @@ import io.openfuture.api.domain.PageRequest
 import io.openfuture.api.domain.PageResponse
 import io.openfuture.api.domain.scaffold.DeployScaffoldRequest
 import io.openfuture.api.domain.scaffold.ScaffoldDto
+import io.openfuture.api.domain.scaffold.SetWebHookRequest
 import io.openfuture.api.entity.auth.User
 import io.openfuture.api.service.ScaffoldService
 import org.springframework.web.bind.annotation.*
@@ -32,8 +33,14 @@ class ScaffoldApiController(
     }
 
     @PostMapping
-    fun deploy(@Valid @RequestBody request: DeployScaffoldRequest, @CurrentUser user: User): ScaffoldDto {
-        val scaffold = scaffoldService.deploy(request, user)
+    fun deploy(@Valid @RequestBody request: DeployScaffoldRequest): ScaffoldDto {
+        val scaffold = scaffoldService.deploy(request)
+        return ScaffoldDto(scaffold)
+    }
+
+    @PatchMapping("/{address}")
+    fun setWebHook(@Valid @RequestBody request: SetWebHookRequest, @PathVariable address: String): ScaffoldDto {
+        val scaffold = scaffoldService.setWebHook(address, request)
         return ScaffoldDto(scaffold)
     }
 

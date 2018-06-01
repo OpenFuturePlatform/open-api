@@ -42,7 +42,10 @@ class Scaffold(
         val property: MutableList<ScaffoldProperty> = mutableListOf(),
 
         @Column(name = "enabled", nullable = false)
-        val enabled: Boolean = false
+        var enabled: Boolean = false,
+
+        @Column(name = "web_hook")
+        var webHook: String? = null
 
 ) : BaseModel() {
 
