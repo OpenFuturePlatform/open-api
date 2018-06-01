@@ -4,6 +4,7 @@ import io.openfuture.api.component.ScaffoldCompiler
 import io.openfuture.api.component.TransactionHandler
 import io.openfuture.api.config.propety.BlockchainProperties
 import io.openfuture.api.domain.scaffold.DeployScaffoldRequest
+import io.openfuture.api.domain.scaffold.SetWebHookRequest
 import io.openfuture.api.entity.auth.User
 import io.openfuture.api.entity.scaffold.Scaffold
 import io.openfuture.api.entity.scaffold.ScaffoldProperty
@@ -29,7 +30,7 @@ import org.web3j.protocol.core.methods.request.Transaction.createContractTransac
 import org.web3j.protocol.http.HttpService
 import org.web3j.tx.gas.DefaultGasProvider.GAS_LIMIT
 import org.web3j.tx.gas.DefaultGasProvider.GAS_PRICE
-import org.web3j.utils.Convert.Unit.WEI
+import org.web3j.utils.Convert.Unit.ETHER
 import org.web3j.utils.Convert.toWei
 import java.math.BigInteger.ZERO
 import java.util.Arrays.asList
@@ -76,18 +77,18 @@ class DefaultScaffoldService(
             ?: throw NotFoundException("Not found scaffold with address $address")
 
     @Transactional
-    override fun deploy(request: DeployScaffoldRequest, user: User): Scaffold {
+    override fun deploy(request: DeployScaffoldRequest): Scaffold {
         if (repository.countByEnabledIsFalse() >= ALLOWED_DISABLED_SCAFFOLDS) {
             throw IllegalStateException("Disabled scaffold count is more than allowed")
         }
         val compiledScaffold = compiler.compile(request.properties)
-        val openKey = openKeyService.get(request.openKey!!, user)
+        val openKey = openKeyService.get(request.openKey!!)
         val encodedConstructor = FunctionEncoder.encodeConstructor(asList<Type<*>>(
                 Address(request.developerAddress),
                 Utf8String(request.description),
                 Utf8String(request.fiatAmount),
                 Utf8String(request.currency!!.getValue()),
-                Uint256(toWei(request.conversionAmount, WEI).toBigInteger()))
+                Uint256(toWei(request.conversionAmount, ETHER).toBigInteger()))
         )
 
         val nonce = web3.ethGetTransactionCount(properties.baseAccount, LATEST).send().transactionCount
@@ -111,6 +112,15 @@ class DefaultScaffoldService(
         val scaffold = repository.save(Scaffold.of(contractAddress, openKey, compiledScaffold.abi, request))
         val properties = request.properties.map { propertyRepository.save(ScaffoldProperty.of(scaffold, it)) }
         scaffold.property.addAll(properties)
+        return scaffold
+    }
+
+    @Transactional
+    override fun setWebHook(address: String, request: SetWebHookRequest): Scaffold {
+        val scaffold = get(address)
+
+        scaffold.webHook = request.webHook
+
         return scaffold
     }
 

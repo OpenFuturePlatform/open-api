@@ -28,6 +28,7 @@ class ScaffoldCompiler(
         private const val RETURN_VARIABLES = "CUSTOM_RETURN_VARIABLES"
     }
 
+
     fun compile(properties: List<ScaffoldPropertyDto>): ContractMetadata {
         val scaffold = generateScaffold(properties)
         val compiled = SolidityCompiler.compile(scaffold, true, ABI, BIN, INTERFACE, METADATA)
