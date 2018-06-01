@@ -2,7 +2,7 @@ FROM openjdk:8-jre-alpine
 
 WORKDIR root/
 
-ADD build/libs/api-*.jar ./application.jar
+ADD build/libs/*.jar ./application.jar
 
-CMD java -Xmx1024M \
+CMD java -Xmx1024M -Djava.security.egd=/dev/zrandom \
     -jar /root/application.jar

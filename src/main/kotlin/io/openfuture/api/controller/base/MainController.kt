@@ -8,12 +8,15 @@ import org.springframework.web.bind.annotation.GetMapping
  * @author Kadach Alexey
  */
 @Controller
-class AuthController {
+class MainController {
 
     @GetMapping("/logout")
     fun logout(): String {
         SecurityContextHolder.getContext().authentication = null
         return "redirect:/"
     }
+
+    @GetMapping("/", "/scaffold", "/scaffolds", "/scaffolds/**")
+    fun frontend() = "frontend"
 
 }

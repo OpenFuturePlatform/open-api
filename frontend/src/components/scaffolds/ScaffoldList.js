@@ -4,7 +4,6 @@ import {fetchScaffolds} from '../../actions';
 import {Card, Divider, Grid, Pagination} from 'semantic-ui-react';
 import {Link} from 'react-router-dom';
 
-const ETHEREUM_NETWORK = process.env.REACT_APP_ETHEREUM_NETWORK;
 const LIMIT = 10;
 
 class ScaffoldList extends Component {
@@ -34,15 +33,7 @@ class ScaffoldList extends Component {
               </Card.Header>
             </Link>
             <div className="meta">
-              Scaffold Address:{' '}
-              <a
-                href={`https://${ETHEREUM_NETWORK}/address/${
-                  scaffold.address
-                  }`}
-                target="_blank"
-              >
-                {scaffold.address}
-              </a>
+              Scaffold Address:{' '}{scaffold.address}
             </div>
           </Card.Content>
           <Card.Content>

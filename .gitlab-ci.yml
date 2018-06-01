@@ -1,7 +1,7 @@
 image: docker:latest
+
 services:
   - docker:dind
-
 
 stages:
   - build
@@ -9,10 +9,12 @@ stages:
   - package
   - deploy
 
+
 variables:
     DOCKER_DRIVER: overlay2
     IMAGE_NAME: gcr.io/zinc-computer-205115/apiopenfuture
     IMAGE_TAG: ${CI_COMMIT_REF_NAME}-${CI_PIPELINE_ID}
+
 
 ###########################
 # Building
@@ -23,14 +25,18 @@ build-jar:
   before_script:
     - export GRADLE_USER_HOME=`pwd`/.gradle
   script: "./gradlew assemble"
-  artifacts:
-    paths:
-      - build/libs/*.jar
-    expire_in: 1 week
   cache:
     paths:
       - .gradle/wrapper
       - .gradle/caches
+      - frontend/.gradle/nodejs
+  artifacts:
+    paths:
+      - build/libs/*.jar
+    expire_in: 1 week
+  only:
+    - master
+    - sprint
 
 unit-tests:
   stage: test
@@ -48,21 +54,23 @@ unit-tests:
     - name: postgres
       alias: $POSTGRES_HOST
   script:
-    - ./gradlew check
+    - ./gradlew build
     - cat build/reports/tests/test/index.html
   cache:
     paths:
       - .gradle/wrapper
       - .gradle/caches
+      - frontend/.gradle/nodejs
   artifacts:
     when: always
     paths:
+      - build/libs/*.jar
       - build/reports/tests/test/
     expire_in: 1 week
 
-.registry-auth-script: &registry_auth
-  - docker login -u _json_key -p "${GOOGLE_JSON_TOKEN}" https://gcr.io 
 
+.registry-auth-script: &registry_auth
+  - docker login -u _json_key -p "${GOOGLE_JSON_TOKEN}" https://gcr.io
 
 package-docker:
   stage: package
@@ -73,6 +81,8 @@ package-docker:
   only:
     - sprint
     - master
+
+
 
 ###########################
 # Deployment
@@ -101,9 +111,8 @@ package-docker:
     "
   - |
     ssh ${DEPLOY_USER}@${DEPLOY_HOST} "
-      docker run -it -d --name ${CONTAINER_NAME} --restart=always \
-                 --net openfuture-lan \
-                 -p 8080:8080 \ 
+      docker run -d --name '${CONTAINER_NAME}' --restart=always \
+                 -p 8080:8080 \
                  -e "POSTGRES_HOST=${POSTGRES_HOST}" \
                  -e "POSTGRES_DB=${POSTGRES_DB}" \
                  -e "POSTGRES_USER=${POSTGRES_USER}" \
@@ -115,7 +124,7 @@ package-docker:
                  ${IMAGE_NAME}:${IMAGE_TAG}
     "
 
-deploy-dev:
+deploy-development:
   stage: deploy
   variables:
     DEPLOY_USER: $DEPLOY_USER_DEV
@@ -135,9 +144,10 @@ deploy-dev:
   only:
     - sprint
   environment:
-    name: dev
+    name: development
+    url: http://api.open-platform.zensoft.io
 
-deploy-prod:
+deploy-production:
   stage: deploy
   variables:
     DEPLOY_USER: $DEPLOY_USER_PROD
@@ -157,4 +167,5 @@ deploy-prod:
   only:
     - master
   environment:
-    name: prod            
+    name: production
+    url: https://api.openfuture.io

@@ -2,13 +2,12 @@ package io.openfuture.api.component
 
 import io.openfuture.api.domain.scaffold.ScaffoldPropertyDto
 import io.openfuture.api.exception.CompileException
-import org.apache.commons.io.FileUtils
+import org.apache.commons.io.IOUtils
 import org.ethereum.solidity.compiler.CompilationResult
 import org.ethereum.solidity.compiler.CompilationResult.ContractMetadata
 import org.ethereum.solidity.compiler.SolidityCompiler
 import org.ethereum.solidity.compiler.SolidityCompiler.Options.*
 import org.springframework.stereotype.Component
-import java.io.File
 import java.nio.charset.Charset
 
 /**
@@ -48,10 +47,9 @@ class ScaffoldCompiler(
                 RETURN_VARIABLES to properties.joinToString(separator = ",") { "${it.name}" }
         )
 
-        val templateUri = this::class.java.classLoader.getResource(SCAFFOLD_TEMPLATE_PATH).toURI()
-        val templateFile = File(templateUri)
-        val templateContent = FileUtils.readFileToString(templateFile, Charset.defaultCharset())
-        val preparedTemplate = templateProcessor.getContent(templateContent, parameters)
+        val resource = javaClass.classLoader.getResource(SCAFFOLD_TEMPLATE_PATH)
+        val scaffoldContent = IOUtils.toString(resource, Charset.defaultCharset())
+        val preparedTemplate = templateProcessor.getContent(scaffoldContent, parameters)
 
         return preparedTemplate.toByteArray()
     }
