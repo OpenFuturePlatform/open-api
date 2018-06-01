@@ -5,6 +5,7 @@ import io.openfuture.api.domain.PageRequest
 import io.openfuture.api.domain.PageResponse
 import io.openfuture.api.domain.scaffold.DeployScaffoldRequest
 import io.openfuture.api.domain.scaffold.ScaffoldDto
+import io.openfuture.api.domain.scaffold.ScaffoldSummaryDto
 import io.openfuture.api.domain.scaffold.SetWebHookRequest
 import io.openfuture.api.entity.auth.User
 import io.openfuture.api.service.ScaffoldService
@@ -43,5 +44,9 @@ class ScaffoldApiController(
         val scaffold = scaffoldService.setWebHook(address, request)
         return ScaffoldDto(scaffold)
     }
+
+    @GetMapping("/{address}/summary")
+    fun getScaffoldSummary(@PathVariable address: String): ScaffoldSummaryDto =
+            scaffoldService.getScaffoldSummary(address)
 
 }
