@@ -15,7 +15,6 @@ contract OpenScaffold {
         ${CUSTOM_SCAFFOLD_PARAMETERS}
         );
     event fundsDeposited(uint _amount);
-    event incorrectVendorAddress(address requestAddress, address vendorAddress);
 
     // custom dataTypes - array for storage of transactions
     OpenScaffoldTransaction[] public openScaffoldTransactions;
@@ -48,7 +47,7 @@ contract OpenScaffold {
         scaffoldAmount = _scaffoldAmount;
     }
 
-    function payVendor(${CUSTOM_SCAFFOLD_PARAMETERS}) public payable {
+    function(${CUSTOM_SCAFFOLD_PARAMETERS}) public payable {
         require(msg.value == scaffoldAmount);
         scaffoldTransactionIndex++;
 
@@ -74,14 +73,13 @@ contract OpenScaffold {
     }
 
     function withdrawFunds(uint amount) private {
-            vendorAddress.transfer(amount);
-            fundsDeposited(amount);
+        vendorAddress.transfer(amount);
+        fundsDeposited(amount);
     }
 
-    function getScaffoldSummary() public view returns (string, uint, string, string, uint, uint, address) {
+    function getScaffoldSummary() public view returns (string, string, string, uint, uint, address) {
         return (
           scaffoldDescription,
-          scaffoldAddress.balance,
           fiatAmount,
           fiatCurrency,
           scaffoldAmount,
