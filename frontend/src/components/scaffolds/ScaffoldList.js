@@ -19,8 +19,6 @@ class ScaffoldList extends Component {
   renderScaffolds() {
     const scaffolds = this.props.scaffolds;
 
-    console.log('>> ', scaffolds);
-
     return scaffolds.list.map((scaffold, index) => {
       const scaffoldData = scaffold;
       return (

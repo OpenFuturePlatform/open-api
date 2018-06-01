@@ -4,6 +4,7 @@ export default function (state = {
                            showModal: false,
                            contract: '',
                            showLoader: true,
+                           error: ''
                          },
                          action,) {
   switch (action.type) {
