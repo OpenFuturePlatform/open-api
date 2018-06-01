@@ -149,11 +149,11 @@ class DefaultScaffoldService(
         val decodedResult = FunctionReturnDecoder.decode(result, function.outputParameters)
         return ScaffoldSummaryDto(
                 decodedResult[0].value as String,
+                decodedResult[1].value as String,
                 decodedResult[2].value as String,
-                decodedResult[3].value as String,
-                fromWei((decodedResult[4].value as BigInteger).toString(), ETHER),
-                decodedResult[5].value as BigInteger,
-                decodedResult[6].value as String
+                fromWei((decodedResult[3].value as BigInteger).toBigDecimal(), ETHER),
+                decodedResult[4].value as BigInteger,
+                decodedResult[5].value as String
         )
     }
 

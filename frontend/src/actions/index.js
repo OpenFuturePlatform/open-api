@@ -1,6 +1,6 @@
 import axios from 'axios';
 import {
-  CONVERT_CURRENCIES,
+  CONVERT_CURRENCIES, FETCH_ONCHAIN_SCAFFOLD_SUMMARY,
   FETCH_SCAFFOLDS,
   FETCH_USER,
   SHOW_MODAL,
@@ -31,6 +31,15 @@ export const fetchScaffolds = (page = 1, limit = 10) => async dispatch => {
   }
 };
 
+export const fetchScaffoldItem = (scaffoldAddres) => async dispatch => {
+  try {
+    const res = await axios.get(`/api/scaffolds/${scaffoldAddres}/summary`);
+    dispatch({type: FETCH_ONCHAIN_SCAFFOLD_SUMMARY, payload: res.data});
+  } catch (err) {
+    console.log('Error getting scaffolds', err);
+  }
+};
+
 export const generatePublicKey = () => async dispatch => {
   let res = {};
   try {
@@ -43,24 +52,14 @@ export const generatePublicKey = () => async dispatch => {
 };
 
 const convertCurrencies = conversionValues => async dispatch => {
-  // set default values if not sent
-  const fromAmount = conversionValues.fromAmount
-    ? conversionValues.fromAmount
-    : '0';
-  const fromCurrency = conversionValues.fromCurrency
-    ? conversionValues.fromCurrency
-    : 'usd';
-  const toCurrency = conversionValues.toCurrency
-    ? conversionValues.toCurrency
-    : 'eth';
-
+  const fromAmount = conversionValues.fromAmount ? conversionValues.fromAmount : '0';
+  const fromCurrency = conversionValues.fromCurrency ? conversionValues.fromCurrency : 'usd';
+  const toCurrency = conversionValues.toCurrency ? conversionValues.toCurrency : 'eth';
   let res = {};
-
   const apiRequestUrl = `https://openexchangerates.org/api/convert/${fromAmount}/${fromCurrency}/${toCurrency}?app_id=d34199d67d85445a846040c0cf621510`;
 
   try {
     res = await axios.get(apiRequestUrl);
-
     dispatch({type: CONVERT_CURRENCIES, payload: res.data.response});
   } catch (err) {
     console.log('Error in convertCurrencies', err);
@@ -81,7 +80,7 @@ export const deployContract = (formValues, history) => async dispatch => {
     });
   } catch (err) {
     const response = err ? err.response : null;
-    const status = response ? response.status : ''
+    const status = response ? response.status : '';
     const data = response ? response.data : null;
     const backendMessage = data ? data.message : null;
     const message = status + ': ' + (backendMessage || 'Error in deploy contract');
