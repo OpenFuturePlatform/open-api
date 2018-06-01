@@ -24,7 +24,6 @@ contract OpenScaffold {
         ${CUSTOM_SCAFFOLD_PARAMETERS}
         );
     event fundsDeposited(uint _amount);
-    event incorrectVendorAddress(address requestAddress, address vendorAddress);
     event activatedScaffold(bool activated);
 
     // custom dataTypes - array for storage of transactions
