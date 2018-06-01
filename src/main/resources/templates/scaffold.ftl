@@ -44,10 +44,11 @@ contract OpenScaffold {
     uint constant private activatingTokensAmount = 10 * 10**8;
     address constant private openTokenAddress = 0x69c4BB240cF05D51eeab6985Bab35527d04a8C64;
     ERC20Token public OPENToken = ERC20Token(openTokenAddress);
+    address private developerAddress;
 
     // Throws if called by any account other than the developer.
     modifier onlyVendor() {
-        require(msg.sender == vendorAddress);
+        require(msg.sender == developerAddress);
         _;
     }
 
@@ -72,6 +73,7 @@ contract OpenScaffold {
         fiatAmount = _fiatAmount;
         fiatCurrency = _fiatCurrency;
         scaffoldAmount = _scaffoldAmount;
+        developerAddress = msg.sender;
     }
 
     // deactivate Scaffold contract by vendor
