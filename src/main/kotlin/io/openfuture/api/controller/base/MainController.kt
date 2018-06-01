@@ -16,7 +16,7 @@ class MainController {
         return "redirect:/"
     }
 
-    @GetMapping("/", "/scaffold", "/scaffolds")
+    @GetMapping("/", "/scaffold", "/scaffolds", "/scaffolds/**")
     fun frontend() = "frontend"
 
 }
