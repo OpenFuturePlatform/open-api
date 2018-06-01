@@ -4,5 +4,5 @@ WORKDIR root/
 
 ADD build/libs/api-*.jar ./application.jar
 
-CMD java -Xmx1024M \
+CMD java -Xmx1024M -Djava.security.egd=/dev/zrandom \
     -jar /root/application.jar
