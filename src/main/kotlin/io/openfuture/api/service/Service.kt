@@ -1,6 +1,7 @@
 package io.openfuture.api.service
 
 import io.openfuture.api.domain.scaffold.DeployScaffoldRequest
+import io.openfuture.api.domain.scaffold.SetWebHookRequest
 import io.openfuture.api.entity.auth.OpenKey
 import io.openfuture.api.entity.auth.User
 import io.openfuture.api.entity.scaffold.Scaffold
@@ -17,7 +18,9 @@ interface ScaffoldService {
 
     fun get(address: String): Scaffold
 
-    fun deploy(request: DeployScaffoldRequest, user: User): Scaffold
+    fun deploy(request: DeployScaffoldRequest): Scaffold
+
+    fun setWebHook(address: String, request: SetWebHookRequest): Scaffold
 
 }
 
@@ -25,9 +28,9 @@ interface OpenKeyService {
 
     fun getAllByUser(user: User): List<OpenKey>
 
-    fun get(key: String, user: User): OpenKey
+    fun get(key: String): OpenKey
 
-    fun save(user: User): OpenKey
+    fun generate(user: User): OpenKey
 
 }
 

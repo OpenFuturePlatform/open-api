@@ -3,6 +3,7 @@ package io.openfuture.api.annotation.resolver
 import io.openfuture.api.annotation.CurrentUser
 import io.openfuture.api.repository.UserRepository
 import org.springframework.core.MethodParameter
+import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.oauth2.core.oidc.user.OidcUser
 import org.springframework.web.bind.support.WebDataBinderFactory
@@ -30,7 +31,7 @@ class CurrentUserArgumentResolver(
             return userRepository.findByGoogleId(principal.subject)
         }
 
-        return null
+        throw AccessDeniedException("Current principal hasn't access")
     }
 
 }
