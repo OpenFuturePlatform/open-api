@@ -1,8 +1,10 @@
 package io.openfuture.api.repository
 
-import io.openfuture.api.model.auth.OpenKey
-import io.openfuture.api.model.auth.User
-import io.openfuture.api.model.scaffold.Scaffold
+import io.openfuture.api.entity.auth.OpenKey
+import io.openfuture.api.entity.auth.User
+import io.openfuture.api.entity.scaffold.Scaffold
+import io.openfuture.api.entity.scaffold.ScaffoldProperty
+import io.openfuture.api.entity.scaffold.Transaction
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
@@ -13,25 +15,34 @@ import org.springframework.stereotype.Repository
 interface BaseRepository<T> : JpaRepository<T, Long>
 
 @Repository
-interface UserRepository: BaseRepository<User> {
+interface UserRepository : BaseRepository<User> {
 
     fun findByGoogleId(googleId: String): User?
 
 }
 
 @Repository
-interface ScaffoldRepository: BaseRepository<Scaffold> {
+interface ScaffoldRepository : BaseRepository<Scaffold> {
 
     fun findByAddress(address: String): Scaffold?
 
-    fun findAllByUser(user: User, pageable: Pageable): Page<Scaffold>
+    fun findAllByOpenKeyUser(user: User, pageable: Pageable): Page<Scaffold>
+
+    fun countByEnabledIsFalse(): Long
 
 }
 
-interface OpenKeyRepository: BaseRepository<OpenKey> {
+@Repository
+interface ScaffoldPropertyRepository : BaseRepository<ScaffoldProperty>
 
-    fun findByValueAndUser(value: String, user: User): OpenKey?
+@Repository
+interface OpenKeyRepository : BaseRepository<OpenKey> {
+
+    fun findByValue(value: String): OpenKey?
 
     fun findAllByUser(user: User): List<OpenKey>
 
 }
+
+@Repository
+interface TransactionRepository : BaseRepository<Transaction>

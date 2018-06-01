@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping
 class AuthController {
 
     @GetMapping("/logout")
-    fun get(): String {
+    fun logout(): String {
         SecurityContextHolder.getContext().authentication = null
         return "redirect:/"
     }
