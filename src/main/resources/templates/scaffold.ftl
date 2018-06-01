@@ -75,7 +75,7 @@ contract OpenScaffold {
         scaffoldAmount = _scaffoldAmount;
     }
 
-    // deactivate Scaffold by
+    // deactivate Scaffold contract by vendor
     function deactivate() onlyVendor public activated {
         OPENToken.transfer(vendorAddress, OPENToken.balanceOf(address(this)));
         activatedScaffold(false);
@@ -111,10 +111,9 @@ contract OpenScaffold {
         fundsDeposited(amount);
     }
 
-    function getScaffoldSummary() public view returns (string, uint, string, string, uint, uint, address, uint) {
+    function getScaffoldSummary() public view returns (string, string, string, uint, uint, address, uint) {
         return (
           scaffoldDescription,
-          scaffoldAddress.balance,
           fiatAmount,
           fiatCurrency,
           scaffoldAmount,
