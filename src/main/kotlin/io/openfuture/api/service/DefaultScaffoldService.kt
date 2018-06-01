@@ -35,6 +35,7 @@ import org.web3j.protocol.http.HttpService
 import org.web3j.tx.gas.DefaultGasProvider.GAS_LIMIT
 import org.web3j.tx.gas.DefaultGasProvider.GAS_PRICE
 import org.web3j.utils.Convert.Unit.ETHER
+import org.web3j.utils.Convert.fromWei
 import org.web3j.utils.Convert.toWei
 import org.web3j.utils.Numeric
 import java.math.BigInteger
@@ -150,7 +151,7 @@ class DefaultScaffoldService(
                 decodedResult[0].value as String,
                 decodedResult[2].value as String,
                 decodedResult[3].value as String,
-                decodedResult[4].value as BigInteger,
+                fromWei((decodedResult[4].value as BigInteger).toString(), ETHER),
                 decodedResult[5].value as BigInteger,
                 decodedResult[6].value as String
         )
