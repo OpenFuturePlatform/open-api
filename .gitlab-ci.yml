@@ -102,7 +102,7 @@ package-docker:
   - |
     ssh ${DEPLOY_USER}@${DEPLOY_HOST} "
       docker run -d --name '${CONTAINER_NAME}' --restart=always \
-                 -p 8080:8080 \ 
+                 -p 8080:8080 \
                  -e "POSTGRES_HOST=${POSTGRES_HOST}" \
                  -e "POSTGRES_DB=${POSTGRES_DB}" \
                  -e "POSTGRES_USER=${POSTGRES_USER}" \
