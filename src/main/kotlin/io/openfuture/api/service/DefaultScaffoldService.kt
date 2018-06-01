@@ -131,7 +131,6 @@ class DefaultScaffoldService(
                 asList(),
                 asList(
                         object : TypeReference<Utf8String>() {},
-                        object : TypeReference<Uint256>() {},
                         object : TypeReference<Utf8String>() {},
                         object : TypeReference<Utf8String>() {},
                         object : TypeReference<Uint256>() {},
@@ -149,7 +148,6 @@ class DefaultScaffoldService(
         val decodedResult = FunctionReturnDecoder.decode(result, function.outputParameters)
         return ScaffoldSummaryDto(
                 decodedResult[0].value as String,
-                decodedResult[1].value as BigInteger,
                 decodedResult[2].value as String,
                 decodedResult[3].value as String,
                 decodedResult[4].value as BigInteger,

@@ -7,7 +7,6 @@ import java.math.BigInteger
  */
 data class ScaffoldSummaryDto(
         val description: String,
-        val balance: BigInteger,
         val fiatAmount: String,
         val fiatCurrency: String,
         val amount: BigInteger,

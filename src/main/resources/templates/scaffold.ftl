@@ -47,7 +47,7 @@ contract OpenScaffold {
         scaffoldAmount = _scaffoldAmount;
     }
 
-    function(${CUSTOM_SCAFFOLD_PARAMETERS}) public payable {
+    function payVendor(${CUSTOM_SCAFFOLD_PARAMETERS}) public payable {
         require(msg.value == scaffoldAmount);
         scaffoldTransactionIndex++;
 
