@@ -10,7 +10,7 @@ plugins {
 apply plugin: "io.spring.dependency-management"
 
 group = "io.openfuture.api"
-version = "0.0.1-SNAPSHOT"
+version = "1.0.0"
 sourceCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
@@ -25,7 +25,7 @@ ext.s3Version = "1.11.333"
 dependencies {
     // Spring
     compile("org.springframework.boot:spring-boot-starter-web")
-    compile('org.springframework.boot:spring-boot-starter-freemarker')
+    compile("org.springframework.boot:spring-boot-starter-freemarker")
     compile("org.springframework.boot:spring-boot-starter-security")
     compile("org.springframework.boot:spring-boot-starter-data-jpa")
 
@@ -50,10 +50,15 @@ dependencies {
     compile("org.jetbrains.kotlin:kotlin-reflect")
 
     // Utils
-    compile('commons-io:commons-io:2.6')
+    compile("commons-io:commons-io:2.6")
 
     //Test
     testCompile("org.springframework.boot:spring-boot-starter-test")
+}
+
+sourceSets {
+    main.kotlin.srcDirs += 'src/main/kotlin'
+    main.resources.srcDirs += 'frontend/build/resources'
 }
 
 compileKotlin {
@@ -69,3 +74,6 @@ compileTestKotlin {
         jvmTarget = "1.8"
     }
 }
+
+// Front
+processResources.dependsOn(':frontend:assemble')

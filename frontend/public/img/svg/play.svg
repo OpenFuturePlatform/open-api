@@ -1,0 +1,40 @@
+<svg width="184" height="184" viewBox="0 0 184 184" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<title>play</title>
+<desc>Created using Figma</desc>
+<g id="Canvas" transform="translate(-6854 -973)">
+<g id="play">
+<g id="Ellipse" filter="url(#filter0_d)">
+<use xlink:href="#path0_fill" transform="translate(6866 979)" fill="#FAFAFC"/>
+</g>
+<g id="Polygon" filter="url(#filter1_d)">
+<use xlink:href="#path1_fill" transform="matrix(6.12323e-17 1 -1 6.12323e-17 6980 1030)" fill="url(#paint1_linear)"/>
+</g>
+</g>
+</g>
+<defs>
+<filter id="filter0_d" filterUnits="userSpaceOnUse" x="6854" y="973" width="184" height="184" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 255 0"/>
+<feOffset dx="0" dy="6"/>
+<feGaussianBlur stdDeviation="6"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0.6557 0 0 0 0 0.712954 0 0 0 0 0.79 0 0 0 0.15 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape"/>
+</filter>
+<filter id="filter1_d" filterUnits="userSpaceOnUse" x="6919" y="1029" width="65" height="70" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 255 0"/>
+<feOffset dx="0" dy="5"/>
+<feGaussianBlur stdDeviation="5"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0.184314 0 0 0 0 0.501961 0 0 0 0 0.929412 0 0 0 0.2 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape"/>
+</filter>
+<linearGradient id="paint1_linear" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(-59.6291 14.0492 31.1769 -124.249 43.2261 80.5999)">
+<stop offset="0" stop-color="#2F80ED"/>
+<stop offset="1" stop-color="#33ADFF"/>
+</linearGradient>
+<path id="path0_fill" d="M 160 80C 160 124.183 124.183 160 80 160C 35.8172 160 0 124.183 0 80C 0 35.8172 35.8172 0 80 0C 124.183 0 160 35.8172 160 80Z"/>
+<path id="path1_fill" d="M 23.7843 9.17251C 26.0847 5.12693 31.9153 5.12693 34.2157 9.17251L 52.9018 42.0342C 55.1762 46.0341 52.2874 51 47.6861 51L 10.3139 51C 5.71264 51 2.82377 46.0341 5.09821 42.0342L 23.7843 9.17251Z"/>
+</defs>
+</svg>

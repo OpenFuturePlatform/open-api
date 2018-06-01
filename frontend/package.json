@@ -1,0 +1,36 @@
+{
+    "name": "client",
+    "version": "0.1.0",
+    "private": true,
+    "proxy": {
+        "/oauth2/authorization/google": {
+            "target": "http://localhost:8080"
+        },
+        "/api/*": {
+            "target": "http://localhost:8080"
+        }
+    },
+    "dependencies": {
+        "axios": "^0.16.2",
+        "react": "^16.0.0-alpha.13",
+        "react-copy-to-clipboard": "^5.0.1",
+        "react-dom": "^16.0.0-alpha.13",
+        "react-redux": "^5.0.5",
+        "react-router-dom": "^4.1.1",
+        "react-scripts": "1.0.10",
+        "react-semantic-redux-form": "^1.2.6",
+        "redux": "^3.7.1",
+        "redux-form": "^7.0.1",
+        "redux-thunk": "^2.2.0",
+        "semantic-ui-react": "^0.78.2"
+    },
+    "scripts": {
+        "start": "react-scripts start",
+        "build": "react-scripts build",
+        "test": "react-scripts test --env=jsdom",
+        "eject": "react-scripts eject"
+    },
+    "devDependencies": {
+        "lodash": "^4.17.10"
+    }
+}

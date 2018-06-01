@@ -1,10 +1,12 @@
 package io.openfuture.api.service
 
 import io.openfuture.api.domain.scaffold.DeployScaffoldRequest
-import io.openfuture.api.model.auth.OpenKey
-import io.openfuture.api.model.auth.User
-import io.openfuture.api.model.scaffold.Scaffold
-import io.openfuture.api.model.scaffold.Transaction
+import io.openfuture.api.domain.scaffold.ScaffoldSummaryDto
+import io.openfuture.api.domain.scaffold.SetWebHookRequest
+import io.openfuture.api.entity.auth.OpenKey
+import io.openfuture.api.entity.auth.User
+import io.openfuture.api.entity.scaffold.Scaffold
+import io.openfuture.api.entity.scaffold.Transaction
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
@@ -17,7 +19,11 @@ interface ScaffoldService {
 
     fun get(address: String): Scaffold
 
-    fun deploy(request: DeployScaffoldRequest, user: User): Scaffold
+    fun deploy(request: DeployScaffoldRequest): Scaffold
+
+    fun setWebHook(address: String, request: SetWebHookRequest): Scaffold
+
+    fun getScaffoldSummary(address: String): ScaffoldSummaryDto
 
 }
 
@@ -25,9 +31,9 @@ interface OpenKeyService {
 
     fun getAllByUser(user: User): List<OpenKey>
 
-    fun get(key: String, user: User): OpenKey
+    fun get(key: String): OpenKey
 
-    fun save(user: User): OpenKey
+    fun generate(user: User): OpenKey
 
 }
 

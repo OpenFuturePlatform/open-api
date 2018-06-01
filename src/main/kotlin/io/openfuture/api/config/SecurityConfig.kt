@@ -16,14 +16,24 @@ class SecurityConfig(
 ) : WebSecurityConfigurerAdapter() {
 
     override fun configure(http: HttpSecurity) {
+        http.csrf().disable()
+
+        // @formatter:off
         http
                 .authorizeRequests()
+                    .antMatchers("/").permitAll()
+                    .antMatchers("/css/**").permitAll()
+                    .antMatchers("/img/**").permitAll()
+                    .antMatchers("/static/**").permitAll()
+                    .antMatchers("**.js").permitAll()
                     .anyRequest().authenticated()
 
                 .and()
 
                 .oauth2Login()
+                    .loginPage("/")
                     .successHandler(AuthenticationSuccessHandler(service))
+        // @formatter:on
     }
 
 }

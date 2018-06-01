@@ -1,1 +1,3 @@
-rootProject.name = 'api'
+rootProject.name = 'open-api'
+
+include 'frontend'

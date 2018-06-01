@@ -1,0 +1,40 @@
+<svg width="372" height="384" viewBox="0 0 372 384" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<title>Group 13</title>
+<desc>Created using Figma</desc>
+<g id="Canvas" transform="translate(-4299 -11730)">
+<g id="Group 13">
+<g id="Rectangle 3.9" filter="url(#filter0_d)">
+<use xlink:href="#path0_fill" transform="matrix(0.965926 0.258819 -0.258819 0.965926 4425.82 11780)" fill="url(#paint0_linear)"/>
+</g>
+<g id="Vector" filter="url(#filter1_d)">
+<use xlink:href="#path1_fill" transform="matrix(0.965926 0.258819 -0.258819 0.965926 4451.82 11826)" fill="#FFFFFF"/>
+</g>
+</g>
+</g>
+<defs>
+<filter id="filter0_d" filterUnits="userSpaceOnUse" x="4287" y="11730" width="384" height="384" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 255 0"/>
+<feOffset dx="0" dy="50"/>
+<feGaussianBlur stdDeviation="50"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0.184314 0 0 0 0 0.501961 0 0 0 0 0.929412 0 0 0 0.35 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape"/>
+</filter>
+<filter id="filter1_d" filterUnits="userSpaceOnUse" x="4428" y="11826" width="101" height="100" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 255 0"/>
+<feOffset dx="0" dy="4"/>
+<feGaussianBlur stdDeviation="2"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0.2352 0 0 0 0 0.26656 0 0 0 0 0.28 0 0 0 0.1 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape"/>
+</filter>
+<linearGradient id="paint0_linear" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(-154.213 41.3213 80.6298 -365.439 111.792 237.059)">
+<stop offset="0" stop-color="#2F80ED"/>
+<stop offset="1" stop-color="#33ADFF"/>
+</linearGradient>
+<path id="path0_fill" d="M 0 50C 0 22.3858 22.3858 0 50 0L 100 0C 127.614 0 150 22.3858 150 50L 150 100C 150 127.614 127.614 150 100 150L 50 150C 22.3858 150 0 127.614 0 100L 0 50Z"/>
+<path id="path1_fill" d="M 37.5 18.6586C 39.3703 18.6586 41.177 18.9311 42.8825 19.4386C 48.5219 16.1828 52.3171 10.0895 52.3171 3.10977C 52.3171 3.0868 52.317 3.06391 52.317 3.04094C 47.7719 1.084 42.7625 0 37.5 0C 16.7893 0 0 16.7893 0 37.5C 0 58.2107 16.7893 75 37.5 75C 58.2107 75 75 58.2107 75 37.5C 75 24.4246 68.3081 12.9123 58.1623 6.20098C 58.1679 6.3894 58.1707 6.57855 58.1707 6.76836C 58.1707 13.5282 54.6108 19.4566 49.2635 22.7811C 53.578 26.2339 56.3414 31.5442 56.3414 37.5C 56.3414 47.9059 47.9058 56.3415 37.5 56.3415C 27.0941 56.3415 18.6585 47.9059 18.6585 37.5C 18.6585 27.0942 27.0941 18.6586 37.5 18.6586Z"/>
+</defs>
+</svg>
