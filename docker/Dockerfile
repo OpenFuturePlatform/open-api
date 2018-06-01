@@ -4,5 +4,5 @@ WORKDIR root/
 
 ADD build/libs/api-*.jar ./application.jar
 
-CMD java -Xmx128M \
+CMD java -Xmx1024M \
     -jar /root/application.jar
