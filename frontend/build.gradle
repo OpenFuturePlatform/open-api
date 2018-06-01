@@ -1,0 +1,55 @@
+plugins {
+    id "com.moowork.node" version "1.2.0"
+}
+
+apply plugin: 'com.moowork.node'
+
+node {
+    version = '8.11.2'
+    distBaseUrl = 'https://nodejs.org/dist'
+    download = true
+//    workDir = file("${rootProject.buildDir}/nodejs")
+}
+
+task assemble(type: NpmTask) {
+    args = ['run', 'build']
+}
+
+assemble.dependsOn npmInstall
+npmInstall.dependsOn npmSetup
+npmSetup.dependsOn nodeSetup
+
+
+/*
+task assemble { task ->
+    doLast {
+        println "Merging frontend"
+
+        subprojects.each { project ->
+            // copying index.html
+            copy {
+                from project.buildDir
+                include 'index.html'
+                rename 'index.html', "${project.name}.ftl"
+                into "$project.parent.buildDir/templates/"
+            }
+            // copying js
+            copy {
+                from project.buildDir
+                include '*.js'
+                into "$project.parent.buildDir/static/$project.name/"
+            }
+            // copying resources
+            copy {
+                from project.buildDir
+                exclude 'index.html', '*.js'
+                into "$project.parent.buildDir/static/"
+            }
+        }
+    }
+
+//    subprojects.each { project ->
+//        task.dependsOn(project.assemble)
+//    }
+}
+*/
