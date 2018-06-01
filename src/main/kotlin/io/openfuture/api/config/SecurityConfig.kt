@@ -31,7 +31,7 @@ class SecurityConfig(
                 .and()
 
                 .oauth2Login()
-//                    .loginPage("/")
+                    .loginPage("/")
                     .successHandler(AuthenticationSuccessHandler(service))
         // @formatter:on
     }
