@@ -1,3 +1,9 @@
-# WIP (Work In Progress)
+# OPEN Platform API
 
-This API implementation will replace the existing API at https://api.openfuture.io.
+[![Release Version](https://img.shields.io/github/release/OpenFuturePlatform/open-api.svg?style=flat-square)](https://github.com/OpenFuturePlatform/open-api/releases)
+[![Release Date](https://img.shields.io/github/release-date/OpenFuturePlatform/open-api.svg?style=flat-square&colorB=007EC6)](https://github.com/OpenFuturePlatform/open-api/releases)
+[![Last Commit](https://img.shields.io/github/last-commit/OpenFuturePlatform/open-api.svg?style=flat-square&colorB=007EC6)](https://github.com/OpenFuturePlatform/open-api/commits)
+[![Contributors](https://img.shields.io/github/contributors/OpenFuturePlatform/open-api.svg?style=flat-square&colorB=007EC6)](https://github.com/OpenFuturePlatform/open-api/contributors)
+
+
+This API is running on https://api.openfuture.io.
