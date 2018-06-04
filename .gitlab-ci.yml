@@ -8,7 +8,7 @@ stages:
   - test
   - package
   - deploy
-  - update
+  - certificates
 
 variables:
     DOCKER_DRIVER: overlay2
@@ -124,7 +124,7 @@ package-docker:
                  ${IMAGE_NAME}:${IMAGE_TAG}
     "
 
-.update-certs-script: &update_certs
+.update-certificates-script: &update_certificates
     - |
       ssh ${DEPLOY_USER}@${DEPLOY_HOST} " 
         docker run --rm -it --name certbot  \
@@ -188,26 +188,26 @@ deploy-production:
   except:
     - schedules
 
-update-certs-dev:
-  stage: update
+certificates-development:
+  stage: certificates
   variables:
     DEPLOY_USER: $DEPLOY_USER_DEV
     DEPLOY_HOST: $DEPLOY_HOST_DEV
     DEPLOY_KEY: $DEPLOY_KEY_DEV
     SERVER_NAME: "api.open-platform.zensoft.io"
   before_script: *prepare_key  
-  script: *update_certs     
+  script: *update_certificates
   only:
     - schedules
 
-update-certs-prod:
-  stage: update
+certificates-production:
+  stage: certificates
   variables:
     DEPLOY_USER: $DEPLOY_USER_PROD
     DEPLOY_HOST: $DEPLOY_HOST_PROD
     DEPLOY_KEY: $DEPLOY_KEY_PROD
     SERVER_NAME: "api.openfuture.io"
   before_script: *prepare_key  
-  script: *update_certs     
+  script: *update_certificates
   only:
     - schedules    
