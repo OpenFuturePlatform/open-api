@@ -23,17 +23,16 @@ class ScaffoldList extends Component {
       return (
         <Card fluid key={index}>
           <Card.Content>
-            <Link
-              to={`scaffolds/${
-                scaffold.address
-                }`}
-            >
+            <Link to={`scaffolds/${scaffold.address}`}>
               <Card.Header>
                 {scaffoldData.description}
               </Card.Header>
             </Link>
             <div className="meta">
-              Scaffold Address:{' '}{scaffold.address}
+              Scaffold Address:{' '}
+              <a href={`https://etherscan.io/address/${scaffold.address}`} target="_blank">
+                {scaffold.address}
+              </a>
             </div>
           </Card.Content>
           <Card.Content>
