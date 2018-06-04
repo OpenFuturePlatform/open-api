@@ -51,6 +51,7 @@ unit-tests:
     GOOGLE_CLIENT_SECRET: $GOOGLE_CLIENT_SECRET_DEV
     INFURA_URL: $INFURA_URL_DEV
     ETHEREUM_PRIVATE_KEY: $ETHEREUM_PRIVATE_KEY_DEV
+    OPEN_TOKEN_ADDRESS: $OPEN_TOKEN_ADDRESS_DEV
   services:
     - name: postgres
       alias: $POSTGRES_HOST
@@ -121,6 +122,7 @@ package-docker:
                  -e "GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}" \
                  -e "INFURA_URL=${INFURA_URL}" \
                  -e "ETHEREUM_PRIVATE_KEY=${ETHEREUM_PRIVATE_KEY}" \
+                 -e "OPEN_TOKEN_ADDRESS=${OPEN_TOKEN_ADDRESS}" \
                  ${IMAGE_NAME}:${IMAGE_TAG}
     "
 
@@ -153,6 +155,7 @@ deploy-development:
     GOOGLE_CLIENT_SECRET: $GOOGLE_CLIENT_SECRET_DEV
     INFURA_URL: $INFURA_URL_DEV
     ETHEREUM_PRIVATE_KEY: $ETHEREUM_PRIVATE_KEY_DEV
+    OPEN_TOKEN_ADDRESS: $OPEN_TOKEN_ADDRESS_DEV
   before_script: *prepare_key
   script: *deploy_to_host
   only:
@@ -178,6 +181,7 @@ deploy-production:
     GOOGLE_CLIENT_SECRET: $GOOGLE_CLIENT_SECRET_PROD
     INFURA_URL: $INFURA_URL_PROD
     ETHEREUM_PRIVATE_KEY: $ETHEREUM_PRIVATE_KEY_PROD
+    OPEN_TOKEN_ADDRESS: $OPEN_TOKEN_ADDRESS_PROD
   before_script: *prepare_key
   script: *deploy_to_host
   only:
