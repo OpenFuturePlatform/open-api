@@ -31,12 +31,22 @@ export const fetchScaffolds = (page = 1, limit = 10) => async dispatch => {
   }
 };
 
-export const fetchScaffoldItem = (scaffoldAddres) => async dispatch => {
+export const fetchScaffoldItem = (scaffoldAddress) => async dispatch => {
+  dispatch({type: FETCH_ONCHAIN_SCAFFOLD_SUMMARY, payload: {}});
   try {
-    const res = await axios.get(`/api/scaffolds/${scaffoldAddres}/summary`);
+    const res = await axios.get(`/api/scaffolds/${scaffoldAddress}/summary`);
     dispatch({type: FETCH_ONCHAIN_SCAFFOLD_SUMMARY, payload: res.data});
   } catch (err) {
     console.log('Error getting scaffolds', err);
+  }
+};
+
+export const deactivateScaffold = (scaffoldAddress) => async dispatch => {
+  try {
+    await axios.post(`/api/scaffolds/${scaffoldAddress}/doDeactivate`);
+    fetchScaffoldItem(scaffoldAddress)(dispatch);
+  } catch (err) {
+    console.log('Error deactivating scaffolds', err);
   }
 };
 
@@ -72,8 +82,6 @@ export const deployContract = (formValues, history) => async dispatch => {
 
   try {
     res = await axios.post('/api/scaffolds', formValues);
-
-    history.push('/scaffolds');
     dispatch({
       type: SHOW_MODAL,
       payload: {contract: res.data, showLoader: false},
