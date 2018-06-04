@@ -42,7 +42,7 @@ contract OpenScaffold {
 
     // OPEN token
     uint constant private activatingTokensAmount = 10 * 10**8;
-    address constant private openTokenAddress = 0x69c4BB240cF05D51eeab6985Bab35527d04a8C64;
+    address constant private openTokenAddress = ${OPEN_TOKEN_ADDRESS};
     ERC20Token public OPENToken = ERC20Token(openTokenAddress);
     address private developerAddress;
 

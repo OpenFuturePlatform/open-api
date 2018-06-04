@@ -60,8 +60,10 @@ class DefaultScaffoldService(
     private lateinit var web3: Web3j
 
     companion object {
-        private const val ALLOWED_DISABLED_SCAFFOLDS = 10
+        private const val ALLOWED_DISABLED_SCAFFOLDS = 10L
+        private const val ENABLED_SCAFFOLD_TOKEN_COUNT = 10L
         private const val GET_SCAFFOLD_SUMMARY_METHOD_NAME = "getScaffoldSummary"
+        private const val DEACTIVATE_SCAFFOLD_METHOD_NAME = "deactivate"
     }
 
 
@@ -136,7 +138,8 @@ class DefaultScaffoldService(
                         object : TypeReference<Utf8String>() {},
                         object : TypeReference<Uint256>() {},
                         object : TypeReference<Uint256>() {},
-                        object : TypeReference<Address>() {}
+                        object : TypeReference<Address>() {},
+                        object : TypeReference<Uint256>() {}
                 )
         )
         val encodedFunction = FunctionEncoder.encode(function)
@@ -153,8 +156,27 @@ class DefaultScaffoldService(
                 decodedResult[2].value as String,
                 fromWei((decodedResult[3].value as BigInteger).toBigDecimal(), ETHER),
                 decodedResult[4].value as BigInteger,
-                decodedResult[5].value as String
+                decodedResult[5].value as String,
+                decodedResult[6].value as BigInteger,
+                (decodedResult[6].value as BigInteger) > BigInteger.valueOf(ENABLED_SCAFFOLD_TOKEN_COUNT)
         )
+    }
+
+    override fun deactivate(address: String): ScaffoldSummaryDto {
+        val scaffold = get(address)
+        val function = Function(
+                DEACTIVATE_SCAFFOLD_METHOD_NAME,
+                asList(),
+                asList()
+        )
+        val encodedFunction = FunctionEncoder.encode(function)
+
+        val credentials = Credentials.create(properties.privateKey)
+        val nonce = web3.ethGetTransactionCount(credentials.address, LATEST).send().transactionCount
+        web3.ethCall(Transaction.createFunctionCallTransaction(credentials.address, nonce, GAS_PRICE,
+                GAS_LIMIT, scaffold.address, encodedFunction), LATEST).send()
+
+        return getScaffoldSummary(address)
     }
 
 }

@@ -49,4 +49,8 @@ class ScaffoldApiController(
     fun getScaffoldSummary(@PathVariable address: String): ScaffoldSummaryDto =
             scaffoldService.getScaffoldSummary(address)
 
+    @PostMapping("/{address}/doDeactivate")
+    fun deactivate(@PathVariable address: String): ScaffoldSummaryDto =
+            scaffoldService.deactivate(address)
+
 }
