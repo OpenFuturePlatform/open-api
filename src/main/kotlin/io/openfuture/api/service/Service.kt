@@ -25,6 +25,8 @@ interface ScaffoldService {
 
     fun getScaffoldSummary(address: String): ScaffoldSummaryDto
 
+    fun deactivate(address: String): ScaffoldSummaryDto
+
 }
 
 interface OpenKeyService {
