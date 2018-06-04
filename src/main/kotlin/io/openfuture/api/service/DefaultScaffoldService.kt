@@ -158,7 +158,7 @@ class DefaultScaffoldService(
                 decodedResult[4].value as BigInteger,
                 decodedResult[5].value as String,
                 decodedResult[6].value as BigInteger,
-                (decodedResult[6].value as BigInteger) > BigInteger.valueOf(ENABLED_SCAFFOLD_TOKEN_COUNT)
+                decodedResult[6].value as BigInteger >= BigInteger.valueOf(ENABLED_SCAFFOLD_TOKEN_COUNT)
         )
     }
 
