@@ -103,7 +103,7 @@ package-docker:
   - ssh ${DEPLOY_USER}@${DEPLOY_HOST} "docker pull ${IMAGE_NAME}:${IMAGE_TAG}"
   - |
     ssh ${DEPLOY_USER}@${DEPLOY_HOST} "
-      docker inspect ${CONTAINER_NAME} && \
+      docker stop ${CONTAINER_NAME} && \
       IMG=\$(docker ps -a --filter='name=^/${CONTAINER_NAME}$' --format='{{.Image}}') &&  \
       docker rm -f ${CONTAINER_NAME} && \
       docker rmi \$IMG; \
