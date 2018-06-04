@@ -41,9 +41,9 @@ contract OpenScaffold {
     address private scaffoldAddress = this;
 
     // OPEN token
-    uint constant private activatingTokensAmount = 10 * 10**8;
-    address constant private openTokenAddress = ${OPEN_TOKEN_ADDRESS};
-    ERC20Token public OPENToken = ERC20Token(openTokenAddress);
+    uint constant private ACTIVATING_TOKENS_AMOUNT = 10 * 10**8;
+    address constant private OPEN_TOKEN_ADDRESS = ${OPEN_TOKEN_ADDRESS};
+    ERC20Token public OPENToken = ERC20Token(OPEN_TOKEN_ADDRESS);
     address private developerAddress;
 
     // Throws if called by any account other than the developer.
@@ -54,7 +54,7 @@ contract OpenScaffold {
 
     // Throws if contract is not activated.
     modifier activated() {
-        require(OPENToken.balanceOf(address(this)) >= activatingTokensAmount);
+        require(OPENToken.balanceOf(address(this)) >= ACTIVATING_TOKENS_AMOUNT);
         _;
     }
 
