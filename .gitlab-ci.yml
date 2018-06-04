@@ -8,13 +8,12 @@ stages:
   - test
   - package
   - deploy
-
+  - update
 
 variables:
     DOCKER_DRIVER: overlay2
     IMAGE_NAME: gcr.io/zinc-computer-205115/apiopenfuture
     IMAGE_TAG: ${CI_COMMIT_REF_NAME}-${CI_PIPELINE_ID}
-
 
 ###########################
 # Building
@@ -37,6 +36,8 @@ build-jar:
   only:
     - master
     - sprint
+  except:
+    - schedules    
 
 unit-tests:
   stage: test
@@ -67,7 +68,8 @@ unit-tests:
       - build/libs/*.jar
       - build/reports/tests/test/
     expire_in: 1 week
-
+  except:
+    - schedules    
 
 .registry-auth-script: &registry_auth
   - docker login -u _json_key -p "${GOOGLE_JSON_TOKEN}" https://gcr.io
@@ -81,8 +83,8 @@ package-docker:
   only:
     - sprint
     - master
-
-
+  except:
+    - schedules    
 
 ###########################
 # Deployment
@@ -96,10 +98,8 @@ package-docker:
   - ssh-keyscan $DEPLOY_HOST >> ~/.ssh/known_hosts
   - chmod 644 ~/.ssh/known_hosts
 
-
 .deploy-to-host-script: &deploy_to_host
-  - |
-    ssh ${DEPLOY_USER}@${DEPLOY_HOST} "docker login -u _json_key -p '${GOOGLE_JSON_TOKEN}' https://gcr.io"
+  - ssh ${DEPLOY_USER}@${DEPLOY_HOST} "docker login -u _json_key -p '${GOOGLE_JSON_TOKEN}' https://gcr.io"
   - ssh ${DEPLOY_USER}@${DEPLOY_HOST} "docker pull ${IMAGE_NAME}:${IMAGE_TAG}"
   - |
     ssh ${DEPLOY_USER}@${DEPLOY_HOST} "
@@ -124,6 +124,20 @@ package-docker:
                  ${IMAGE_NAME}:${IMAGE_TAG}
     "
 
+.update-certs-script: &update_certs
+    - |
+      ssh ${DEPLOY_USER}@${DEPLOY_HOST} " 
+        docker run --rm -it --name certbot  \
+        -v /etc/letsencrypt:/etc/letsencrypt \
+        -v /var/www/certbot:/var/www/acme-challenge \
+        -v /var/log/letsencrypt:/var/log/letsencrypt \
+        certbot/certbot \
+        certonly --webroot -w /var/www/acme-challenge/ \
+        -d ${SERVER_NAME} \
+        --renew-by-default -m devops@zensoft.io --eff-email --agree-tos --manual-public-ip-logging-ok
+      "
+    - ssh ${DEPLOY_USER}@${DEPLOY_HOST} "sudo service nginx reload"
+
 deploy-development:
   stage: deploy
   variables:
@@ -146,6 +160,8 @@ deploy-development:
   environment:
     name: development
     url: http://api.open-platform.zensoft.io
+  except:
+    - schedules
 
 deploy-production:
   stage: deploy
@@ -169,3 +185,29 @@ deploy-production:
   environment:
     name: production
     url: https://api.openfuture.io
+  except:
+    - schedules
+
+update-certs-dev:
+  stage: update
+  variables:
+    DEPLOY_USER: $DEPLOY_USER_DEV
+    DEPLOY_HOST: $DEPLOY_HOST_DEV
+    DEPLOY_KEY: $DEPLOY_KEY_DEV
+    SERVER_NAME: "api.open-platform.zensoft.io"
+  before_script: *prepare_key  
+  script: *update_certs     
+  only:
+    - schedules
+
+update-certs-prod:
+  stage: update
+  variables:
+    DEPLOY_USER: $DEPLOY_USER_PROD
+    DEPLOY_HOST: $DEPLOY_HOST_PROD
+    DEPLOY_KEY: $DEPLOY_KEY_PROD
+    SERVER_NAME: "api.openfuture.io"
+  before_script: *prepare_key  
+  script: *update_certs     
+  only:
+    - schedules    
