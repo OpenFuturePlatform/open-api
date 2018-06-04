@@ -20,7 +20,9 @@ repositories {
     }
 }
 
-ext.s3Version = "1.11.333"
+ext {
+    s3Version = "1.11.333"
+}
 
 dependencies {
     // Spring
@@ -37,11 +39,11 @@ dependencies {
     runtime("org.postgresql:postgresql")
     compile("org.flywaydb:flyway-core")
 
-    //Ethereum
+    // Ethereum
     compile("org.web3j:core:3.4.0")
     compile("org.ethereum:ethereumj-core:1.7.2-RELEASE")
 
-    //AWS
+    // AWS
     compile("com.amazonaws:aws-java-sdk-s3:${s3Version}")
 
     // Kotlin
@@ -52,7 +54,7 @@ dependencies {
     // Utils
     compile("commons-io:commons-io:2.6")
 
-    //Test
+    // Test
     testCompile("org.springframework.boot:spring-boot-starter-test")
 }
 
