@@ -24,7 +24,6 @@ import org.web3j.abi.datatypes.Function
 import org.web3j.abi.datatypes.Type
 import org.web3j.abi.datatypes.Utf8String
 import org.web3j.abi.datatypes.generated.Uint256
-import org.web3j.crypto.Credentials
 import org.web3j.crypto.RawTransaction
 import org.web3j.crypto.TransactionEncoder
 import org.web3j.protocol.Web3j
@@ -82,7 +81,7 @@ class DefaultScaffoldService(
     @Transactional(readOnly = true)
     override fun compile(request: CompileScaffoldRequest): CompiledScaffoldDto {
         val openKey = openKeyService.get(request.openKey!!)
-        if (repository.countByEnabledIsFalseAndByOpenKeyUser(openKey.user) >= ALLOWED_DISABLED_SCAFFOLDS) {
+        if (repository.countByEnabledIsFalseAndOpenKeyUser(openKey.user) >= ALLOWED_DISABLED_SCAFFOLDS) {
             throw IllegalStateException("Disabled scaffold count is more than allowed")
         }
 
@@ -101,7 +100,7 @@ class DefaultScaffoldService(
                 Uint256(toWei(request.conversionAmount, ETHER).toBigInteger()))
         )
 
-        val credentials = Credentials.create(properties.privateKey)
+        val credentials = properties.getCredentials()
         val nonce = web3.ethGetTransactionCount(credentials.address, LATEST).send().transactionCount
         val rawTransaction = RawTransaction.createContractTransaction(nonce, GAS_PRICE, GAS_LIMIT, ZERO,
                 compiledScaffold.bin + encodedConstructor)
@@ -193,7 +192,7 @@ class DefaultScaffoldService(
 
     private fun callFunction(function: Function, address: String): MutableList<Type<Any>> {
         val encodedFunction = FunctionEncoder.encode(function)
-        val credentials = Credentials.create(properties.privateKey)
+        val credentials = properties.getCredentials()
         val nonce = web3.ethGetTransactionCount(credentials.address, LATEST).send().transactionCount
         val result = web3.ethCall(Transaction.createFunctionCallTransaction(credentials.address, nonce, GAS_PRICE,
                 GAS_LIMIT, address, encodedFunction), LATEST).send()
