@@ -138,7 +138,7 @@ package-docker:
         -d ${SERVER_NAME} \
         --renew-by-default -m devops@zensoft.io --eff-email --agree-tos --manual-public-ip-logging-ok
       "
-    - ssh ${DEPLOY_USER}@${DEPLOY_HOST} "sudo service nginx reload"
+  - ssh ${DEPLOY_USER}@${DEPLOY_HOST} "sudo service nginx reload"
 
 deploy-development:
   stage: deploy
