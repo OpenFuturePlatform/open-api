@@ -129,12 +129,12 @@ package-docker:
 .update-certificates-script: &update_certificates
   - |
     ssh ${DEPLOY_USER}@${DEPLOY_HOST} "
-      docker run --rm -it --name certbot  \
+      docker run --rm -t --name certbot  \
         -v /etc/letsencrypt:/etc/letsencrypt \
-        -v /var/www/certbot:/var/www/acme-challenge \
+        -v /var/www/certbot:/var/www/certbot \
         -v /var/log/letsencrypt:/var/log/letsencrypt \
         certbot/certbot \
-        certonly --webroot -w /var/www/acme-challenge/ \
+        certonly --webroot -w /var/www/certbot/ \
         -d ${SERVER_NAME} \
         --renew-by-default -m devops@zensoft.io --eff-email --agree-tos --manual-public-ip-logging-ok
       "
