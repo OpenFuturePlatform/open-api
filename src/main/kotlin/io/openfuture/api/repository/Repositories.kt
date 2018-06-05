@@ -28,7 +28,7 @@ interface ScaffoldRepository : BaseRepository<Scaffold> {
 
     fun findAllByOpenKeyUser(user: User, pageable: Pageable): Page<Scaffold>
 
-    fun countByEnabledIsFalse(): Long
+    fun countByEnabledIsFalseAndByOpenKeyUser(user: User): Long
 
 }
 
