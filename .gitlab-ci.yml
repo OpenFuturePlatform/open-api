@@ -8,7 +8,7 @@ stages:
   - test
   - package
   - deploy
-  - update
+  - certificates
 
 variables:
     DOCKER_DRIVER: overlay2
@@ -51,6 +51,7 @@ unit-tests:
     GOOGLE_CLIENT_SECRET: $GOOGLE_CLIENT_SECRET_DEV
     INFURA_URL: $INFURA_URL_DEV
     ETHEREUM_PRIVATE_KEY: $ETHEREUM_PRIVATE_KEY_DEV
+    OPEN_TOKEN_ADDRESS: $OPEN_TOKEN_ADDRESS_DEV
   services:
     - name: postgres
       alias: $POSTGRES_HOST
@@ -121,10 +122,11 @@ package-docker:
                  -e "GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}" \
                  -e "INFURA_URL=${INFURA_URL}" \
                  -e "ETHEREUM_PRIVATE_KEY=${ETHEREUM_PRIVATE_KEY}" \
+                 -e "OPEN_TOKEN_ADDRESS=${OPEN_TOKEN_ADDRESS}" \
                  ${IMAGE_NAME}:${IMAGE_TAG}
     "
 
-.update-certs-script: &update_certs
+.update-certificates-script: &update_certificates
     - |
       ssh ${DEPLOY_USER}@${DEPLOY_HOST} " 
         docker run --rm -it --name certbot  \
@@ -153,6 +155,7 @@ deploy-development:
     GOOGLE_CLIENT_SECRET: $GOOGLE_CLIENT_SECRET_DEV
     INFURA_URL: $INFURA_URL_DEV
     ETHEREUM_PRIVATE_KEY: $ETHEREUM_PRIVATE_KEY_DEV
+    OPEN_TOKEN_ADDRESS: $OPEN_TOKEN_ADDRESS_DEV
   before_script: *prepare_key
   script: *deploy_to_host
   only:
@@ -178,6 +181,7 @@ deploy-production:
     GOOGLE_CLIENT_SECRET: $GOOGLE_CLIENT_SECRET_PROD
     INFURA_URL: $INFURA_URL_PROD
     ETHEREUM_PRIVATE_KEY: $ETHEREUM_PRIVATE_KEY_PROD
+    OPEN_TOKEN_ADDRESS: $OPEN_TOKEN_ADDRESS_PROD
   before_script: *prepare_key
   script: *deploy_to_host
   only:
@@ -188,26 +192,26 @@ deploy-production:
   except:
     - schedules
 
-update-certs-dev:
-  stage: update
+certificates-development:
+  stage: certificates
   variables:
     DEPLOY_USER: $DEPLOY_USER_DEV
     DEPLOY_HOST: $DEPLOY_HOST_DEV
     DEPLOY_KEY: $DEPLOY_KEY_DEV
     SERVER_NAME: "api.open-platform.zensoft.io"
   before_script: *prepare_key  
-  script: *update_certs     
+  script: *update_certificates
   only:
     - schedules
 
-update-certs-prod:
-  stage: update
+certificates-production:
+  stage: certificates
   variables:
     DEPLOY_USER: $DEPLOY_USER_PROD
     DEPLOY_HOST: $DEPLOY_HOST_PROD
     DEPLOY_KEY: $DEPLOY_KEY_PROD
     SERVER_NAME: "api.openfuture.io"
   before_script: *prepare_key  
-  script: *update_certs     
+  script: *update_certificates
   only:
     - schedules    

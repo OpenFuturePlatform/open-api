@@ -12,5 +12,7 @@ data class ScaffoldSummaryDto(
         val fiatCurrency: String,
         val amount: BigDecimal,
         val transactionIndex: BigInteger,
-        val vendorAddress: String
+        val vendorAddress: String,
+        val tokenBalance: BigInteger,
+        val enabled: Boolean
 )
