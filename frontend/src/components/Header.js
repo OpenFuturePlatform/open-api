@@ -23,7 +23,7 @@ class Header extends Component {
       <Menu.Item position="right">
         <Link className="item" to={'/scaffolds'}>Open Tokens: {this.props.auth.credits}</Link>
         <Link className="item" to={'/scaffolds'}>Scaffolds</Link>
-        <a className="item" href="/login?logout">Log Out</a>
+        <a className="item" href="/logout">Log Out</a>
       </Menu.Item>
     );
   }
