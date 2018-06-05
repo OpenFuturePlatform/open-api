@@ -127,9 +127,9 @@ package-docker:
     "
 
 .update-certificates-script: &update_certificates
-    - |
-      ssh ${DEPLOY_USER}@${DEPLOY_HOST} " 
-        docker run --rm -it --name certbot  \
+  - |
+    ssh ${DEPLOY_USER}@${DEPLOY_HOST} "
+      docker run --rm -it --name certbot  \
         -v /etc/letsencrypt:/etc/letsencrypt \
         -v /var/www/certbot:/var/www/acme-challenge \
         -v /var/log/letsencrypt:/var/log/letsencrypt \
