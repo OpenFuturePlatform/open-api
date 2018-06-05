@@ -1,4 +1,4 @@
-# OPEN Platform API
+# OPEN Platform API [![Twitter Follow](https://img.shields.io/twitter/follow/openplatformico.svg?style=social&label=Follow)](https://twitter.com/openplatformico)
 
 [![Release Version](https://img.shields.io/github/release/OpenFuturePlatform/open-api.svg?style=flat-square)](https://github.com/OpenFuturePlatform/open-api/releases)
 [![Release Date](https://img.shields.io/github/release-date/OpenFuturePlatform/open-api.svg?style=flat-square&colorB=007EC6)](https://github.com/OpenFuturePlatform/open-api/releases)
