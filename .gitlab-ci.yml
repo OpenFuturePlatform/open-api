@@ -15,6 +15,7 @@ variables:
     IMAGE_NAME: gcr.io/zinc-computer-205115/apiopenfuture
     IMAGE_TAG: ${CI_COMMIT_REF_NAME}-${CI_PIPELINE_ID}
 
+
 ###########################
 # Building
 ###########################
@@ -87,6 +88,7 @@ package-docker:
   except:
     - schedules    
 
+
 ###########################
 # Deployment
 ###########################
@@ -125,20 +127,6 @@ package-docker:
                  -e "OPEN_TOKEN_ADDRESS=${OPEN_TOKEN_ADDRESS}" \
                  ${IMAGE_NAME}:${IMAGE_TAG}
     "
-
-.update-certificates-script: &update_certificates
-  - |
-    ssh ${DEPLOY_USER}@${DEPLOY_HOST} "
-      docker run --rm -t --name certbot  \
-        -v /etc/letsencrypt:/etc/letsencrypt \
-        -v /var/www/certbot:/var/www/certbot \
-        -v /var/log/letsencrypt:/var/log/letsencrypt \
-        certbot/certbot \
-        certonly --webroot -w /var/www/certbot/ \
-        -d ${SERVER_NAME} \
-        --renew-by-default -m devops@zensoft.io --eff-email --agree-tos --manual-public-ip-logging-ok
-      "
-  - ssh ${DEPLOY_USER}@${DEPLOY_HOST} "sudo service nginx reload"
 
 deploy-development:
   stage: deploy
@@ -191,6 +179,25 @@ deploy-production:
     url: https://api.openfuture.io
   except:
     - schedules
+
+
+###########################
+# Certificates
+###########################
+.update-certificates-script: &update_certificates
+  - |
+    ssh ${DEPLOY_USER}@${DEPLOY_HOST} "
+      docker run --rm -t --name certbot  \
+        -v /etc/letsencrypt:/etc/letsencrypt \
+        -v /var/www/certbot:/var/www/certbot \
+        -v /var/log/letsencrypt:/var/log/letsencrypt \
+        certbot/certbot \
+        certonly --webroot -w /var/www/certbot/ \
+        -d ${SERVER_NAME} \
+        --renew-by-default -m devops@zensoft.io --eff-email --agree-tos --manual-public-ip-logging-ok
+      "
+  - ssh ${DEPLOY_USER}@${DEPLOY_HOST} "sudo service nginx reload"
+
 
 certificates-development:
   stage: certificates
