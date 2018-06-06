@@ -1,4 +1,5 @@
 plugins {
+    id 'jacoco'
     id "idea"
     id "org.jetbrains.kotlin.jvm" version "1.2.41"
     id "org.jetbrains.kotlin.kapt" version "1.2.41"
@@ -63,19 +64,39 @@ sourceSets {
     main.resources.srcDirs += 'frontend/build/resources'
 }
 
+// Kotlin
 compileKotlin {
     kotlinOptions {
         freeCompilerArgs = ["-Xjsr305=strict"]
         jvmTarget = "1.8"
     }
 }
-
 compileTestKotlin {
     kotlinOptions {
         freeCompilerArgs = ["-Xjsr305=strict"]
         jvmTarget = "1.8"
     }
 }
+
+// Jacoco
+jacocoTestReport {
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+
+    afterEvaluate {
+        classDirectories = files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                    'io/openfuture/api/*Application*',
+                    'io/openfuture/api/model/**',
+                    'io/openfuture/api/exception/**',
+                    'io/openfuture/api/config/**'
+            ])
+        })
+    }
+}
+check.dependsOn jacocoTestReport
 
 // Front
 processResources.dependsOn(':frontend:assemble')
