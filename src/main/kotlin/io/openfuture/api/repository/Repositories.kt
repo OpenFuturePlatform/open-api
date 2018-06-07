@@ -49,6 +49,6 @@ interface OpenKeyRepository : BaseRepository<OpenKey> {
 @Repository
 interface TransactionRepository : BaseRepository<Transaction> {
 
-    fun findAllByScaffold(scaffold: Scaffold): Page<Transaction>
+    fun findAllByScaffold(scaffold: Scaffold, pageable: Pageable): Page<Transaction>
 
 }
