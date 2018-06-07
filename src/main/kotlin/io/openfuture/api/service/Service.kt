@@ -1,8 +1,6 @@
 package io.openfuture.api.service
 
-import io.openfuture.api.domain.scaffold.DeployScaffoldRequest
-import io.openfuture.api.domain.scaffold.ScaffoldSummaryDto
-import io.openfuture.api.domain.scaffold.SetWebHookRequest
+import io.openfuture.api.domain.scaffold.*
 import io.openfuture.api.entity.auth.OpenKey
 import io.openfuture.api.entity.auth.User
 import io.openfuture.api.entity.scaffold.Scaffold
@@ -19,7 +17,11 @@ interface ScaffoldService {
 
     fun get(address: String): Scaffold
 
+    fun compile(request: CompileScaffoldRequest): CompiledScaffoldDto
+
     fun deploy(request: DeployScaffoldRequest): Scaffold
+
+    fun save(request: SaveScaffoldRequest): Scaffold
 
     fun setWebHook(address: String, request: SetWebHookRequest): Scaffold
 
