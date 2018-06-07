@@ -29,6 +29,8 @@ interface ScaffoldService {
 
     fun deactivate(address: String, user: User): ScaffoldSummaryDto
 
+    fun getQuota(user: User): ScaffoldQuotaDto
+
 }
 
 interface OpenKeyService {

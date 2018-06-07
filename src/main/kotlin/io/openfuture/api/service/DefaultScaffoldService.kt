@@ -190,6 +190,12 @@ class DefaultScaffoldService(
         return getScaffoldSummary(scaffold.address, user)
     }
 
+    @Transactional(readOnly = true)
+    override fun getQuota(user: User): ScaffoldQuotaDto {
+        val scaffoldCount = repository.countByEnabledIsFalseAndOpenKeyUser(user)
+        return ScaffoldQuotaDto(scaffoldCount, ENABLED_SCAFFOLD_TOKEN_COUNT)
+    }
+
     private fun callFunction(function: Function, address: String): MutableList<Type<Any>> {
         val encodedFunction = FunctionEncoder.encode(function)
         val credentials = properties.getCredentials()

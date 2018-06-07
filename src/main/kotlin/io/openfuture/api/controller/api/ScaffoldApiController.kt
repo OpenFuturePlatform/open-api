@@ -65,4 +65,7 @@ class ScaffoldApiController(
     fun deactivate(@CurrentUser user: User, @PathVariable address: String): ScaffoldSummaryDto =
             service.deactivate(address, user)
 
+    @GetMapping("/quota")
+    fun getQuota(@CurrentUser user: User): ScaffoldQuotaDto = service.getQuota(user)
+
 }
