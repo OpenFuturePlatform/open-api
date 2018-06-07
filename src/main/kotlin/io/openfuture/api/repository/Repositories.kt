@@ -24,6 +24,8 @@ interface UserRepository : BaseRepository<User> {
 @Repository
 interface ScaffoldRepository : BaseRepository<Scaffold> {
 
+    fun findByAddressAndOpenKeyUser(address: String, user: User): Scaffold?
+
     fun findByAddress(address: String): Scaffold?
 
     fun findAllByOpenKeyUser(user: User, pageable: Pageable): Page<Scaffold>
@@ -45,4 +47,8 @@ interface OpenKeyRepository : BaseRepository<OpenKey> {
 }
 
 @Repository
-interface TransactionRepository : BaseRepository<Transaction>
+interface TransactionRepository : BaseRepository<Transaction> {
+
+    fun findAllByScaffold(scaffold: Scaffold): Page<Transaction>
+
+}

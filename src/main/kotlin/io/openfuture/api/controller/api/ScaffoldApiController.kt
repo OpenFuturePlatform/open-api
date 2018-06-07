@@ -26,8 +26,8 @@ class ScaffoldApiController(
     }
 
     @GetMapping("/{address}")
-    fun get(@PathVariable address: String): ScaffoldDto {
-        val scaffold = service.get(address)
+    fun get(@CurrentUser user: User, @PathVariable address: String): ScaffoldDto {
+        val scaffold = service.get(address, user)
         return ScaffoldDto(scaffold)
     }
 
@@ -51,17 +51,18 @@ class ScaffoldApiController(
     }
 
     @PatchMapping("/{address}")
-    fun setWebHook(@Valid @RequestBody request: SetWebHookRequest, @PathVariable address: String): ScaffoldDto {
-        val scaffold = service.setWebHook(address, request)
+    fun setWebHook(@CurrentUser user: User, @Valid @RequestBody request: SetWebHookRequest,
+                   @PathVariable address: String): ScaffoldDto {
+        val scaffold = service.setWebHook(address, request, user)
         return ScaffoldDto(scaffold)
     }
 
     @GetMapping("/{address}/summary")
-    fun getScaffoldSummary(@PathVariable address: String): ScaffoldSummaryDto =
-            service.getScaffoldSummary(address)
+    fun getScaffoldSummary(@CurrentUser user: User, @PathVariable address: String): ScaffoldSummaryDto =
+            service.getScaffoldSummary(address, user)
 
     @PostMapping("/{address}/doDeactivate")
-    fun deactivate(@PathVariable address: String): ScaffoldSummaryDto =
-            service.deactivate(address)
+    fun deactivate(@CurrentUser user: User, @PathVariable address: String): ScaffoldSummaryDto =
+            service.deactivate(address, user)
 
 }

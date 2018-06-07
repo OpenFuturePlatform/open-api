@@ -75,7 +75,7 @@ class DefaultScaffoldService(
             repository.findAllByOpenKeyUser(user, pageRequest)
 
     @Transactional(readOnly = true)
-    override fun get(address: String): Scaffold = repository.findByAddress(address)
+    override fun get(address: String, user: User): Scaffold = repository.findByAddressAndOpenKeyUser(address, user)
             ?: throw NotFoundException("Not found scaffold with address $address")
 
     @Transactional(readOnly = true)
@@ -139,8 +139,8 @@ class DefaultScaffoldService(
     }
 
     @Transactional
-    override fun setWebHook(address: String, request: SetWebHookRequest): Scaffold {
-        val scaffold = get(address)
+    override fun setWebHook(address: String, request: SetWebHookRequest, user: User): Scaffold {
+        val scaffold = get(address, user)
 
         scaffold.webHook = request.webHook
 
@@ -148,8 +148,8 @@ class DefaultScaffoldService(
     }
 
     @Transactional(readOnly = true)
-    override fun getScaffoldSummary(address: String): ScaffoldSummaryDto {
-        val scaffold = get(address)
+    override fun getScaffoldSummary(address: String, user: User): ScaffoldSummaryDto {
+        val scaffold = get(address, user)
         val function = Function(
                 GET_SCAFFOLD_SUMMARY_METHOD_NAME,
                 asList(),
@@ -178,8 +178,8 @@ class DefaultScaffoldService(
     }
 
     @Transactional(readOnly = true)
-    override fun deactivate(address: String): ScaffoldSummaryDto {
-        val scaffold = get(address)
+    override fun deactivate(address: String, user: User): ScaffoldSummaryDto {
+        val scaffold = get(address, user)
         val function = Function(
                 DEACTIVATE_SCAFFOLD_METHOD_NAME,
                 asList(),
@@ -187,7 +187,7 @@ class DefaultScaffoldService(
         )
 
         callFunction(function, scaffold.address)
-        return getScaffoldSummary(scaffold.address)
+        return getScaffoldSummary(scaffold.address, user)
     }
 
     private fun callFunction(function: Function, address: String): MutableList<Type<Any>> {
