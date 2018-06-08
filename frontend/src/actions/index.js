@@ -138,10 +138,6 @@ let ethAccountTimer;
 
 const setEthAccount = (account, dispatch) => {
   if (!account) {
-    dispatch({
-      type: SET_CURRENT_ETH_ACCOUNT,
-      payload: {account: '', balance: null}
-    });
     return;
   }
   web3.eth.getBalance(account, (error, balance) => {
