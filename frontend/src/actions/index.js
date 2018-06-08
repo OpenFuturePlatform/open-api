@@ -81,7 +81,7 @@ export const deployContract = (formValues, history) => async dispatch => {
   dispatch({type: SHOW_MODAL, payload: {showModal: true}});
 
   try {
-    res = await axios.post('/api/scaffolds', formValues);
+    res = await axios.post('/api/scaffolds/doDeploy', formValues);
     dispatch({
       type: SHOW_MODAL,
       payload: {contract: res.data, showLoader: false},
