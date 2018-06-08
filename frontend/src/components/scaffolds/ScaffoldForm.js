@@ -12,7 +12,7 @@ import ScaffoldField from './ScaffoldField';
 import ScaffoldPropertyFields from './ScaffoldPropertyFields';
 import WrappedInput from './wrappedComponents/WrappedInput';
 import {convertCurrencies, deployContract, subscribeEthAccount} from '../../actions';
-import {compileContract} from "../../actions/index";
+import {compileContract, unsubscribeEthAccount} from "../../actions/index";
 
 class ScaffoldForm extends Component {
 
@@ -20,19 +20,45 @@ class ScaffoldForm extends Component {
     super(props);
     this.handleOnConvert = this.handleOnConvert.bind(this);
     this.handleOnSubmit = this.handleOnSubmit.bind(this);
+    this.validateAddress = this.validateAddress.bind(this);
+    this.validateBalance = this.validateBalance.bind(this);
   }
 
   componentDidMount() {
     this.props.actions.subscribeEthAccount();
+    this.initDeveloperAddressValidation();
+  }
+
+  componentWillUnmount() {
+    this.props.actions.unsubscribeEthAccount();
   }
 
   componentDidUpdate(prevProps) {
     const prevEthAccount = prevProps.ethAccount;
-    const {ethAccount, change} = this.props;
+    const {ethAccount} = this.props;
 
     if (prevEthAccount.account !== ethAccount.account) {
-      change('developerAddress', ethAccount.account);
+      this.initDeveloperAddressValidation();
     }
+  }
+
+  initDeveloperAddressValidation() {
+    const {ethAccount, blur, dispatch} = this.props;
+    dispatch(blur('developerAddress', ethAccount.account));
+  }
+
+  validateAddress(value) {
+    const {ethAccount} = this.props;
+    return !ethAccount.account ? 'start MetaMask' : null;
+  }
+
+  validateBalance(value) {
+    const {ethAccount} = this.props;
+    if (!value) {
+      return null;
+    }
+
+    return !ethAccount.balance ? 'low balance' : null;
   }
 
   async handleOnConvert(newCurrency) {
@@ -57,7 +83,7 @@ class ScaffoldForm extends Component {
   }
 
   render() {
-    const {formValues, invalid, scaffoldFieldsErrors, openKeyOptions} = this.props;
+    const {formValues, invalid, scaffoldFieldsErrors, openKeyOptions, errors} = this.props;
     const fieldErrors = _.flatten(scaffoldFieldsErrors).length !== 0 ? true : false;
     const disableSubmit = invalid || fieldErrors;
 
@@ -91,6 +117,7 @@ class ScaffoldForm extends Component {
                        placeholder="Developer Address where funds will be sent"
                        component={ScaffoldField}
                        type="text"
+                       validate={[this.validateAddress, this.validateBalance]}
                        name="developerAddress"/>
               </Grid.Column>
               <Grid.Column width={16}>
@@ -193,7 +220,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = dispatch => ({
   actions: bindActionCreators(
-    {convertCurrencies, deployContract, subscribeEthAccount, compileContract},
+    {convertCurrencies, deployContract, subscribeEthAccount, compileContract, unsubscribeEthAccount},
     dispatch,
   ),
 });
@@ -211,7 +238,7 @@ ScaffoldForm = reduxForm({
     // currency: "USD",
     // description: "hello " + Math.round(Math.random()*1000),
     // developerAddress: "",
-    // fiatAmount: "1234",
+    // fiatAmount: "555",
     // openKey: "op_pk_9d3e3c1e-2770-4eca-8453-0cef89b51591",
     // properties: [{
     //   defaultValue: "1",
