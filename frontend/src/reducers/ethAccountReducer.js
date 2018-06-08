@@ -2,7 +2,8 @@ import {SET_CURRENT_ETH_ACCOUNT} from '../actions/types';
 
 const initialState = {
   account: '',
-  balance: null
+  balance: null,
+  trueNetwork: false
 };
 
 export default function (state = initialState, action) {

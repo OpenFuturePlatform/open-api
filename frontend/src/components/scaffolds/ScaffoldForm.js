@@ -13,6 +13,8 @@ import ScaffoldPropertyFields from './ScaffoldPropertyFields';
 import WrappedInput from './wrappedComponents/WrappedInput';
 import {convertCurrencies, deployContract, subscribeEthAccount} from '../../actions';
 import {compileContract, unsubscribeEthAccount} from "../../actions/index";
+import {MIN_BALANCE} from "../../const/index";
+import web3 from "../../utils/web3";
 
 class ScaffoldForm extends Component {
 
@@ -20,7 +22,7 @@ class ScaffoldForm extends Component {
     super(props);
     this.handleOnConvert = this.handleOnConvert.bind(this);
     this.handleOnSubmit = this.handleOnSubmit.bind(this);
-    this.validateAddress = this.validateAddress.bind(this);
+    this.validateMetaMask = this.validateMetaMask.bind(this);
     this.validateBalance = this.validateBalance.bind(this);
   }
 
@@ -36,8 +38,11 @@ class ScaffoldForm extends Component {
   componentDidUpdate(prevProps) {
     const prevEthAccount = prevProps.ethAccount;
     const {ethAccount} = this.props;
+    const accountChanged = prevEthAccount.account !== ethAccount.account;
+    const networkChanged = prevEthAccount.trueNetwork !== ethAccount.trueNetwork;
+    const balanceChanged = prevEthAccount.balance !== ethAccount.balance;
 
-    if (prevEthAccount.account !== ethAccount.account) {
+    if (accountChanged || networkChanged || balanceChanged) {
       this.initDeveloperAddressValidation();
     }
   }
@@ -47,9 +52,14 @@ class ScaffoldForm extends Component {
     dispatch(blur('developerAddress', ethAccount.account));
   }
 
-  validateAddress(value) {
-    const {ethAccount} = this.props;
-    return !ethAccount.account ? 'start MetaMask' : null;
+  validateMetaMask() {
+    const {trueNetwork} = this.props.ethAccount;
+
+    if (!web3) {
+      return 'Install MetaMask and refresh page.'
+    }
+
+    return !trueNetwork ? 'Log in to MetaMask and choose MainNetwork' : null;
   }
 
   validateBalance(value) {
@@ -58,7 +68,9 @@ class ScaffoldForm extends Component {
       return null;
     }
 
-    return !ethAccount.balance ? 'low balance' : null;
+    return ethAccount.balance < MIN_BALANCE ?
+      'Minimum balance: 0,0087 Eth. Change MetaMask account or top up the balance.'
+      : null;
   }
 
   async handleOnConvert(newCurrency) {
@@ -75,8 +87,8 @@ class ScaffoldForm extends Component {
     const {actions, history, formValues} = this.props;
     e.preventDefault();
     try {
-      await actions.deployContract(formValues);
-      history.push('/scaffolds')
+      const contractAddress = await actions.deployContract(formValues);
+      history.push(`/scaffolds/${contractAddress}`)
     } catch (e) {
       console.warn('Deployment Error: ', e);
     }
@@ -117,7 +129,7 @@ class ScaffoldForm extends Component {
                        placeholder="Developer Address where funds will be sent"
                        component={ScaffoldField}
                        type="text"
-                       validate={[this.validateAddress, this.validateBalance]}
+                       validate={[this.validateMetaMask, this.validateBalance]}
                        name="developerAddress"/>
               </Grid.Column>
               <Grid.Column width={16}>

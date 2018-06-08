@@ -89,7 +89,7 @@ export const processDeploy = async (contract, bin, formValues) => {
 };
 
 export const deployContract = (formValues) => async dispatch => {
-  dispatch({type: SHOW_MODAL, payload: {showModal: true}});
+  dispatch({type: SHOW_MODAL, payload: {showModal: true, showLoader: true}});
   try {
     const {abi, bin} = await compileContract(formValues.openKey, formValues.properties);
     const contract = new web3.eth.Contract(JSON.parse(abi));
@@ -100,22 +100,22 @@ export const deployContract = (formValues) => async dispatch => {
 
     dispatch({
       type: SHOW_MODAL,
-      payload: {contract: response.data, showLoader: false, showModal: false},
+      payload: {contract: response.data, showLoader: false},
     });
 
-    return response;
+    return address;
 
   } catch (err) {
 
     let message = 'Error in deploy contract';
-    if (err.message) {
-      message = err.message;
-    } else {
+    if (err.response) {
       const response = err ? err.response : null;
       const status = response ? response.status : '';
       const data = response ? response.data : null;
       const backendMessage = data ? data.message : null;
       message = status + ': ' + (backendMessage || 'Error in deploy contract');
+    } else {
+      message = err.message;
     }
 
     dispatch({
@@ -127,16 +127,16 @@ export const deployContract = (formValues) => async dispatch => {
 };
 
 export const closeModal = () => async dispatch => {
-  dispatch({type: SHOW_MODAL, payload: {showModal: false, error: ''}});
+  dispatch({type: SHOW_MODAL, payload: {showModal: false, error: '', contract: '', showLoader: true}});
 };
 
 export const closeWithdrawalModal = () => async dispatch => {
-  dispatch({type: SHOW_WITHDRAWAL_MODAL, payload: {showModal: false}});
+  dispatch({type: SHOW_WITHDRAWAL_MODAL, payload: {showModal: false, contract: '', showLoader: true}});
 };
 
 let ethAccountTimer;
 
-const setEthAccount = (account, dispatch) => {
+const setEthAccount = account => async dispatch => {
   if (!account) {
     dispatch({
       type: SET_CURRENT_ETH_ACCOUNT,
@@ -144,30 +144,26 @@ const setEthAccount = (account, dispatch) => {
     });
     return;
   }
-  web3.eth.getBalance(account, (error, balance) => {
+  web3.eth.getBalance(account, async (error, balance) => {
+    const netId = await web3.eth.net.getId();
     dispatch({
       type: SET_CURRENT_ETH_ACCOUNT,
-      payload: {account, balance: Number(balance) / 1000000000000000000}
-    })
+      payload: {account, balance: Number(balance) / 1000000000000000000, trueNetwork: netId === 1}
+    });
   });
 };
 
 export const subscribeEthAccount = () => async dispatch => {
-  if (ethAccountTimer) {
+  if (ethAccountTimer || !web3) {
     return;
   }
 
   let account;
-  web3.eth.getAccounts((error, newAccounts) => {
-    account = newAccounts[0];
-    setEthAccount(account, dispatch);
-  });
-
   ethAccountTimer = setInterval(() => {
     web3.eth.getAccounts((error, newAccounts) => {
       if (newAccounts[0] !== account) {
         account = newAccounts[0];
-        setEthAccount(account, dispatch);
+        dispatch(setEthAccount(account));
       }
     });
   }, 1000);
