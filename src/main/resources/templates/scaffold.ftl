@@ -120,7 +120,7 @@ contract OpenScaffold {
         activatedScaffold(false);
     }
 
-    function(${CUSTOM_SCAFFOLD_PARAMETERS}) public payable activated {
+    function payVendor(${CUSTOM_SCAFFOLD_PARAMETERS}) public payable activated {
         require(msg.value == scaffoldAmount);
         scaffoldTransactionIndex++;
 
