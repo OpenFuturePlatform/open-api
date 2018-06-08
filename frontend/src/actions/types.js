@@ -7,3 +7,5 @@ export const GET_SCAFFOLD_FIELDS = 'get_scaffold_fields';
 export const CONVERT_CURRENCIES = 'convert_currencies';
 export const SHOW_MODAL = 'show_modal';
 export const SHOW_WITHDRAWAL_MODAL = 'show_withdrawal_modal';
+export const SET_CURRENT_ETH_ACCOUNT = 'set_current_eth_account';
+

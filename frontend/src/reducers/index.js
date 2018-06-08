@@ -1,6 +1,5 @@
 import {combineReducers} from 'redux';
 import {reducer as reduxForm} from 'redux-form';
-// reducers
 import authReducer from './authReducer';
 import currencyConversionReducer from './currencyConversionReducer';
 import currentScaffoldInstanceReducer from './currentScaffoldInstanceReducer';
@@ -9,6 +8,7 @@ import onchainScaffoldSummaryReducer from './onchainScaffoldSummaryReducer';
 import scaffoldFeildsReducer from './scaffoldFeildsReducer';
 import scaffoldsReducer from './scaffoldsReducer';
 import withdrawModalReducer from './withdrawModalReducer';
+import ethAccountReducer from "./ethAccountReducer";
 
 export default combineReducers({
   form: reduxForm,
@@ -19,5 +19,6 @@ export default combineReducers({
   onchainScaffoldSummary: onchainScaffoldSummaryReducer,
   scaffoldFeilds: scaffoldFeildsReducer,
   scaffolds: scaffoldsReducer,
-  withdrawModalInfo: withdrawModalReducer
+  withdrawModalInfo: withdrawModalReducer,
+  ethAccount: ethAccountReducer
 });

@@ -67,17 +67,17 @@ const convertCurrencies = conversionValues => async dispatch => {
   }
 };
 
-export const deployContractByServer = (formValues, history) => async dispatch => {
+export const deployContractByApi = (formValues, history) => async dispatch => {
   let res = {};
   dispatch({type: SHOW_MODAL, payload: {showModal: true}});
 
   try {
     res = await axios.post('/api/scaffolds/doDeploy', formValues);
-    history.push('/scaffolds');
     dispatch({
       type: SHOW_MODAL,
       payload: {contract: res.data, showLoader: false},
     });
+    return res;
   } catch (err) {
     const response = err ? err.response : null;
     const status = response ? response.status : '';
@@ -89,7 +89,7 @@ export const deployContractByServer = (formValues, history) => async dispatch =>
       type: SHOW_MODAL,
       payload: {showLoader: false, error: message},
     });
-    console.warn('Error in deploy contract: ' + message);
+    throw new Error('Error in deploy contract: ' + message);
   }
 };
 
@@ -103,15 +103,16 @@ export const processDeploy = async (contract, bin, formValues) => {
     data: bin,
     arguments: [
       formValues.developerAddress,
+      formValues.developerAddress,
       formValues.description,
       formValues.fiatAmount,
       formValues.currency,
       web3.utils.toWei(formValues.conversionAmount.toString())]
   }).send({
     from: formValues.developerAddress,
-    gas: 1450000,
+    gas: 1700000,
     gasPrice: '10000000000'
-  });
+  }).on('error', (error) => console.log('>> ', error));
 };
 
 export const deployContract = (formValues) => async dispatch => {
@@ -174,7 +175,7 @@ const setEthAccount = account => async dispatch => {
     const netId = await web3.eth.net.getId();
     dispatch({
       type: SET_CURRENT_ETH_ACCOUNT,
-      payload: {account, balance: Number(balance) / 1000000000000000000, trueNetwork: netId === 1}
+      payload: {account, balance: Number(balance) / 1000000000000000000, trueNetwork: netId !== 1}
     });
   });
 };

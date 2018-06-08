@@ -12,7 +12,7 @@ import ScaffoldField from './ScaffoldField';
 import ScaffoldPropertyFields from './ScaffoldPropertyFields';
 import WrappedInput from './wrappedComponents/WrappedInput';
 import {convertCurrencies, deployContract, subscribeEthAccount} from '../../actions';
-import {compileContract, unsubscribeEthAccount} from "../../actions/index";
+import {compileContract, deployContractByApi, unsubscribeEthAccount} from "../../actions/index";
 import {MIN_BALANCE} from "../../const/index";
 import web3 from "../../utils/web3";
 
@@ -27,8 +27,10 @@ class ScaffoldForm extends Component {
   }
 
   componentDidMount() {
-    this.props.actions.subscribeEthAccount();
-    this.initDeveloperAddressValidation();
+    if (!this.props.isDeployByApi) {
+      this.props.actions.subscribeEthAccount();
+      this.initDeveloperAddressValidation();
+    }
   }
 
   componentWillUnmount() {
@@ -84,20 +86,28 @@ class ScaffoldForm extends Component {
   }
 
   async handleOnSubmit(e) {
-    const {actions, history, formValues} = this.props;
+    const {actions, history, formValues, isDeployByApi} = this.props;
     e.preventDefault();
     try {
-      const contractAddress = await actions.deployContract(formValues);
-      history.push(`/scaffolds/${contractAddress}`)
+      let contractAddress;
+
+      if (isDeployByApi) {
+        const response = await actions.deployContractByApi(formValues);
+        history.push(`/scaffolds`)
+      } else {
+        contractAddress = await actions.deployContract(formValues);
+        history.push(`/scaffolds/${contractAddress}`)
+      }
     } catch (e) {
       console.warn('Deployment Error: ', e);
     }
   }
 
   render() {
-    const {formValues, invalid, scaffoldFieldsErrors, openKeyOptions, errors} = this.props;
+    const {formValues, invalid, scaffoldFieldsErrors, openKeyOptions, isDeployByApi} = this.props;
     const fieldErrors = _.flatten(scaffoldFieldsErrors).length !== 0 ? true : false;
     const disableSubmit = invalid || fieldErrors;
+    const developerAddressValidations = !isDeployByApi ? [this.validateMetaMask, this.validateBalance] : []
 
     return (
       <div>
@@ -129,7 +139,7 @@ class ScaffoldForm extends Component {
                        placeholder="Developer Address where funds will be sent"
                        component={ScaffoldField}
                        type="text"
-                       validate={[this.validateMetaMask, this.validateBalance]}
+                       validate={developerAddressValidations}
                        name="developerAddress"/>
               </Grid.Column>
               <Grid.Column width={16}>
@@ -220,8 +230,11 @@ const mapStateToProps = (state) => {
   const openKeyOptions = state.auth ? state.auth.openKeys
     .filter(it => it.enabled).map(it => ({text: it.value, value: it.value})) : [];
   const ethAccount = state.ethAccount;
+  const roles = state.auth ? state.auth.roles : [];
+  const isDeployByApi = roles.includes('ROLE_DEPLOY');
 
   return {
+    isDeployByApi,
     ethAccount,
     formValues,
     openKey,
@@ -232,7 +245,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = dispatch => ({
   actions: bindActionCreators(
-    {convertCurrencies, deployContract, subscribeEthAccount, compileContract, unsubscribeEthAccount},
+    {convertCurrencies, deployContract, subscribeEthAccount, compileContract, unsubscribeEthAccount, deployContractByApi},
     dispatch,
   ),
 });
