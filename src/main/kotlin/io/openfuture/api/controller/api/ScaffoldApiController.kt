@@ -6,7 +6,7 @@ import io.openfuture.api.domain.PageResponse
 import io.openfuture.api.domain.scaffold.*
 import io.openfuture.api.entity.auth.User
 import io.openfuture.api.service.ScaffoldService
-import org.springframework.security.access.AccessDeniedException
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
@@ -35,11 +35,9 @@ class ScaffoldApiController(
     fun compile(@Valid @RequestBody request: CompileScaffoldRequest): CompiledScaffoldDto =
             service.compile(request)
 
+    @PreAuthorize("hasRole('DEPLOY')")
     @PostMapping("/doDeploy")
     fun deploy(@CurrentUser user: User, @Valid @RequestBody request: DeployScaffoldRequest): ScaffoldDto {
-        if (user.roles.none { it.key == "ROLE_DEPLOY" }) {
-            throw AccessDeniedException("User not contain enough roles")
-        }
         val scaffold = service.deploy(request)
         return ScaffoldDto(scaffold)
     }

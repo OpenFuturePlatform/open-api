@@ -6,9 +6,10 @@ import io.openfuture.api.config.propety.AuthorizationProperties
 import io.openfuture.api.service.OpenKeyService
 import io.openfuture.api.service.UserService
 import org.springframework.context.annotation.Configuration
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
-import org.springframework.security.config.http.SessionCreationPolicy
+import org.springframework.security.config.http.SessionCreationPolicy.STATELESS
 import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter
 
 
@@ -16,10 +17,11 @@ import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationF
  * @author Kadach Alexey
  */
 @Configuration
+@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 class SecurityConfig(
         private val userService: UserService,
         private val keyService: OpenKeyService,
-        private val properites: AuthorizationProperties
+        private val properties: AuthorizationProperties
 ) : WebSecurityConfigurerAdapter() {
 
     override fun configure(http: HttpSecurity) {
@@ -37,14 +39,18 @@ class SecurityConfig(
 
                 .and()
 
-                .addFilterAfter(AuthorizationFilter(properites, keyService), OAuth2LoginAuthenticationFilter::class.java)
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .addFilterAfter(AuthorizationFilter(properties, keyService), OAuth2LoginAuthenticationFilter::class.java)
+                .sessionManagement().sessionCreationPolicy(STATELESS)
 
                 .and()
 
                 .oauth2Login()
                     .loginPage("/")
-                    .successHandler(AuthenticationSuccessHandler(properites, userService))
+                    .successHandler(AuthenticationSuccessHandler(properties, userService))
+
+                .and()
+
+                .logout().disable()
         // @formatter:on
     }
 

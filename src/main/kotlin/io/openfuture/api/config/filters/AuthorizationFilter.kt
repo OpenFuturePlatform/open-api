@@ -26,7 +26,7 @@ class AuthorizationFilter(
         request as HttpServletRequest
 
         val key = request.getHeader(AUTHORIZATION)
-                ?: request.cookies?.firstOrNull { it.name == properties.cookieName }?.value
+                ?: request.cookies?.firstOrNull { properties.cookieName == it.name }?.value
 
         val openKey = key?.let { keyService.find(it) }
         openKey?.let {
