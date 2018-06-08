@@ -1,6 +1,6 @@
 package io.openfuture.api.entity.scaffold
 
-import io.openfuture.api.domain.scaffold.DeployScaffoldRequest
+import io.openfuture.api.domain.scaffold.SaveScaffoldRequest
 import io.openfuture.api.entity.auth.OpenKey
 import io.openfuture.api.entity.base.BaseModel
 import io.openfuture.api.util.DictionaryUtils
@@ -52,10 +52,10 @@ class Scaffold(
     fun getCurrency() = DictionaryUtils.valueOf(Currency::class.java, currencyId)
 
     companion object {
-        fun of(address: String, openKey: OpenKey, abi: String, scaffold: DeployScaffoldRequest): Scaffold = Scaffold(
-                address,
+        fun of(scaffold: SaveScaffoldRequest, openKey: OpenKey): Scaffold = Scaffold(
+                scaffold.address!!,
                 openKey,
-                abi,
+                scaffold.abi!!,
                 scaffold.developerAddress!!,
                 scaffold.description!!,
                 scaffold.fiatAmount!!,
