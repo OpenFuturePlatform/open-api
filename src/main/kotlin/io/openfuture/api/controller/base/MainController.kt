@@ -1,18 +1,23 @@
 package io.openfuture.api.controller.base
 
-import org.springframework.security.core.context.SecurityContextHolder
+import io.openfuture.api.config.propety.AuthorizationProperties
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
+import javax.servlet.http.Cookie
+import javax.servlet.http.HttpServletResponse
 
 /**
  * @author Kadach Alexey
  */
 @Controller
-class MainController {
+class MainController(
+        private val properties: AuthorizationProperties
+) {
 
     @GetMapping("/logout")
-    fun logout(): String {
-        SecurityContextHolder.getContext().authentication = null
+    fun logout(response: HttpServletResponse): String {
+        val cookie = Cookie(properties.cookieName, null)
+        response.addCookie(cookie)
         return "redirect:/"
     }
 

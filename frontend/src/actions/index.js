@@ -67,6 +67,32 @@ const convertCurrencies = conversionValues => async dispatch => {
   }
 };
 
+export const deployContractByServer = (formValues, history) => async dispatch => {
+  let res = {};
+  dispatch({type: SHOW_MODAL, payload: {showModal: true}});
+
+  try {
+    res = await axios.post('/api/scaffolds/doDeploy', formValues);
+    history.push('/scaffolds');
+    dispatch({
+      type: SHOW_MODAL,
+      payload: {contract: res.data, showLoader: false},
+    });
+  } catch (err) {
+    const response = err ? err.response : null;
+    const status = response ? response.status : '';
+    const data = response ? response.data : null;
+    const backendMessage = data ? data.message : null;
+    const message = status + ': ' + (backendMessage || 'Error in deploy contract');
+
+    dispatch({
+      type: SHOW_MODAL,
+      payload: {showLoader: false, error: message},
+    });
+    console.warn('Error in deploy contract: ' + message);
+  }
+};
+
 export const compileContract = async (openKey, properties) => {
   const response = await axios.post('/api/scaffolds/doCompile', {openKey, properties});
   return response.data;

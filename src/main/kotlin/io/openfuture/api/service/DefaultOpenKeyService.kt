@@ -22,6 +22,9 @@ class DefaultOpenKeyService(
     override fun get(key: String): OpenKey = repository.findByValue(key)
             ?: throw NotFoundException("Not found key $key")
 
+    @Transactional(readOnly = true)
+    override fun find(key: String): OpenKey? = repository.findByValue(key)
+
     @Transactional
     override fun generate(user: User): OpenKey = repository.save(OpenKey(user))
 

@@ -15,7 +15,7 @@ interface ScaffoldService {
 
     fun getAll(user: User, pageRequest: Pageable): Page<Scaffold>
 
-    fun get(address: String): Scaffold
+    fun get(address: String, user: User): Scaffold
 
     fun compile(request: CompileScaffoldRequest): CompiledScaffoldDto
 
@@ -23,11 +23,13 @@ interface ScaffoldService {
 
     fun save(request: SaveScaffoldRequest): Scaffold
 
-    fun setWebHook(address: String, request: SetWebHookRequest): Scaffold
+    fun setWebHook(address: String, request: SetWebHookRequest, user: User): Scaffold
 
-    fun getScaffoldSummary(address: String): ScaffoldSummaryDto
+    fun getScaffoldSummary(address: String, user: User): ScaffoldSummaryDto
 
-    fun deactivate(address: String): ScaffoldSummaryDto
+    fun deactivate(address: String, user: User): ScaffoldSummaryDto
+
+    fun getQuota(user: User): ScaffoldQuotaDto
 
 }
 
@@ -36,6 +38,8 @@ interface OpenKeyService {
     fun getAllByUser(user: User): List<OpenKey>
 
     fun get(key: String): OpenKey
+
+    fun find(key: String): OpenKey?
 
     fun generate(user: User): OpenKey
 
@@ -50,6 +54,8 @@ interface UserService {
 }
 
 interface TransactionService {
+
+    fun getAll(scaffold: Scaffold, pageRequest: Pageable): Page<Transaction>
 
     fun save(transaction: Transaction): Transaction
 

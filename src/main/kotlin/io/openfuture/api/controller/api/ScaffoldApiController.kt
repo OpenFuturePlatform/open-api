@@ -6,7 +6,7 @@ import io.openfuture.api.domain.PageResponse
 import io.openfuture.api.domain.scaffold.*
 import io.openfuture.api.entity.auth.User
 import io.openfuture.api.service.ScaffoldService
-import org.springframework.security.access.AccessDeniedException
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
@@ -26,8 +26,8 @@ class ScaffoldApiController(
     }
 
     @GetMapping("/{address}")
-    fun get(@PathVariable address: String): ScaffoldDto {
-        val scaffold = service.get(address)
+    fun get(@CurrentUser user: User, @PathVariable address: String): ScaffoldDto {
+        val scaffold = service.get(address, user)
         return ScaffoldDto(scaffold)
     }
 
@@ -35,11 +35,9 @@ class ScaffoldApiController(
     fun compile(@Valid @RequestBody request: CompileScaffoldRequest): CompiledScaffoldDto =
             service.compile(request)
 
+    @PreAuthorize("hasRole('DEPLOY')")
     @PostMapping("/doDeploy")
     fun deploy(@CurrentUser user: User, @Valid @RequestBody request: DeployScaffoldRequest): ScaffoldDto {
-        if (user.roles.none { it.key == "ROLE_DEPLOY" }) {
-            throw AccessDeniedException("User not contain enough roles")
-        }
         val scaffold = service.deploy(request)
         return ScaffoldDto(scaffold)
     }
@@ -51,17 +49,21 @@ class ScaffoldApiController(
     }
 
     @PatchMapping("/{address}")
-    fun setWebHook(@Valid @RequestBody request: SetWebHookRequest, @PathVariable address: String): ScaffoldDto {
-        val scaffold = service.setWebHook(address, request)
+    fun setWebHook(@CurrentUser user: User, @Valid @RequestBody request: SetWebHookRequest,
+                   @PathVariable address: String): ScaffoldDto {
+        val scaffold = service.setWebHook(address, request, user)
         return ScaffoldDto(scaffold)
     }
 
     @GetMapping("/{address}/summary")
-    fun getScaffoldSummary(@PathVariable address: String): ScaffoldSummaryDto =
-            service.getScaffoldSummary(address)
+    fun getScaffoldSummary(@CurrentUser user: User, @PathVariable address: String): ScaffoldSummaryDto =
+            service.getScaffoldSummary(address, user)
 
     @PostMapping("/{address}/doDeactivate")
-    fun deactivate(@PathVariable address: String): ScaffoldSummaryDto =
-            service.deactivate(address)
+    fun deactivate(@CurrentUser user: User, @PathVariable address: String): ScaffoldSummaryDto =
+            service.deactivate(address, user)
+
+    @GetMapping("/quota")
+    fun getQuota(@CurrentUser user: User): ScaffoldQuotaDto = service.getQuota(user)
 
 }
