@@ -49,10 +49,10 @@ class SecurityConfig(
                     .authorizationEndpoint()
                     .authorizationRequestRepository(OAuth2AuthorizationRequestRepository())
 
-                .and()
+                    .and()
 
-                .loginPage("/")
-                .successHandler(AuthenticationSuccessHandler(properties, userService))
+                    .loginPage("/")
+                    .successHandler(AuthenticationSuccessHandler(properties, userService))
 
                 .and()
 

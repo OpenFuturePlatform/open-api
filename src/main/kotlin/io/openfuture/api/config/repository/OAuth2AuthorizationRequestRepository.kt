@@ -15,19 +15,19 @@ import javax.servlet.http.HttpServletResponse
 class OAuth2AuthorizationRequestRepository : AuthorizationRequestRepository<OAuth2AuthorizationRequest> {
 
     companion object {
-        private const val SESSION_COOKIE_NAME = "auth_request"
+        private const val AUTHORIZATION_COOKIE_NAME = "auth_request"
 
         fun deleteAuthCookies(request: HttpServletRequest, response: HttpServletResponse) {
-            val isSessionCookieExists = request.cookies.any({ SESSION_COOKIE_NAME == it.name })
+            val isSessionCookieExists = request.cookies.any({ AUTHORIZATION_COOKIE_NAME == it.name })
 
             if (isSessionCookieExists) {
-                CookieUtils.delete(response, SESSION_COOKIE_NAME, StringUtils.EMPTY)
+                CookieUtils.delete(response, AUTHORIZATION_COOKIE_NAME, StringUtils.EMPTY)
             }
         }
     }
 
     override fun loadAuthorizationRequest(request: HttpServletRequest): OAuth2AuthorizationRequest {
-        val authCookie = request.cookies.find({ SESSION_COOKIE_NAME == it.name })
+        val authCookie = request.cookies.find({ AUTHORIZATION_COOKIE_NAME == it.name })
 
         return SerializationUtils.deserialize(Base64.getUrlDecoder().decode(authCookie?.value))
     }
@@ -36,7 +36,7 @@ class OAuth2AuthorizationRequestRepository : AuthorizationRequestRepository<OAut
                                           response: HttpServletResponse) {
         val serializedAuthorizationRequest = Base64.getUrlEncoder().encodeToString(SerializationUtils.serialize(authorizationRequest))
 
-        CookieUtils.add(response, SESSION_COOKIE_NAME, serializedAuthorizationRequest)
+        CookieUtils.add(response, AUTHORIZATION_COOKIE_NAME, serializedAuthorizationRequest)
     }
 
     override fun removeAuthorizationRequest(request: HttpServletRequest): OAuth2AuthorizationRequest {
