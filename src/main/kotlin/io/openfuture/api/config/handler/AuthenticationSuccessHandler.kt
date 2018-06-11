@@ -1,7 +1,7 @@
 package io.openfuture.api.config.handler
 
-import io.openfuture.api.config.OAuth2AuthorizationRequestRepository
 import io.openfuture.api.config.propety.AuthorizationProperties
+import io.openfuture.api.config.repository.OAuth2AuthorizationRequestRepository
 import io.openfuture.api.entity.auth.User
 import io.openfuture.api.service.UserService
 import io.openfuture.api.util.CookieUtils

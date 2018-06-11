@@ -1,4 +1,4 @@
-package io.openfuture.api.config
+package io.openfuture.api.config.repository
 
 import io.openfuture.api.util.CookieUtils
 import org.apache.commons.lang3.SerializationUtils
