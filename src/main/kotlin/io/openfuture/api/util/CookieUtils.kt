@@ -8,13 +8,13 @@ import javax.servlet.http.HttpServletResponse
  */
 object CookieUtils {
 
-    fun add(name: String, value: String, response: HttpServletResponse) {
+    fun add(response: HttpServletResponse, name: String, value: String) {
         val cookie = create(name, value)
 
         response.addCookie(cookie)
     }
 
-    fun expire(name: String, value: String, response: HttpServletResponse) {
+    fun delete(response: HttpServletResponse, name: String, value: String) {
         val cookie = create(name, value)
         cookie.maxAge = 0
 

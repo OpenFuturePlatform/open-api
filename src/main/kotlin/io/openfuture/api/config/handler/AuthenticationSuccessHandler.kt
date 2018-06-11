@@ -26,7 +26,7 @@ class AuthenticationSuccessHandler(
         val principal = authentication.principal as OidcUser
         val persistUser = service.findByGoogleId(principal.subject) ?: service.save(User(principal.subject))
 
-        CookieUtils.add(properties.cookieName!!, persistUser.openKeys.first().value, response)
+        CookieUtils.add(response, properties.cookieName!!, persistUser.openKeys.first().value)
 
         response.sendRedirect("/scaffolds")
     }

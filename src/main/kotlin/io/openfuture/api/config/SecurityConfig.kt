@@ -46,7 +46,7 @@ class SecurityConfig(
 
                 .oauth2Login()
                     .authorizationEndpoint()
-                    .authorizationRequestRepository(OAuth2AuthorizationRequestRepository(properties))
+                    .authorizationRequestRepository(OAuth2AuthorizationRequestRepository())
 
                 .and()
 
