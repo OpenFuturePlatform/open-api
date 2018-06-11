@@ -31,6 +31,8 @@ interface ScaffoldService {
 
     fun getQuota(user: User): ScaffoldQuotaDto
 
+    fun test(address: String)
+
 }
 
 interface OpenKeyService {

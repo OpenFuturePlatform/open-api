@@ -1,5 +1,6 @@
 package io.openfuture.api.service
 
+import io.netty.handler.codec.mqtt.MqttMessageBuilders.subscribe
 import io.openfuture.api.component.ScaffoldCompiler
 import io.openfuture.api.component.TransactionHandler
 import io.openfuture.api.config.propety.EthereumProperties
@@ -17,19 +18,19 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.web3j.abi.EventEncoder
 import org.web3j.abi.FunctionEncoder
 import org.web3j.abi.FunctionReturnDecoder
 import org.web3j.abi.TypeReference
-import org.web3j.abi.datatypes.Address
+import org.web3j.abi.datatypes.*
 import org.web3j.abi.datatypes.Function
-import org.web3j.abi.datatypes.Type
-import org.web3j.abi.datatypes.Utf8String
 import org.web3j.abi.datatypes.generated.Uint256
 import org.web3j.crypto.RawTransaction
 import org.web3j.crypto.TransactionEncoder
 import org.web3j.protocol.Web3j
-import org.web3j.protocol.core.DefaultBlockParameterName.EARLIEST
-import org.web3j.protocol.core.DefaultBlockParameterName.LATEST
+import org.web3j.protocol.core.DefaultBlockParameter
+import org.web3j.protocol.core.DefaultBlockParameterName
+import org.web3j.protocol.core.DefaultBlockParameterName.*
 import org.web3j.protocol.core.methods.request.EthFilter
 import org.web3j.protocol.core.methods.request.Transaction
 import org.web3j.protocol.http.HttpService
@@ -71,10 +72,10 @@ class DefaultScaffoldService(
     @PostConstruct
     fun init() {
         web3 = Web3j.build(HttpService(properties.infura))
-        repository.findAll().forEach {
-            val filter = EthFilter(EARLIEST, LATEST, HexUtils.decode(it.address))
-            web3.ethLogObservable(filter).subscribe {
-                transactionHandler.handle(it)
+        web3.transactionObservable().subscribe {
+            val a = web3.ethGetTransactionReceipt(it.hash).send().transactionReceipt
+            if (a.isPresent) {
+                println(a)
             }
         }
     }
@@ -111,7 +112,7 @@ class DefaultScaffoldService(
 
         val credentials = properties.getCredentials()
         val nonce = web3.ethGetTransactionCount(credentials.address, LATEST).send().transactionCount
-        val rawTransaction = RawTransaction.createContractTransaction(nonce, GAS_PRICE, GAS_LIMIT, ZERO,
+        val rawTransaction = RawTransaction.createContractTransaction(nonce, GAS_PRICE, BigInteger.valueOf(5300000), ZERO,
                 compiledScaffold.bin + encodedConstructor)
         val encodedTransaction = TransactionEncoder.signMessage(rawTransaction, credentials)
         val deployResult = web3.ethSendRawTransaction(Numeric.toHexString(encodedTransaction)).send()
@@ -142,13 +143,22 @@ class DefaultScaffoldService(
     override fun save(request: SaveScaffoldRequest): Scaffold {
         val openKey = openKeyService.get(request.openKey!!)
         val scaffold = repository.save(Scaffold.of(request, openKey))
-        val filter = EthFilter(EARLIEST, LATEST, HexUtils.decode(scaffold.address))
-        web3.ethLogObservable(filter).subscribe {
-            transactionHandler.handle(it)
+        web3.ethLogObservable(EthFilter(EARLIEST, LATEST,
+                HexUtils.decode(scaffold.address)).addSingleTopic(EventEncoder.encode(Event("testEvent", listOf(object : TypeReference<Address>() {}, object : TypeReference<Utf8String>() {}), listOf())))).subscribe {
+            print(it)
+        }
+        web3.ethLogObservable(EthFilter(EARLIEST, LATEST,
+                scaffold.address).addSingleTopic(EventEncoder.encode(Event("testEvent", listOf(object : TypeReference<Address>() {}, object : TypeReference<Utf8String>() {}), listOf())))).subscribe {
+            print(it)
         }
         val properties = request.properties.map { propertyRepository.save(ScaffoldProperty.of(scaffold, it)) }
         scaffold.property.addAll(properties)
         return scaffold
+    }
+
+    @Transactional
+    override fun test(address: String) {
+        callFunction(Function("createEvent", listOf(), listOf()), address)
     }
 
     @Transactional

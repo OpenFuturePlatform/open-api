@@ -66,4 +66,9 @@ class ScaffoldApiController(
     @GetMapping("/quota")
     fun getQuota(@CurrentUser user: User): ScaffoldQuotaDto = service.getQuota(user)
 
+    @GetMapping("/{address}/test")
+    fun test(@PathVariable address: String) {
+        service.test(address)
+    }
+
 }
