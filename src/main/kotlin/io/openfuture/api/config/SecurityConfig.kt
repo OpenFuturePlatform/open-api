@@ -45,8 +45,13 @@ class SecurityConfig(
                 .and()
 
                 .oauth2Login()
-                    .loginPage("/")
-                    .successHandler(AuthenticationSuccessHandler(properties, userService))
+                    .authorizationEndpoint()
+                    .authorizationRequestRepository(OAuth2AuthorizationRequestRepository(properties))
+
+                .and()
+
+                .loginPage("/")
+                .successHandler(AuthenticationSuccessHandler(properties, userService))
 
                 .and()
 
