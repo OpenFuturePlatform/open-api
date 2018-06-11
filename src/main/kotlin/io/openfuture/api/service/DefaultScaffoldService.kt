@@ -12,6 +12,7 @@ import io.openfuture.api.exception.FunctionCallException
 import io.openfuture.api.exception.NotFoundException
 import io.openfuture.api.repository.ScaffoldPropertyRepository
 import io.openfuture.api.repository.ScaffoldRepository
+import io.openfuture.api.util.HexUtils
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -27,7 +28,9 @@ import org.web3j.abi.datatypes.generated.Uint256
 import org.web3j.crypto.RawTransaction
 import org.web3j.crypto.TransactionEncoder
 import org.web3j.protocol.Web3j
+import org.web3j.protocol.core.DefaultBlockParameterName.EARLIEST
 import org.web3j.protocol.core.DefaultBlockParameterName.LATEST
+import org.web3j.protocol.core.methods.request.EthFilter
 import org.web3j.protocol.core.methods.request.Transaction
 import org.web3j.protocol.http.HttpService
 import org.web3j.tx.gas.DefaultGasProvider.GAS_LIMIT
@@ -68,6 +71,12 @@ class DefaultScaffoldService(
     @PostConstruct
     fun init() {
         web3 = Web3j.build(HttpService(properties.infura))
+        repository.findAll().forEach {
+            val filter = EthFilter(EARLIEST, LATEST, HexUtils.decode(it.address))
+            web3.ethLogObservable(filter).subscribe {
+                transactionHandler.handle(it)
+            }
+        }
     }
 
     @Transactional(readOnly = true)
@@ -133,6 +142,10 @@ class DefaultScaffoldService(
     override fun save(request: SaveScaffoldRequest): Scaffold {
         val openKey = openKeyService.get(request.openKey!!)
         val scaffold = repository.save(Scaffold.of(request, openKey))
+        val filter = EthFilter(EARLIEST, LATEST, HexUtils.decode(scaffold.address))
+        web3.ethLogObservable(filter).subscribe {
+            transactionHandler.handle(it)
+        }
         val properties = request.properties.map { propertyRepository.save(ScaffoldProperty.of(scaffold, it)) }
         scaffold.property.addAll(properties)
         return scaffold
