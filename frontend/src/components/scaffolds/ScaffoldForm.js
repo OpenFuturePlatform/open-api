@@ -297,7 +297,7 @@ const mapStateToProps = (state) => {
     .filter(it => it.enabled).map(it => ({text: it.value, value: it.value})) : [];
   const ethAccount = state.ethAccount;
   const roles = state.auth ? state.auth.roles : [];
-  const isDeployByApiAllowed = true//roles.includes('ROLE_DEPLOY');
+  const isDeployByApiAllowed = roles.includes('ROLE_DEPLOY');
   const targetNetwork = state.globalProperties.network;
 
   return {
