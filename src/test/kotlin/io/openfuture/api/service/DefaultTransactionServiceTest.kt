@@ -1,0 +1,66 @@
+package io.openfuture.api.service
+
+import io.openfuture.api.entity.auth.OpenKey
+import io.openfuture.api.entity.auth.User
+import io.openfuture.api.entity.scaffold.Scaffold
+import io.openfuture.api.entity.scaffold.Transaction
+import io.openfuture.api.repository.TransactionRepository
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.Before
+import org.junit.Test
+import org.mockito.BDDMockito.given
+import org.mockito.Mock
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.Pageable
+import java.util.*
+
+/**
+ * @author Alexey Skadorva
+ */
+internal class DefaultTransactionServiceTest : ServiceTest() {
+
+    @Mock private lateinit var pagable: Pageable
+    @Mock private lateinit var repository: TransactionRepository
+
+    private lateinit var service: TransactionService
+
+
+    @Before
+    fun setUp() {
+        service = DefaultTransactionService(repository)
+    }
+
+    @Test
+    fun getAll() {
+        val scaffold = getScaffold()
+        val expectedTransactionPages = PageImpl(Collections.singletonList(getTransaction()), pagable, 1)
+
+        given(repository.findAllByScaffold(scaffold, pagable)).willReturn(expectedTransactionPages)
+
+        val actualTransactionPages = service.getAll(scaffold, pagable)
+
+        assertThat(actualTransactionPages).isEqualTo(expectedTransactionPages)
+    }
+
+    @Test
+    fun save() {
+        val transaction = getTransaction()
+
+        given(repository.save(transaction)).willReturn(transaction)
+
+        val actualTransaction = service.save(transaction)
+
+        assertThat(actualTransaction).isEqualTo(transaction)
+
+    }
+
+    private fun getTransaction(): Transaction = Transaction(getScaffold(), "data binary", "type")
+
+    private fun getScaffold(): Scaffold {
+        val openKey = OpenKey(User("googleId"))
+
+        return Scaffold("address", openKey, "abi", "developerAddress", "description", "fiatAmount", 1,
+                "conversionAmount", Collections.emptyList(), true, "webHook")
+    }
+
+}
