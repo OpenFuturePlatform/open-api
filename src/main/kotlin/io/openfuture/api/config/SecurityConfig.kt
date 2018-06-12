@@ -3,6 +3,7 @@ package io.openfuture.api.config
 import io.openfuture.api.config.filters.AuthorizationFilter
 import io.openfuture.api.config.handler.AuthenticationSuccessHandler
 import io.openfuture.api.config.propety.AuthorizationProperties
+import io.openfuture.api.config.repository.OAuth2AuthorizationRequestRepository
 import io.openfuture.api.service.OpenKeyService
 import io.openfuture.api.service.UserService
 import org.springframework.context.annotation.Configuration
@@ -45,6 +46,11 @@ class SecurityConfig(
                 .and()
 
                 .oauth2Login()
+                    .authorizationEndpoint()
+                    .authorizationRequestRepository(OAuth2AuthorizationRequestRepository(properties))
+
+                    .and()
+
                     .loginPage("/")
                     .successHandler(AuthenticationSuccessHandler(properties, userService))
 

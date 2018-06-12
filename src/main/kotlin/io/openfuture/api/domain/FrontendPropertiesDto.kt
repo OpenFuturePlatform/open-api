@@ -3,6 +3,6 @@ package io.openfuture.api.domain
 /**
  * @author Kadach Alexey
  */
-data class GlobalPropertiesDto(
+data class FrontendPropertiesDto(
         val infura: String
 )
