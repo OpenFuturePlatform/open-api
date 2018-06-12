@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 - Dropdown for deployment method
 - Active ethereum network recognition
+- Setting Webhooks
 
 ## [2.0.0] - 2018-06-04
 ### Added
