@@ -77,7 +77,7 @@ export const deployContractByApi = (formValues, history) => async dispatch => {
       type: SHOW_MODAL,
       payload: {contract: res.data, showLoader: false},
     });
-    return res;
+    return res.address;
   } catch (err) {
     const response = err ? err.response : null;
     const status = response ? response.status : '';
@@ -131,7 +131,6 @@ export const deployContract = (formValues) => async dispatch => {
     });
 
     return address;
-
   } catch (err) {
 
     let message = 'Error in deploy contract';
@@ -161,8 +160,6 @@ export const closeWithdrawalModal = () => async dispatch => {
   dispatch({type: SHOW_WITHDRAWAL_MODAL, payload: {showModal: false, contract: '', showLoader: true}});
 };
 
-let ethAccountTimer;
-
 const setEthAccount = account => async dispatch => {
   if (!account) {
     dispatch({
@@ -175,10 +172,12 @@ const setEthAccount = account => async dispatch => {
     const netId = await web3.eth.net.getId();
     dispatch({
       type: SET_CURRENT_ETH_ACCOUNT,
-      payload: {account, balance: Number(balance) / 1000000000000000000, trueNetwork: netId !== 1}
+      payload: {account, balance: Number(balance) / 1000000000000000000, trueNetwork: netId === 1}
     });
   });
 };
+
+let ethAccountTimer;
 
 export const subscribeEthAccount = () => async dispatch => {
   if (ethAccountTimer || !web3) {

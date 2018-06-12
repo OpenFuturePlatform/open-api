@@ -3,7 +3,7 @@ import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import {Field, FieldArray, getFormValues, reduxForm} from 'redux-form';
 import {withRouter} from 'react-router-dom';
-import {Button, Grid, Input} from 'semantic-ui-react';
+import {Button, Dropdown, Grid, Input} from 'semantic-ui-react';
 import {DropdownField} from 'react-semantic-redux-form';
 import _ from 'lodash';
 import {validate, validateScaffoldProperties, warn} from '../../utils/validation';
@@ -20,14 +20,21 @@ class ScaffoldForm extends Component {
 
   constructor(props) {
     super(props);
+
+    this.state = {
+      isDeployByApi: false
+    };
+
     this.handleOnConvert = this.handleOnConvert.bind(this);
     this.handleOnSubmit = this.handleOnSubmit.bind(this);
     this.validateMetaMask = this.validateMetaMask.bind(this);
     this.validateBalance = this.validateBalance.bind(this);
+    this.renderWalletSelect = this.renderWalletSelect.bind(this);
+    this.handleOnWalletChange = this.handleOnWalletChange.bind(this);
   }
 
   componentDidMount() {
-    if (!this.props.isDeployByApi) {
+    if (!this.state.isDeployByApi) {
       this.props.actions.subscribeEthAccount();
       this.initDeveloperAddressValidation();
     }
@@ -86,34 +93,65 @@ class ScaffoldForm extends Component {
   }
 
   async handleOnSubmit(e) {
-    const {actions, history, formValues, isDeployByApi} = this.props;
+    const {actions, history, formValues} = this.props;
+    const {isDeployByApi} = this.state;
     e.preventDefault();
     try {
       let contractAddress;
 
       if (isDeployByApi) {
-        const response = await actions.deployContractByApi(formValues);
-        history.push(`/scaffolds`)
+        contractAddress = await actions.deployContractByApi(formValues);
       } else {
         contractAddress = await actions.deployContract(formValues);
-        history.push(`/scaffolds/${contractAddress}`)
       }
+      history.push(`/scaffolds/${contractAddress}`);
     } catch (e) {
       console.warn('Deployment Error: ', e);
     }
   }
 
+  handleOnWalletChange(event, {value}) {
+    const {dispatch, blur} = this.props;
+    if (value === 'open') {
+      this.setState({isDeployByApi: true});
+      dispatch(blur('developerAddress', ''));
+    } else {
+      this.setState({isDeployByApi: false});
+      this.initDeveloperAddressValidation();
+    }
+  }
+
+  renderWalletSelect() {
+    if (!this.props.isDeployByApiAllowed) {
+      return null;
+    }
+
+    const isDeployByApi =  this.state.isDeployByApi;
+    const value = isDeployByApi ? 'open' : 'private';
+
+    return (
+      <Grid.Column width={16} style={{paddingTop: '10px'}}>
+        <Dropdown fluid search selection value={value} onChange={this.handleOnWalletChange} options={[
+          {key: 'private', text: 'Private Wallet', value: 'private'},
+          {key: 'open', text: 'OPEN Platform Wallet', value: 'open'},
+        ]}/>
+      </Grid.Column>
+    )
+  }
+
   render() {
-    const {formValues, invalid, scaffoldFieldsErrors, openKeyOptions, isDeployByApi} = this.props;
+    const {formValues, invalid, scaffoldFieldsErrors, openKeyOptions} = this.props;
+    const {isDeployByApi} = this.state;
     const fieldErrors = _.flatten(scaffoldFieldsErrors).length !== 0 ? true : false;
     const disableSubmit = invalid || fieldErrors;
-    const developerAddressValidations = !isDeployByApi ? [this.validateMetaMask, this.validateBalance] : []
+    const developerAddressValidations = !isDeployByApi ? [this.validateMetaMask, this.validateBalance] : [];
 
     return (
       <div>
         <form onSubmit={this.handleOnSubmit}>
           <Grid style={{paddingLeft: '15px'}}>
             <Grid.Row>
+              {this.renderWalletSelect()}
               <Grid.Column width={16} style={{paddingTop: '10px'}}>
                 <Field key={1}
                        className="ui selection fluid dropdown"
@@ -231,10 +269,10 @@ const mapStateToProps = (state) => {
     .filter(it => it.enabled).map(it => ({text: it.value, value: it.value})) : [];
   const ethAccount = state.ethAccount;
   const roles = state.auth ? state.auth.roles : [];
-  const isDeployByApi = roles.includes('ROLE_DEPLOY');
+  const isDeployByApiAllowed = true//roles.includes('ROLE_DEPLOY');
 
   return {
-    isDeployByApi,
+    isDeployByApiAllowed,
     ethAccount,
     formValues,
     openKey,
