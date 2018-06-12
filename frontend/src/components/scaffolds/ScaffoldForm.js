@@ -182,7 +182,7 @@ class ScaffoldForm extends Component {
                          marginTop: '10px',
                          marginBottom: '5px',
                        }}
-                       label="Developer Address"
+                       label="Developer Address*"
                        placeholder="Developer Address where funds will be sent"
                        component={ScaffoldField}
                        type="text"
@@ -201,11 +201,30 @@ class ScaffoldForm extends Component {
                          marginTop: '10px',
                          marginBottom: '5px',
                        }}
-                       label="Scaffold Title"
+                       label="Scaffold Title*"
                        placeholder="Title shown to customer at checkout"
                        component={ScaffoldField}
                        type="text"
                        name="description"
+                />
+              </Grid.Column>
+              <Grid.Column width={16}>
+                <Field key={3}
+                       labelStyle={{
+                         width: '187px',
+                         maxHeight: '38px',
+                         marginTop: '10px',
+                         marginBottom: '5px',
+                       }}
+                       inputStyle={{
+                         marginTop: '10px',
+                         marginBottom: '5px',
+                       }}
+                       label="Webhook"
+                       placeholder="Webhook"
+                       component={ScaffoldField}
+                       type="text"
+                       name="webHook"
                 />
               </Grid.Column>
             </Grid.Row>
@@ -233,7 +252,7 @@ class ScaffoldForm extends Component {
                 </Input>
               </Grid.Column>
               <Grid.Column width={8}>
-                <Field key={3} action="Converted to Ethereum"
+                <Field key={3} action="Converted to Ethereum*"
                        placeholder="Fiat in Ether"
                        component={ScaffoldActionField}
                        disableInput={true}
@@ -278,7 +297,7 @@ const mapStateToProps = (state) => {
     .filter(it => it.enabled).map(it => ({text: it.value, value: it.value})) : [];
   const ethAccount = state.ethAccount;
   const roles = state.auth ? state.auth.roles : [];
-  const isDeployByApiAllowed = roles.includes('ROLE_DEPLOY');
+  const isDeployByApiAllowed = true//roles.includes('ROLE_DEPLOY');
   const targetNetwork = state.globalProperties.network;
 
   return {

@@ -65,12 +65,19 @@ const convertCurrencies = conversionValues => async dispatch => {
   }
 };
 
+const setWebHook = async (address, webHook) => {
+  return await axios.patch(`/api/scaffolds/${address}`, {webHook});
+};
+
 export const deployContractByApi = (formValues, history) => async dispatch => {
   let res = {};
   dispatch({type: SHOW_MODAL, payload: {showModal: true}});
 
   try {
     res = await axios.post('/api/scaffolds/doDeploy', formValues);
+    if (formValues.webHook) {
+      await setWebHook(res.address, formValues.webHook);
+    }
     dispatch({
       type: SHOW_MODAL,
       payload: {contract: res.data, showLoader: false},
@@ -122,6 +129,10 @@ export const deployContract = (formValues) => async dispatch => {
 
     const address = newContractInstance.options.address;
     const response = await axios.post('/api/scaffolds', {...formValues, abi, address});
+
+    if (formValues.webHook) {
+      await setWebHook(address, formValues.webHook);
+    }
 
     dispatch({
       type: SHOW_MODAL,
