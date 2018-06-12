@@ -21,7 +21,9 @@ class DefaultUserService(
     override fun save(user: User): User {
         val persistUser = repository.save(user)
 
-        openKeyService.generate(persistUser)
+        val openKey = openKeyService.generate(persistUser)
+
+        persistUser.openKeys.add(openKey)
 
         return persistUser
     }
