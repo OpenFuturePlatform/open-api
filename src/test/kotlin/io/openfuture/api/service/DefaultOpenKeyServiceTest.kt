@@ -17,10 +17,6 @@ import java.util.*
  */
 class DefaultOpenKeyServiceTest : ServiceTest() {
 
-    companion object {
-        private const val OPEN_KEY_VALUE = "op_pk_1"
-    }
-
     @Mock private lateinit var repository: OpenKeyRepository
 
     private lateinit var service: OpenKeyService
@@ -86,6 +82,6 @@ class DefaultOpenKeyServiceTest : ServiceTest() {
 
     private fun getOpenKey(): OpenKey = OpenKey(getUser(), OPEN_KEY_VALUE, true, Date())
 
-    private fun getUser(): User = User("googleId", 0, Collections.emptySet(), Collections.emptySet())
+    private fun getUser(): User = User(GOOGLE_ID, 0, Collections.emptySet(), Collections.emptySet())
 
 }

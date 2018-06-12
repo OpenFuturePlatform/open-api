@@ -19,7 +19,7 @@ import java.util.*
  */
 internal class DefaultTransactionServiceTest : ServiceTest() {
 
-    @Mock private lateinit var pagable: Pageable
+    @Mock private lateinit var pageable: Pageable
     @Mock private lateinit var repository: TransactionRepository
 
     private lateinit var service: TransactionService
@@ -33,11 +33,11 @@ internal class DefaultTransactionServiceTest : ServiceTest() {
     @Test
     fun getAll() {
         val scaffold = getScaffold()
-        val expectedTransactionPages = PageImpl(Collections.singletonList(getTransaction()), pagable, 1)
+        val expectedTransactionPages = PageImpl(Collections.singletonList(getTransaction()), pageable, 1)
 
-        given(repository.findAllByScaffold(scaffold, pagable)).willReturn(expectedTransactionPages)
+        given(repository.findAllByScaffold(scaffold, pageable)).willReturn(expectedTransactionPages)
 
-        val actualTransactionPages = service.getAll(scaffold, pagable)
+        val actualTransactionPages = service.getAll(scaffold, pageable)
 
         assertThat(actualTransactionPages).isEqualTo(expectedTransactionPages)
     }
@@ -46,7 +46,7 @@ internal class DefaultTransactionServiceTest : ServiceTest() {
     fun save() {
         val transaction = getTransaction()
 
-        given(repository.save(transaction)).willReturn(transaction)
+        given(repository.save(transaction)).willReturn(transaction.apply { id = ID })
 
         val actualTransaction = service.save(transaction)
 
@@ -57,7 +57,7 @@ internal class DefaultTransactionServiceTest : ServiceTest() {
     private fun getTransaction(): Transaction = Transaction(getScaffold(), "data binary", "type")
 
     private fun getScaffold(): Scaffold {
-        val openKey = OpenKey(User("googleId"))
+        val openKey = OpenKey(User(GOOGLE_ID))
 
         return Scaffold("address", openKey, "abi", "developerAddress", "description", "fiatAmount", 1,
                 "conversionAmount", Collections.emptyList(), true, "webHook")

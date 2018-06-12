@@ -1,7 +1,6 @@
 package io.openfuture.api.service
 
 import io.openfuture.api.component.ScaffoldCompiler
-import io.openfuture.api.component.TransactionHandler
 import io.openfuture.api.config.propety.EthereumProperties
 import io.openfuture.api.domain.scaffold.*
 import io.openfuture.api.entity.auth.User
@@ -51,8 +50,7 @@ class DefaultScaffoldService(
         private val propertyRepository: ScaffoldPropertyRepository,
         private val compiler: ScaffoldCompiler,
         private val properties: EthereumProperties,
-        private val openKeyService: OpenKeyService,
-        private val transactionHandler: TransactionHandler
+        private val openKeyService: OpenKeyService
 ) : ScaffoldService {
 
     private lateinit var web3: Web3j
@@ -81,7 +79,7 @@ class DefaultScaffoldService(
     @Transactional(readOnly = true)
     override fun compile(request: CompileScaffoldRequest): CompiledScaffoldDto {
         val openKey = openKeyService.get(request.openKey!!)
-        if (repository.countByEnabledIsFalseAndOpenKeyUser(openKey.user) >= ALLOWED_DISABLED_SCAFFOLDS) {
+        if (repository.countByEnabledIsFalseAndOpenKeyUser(openKey.user) > ALLOWED_DISABLED_SCAFFOLDS) {
             throw IllegalStateException("Disabled scaffold count is more than allowed")
         }
 
