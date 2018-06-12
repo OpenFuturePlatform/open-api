@@ -9,10 +9,8 @@ import {
 } from './types';
 
 export const fetchUser = () => async dispatch => {
-  let res = {};
-
   try {
-    res = await axios.get('/api/users/current');
+    const res = await axios.get('/api/users/current');
     dispatch({type: FETCH_USER, payload: res.data});
   } catch (err) {
     console.warn('Error fetching user', err);
@@ -169,10 +167,11 @@ const setEthAccount = account => async dispatch => {
     return;
   }
   web3.eth.getBalance(account, async (error, balance) => {
-    const netId = await web3.eth.net.getId();
+    const id = await web3.eth.net.getId();
+    const activeNetworkId = id > 100 ? 'local' : id;
     dispatch({
       type: SET_CURRENT_ETH_ACCOUNT,
-      payload: {account, balance: Number(balance) / 1000000000000000000, trueNetwork: netId === 1}
+      payload: {account, balance: Number(balance) / 1000000000000000000, activeNetworkId}
     });
   });
 };

@@ -62,13 +62,18 @@ class ScaffoldForm extends Component {
   }
 
   validateMetaMask() {
-    const {trueNetwork} = this.props.ethAccount;
-
     if (!web3) {
       return 'Install MetaMask and refresh page.'
     }
 
-    return !trueNetwork ? 'Log in to MetaMask and choose MainNetwork' : null;
+    const {activeNetworkId} = this.props.ethAccount;
+    const {targetNetwork} = this.props;
+
+    if (!activeNetworkId) {
+      return 'Log in to MetaMask';
+    }
+
+    return activeNetworkId !== targetNetwork.id ? `Choose ${targetNetwork.name} MetaMask network` : null;
   }
 
   validateBalance(value) {
@@ -140,11 +145,15 @@ class ScaffoldForm extends Component {
   }
 
   render() {
-    const {formValues, invalid, scaffoldFieldsErrors, openKeyOptions} = this.props;
+    const {formValues, invalid, scaffoldFieldsErrors, openKeyOptions, targetNetwork} = this.props;
     const {isDeployByApi} = this.state;
     const fieldErrors = _.flatten(scaffoldFieldsErrors).length !== 0 ? true : false;
     const disableSubmit = invalid || fieldErrors;
     const developerAddressValidations = !isDeployByApi ? [this.validateMetaMask, this.validateBalance] : [];
+
+    if (!targetNetwork) {
+      return <div>Network from globalProperties is not allowed</div>;
+    }
 
     return (
       <div>
@@ -269,9 +278,11 @@ const mapStateToProps = (state) => {
     .filter(it => it.enabled).map(it => ({text: it.value, value: it.value})) : [];
   const ethAccount = state.ethAccount;
   const roles = state.auth ? state.auth.roles : [];
-  const isDeployByApiAllowed = true//roles.includes('ROLE_DEPLOY');
+  const isDeployByApiAllowed = roles.includes('ROLE_DEPLOY');
+  const targetNetwork = state.globalProperties.network;
 
   return {
+    targetNetwork,
     isDeployByApiAllowed,
     ethAccount,
     formValues,

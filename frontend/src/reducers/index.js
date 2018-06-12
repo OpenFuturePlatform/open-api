@@ -8,7 +8,8 @@ import onchainScaffoldSummaryReducer from './onchainScaffoldSummaryReducer';
 import scaffoldFeildsReducer from './scaffoldFeildsReducer';
 import scaffoldsReducer from './scaffoldsReducer';
 import withdrawModalReducer from './withdrawModalReducer';
-import ethAccountReducer from "./ethAccountReducer";
+import globalProperties from "./globalProperties";
+import ethAccount from "./ethAccount";
 
 export default combineReducers({
   form: reduxForm,
@@ -20,5 +21,6 @@ export default combineReducers({
   scaffoldFeilds: scaffoldFeildsReducer,
   scaffolds: scaffoldsReducer,
   withdrawModalInfo: withdrawModalReducer,
-  ethAccount: ethAccountReducer
+  ethAccount,
+  globalProperties
 });
