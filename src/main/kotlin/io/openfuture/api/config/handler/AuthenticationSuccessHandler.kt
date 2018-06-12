@@ -1,7 +1,6 @@
 package io.openfuture.api.config.handler
 
 import io.openfuture.api.config.propety.AuthorizationProperties
-import io.openfuture.api.config.repository.OAuth2AuthorizationRequestRepository
 import io.openfuture.api.entity.auth.User
 import io.openfuture.api.service.UserService
 import io.openfuture.api.util.CookieUtils
@@ -21,8 +20,6 @@ class AuthenticationSuccessHandler(
 
     override fun onAuthenticationSuccess(request: HttpServletRequest, response: HttpServletResponse,
                                          authentication: Authentication) {
-        OAuth2AuthorizationRequestRepository.deleteAuthCookies(request, response)
-
         val principal = authentication.principal as OidcUser
         val persistUser = service.findByGoogleId(principal.subject) ?: service.save(User(principal.subject))
 
