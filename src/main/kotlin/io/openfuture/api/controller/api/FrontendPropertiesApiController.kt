@@ -1,7 +1,7 @@
 package io.openfuture.api.controller.api
 
 import io.openfuture.api.config.propety.EthereumProperties
-import io.openfuture.api.domain.GlobalPropertiesDto
+import io.openfuture.api.domain.FrontendPropertiesDto
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.RestController
  */
 @RestController
 @RequestMapping("/api/properties")
-class GlobalPropertiesApiController(
+class FrontendPropertiesApiController(
         private val properties: EthereumProperties
 ) {
 
     @GetMapping
-    fun get(): GlobalPropertiesDto = GlobalPropertiesDto(properties.infura!!)
+    fun get(): FrontendPropertiesDto = FrontendPropertiesDto(properties.infura!!)
 
 }
