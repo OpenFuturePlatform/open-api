@@ -147,11 +147,6 @@ class DefaultScaffoldService(
     }
 
     @Transactional
-    override fun test(address: String) {
-        callFunction(Function("createEvent", listOf(), listOf()), address)
-    }
-
-    @Transactional
     override fun setWebHook(address: String, request: SetWebHookRequest, user: User): Scaffold {
         val scaffold = get(address, user)
 
