@@ -16,7 +16,7 @@ class DefaultOpenKeyService(
 ) : OpenKeyService {
 
     @Transactional(readOnly = true)
-    override fun getAllByUser(user: User): List<OpenKey> = repository.findAllByUser(user)
+    override fun getAll(user: User): List<OpenKey> = repository.findAllByUser(user)
 
     @Transactional(readOnly = true)
     override fun get(key: String): OpenKey = repository.findByValue(key)

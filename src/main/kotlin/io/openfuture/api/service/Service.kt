@@ -4,6 +4,7 @@ import io.openfuture.api.domain.scaffold.*
 import io.openfuture.api.entity.auth.OpenKey
 import io.openfuture.api.entity.auth.User
 import io.openfuture.api.entity.scaffold.Scaffold
+import io.openfuture.api.entity.scaffold.ScaffoldTemplate
 import io.openfuture.api.entity.scaffold.Transaction
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -33,9 +34,17 @@ interface ScaffoldService {
 
 }
 
+interface ScaffoldTemplateService {
+
+    fun getAll(user: User): List<ScaffoldTemplate>
+
+    fun save(request: SaveScaffoldTemplateRequest, user: User): ScaffoldTemplate
+
+}
+
 interface OpenKeyService {
 
-    fun getAllByUser(user: User): List<OpenKey>
+    fun getAll(user: User): List<OpenKey>
 
     fun get(key: String): OpenKey
 
