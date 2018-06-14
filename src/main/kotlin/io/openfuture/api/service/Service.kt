@@ -54,7 +54,11 @@ interface OpenKeyService {
 
     fun find(key: String): OpenKey?
 
+    fun generate(request: GenerateOpenKeyRequest, user: User): OpenKey
+
     fun generate(user: User): OpenKey
+
+    fun disable(key: String): OpenKey
 
 }
 
