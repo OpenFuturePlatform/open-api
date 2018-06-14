@@ -48,6 +48,12 @@ class ScaffoldApiController(
         return ScaffoldDto(scaffold)
     }
 
+    @PostMapping("/{address}")
+    fun update(@CurrentUser user: User, @PathVariable address: String, @Valid @RequestBody request: UpdateScaffoldRequest): ScaffoldDto {
+        val scaffold = service.update(address, user, request)
+        return ScaffoldDto(scaffold)
+    }
+
     @PatchMapping("/{address}")
     fun setWebHook(@CurrentUser user: User, @Valid @RequestBody request: SetWebHookRequest,
                    @PathVariable address: String): ScaffoldDto {

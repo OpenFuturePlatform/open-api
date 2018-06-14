@@ -139,6 +139,13 @@ class DefaultScaffoldService(
     }
 
     @Transactional
+    override fun update(address: String, user: User, request: UpdateScaffoldRequest): Scaffold {
+        val scaffold = get(address, user)
+
+        return repository.save(Scaffold.of(request, scaffold))
+    }
+
+    @Transactional
     override fun setWebHook(address: String, request: SetWebHookRequest, user: User): Scaffold {
         val scaffold = get(address, user)
 
