@@ -8,6 +8,7 @@ import io.openfuture.api.entity.scaffold.ScaffoldTemplate
  * @author Kadach Alexey
  */
 class ScaffoldTemplateDto(
+        val id: Long,
         val name: String,
         val user: UserDto,
         val developerAddress: String?,
@@ -19,6 +20,7 @@ class ScaffoldTemplateDto(
 ) {
 
     constructor(scaffold: ScaffoldTemplate) : this(
+            scaffold.id,
             scaffold.name,
             UserDto(scaffold.user),
             scaffold.developerAddress,
