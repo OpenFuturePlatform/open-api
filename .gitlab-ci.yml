@@ -153,7 +153,7 @@ deploy-rinkeby:
   script:
     - |
       ssh ${DEPLOY_USER}@${DEPLOY_HOST} "
-        docker rm -f ${CONTAINER_NAME} && \
+        docker rm -f ${CONTAINER_NAME}; \
         exit 0
       "
     - |
@@ -163,7 +163,7 @@ deploy-rinkeby:
       "
     - |
       ssh ${DEPLOY_USER}@${DEPLOY_HOST} '
-        docker exec rinkeby /geth --exec "personal.importRawKey('${RINKEBY_KEY}')" attach rpc:http://127.0.0.1:8545
+        sleep 20; docker exec rinkeby /geth --exec "personal.importRawKey('${RINKEBY_KEY}')" attach rpc:http://127.0.0.1:8545
       '
   only:
     - sprint
