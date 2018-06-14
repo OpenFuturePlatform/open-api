@@ -149,6 +149,7 @@ deploy-rinkeby:
     DEPLOY_HOST: $DEPLOY_HOST_DEV
     DEPLOY_KEY: $DEPLOY_KEY_DEV
     CONTAINER_NAME: rinkeby
+  before_script: *prepare_key
   script:
     - |
       ssh ${DEPLOY_USER}@${DEPLOY_HOST} "
