@@ -1,6 +1,7 @@
 package io.openfuture.api.service
 
 import io.openfuture.api.component.ScaffoldCompiler
+import io.openfuture.api.component.TransactionHandler
 import io.openfuture.api.config.propety.EthereumProperties
 import io.openfuture.api.domain.scaffold.*
 import io.openfuture.api.entity.auth.User
@@ -50,7 +51,8 @@ class DefaultScaffoldService(
         private val propertyRepository: ScaffoldPropertyRepository,
         private val compiler: ScaffoldCompiler,
         private val properties: EthereumProperties,
-        private val openKeyService: OpenKeyService
+        private val openKeyService: OpenKeyService,
+        private val transactionHandler: TransactionHandler
 ) : ScaffoldService {
 
     companion object {

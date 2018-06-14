@@ -37,7 +37,7 @@ class TransactionHandlerTest : ServiceTest() {
     fun handle() {
         val log = Log().apply { address = ADDRESS_VALUE ; data = "data" ; type = "type"}
         val scaffold = Scaffold(ADDRESS_VALUE, OpenKey(User(GOOGLE_ID)), "abi", "developerAddress", "description", "fiatAmount", 1,
-                "conversionAmount", mutableListOf(), true, "webHook")
+                "conversionAmount", "webHook", mutableListOf(), true)
         val transaction = Transaction.of(scaffold, log)
 
         given(scaffoldRepository.findByAddress(log.address)).willReturn(scaffold)

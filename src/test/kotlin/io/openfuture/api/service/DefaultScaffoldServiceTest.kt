@@ -1,6 +1,7 @@
 package io.openfuture.api.service
 
 import io.openfuture.api.component.ScaffoldCompiler
+import io.openfuture.api.component.TransactionHandler
 import io.openfuture.api.config.any
 import io.openfuture.api.config.anyString
 import io.openfuture.api.config.propety.EthereumProperties
@@ -25,7 +26,6 @@ import org.mockito.BDDMockito.given
 import org.mockito.Mock
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
-import org.springframework.test.util.ReflectionTestUtils
 import org.web3j.crypto.Credentials
 import org.web3j.crypto.ECKeyPair
 import org.web3j.protocol.Web3j
@@ -47,6 +47,7 @@ internal class DefaultScaffoldServiceTest : ServiceTest() {
     @Mock private lateinit var repository: ScaffoldRepository
     @Mock private lateinit var properties: EthereumProperties
     @Mock private lateinit var openKeyService: OpenKeyService
+    @Mock private lateinit var transactionHandler: TransactionHandler
     @Mock private lateinit var propertyRepository: ScaffoldPropertyRepository
 
     @Mock private lateinit var web3j: Web3j
@@ -72,7 +73,7 @@ internal class DefaultScaffoldServiceTest : ServiceTest() {
 
     @Before
     fun setUp() {
-        service = DefaultScaffoldService(repository, propertyRepository, compiler, properties, openKeyService)
+        service = DefaultScaffoldService(web3j, repository, propertyRepository, compiler, properties, openKeyService, transactionHandler)
     }
 
     @Test
@@ -231,7 +232,6 @@ internal class DefaultScaffoldServiceTest : ServiceTest() {
         val expectedScaffold = getScaffold()
         val nonce = BigInteger.ZERO
 
-        mockWeb3j()
         given(repository.findByAddressAndOpenKeyUser(ADDRESS_VALUE, user)).willReturn(expectedScaffold)
         given(properties.getCredentials()).willReturn(credentials)
         given(credentials.address).willReturn(ADDRESS_VALUE)
@@ -265,8 +265,6 @@ internal class DefaultScaffoldServiceTest : ServiceTest() {
         val compileScaffoldRequest = CompileScaffoldRequest(openKey.value, listOf(scaffoldPropertyDto))
         val contractMetadata = CompilationResult.ContractMetadata().apply { abi = "abi"; bin = "bin" }
 
-        mockWeb3j()
-
         given(openKeyService.get(OPEN_KEY_VALUE)).willReturn(openKey)
         given(repository.countByEnabledIsFalseAndOpenKeyUser(user)).willReturn(1)
         given(compiler.compile(compileScaffoldRequest.properties)).willReturn(contractMetadata)
@@ -286,7 +284,6 @@ internal class DefaultScaffoldServiceTest : ServiceTest() {
     }
 
     private fun mockGetCall() {
-        mockWeb3j()
         given(properties.getCredentials()).willReturn(credentials)
         given(credentials.address).willReturn(ADDRESS_VALUE)
         given(web3j.ethGetTransactionCount(ADDRESS_VALUE, DefaultBlockParameterName.LATEST)).willReturn(transactionCountRequest)
@@ -308,11 +305,7 @@ internal class DefaultScaffoldServiceTest : ServiceTest() {
         val openKey = OpenKey(User(GOOGLE_ID), OPEN_KEY_VALUE).apply { id = ID }
 
         return Scaffold(ADDRESS_VALUE, openKey, "abi", "developerAddress", "description", "fiatAmount", 1,
-                "conversionAmount", mutableListOf(), true, "webHook")
-    }
-
-    private fun mockWeb3j() {
-        ReflectionTestUtils.setField(service, "web3", web3j, Web3j::class.java)
+                "conversionAmount", "webHook", mutableListOf(), true)
     }
 
 }
