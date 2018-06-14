@@ -2,8 +2,8 @@ import React, {Component} from 'react';
 import {Container} from 'semantic-ui-react';
 import {Route, Switch} from 'react-router-dom';
 import {connect} from 'react-redux';
-import * as actions from '../actions';
-
+import {fetchUser} from "../actions/index";
+import {fetchGlobalProperties} from "../actions/global-properties";
 import Header from './Header';
 import Dashboard from './Dashboard';
 import ScaffoldForm from './scaffolds/ScaffoldForm';
@@ -16,6 +16,7 @@ class Scaffolds extends Component {
 
   componentDidMount() {
     this.fetchUser();
+    this.props.fetchGlobalProperties();
   }
 
   async fetchUser() {
@@ -49,4 +50,4 @@ function mapStateToProps({ modalInfo, withdrawModalInfo }) {
   return { modalInfo, withdrawModalInfo };
 }
 
-export default connect(mapStateToProps, actions)(Scaffolds);
+export default connect(mapStateToProps, {fetchGlobalProperties, fetchUser})(Scaffolds);
