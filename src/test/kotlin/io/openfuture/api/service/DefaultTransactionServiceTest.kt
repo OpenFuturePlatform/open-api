@@ -1,5 +1,8 @@
 package io.openfuture.api.service
 
+import io.openfuture.api.GOOGLE_ID
+import io.openfuture.api.ID
+import io.openfuture.api.UnitTest
 import io.openfuture.api.entity.auth.OpenKey
 import io.openfuture.api.entity.auth.User
 import io.openfuture.api.entity.scaffold.Scaffold
@@ -17,7 +20,7 @@ import java.util.*
 /**
  * @author Alexey Skadorva
  */
-internal class DefaultTransactionServiceTest : ServiceTest() {
+internal class DefaultTransactionServiceTest : UnitTest() {
 
     @Mock private lateinit var pageable: Pageable
     @Mock private lateinit var repository: TransactionRepository

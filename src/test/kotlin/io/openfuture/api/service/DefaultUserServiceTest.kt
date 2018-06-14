@@ -1,5 +1,9 @@
 package io.openfuture.api.service
 
+import io.openfuture.api.GOOGLE_ID
+import io.openfuture.api.ID
+import io.openfuture.api.OPEN_KEY_VALUE
+import io.openfuture.api.UnitTest
 import io.openfuture.api.entity.auth.OpenKey
 import io.openfuture.api.entity.auth.User
 import io.openfuture.api.repository.UserRepository
@@ -12,7 +16,7 @@ import org.mockito.Mock
 /**
  * @author Alexey Skadorva
  */
-internal class DefaultUserServiceTest : ServiceTest() {
+internal class DefaultUserServiceTest : UnitTest() {
 
     @Mock private lateinit var repository: UserRepository
     @Mock private lateinit var openKeyService: OpenKeyService

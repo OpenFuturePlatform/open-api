@@ -1,5 +1,9 @@
 package io.openfuture.api.component
 
+import io.openfuture.api.ADDRESS_VALUE
+import io.openfuture.api.GOOGLE_ID
+import io.openfuture.api.ID
+import io.openfuture.api.UnitTest
 import io.openfuture.api.config.any
 import io.openfuture.api.entity.auth.OpenKey
 import io.openfuture.api.entity.auth.User
@@ -18,7 +22,7 @@ import org.web3j.protocol.core.methods.response.Log
 /**
  * @author Alexey Skadorva
  */
-class TransactionHandlerTest : ServiceTest() {
+class TransactionHandlerTest : UnitTest() {
 
     @Mock private lateinit var transactionService: TransactionService
     @Mock private lateinit var scaffoldRepository: ScaffoldRepository
@@ -34,7 +38,7 @@ class TransactionHandlerTest : ServiceTest() {
 
     @Test
     fun handle() {
-        val log = Log().apply { address = ADDRESS_VALUE ; data = "data" ; type = "type"}
+        val log = Log().apply { address = ADDRESS_VALUE; data = "data" ; type = "type"}
         val scaffold = Scaffold(ADDRESS_VALUE, OpenKey(User(GOOGLE_ID)), "abi", "developerAddress", "description", "fiatAmount", 1,
                 "conversionAmount", "https://test.com", mutableListOf(), true)
         val transaction = Transaction.of(scaffold, log)

@@ -1,4 +1,4 @@
-package io.openfuture.api.service
+package io.openfuture.api
 
 import org.junit.runner.RunWith
 import org.mockito.junit.MockitoJUnitRunner
@@ -7,7 +7,7 @@ import org.mockito.junit.MockitoJUnitRunner
  * @author Alexey Skadorva
  */
 @RunWith(MockitoJUnitRunner::class)
-abstract class ServiceTest
+abstract class UnitTest
 
     const val ID = 1L
     const val GOOGLE_ID = "104113085667282103363"

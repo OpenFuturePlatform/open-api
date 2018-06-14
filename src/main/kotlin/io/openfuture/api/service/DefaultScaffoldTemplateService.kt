@@ -23,10 +23,10 @@ class DefaultScaffoldTemplateService(
 
     @Transactional
     override fun save(request: SaveScaffoldTemplateRequest, user: User): ScaffoldTemplate {
-        val scaffold = repository.save(ScaffoldTemplate.of(request, user))
-        val properties = request.properties.map { propertyRepository.save(ScaffoldTemplateProperty.of(scaffold, it)) }
-        scaffold.property.addAll(properties)
-        return scaffold
+        val scaffoldTemplate = repository.save(ScaffoldTemplate.of(request, user))
+        val properties = request.properties.map { propertyRepository.save(ScaffoldTemplateProperty.of(scaffoldTemplate, it)) }
+        scaffoldTemplate.property.addAll(properties)
+        return scaffoldTemplate
     }
 
 }

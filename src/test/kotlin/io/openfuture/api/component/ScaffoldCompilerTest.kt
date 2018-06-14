@@ -4,8 +4,8 @@ import io.openfuture.api.config.propety.EthereumProperties
 import io.openfuture.api.domain.scaffold.ScaffoldPropertyDto
 import io.openfuture.api.entity.scaffold.PropertyType
 import io.openfuture.api.exception.CompileException
-import io.openfuture.api.service.ADDRESS_VALUE
-import io.openfuture.api.service.ServiceTest
+import io.openfuture.api.ADDRESS_VALUE
+import io.openfuture.api.UnitTest
 import org.junit.Before
 import org.junit.Test
 import org.mockito.ArgumentMatchers
@@ -17,7 +17,7 @@ import org.mockito.Mock
 /**
  * @author Alexey Skadorva
  */
-internal class ScaffoldCompilerTest : ServiceTest() {
+internal class ScaffoldCompilerTest : UnitTest() {
 
     @Mock private lateinit var templateProcessor: TemplateProcessor
     @Mock private lateinit var properties: EthereumProperties

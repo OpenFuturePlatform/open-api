@@ -1,5 +1,6 @@
 package io.openfuture.api.service
 
+import io.openfuture.api.*
 import io.openfuture.api.component.ScaffoldCompiler
 import io.openfuture.api.component.TransactionHandler
 import io.openfuture.api.config.any
@@ -41,7 +42,7 @@ import java.util.*
 /**
  * @author Alexey Skadorva
  */
-internal class DefaultScaffoldServiceTest : ServiceTest() {
+internal class DefaultScaffoldServiceTest : UnitTest() {
 
     @Mock private lateinit var compiler: ScaffoldCompiler
     @Mock private lateinit var repository: ScaffoldRepository

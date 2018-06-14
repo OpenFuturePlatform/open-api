@@ -1,5 +1,8 @@
 package io.openfuture.api.service
 
+import io.openfuture.api.GOOGLE_ID
+import io.openfuture.api.OPEN_KEY_VALUE
+import io.openfuture.api.UnitTest
 import io.openfuture.api.entity.auth.OpenKey
 import io.openfuture.api.entity.auth.User
 import io.openfuture.api.exception.NotFoundException
@@ -15,7 +18,7 @@ import java.util.*
 /**
  * @author Alexey Skadorva
  */
-class DefaultOpenKeyServiceTest : ServiceTest() {
+class DefaultOpenKeyServiceTest : UnitTest() {
 
     @Mock private lateinit var repository: OpenKeyRepository
 
