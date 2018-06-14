@@ -20,8 +20,7 @@ import org.web3j.protocol.core.methods.response.Log
  */
 class TransactionHandlerTest : ServiceTest() {
 
-    @Mock
-    private lateinit var transactionService: TransactionService
+    @Mock private lateinit var transactionService: TransactionService
     @Mock private lateinit var scaffoldRepository: ScaffoldRepository
 
     private lateinit var transactionHandler: TransactionHandler
@@ -37,11 +36,11 @@ class TransactionHandlerTest : ServiceTest() {
     fun handle() {
         val log = Log().apply { address = ADDRESS_VALUE ; data = "data" ; type = "type"}
         val scaffold = Scaffold(ADDRESS_VALUE, OpenKey(User(GOOGLE_ID)), "abi", "developerAddress", "description", "fiatAmount", 1,
-                "conversionAmount", "webHook", mutableListOf(), true)
+                "conversionAmount", "https://test.com", mutableListOf(), true)
         val transaction = Transaction.of(scaffold, log)
 
         given(scaffoldRepository.findByAddress(log.address)).willReturn(scaffold)
-        given(transactionService.save(transaction)).willReturn(transaction.apply { id = ID })
+        given(transactionService.save(any(Transaction::class.java))).willReturn(transaction.apply { id = ID })
 
         transactionHandler.handle(log)
     }
