@@ -150,8 +150,7 @@ deploy-rinkeby:
     DEPLOY_KEY: $DEPLOY_KEY_DEV
     CONTAINER_NAME: rinkeby
   script:
-    - |  docker run -d --name ${CONTAINER_NAME} -p 8545:8545 \
-  ethereum/client-go:alpine --rpc --light --rpcapi="admin,debug,miner,shh,txpool,personal,eth,net,web
+    - |
       ssh ${DEPLOY_USER}@${DEPLOY_HOST} "
         docker rm -f ${CONTAINER_NAME} && \
         exit 0
