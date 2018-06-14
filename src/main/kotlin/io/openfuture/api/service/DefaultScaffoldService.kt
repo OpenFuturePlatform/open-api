@@ -29,9 +29,8 @@ import org.web3j.crypto.TransactionEncoder
 import org.web3j.protocol.Web3j
 import org.web3j.protocol.core.DefaultBlockParameterName.LATEST
 import org.web3j.protocol.core.methods.request.Transaction
-import org.web3j.protocol.http.HttpService
-import org.web3j.tx.gas.DefaultGasProvider.GAS_LIMIT
-import org.web3j.tx.gas.DefaultGasProvider.GAS_PRICE
+import org.web3j.tx.Contract.GAS_LIMIT
+import org.web3j.tx.ManagedTransaction.GAS_PRICE
 import org.web3j.utils.Convert.Unit.ETHER
 import org.web3j.utils.Convert.fromWei
 import org.web3j.utils.Convert.toWei
@@ -47,6 +46,7 @@ import javax.annotation.PostConstruct
  */
 @Service
 class DefaultScaffoldService(
+        private val web3: Web3j,
         private val repository: ScaffoldRepository,
         private val propertyRepository: ScaffoldPropertyRepository,
         private val compiler: ScaffoldCompiler,
@@ -54,8 +54,6 @@ class DefaultScaffoldService(
         private val openKeyService: OpenKeyService,
         private val transactionHandler: TransactionHandler
 ) : ScaffoldService {
-
-    private lateinit var web3: Web3j
 
     companion object {
         private const val ALLOWED_DISABLED_SCAFFOLDS = 10L
@@ -67,7 +65,6 @@ class DefaultScaffoldService(
 
     @PostConstruct
     fun init() {
-        web3 = Web3j.build(HttpService(properties.infura))
         web3.transactionObservable().subscribe {
             val transactionReceipt = web3.ethGetTransactionReceipt(it.hash).send().transactionReceipt
             if (transactionReceipt.isPresent) {
@@ -133,6 +130,7 @@ class DefaultScaffoldService(
                 request.fiatAmount,
                 request.currency,
                 request.conversionAmount,
+                request.webHook,
                 request.properties
         ))
     }
