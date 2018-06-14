@@ -11,7 +11,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Setting Webhooks
 - Scaffold update
 
-
 ## [2.0.0] - 2018-06-04
 ### Added
 - Scaffold activation: transfer at least 10 OPEN Tokens to a scaffold to make it active.
