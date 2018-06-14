@@ -4,6 +4,7 @@ import io.openfuture.api.domain.scaffold.SaveScaffoldRequest
 import io.openfuture.api.entity.auth.OpenKey
 import io.openfuture.api.entity.base.BaseModel
 import io.openfuture.api.util.DictionaryUtils
+import org.apache.commons.lang3.StringUtils.EMPTY
 import javax.persistence.*
 
 /**
@@ -38,14 +39,14 @@ class Scaffold(
         @Column(name = "conversion_amount", nullable = false)
         val conversionAmount: String,
 
+        @Column(name = "web_hook")
+        var webHook: String? = null,
+
         @OneToMany(mappedBy = "scaffold")
         val property: MutableList<ScaffoldProperty> = mutableListOf(),
 
         @Column(name = "enabled", nullable = false)
-        var enabled: Boolean = false,
-
-        @Column(name = "web_hook")
-        var webHook: String? = null
+        var enabled: Boolean = false
 
 ) : BaseModel() {
 
@@ -60,7 +61,8 @@ class Scaffold(
                 scaffold.description!!,
                 scaffold.fiatAmount!!,
                 scaffold.currency!!.getId(),
-                scaffold.conversionAmount!!
+                scaffold.conversionAmount!!,
+                if (EMPTY == scaffold.webHook?.trim()) null else scaffold.webHook
         )
     }
 

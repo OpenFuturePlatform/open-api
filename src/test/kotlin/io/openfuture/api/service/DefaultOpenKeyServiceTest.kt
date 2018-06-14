@@ -34,7 +34,7 @@ class DefaultOpenKeyServiceTest : ServiceTest() {
 
         given(repository.findAllByUser(user)).willReturn(expectedOpenKeys)
 
-        val actualOpenKeys = service.getAllByUser(user)
+        val actualOpenKeys = service.getAll(user)
 
         assertThat(actualOpenKeys).isEqualTo(expectedOpenKeys)
     }

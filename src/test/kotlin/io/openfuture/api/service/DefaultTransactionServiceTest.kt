@@ -60,7 +60,7 @@ internal class DefaultTransactionServiceTest : ServiceTest() {
         val openKey = OpenKey(User(GOOGLE_ID))
 
         return Scaffold("address", openKey, "abi", "developerAddress", "description", "fiatAmount", 1,
-                "conversionAmount", Collections.emptyList(), true, "webHook")
+                "conversionAmount", "webHook", Collections.emptyList(), true)
     }
 
 }

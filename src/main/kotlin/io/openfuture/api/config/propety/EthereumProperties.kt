@@ -13,7 +13,6 @@ import javax.validation.constraints.NotEmpty
 @Validated
 @Component
 class EthereumProperties(
-        @field:NotEmpty var infura: String? = null,
         @field:NotEmpty var privateKey: String? = null,
         @field:NotEmpty var openTokenAddress: String? = null
 ) {
