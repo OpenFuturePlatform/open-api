@@ -1,6 +1,8 @@
 package io.openfuture.api.service
 
 import io.openfuture.api.component.ScaffoldCompiler
+import io.openfuture.api.config.any
+import io.openfuture.api.config.anyString
 import io.openfuture.api.config.propety.EthereumProperties
 import io.openfuture.api.domain.scaffold.*
 import io.openfuture.api.entity.auth.OpenKey
@@ -19,7 +21,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.ethereum.solidity.compiler.CompilationResult
 import org.junit.Before
 import org.junit.Test
-import org.mockito.ArgumentMatchers
 import org.mockito.BDDMockito.given
 import org.mockito.Mock
 import org.springframework.data.domain.PageImpl
@@ -28,6 +29,7 @@ import org.springframework.test.util.ReflectionTestUtils
 import org.web3j.crypto.Credentials
 import org.web3j.crypto.ECKeyPair
 import org.web3j.protocol.Web3j
+import org.web3j.protocol.core.DefaultBlockParameter
 import org.web3j.protocol.core.DefaultBlockParameterName
 import org.web3j.protocol.core.Request
 import org.web3j.protocol.core.Response
@@ -138,8 +140,8 @@ internal class DefaultScaffoldServiceTest : ServiceTest() {
         val optionalTransactionReceipt = Optional.of(TransactionReceipt().apply { contractAddress = ADDRESS_VALUE })
 
         mockDeploy()
-        given(repository.save(ArgumentMatchers.any<Scaffold>())).willReturn(expectedScaffold.apply { id = ID })
-        given(propertyRepository.save(ArgumentMatchers.any<ScaffoldProperty>())).willReturn(scaffoldProperty.apply { id = ID })
+        given(repository.save(any(Scaffold::class.java))).willReturn(expectedScaffold.apply { id = ID })
+        given(propertyRepository.save(any(ScaffoldProperty::class.java))).willReturn(scaffoldProperty.apply { id = ID })
         given(transaction.hasError()).willReturn(false)
         given(web3j.ethGetTransactionReceipt(transaction.transactionHash)).willReturn(transactionReceiptRequest)
         given(transactionReceiptRequest.send()).willReturn(transactionReceipt)
@@ -170,13 +172,13 @@ internal class DefaultScaffoldServiceTest : ServiceTest() {
         val scaffold = getScaffold()
         val scaffoldPropertyDto = ScaffoldPropertyDto("name", PropertyType.STRING, "value")
         val scaffoldProperty = ScaffoldProperty.of(scaffold, scaffoldPropertyDto)
-        val request = SaveScaffoldRequest(ADDRESS_VALUE, "abi", OPEN_KEY_VALUE, "developerAddress", "description", "", Currency.USD, "")
-                .apply { properties = listOf(scaffoldPropertyDto) }
+        val request = SaveScaffoldRequest(ADDRESS_VALUE, "abi", OPEN_KEY_VALUE, "developerAddress",
+                "description", "1", Currency.USD, "1").apply { properties = listOf(scaffoldPropertyDto) }
         val expectedScaffold = getScaffold().apply { id = ID; property.add(scaffoldProperty) }
 
         given(openKeyService.get(OPEN_KEY_VALUE)).willReturn(openKey)
-        given(repository.save(ArgumentMatchers.any<Scaffold>())).willReturn(scaffold.apply { id = ID })
-        given(propertyRepository.save(ArgumentMatchers.any<ScaffoldProperty>())).willReturn(scaffoldProperty.apply { id = ID })
+        given(repository.save(any(Scaffold::class.java))).willReturn(scaffold.apply { id = ID })
+        given(propertyRepository.save(any(ScaffoldProperty::class.java))).willReturn(scaffoldProperty.apply { id = ID })
 
         val actualScaffold = service.save(request)
 
@@ -236,7 +238,7 @@ internal class DefaultScaffoldServiceTest : ServiceTest() {
         given(web3j.ethGetTransactionCount(ADDRESS_VALUE, DefaultBlockParameterName.LATEST)).willReturn(transactionCountRequest)
         given(transactionCountRequest.send()).willReturn(transactionCount)
         given(transactionCount.transactionCount).willReturn(nonce)
-        given(web3j.ethCall(ArgumentMatchers.any(), ArgumentMatchers.any())).willReturn(callRequest)
+        given(web3j.ethCall(any(Transaction::class.java), any(DefaultBlockParameter::class.java))).willReturn(callRequest)
         given(callRequest.send()).willReturn(call)
         given(call.hasError()).willReturn(true)
         given(call.error).willReturn(error)
@@ -279,7 +281,7 @@ internal class DefaultScaffoldServiceTest : ServiceTest() {
         given(web3j.ethGetTransactionCount(ADDRESS_VALUE, DefaultBlockParameterName.LATEST)).willReturn(transactionCountRequest)
         given(transactionCountRequest.send()).willReturn(transactionCount)
         given(transactionCount.transactionCount).willReturn(BigInteger.ZERO)
-        given(web3j.ethSendRawTransaction(ArgumentMatchers.any())).willReturn(transactionRequest)
+        given(web3j.ethSendRawTransaction(anyString())).willReturn(transactionRequest)
         given(transactionRequest.send()).willReturn(transaction)
     }
 
@@ -290,7 +292,7 @@ internal class DefaultScaffoldServiceTest : ServiceTest() {
         given(web3j.ethGetTransactionCount(ADDRESS_VALUE, DefaultBlockParameterName.LATEST)).willReturn(transactionCountRequest)
         given(transactionCountRequest.send()).willReturn(transactionCount)
         given(transactionCount.transactionCount).willReturn(BigInteger.ZERO)
-        given(web3j.ethCall(ArgumentMatchers.any(), ArgumentMatchers.any())).willReturn(callRequest)
+        given(web3j.ethCall(any(Transaction::class.java), any(DefaultBlockParameter::class.java))).willReturn(callRequest)
         given(callRequest.send()).willReturn(call)
         given(call.hasError()).willReturn(false)
         given(call.value).willReturn("0xa5643bf2000000000000000000000000000000000000000000000000000000000000006" +
