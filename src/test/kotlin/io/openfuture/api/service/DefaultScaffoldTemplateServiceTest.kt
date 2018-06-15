@@ -42,7 +42,7 @@ internal class DefaultScaffoldTemplateServiceTest : UnitTest() {
                 1, "1", "webHook", mutableListOf())
         val expectedScaffoldTemplates = listOf(scaffoldTemplate)
 
-        given(repository.findAllByUser(user)).willReturn(expectedScaffoldTemplates)
+        given(repository.findAllByUserAndDeletedIsFalse(user)).willReturn(expectedScaffoldTemplates)
 
         val actualScaffoldTemplates = service.getAll(user)
 
