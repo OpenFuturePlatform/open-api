@@ -2,15 +2,14 @@ import React, {Component} from 'react';
 import {Container} from 'semantic-ui-react';
 import {Route, Switch} from 'react-router-dom';
 import {connect} from 'react-redux';
-import {fetchUser} from "../actions/index";
-import {fetchGlobalProperties} from "../actions/global-properties";
-import Header from './Header';
+import {fetchUser} from '../actions/index';
+import {fetchGlobalProperties} from '../actions/global-properties';
+import Header from '../components/Header';
+import ScaffoldForm from './ScaffoldForm';
+import DeployingModal from '../components/DeployingModal';
+import WithdrawModal from '../components/WithdrawModal';
+import {ScaffoldSummaryContainer} from './ScaffoldSummary';
 import Dashboard from './Dashboard';
-import ScaffoldForm from './scaffolds/ScaffoldForm';
-import ScaffoldSummary from './scaffolds/ScaffoldSummary';
-import DeployingModal from './DeployingModal';
-import WithdrawModal from './WithdrawModal';
-
 
 class Scaffolds extends Component {
 
@@ -22,7 +21,7 @@ class Scaffolds extends Component {
   async fetchUser() {
     try {
       await this.props.fetchUser();
-    } catch(e) {
+    } catch (e) {
       // if 404 then
       // this.props.history.push('/');
     }
@@ -37,7 +36,7 @@ class Scaffolds extends Component {
         <Switch>
           <Route exact path={`${url}/`} component={Dashboard}/>
           <Route path={`${url}/new`} component={ScaffoldForm}/>
-          <Route path={`${url}/:scaffoldAddress`} component={ScaffoldSummary}/>
+          <Route path={`${url}/:scaffoldAddress`} component={ScaffoldSummaryContainer}/>
         </Switch>
         <DeployingModal modalInfo={this.props.modalInfo}/>
         <WithdrawModal withdrawModalInfo={this.props.withdrawModalInfo}/>
@@ -46,8 +45,8 @@ class Scaffolds extends Component {
   }
 }
 
-function mapStateToProps({ modalInfo, withdrawModalInfo }) {
-  return { modalInfo, withdrawModalInfo };
+function mapStateToProps({modalInfo, withdrawModalInfo}) {
+  return {modalInfo, withdrawModalInfo};
 }
 
 export default connect(mapStateToProps, {fetchGlobalProperties, fetchUser})(Scaffolds);

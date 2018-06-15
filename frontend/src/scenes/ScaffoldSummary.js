@@ -1,39 +1,23 @@
 import React, {Component} from 'react';
-import {Button, Card, Grid} from 'semantic-ui-react';
+import {Card, Grid} from 'semantic-ui-react';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
-import {convertCurrencies} from '../../actions';
-import {deactivateScaffold, fetchScaffoldItem} from "../../actions/index";
+import {fetchScaffoldItem} from "../actions/index";
+import {ScaffoldStatusContainer} from '../components/ScaffoldStatus';
 
 class ScaffoldSummary extends Component {
 
   componentDidMount() {
-    const scaffoldAddress = this.props.match.params.scaffoldAddress;
+    const scaffoldAddress = this.getScaffoldAddress();
     this.props.actions.fetchScaffoldItem(scaffoldAddress);
   }
 
-  renderStatus() {
-    const {onchainScaffoldSummary} = this.props;
-    const scaffoldAddress = this.props.match.params.scaffoldAddress;
-    const status = onchainScaffoldSummary.enabled;
-    const activateMessage = (
-      <div style={{color: 'red'}}>
-        Your scaffold is created but is inactive. To activate your scaffold you need to transfer 10 OPEN Tokens to it.
-      </div>
-    );
-    const deactivateButton = <Button onClick={() => this.props.actions.deactivateScaffold(scaffoldAddress)}>Deactivate</Button>
-
-    return (
-      <div>
-        Status: {status ? 'Active' : 'Disabled'}
-        <div style={{marginTop: '10px'}}>
-          {status ? deactivateButton : activateMessage}
-        </div>
-      </div>
-    )
+  getScaffoldAddress() {
+    return this.props.match.params.scaffoldAddress;
   }
 
   render() {
+    const scaffoldAddress = this.getScaffoldAddress();
     const {onchainScaffoldSummary} = this.props;
 
     return (
@@ -44,7 +28,8 @@ class ScaffoldSummary extends Component {
               <Card fluid>
                 <Card.Content header="On-chain Scaffold Summary" meta="This data is coming from the Ethereum Network"/>
                 <Card.Content>
-                  {this.renderStatus()}
+                  {onchainScaffoldSummary.tokenBalance} tokens
+                  <ScaffoldStatusContainer scaffoldAddress={scaffoldAddress} status={onchainScaffoldSummary.enabled} />
                 </Card.Content>
                 <Card.Content>
                   <div>Scaffold Description: {onchainScaffoldSummary.description}</div>
@@ -73,12 +58,8 @@ class ScaffoldSummary extends Component {
   }
 }
 
-const mapStateToProps = ({auth, onchainScaffoldSummary, currencyConversionValue}) =>
-  ({auth, onchainScaffoldSummary, currencyConversionValue});
+const mapStateToProps = ({onchainScaffoldSummary}) => ({onchainScaffoldSummary});
 
-const mapDispatchToProps = dispatch =>
-  ({actions: bindActionCreators({convertCurrencies, fetchScaffoldItem, deactivateScaffold}, dispatch)});
+const mapDispatchToProps = dispatch => ({actions: bindActionCreators({fetchScaffoldItem}, dispatch)});
 
-ScaffoldSummary = connect(mapStateToProps, mapDispatchToProps)(ScaffoldSummary);
-
-export default ScaffoldSummary;
+export const ScaffoldSummaryContainer = connect(mapStateToProps, mapDispatchToProps)(ScaffoldSummary);

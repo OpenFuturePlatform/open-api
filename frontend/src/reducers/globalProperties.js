@@ -8,7 +8,7 @@ const networkMap = {
 };
 
 const initialState = {
-  network: null
+  network: {id: null, name: ''}
 };
 
 const globalProperties = (state = initialState, action) => {
