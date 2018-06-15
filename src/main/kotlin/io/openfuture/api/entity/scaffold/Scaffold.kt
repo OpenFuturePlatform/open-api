@@ -1,7 +1,6 @@
 package io.openfuture.api.entity.scaffold
 
 import io.openfuture.api.domain.scaffold.SaveScaffoldRequest
-import io.openfuture.api.domain.scaffold.UpdateScaffoldRequest
 import io.openfuture.api.entity.auth.OpenKey
 import io.openfuture.api.entity.base.BaseModel
 import io.openfuture.api.util.DictionaryUtils
@@ -28,7 +27,7 @@ class Scaffold(
         val developerAddress: String,
 
         @Column(name = "description", nullable = false)
-        val description: String,
+        var description: String,
 
         @Column(name = "fiat_amount", nullable = false)
         val fiatAmount: String,
@@ -63,17 +62,6 @@ class Scaffold(
                 scaffold.currency!!.getId(),
                 scaffold.conversionAmount!!
         )
-
-        fun of(request: UpdateScaffoldRequest, scaffold: Scaffold): Scaffold = Scaffold(
-                scaffold.address,
-                scaffold.openKey,
-                scaffold.abi,
-                scaffold.developerAddress,
-                request.description!!,
-                scaffold.fiatAmount,
-                scaffold.currencyId,
-                scaffold.conversionAmount
-        ).apply { id = scaffold.id }
     }
 
 }

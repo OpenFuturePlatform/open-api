@@ -142,7 +142,9 @@ class DefaultScaffoldService(
     override fun update(address: String, user: User, request: UpdateScaffoldRequest): Scaffold {
         val scaffold = get(address, user)
 
-        return repository.save(Scaffold.of(request, scaffold))
+        scaffold.description = request.description!!
+
+        return scaffold
     }
 
     @Transactional
