@@ -4,5 +4,6 @@ package io.openfuture.api.domain
  * @author Kadach Alexey
  */
 data class FrontendPropertiesDto(
-        val infura: String
+        val networkAddress: String,
+        val networkVersion: String
 )
