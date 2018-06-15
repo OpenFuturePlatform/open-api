@@ -36,10 +36,13 @@ class ScaffoldTemplate(
         val conversionAmount: String?,
 
         @Column(name = "web_hook")
-        var webHook: String?,
+        val webHook: String?,
 
         @OneToMany(mappedBy = "scaffold")
-        val property: MutableList<ScaffoldTemplateProperty> = mutableListOf()
+        val property: MutableList<ScaffoldTemplateProperty> = mutableListOf(),
+
+        @Column(name = "deleted", nullable = false)
+        var deleted: Boolean = false
 
 ) : BaseModel() {
 

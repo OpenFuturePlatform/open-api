@@ -7,7 +7,8 @@ CREATE TABLE scaffold_templates(
   fiat_amount VARCHAR,
   currency_id INT REFERENCES currencies,
   conversion_amount VARCHAR,
-  web_hook VARCHAR
+  web_hook VARCHAR,
+  deleted BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 CREATE TABLE scaffold_template_properties(

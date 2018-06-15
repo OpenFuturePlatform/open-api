@@ -54,7 +54,9 @@ interface TransactionRepository : BaseRepository<Transaction> {
 @Repository
 interface ScaffoldTemplateRepository : BaseRepository<ScaffoldTemplate> {
 
-    fun findAllByUser(user: User): List<ScaffoldTemplate>
+    fun findAllByUserAndDeletedIsFalse(user: User): List<ScaffoldTemplate>
+
+    fun findByIdAndUser(id: Long, user: User): ScaffoldTemplate?
 
 }
 

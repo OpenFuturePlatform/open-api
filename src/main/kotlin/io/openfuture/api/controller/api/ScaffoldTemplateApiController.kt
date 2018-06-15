@@ -25,4 +25,10 @@ class ScaffoldTemplateApiController(
         return ScaffoldTemplateDto(template)
     }
 
+    @DeleteMapping("/{id}")
+    fun delete(@PathVariable id: Long, @CurrentUser user: User): ScaffoldTemplateDto {
+        val template = service.delete(id, user)
+        return ScaffoldTemplateDto(template)
+    }
+
 }

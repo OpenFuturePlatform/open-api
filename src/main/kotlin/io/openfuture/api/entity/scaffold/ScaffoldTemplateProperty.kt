@@ -17,13 +17,13 @@ class ScaffoldTemplateProperty(
         val scaffold: ScaffoldTemplate,
 
         @Column(name = "name")
-        var name: String?,
+        val name: String?,
 
         @Column(name = "type_id")
-        private var typeId: Int?,
+        private val typeId: Int?,
 
         @Column(name = "default_value")
-        var defaultValue: String?
+        val defaultValue: String?
 
 ) : BaseModel() {
 
