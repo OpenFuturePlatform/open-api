@@ -12,6 +12,7 @@ import io.openfuture.api.exception.FunctionCallException
 import io.openfuture.api.exception.NotFoundException
 import io.openfuture.api.repository.ScaffoldPropertyRepository
 import io.openfuture.api.repository.ScaffoldRepository
+import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -60,6 +61,7 @@ class DefaultScaffoldService(
         private const val ENABLED_SCAFFOLD_TOKEN_COUNT = 10L
         private const val GET_SCAFFOLD_SUMMARY_METHOD_NAME = "getScaffoldSummary"
         private const val DEACTIVATE_SCAFFOLD_METHOD_NAME = "deactivate"
+        private val log = LoggerFactory.getLogger(DefaultScaffoldService::class.java)
     }
 
 
@@ -106,6 +108,7 @@ class DefaultScaffoldService(
         )
 
         val credentials = properties.getCredentials()
+        log.info(credentials.address)
         val nonce = web3.ethGetTransactionCount(credentials.address, LATEST).send().transactionCount
         val rawTransaction = RawTransaction.createContractTransaction(nonce, GAS_PRICE, GAS_LIMIT, ZERO,
                 compiledScaffold.bin + encodedConstructor)
