@@ -7,23 +7,16 @@ import io.openfuture.api.domain.scaffold.*
 import io.openfuture.api.entity.auth.User
 import io.openfuture.api.entity.scaffold.Scaffold
 import io.openfuture.api.entity.scaffold.ScaffoldProperty
-import io.openfuture.api.exception.DeployException
-import io.openfuture.api.exception.FunctionCallException
-import io.openfuture.api.exception.NotFoundException
+import io.openfuture.api.exception.*
 import io.openfuture.api.repository.ScaffoldPropertyRepository
 import io.openfuture.api.repository.ScaffoldRepository
-import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import org.web3j.abi.FunctionEncoder
-import org.web3j.abi.FunctionReturnDecoder
-import org.web3j.abi.TypeReference
-import org.web3j.abi.datatypes.Address
+import org.web3j.abi.*
+import org.web3j.abi.datatypes.*
 import org.web3j.abi.datatypes.Function
-import org.web3j.abi.datatypes.Type
-import org.web3j.abi.datatypes.Utf8String
 import org.web3j.abi.datatypes.generated.Uint256
 import org.web3j.crypto.RawTransaction
 import org.web3j.crypto.TransactionEncoder
@@ -63,7 +56,6 @@ class DefaultScaffoldService(
         private const val ENABLED_SCAFFOLD_TOKEN_COUNT = 10L
         private const val GET_SCAFFOLD_SUMMARY_METHOD_NAME = "getScaffoldSummary"
         private const val DEACTIVATE_SCAFFOLD_METHOD_NAME = "deactivate"
-        private val log = LoggerFactory.getLogger(DefaultScaffoldService::class.java)
     }
 
 
@@ -111,7 +103,6 @@ class DefaultScaffoldService(
         )
 
         val credentials = properties.getCredentials()
-        log.info(credentials.address)
         val nonce = web3.ethGetTransactionCount(credentials.address, LATEST).send().transactionCount
         val rawTransaction = RawTransaction.createContractTransaction(nonce, GAS_PRICE, GAS_LIMIT, ZERO,
                 compiledScaffold.bin + encodedConstructor)
