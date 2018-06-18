@@ -5,16 +5,22 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-- Scaffold Deployment via MetaMask
-- Dropdown for deployment method
-- Active Ethereum network recognition
-- Stateless authentication
-- Off-chain data synchronization
-- OPEN API Keys management
-- Scaffold templates functionality
-- Functionality for updating Scaffold Information
+- Public API Specification
+- Scaffold deployment via MetaMask
 - Scaffold activation via MetaMask
-- Public API Specification and Implementation
+- The number of inactive Scaffolds is limited to 10 Scaffolds
+- Choose Scaffold deployment method
+- Active Ethereum network recognition
+- Off-chain data synchronization
+- Receive Scaffolds
+- Receive Scaffold transactions
+- Set Scaffold webhooks
+- Receive Scaffold state
+- Backend: OPEN API Keys management
+- Backend: Update Scaffold Information
+- Backend: Scaffold templates
+- Backend: Split Transaction
+- Scaffold: Split Transaction
 
 ## [2.0.0] - 2018-06-04
 ### Added
