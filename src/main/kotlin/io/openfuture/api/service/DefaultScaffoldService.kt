@@ -183,6 +183,7 @@ class DefaultScaffoldService(
 
         val result = callFunction(function, scaffold.address)
         return ScaffoldSummaryDto(
+                scaffold.abi,
                 result[0].value as String,
                 result[1].value as String,
                 result[2].value as String,

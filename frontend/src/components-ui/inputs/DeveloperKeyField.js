@@ -1,7 +1,6 @@
-// ScaffoldField contains logic to render a single field
 import React from 'react';
 import {Button, Input} from 'semantic-ui-react';
-import CopyToClipboardButton from './CopyToClipboardButton';
+import CopyToClipboardButton from '../CopyToClipboardButton';
 
 export default ({
                     action,

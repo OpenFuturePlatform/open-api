@@ -36,6 +36,14 @@ body .video {
     user-select: none;
 }
 
+.selectable {
+    -moz-user-select: text;
+    -khtml-user-select: text;
+    -webkit-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+}
+
 li {
     list-style-type: none;
 }

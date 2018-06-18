@@ -4,6 +4,7 @@ import java.math.BigDecimal
 import java.math.BigInteger
 
 data class ScaffoldSummaryDto(
+        val abi: String,
         val description: String,
         val fiatAmount: String,
         val fiatCurrency: String,
