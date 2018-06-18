@@ -15,5 +15,5 @@ export const getMetaMaskError = state => {
   }
 
   const targetNetwork = getTargetNetwork(state);
-  return activeNetworkId !== targetNetwork.id ? `Choose ${targetNetwork.name} MetaMask network` : '';
+  return activeNetworkId !== targetNetwork.id ? `Choose ${targetNetwork.name}` : '';
 };

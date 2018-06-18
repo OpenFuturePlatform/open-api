@@ -32,8 +32,7 @@ class ScaffoldSummary extends Component {
               <Card fluid>
                 <Card.Content header="On-chain Scaffold Summary" meta="This data is coming from the Ethereum Network"/>
                 <Card.Content>
-                  {onchainScaffoldSummary.tokenBalance} tokens
-                  <ScaffoldStatusContainer scaffoldAddress={scaffoldAddress} status={onchainScaffoldSummary.enabled} />
+                  <ScaffoldStatusContainer scaffoldAddress={scaffoldAddress} scaffold={onchainScaffoldSummary}/>
                 </Card.Content>
                 <Card.Content>
                   <div>Scaffold Description: {onchainScaffoldSummary.description}</div>

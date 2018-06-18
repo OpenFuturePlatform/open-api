@@ -1,7 +1,12 @@
 import React, {Component} from 'react';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
-import {activateScaffold, deactivateScaffold, subscribeScaffoldActivation} from '../actions/scaffold-activation';
+import {
+  activateScaffold,
+  deactivateScaffold,
+  deactivateScaffoldByApi,
+  subscribeScaffoldActivation
+} from '../actions/scaffold-activation';
 import {subscribeEthAccount, unsubscribeEthAccount} from '../actions/eth-account';
 import {Button} from 'semantic-ui-react';
 import {MIN_CONTRACT_DEPOSIT} from '../const/index';
@@ -29,8 +34,13 @@ class ScaffoldStatus extends Component {
   }
 
   handleOnDeactivate() {
+    const {scaffoldAddress, abi, vendorAddress} = this.props;
+    this.props.actions.deactivateScaffold(scaffoldAddress, abi, vendorAddress);
+  }
+
+  handleOnDeactivateByApi() {
     const {scaffoldAddress} = this.props;
-    this.props.actions.deactivateScaffold(scaffoldAddress);
+    this.props.actions.deactivateScaffoldByApi(scaffoldAddress);
   }
 
   handleOnActivate() {
@@ -44,7 +54,20 @@ class ScaffoldStatus extends Component {
   }
 
   renderDeactivateButton() {
-    return <Button onClick={this.handleOnDeactivate}>Deactivate</Button>;
+    const loading = this.props.ethAccount.activating;
+    const activationAllowed = this.validateTokenBalance();
+    const disabled = loading || !activationAllowed;
+
+    return (
+      <div style={{display: 'flex'}}>
+        <div style={{paddingRight: 30}}>
+          <Button loading={loading} disabled={disabled} onClick={this.handleOnDeactivate}>Deactivate</Button>
+        </div>
+        <div style={{color: 'red', paddingTop: 8}}>
+          {this.renderMetaMaskMessage()}
+        </div>
+      </div>
+    );
   }
 
   renderMetaMaskMessage() {
@@ -106,23 +129,26 @@ class ScaffoldStatus extends Component {
     return (
       <div>
         Status: {status ? 'Active' : 'Disabled'}
+        {/*({tokenBalance || 0} tokens)*/}
         <div style={{marginTop: '10px'}}>
           {status ? this.renderDeactivateButton() : this.renderActivateButton()}
+          {/*{this.renderDeactivateButton()} {this.renderActivateButton()}*/}
         </div>
       </div>
     );
   }
 }
 
-const mapStateToProps = (state, {status, scaffoldAddress}) => {
+const mapStateToProps = (state, {scaffoldAddress, scaffold: {enabled, abi, tokenBalance, vendorAddress}}) => {
   const {ethAccount} = state;
   const metaMaskError = getMetaMaskError(state);
-  return ({ethAccount, status, scaffoldAddress, metaMaskError});
+  return ({ethAccount, status: enabled, vendorAddress, scaffoldAddress, abi, tokenBalance, metaMaskError});
 };
 
 const mapDispatchToProps = dispatch => ({
   actions: bindActionCreators({
     deactivateScaffold,
+    deactivateScaffoldByApi,
     activateScaffold,
     subscribeEthAccount,
     unsubscribeEthAccount,
