@@ -13,6 +13,7 @@ class ScaffoldTemplateDto(
         val fiatAmount: String?,
         val currency: Currency?,
         val conversionAmount: String?,
+        val webHook: String?,
         val properties: List<ScaffoldTemplatePropertyDto>
 ) {
 
@@ -25,6 +26,7 @@ class ScaffoldTemplateDto(
             scaffold.fiatAmount,
             scaffold.getCurrency(),
             scaffold.conversionAmount,
+            scaffold.webHook,
             scaffold.property.map { ScaffoldTemplatePropertyDto(it) }
     )
 
