@@ -2,6 +2,9 @@ package io.openfuture.api.controller.api
 
 import io.openfuture.api.config.ControllerTests
 import io.openfuture.api.domain.PageRequest
+import io.openfuture.api.entity.auth.OpenKey
+import io.openfuture.api.entity.auth.Role
+import io.openfuture.api.entity.auth.User
 import io.openfuture.api.entity.scaffold.Currency
 import io.openfuture.api.entity.scaffold.Scaffold
 import io.openfuture.api.entity.scaffold.Transaction
@@ -12,6 +15,7 @@ import org.mockito.BDDMockito.given
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.data.domain.PageImpl
+import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -32,15 +36,17 @@ class TransactionApiControllerTest : ControllerTests() {
 
     @Test
     fun getAll() {
-        val scaffold = createScaffold()
+        val openKey = createOpenKey(setOf(Role("ROLE_DEPLOY")))
+        val scaffold = createScaffold(openKey)
         val pageRequest = PageRequest()
         val transaction = Transaction(scaffold, "data", "type")
 
+        given(keyService.find(openKey.value)).willReturn(openKey)
         given(scaffoldService.get(scaffold.address, openKey.user)).willReturn(scaffold)
         given(service.getAll(scaffold, pageRequest)).willReturn(PageImpl(listOf(transaction)))
 
         mvc.perform(get("/api/scaffolds/${scaffold.address}/transactions")
-                .header(AUTHORIZATION, OPEN_TOKEN_VALUE))
+                .header(AUTHORIZATION, openKey.value))
 
                 .andExpect(status().isOk)
                 .andExpect(content().json("""
@@ -53,7 +59,7 @@ class TransactionApiControllerTest : ControllerTests() {
                     """.trimIndent(), true))
     }
 
-    private fun createScaffold() = Scaffold("address", openKey, "abi", "developerAddress",
+    private fun createScaffold(openKey: OpenKey) = Scaffold("address", openKey, "abi", "developerAddress",
             "description", "2", Currency.USD.getId(), "0.00023")
 
 
@@ -90,5 +96,15 @@ class TransactionApiControllerTest : ControllerTests() {
                         "type": ${transaction.type}
                     }
                     """.trimIndent()
+
+    private fun createOpenKey(roles: Set<Role>): OpenKey {
+        val user = User("test", 0, mutableSetOf(), roles)
+        val openKey = OpenKey(user, value = "open_token_value")
+        openKey.id = 1
+        user.id = 1
+        user.openKeys.add(openKey)
+
+        return openKey
+    }
 
 }
