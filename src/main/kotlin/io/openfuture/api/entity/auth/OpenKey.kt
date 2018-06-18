@@ -5,9 +5,6 @@ import io.openfuture.api.entity.base.BaseModel
 import java.util.*
 import javax.persistence.*
 
-/**
- * @author Kadach Alexey
- */
 @Entity
 @Table(name = "open_keys")
 class OpenKey(

@@ -5,9 +5,6 @@ import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Table
 
-/**
- * @author Kadach Alexey
- */
 @Entity
 @Table(name = "roles")
 class Role(

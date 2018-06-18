@@ -9,9 +9,6 @@ import java.util.*
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-/**
- * @author Alexey Skadorva
- */
 class OAuth2AuthorizationRequestRepository (private val properties: AuthorizationProperties) : AuthorizationRequestRepository<OAuth2AuthorizationRequest> {
 
     override fun loadAuthorizationRequest(request: HttpServletRequest): OAuth2AuthorizationRequest {

@@ -7,9 +7,6 @@ import io.openfuture.api.entity.auth.User
 import io.openfuture.api.service.ScaffoldTemplateService
 import org.springframework.web.bind.annotation.*
 
-/**
- * @author Kadach Alexey
- */
 @RestController
 @RequestMapping("/api/scaffolds/templates")
 class ScaffoldTemplateApiController(

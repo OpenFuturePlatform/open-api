@@ -9,9 +9,6 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
-/**
- * @author Kadach Alexey
- */
 @Service
 class DefaultOpenKeyService(
         private val repository: OpenKeyRepository

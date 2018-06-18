@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   actions required.
 - Logo - link to /scaffolds
 - Link to Etherscan
+- Scaffold templates functionality
 - Keys management
 
 ### Changed

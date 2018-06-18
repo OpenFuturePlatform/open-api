@@ -7,9 +7,6 @@ import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotEmpty
 import javax.validation.constraints.NotNull
 
-/**
- * @author Kadach Alexey
- */
 data class SaveScaffoldRequest(
         @field:NotBlank var address: String? = null,
         @field:NotBlank var abi: String? = null,

@@ -3,9 +3,6 @@ package io.openfuture.api.util
 import javax.servlet.http.Cookie
 import javax.servlet.http.HttpServletResponse
 
-/**
- * @author Alexey Skadorva
- */
 object CookieUtils {
 
     fun add(response: HttpServletResponse, name: String, value: String) {

@@ -6,9 +6,6 @@ import org.springframework.validation.annotation.Validated
 import org.web3j.crypto.Credentials
 import javax.validation.constraints.NotEmpty
 
-/**
- * @author Kadach Alexey
- */
 @ConfigurationProperties(prefix = "ethereum")
 @Validated
 @Component

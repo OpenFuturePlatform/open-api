@@ -7,9 +7,6 @@ import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotEmpty
 import javax.validation.constraints.NotNull
 
-/**
- * @author Kadach Alexey
- */
 data class DeployScaffoldRequest(
         @field:NotBlank var openKey: String? = null,
         @field:NotBlank var developerAddress: String? = null,

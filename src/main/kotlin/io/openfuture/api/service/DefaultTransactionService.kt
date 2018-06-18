@@ -8,9 +8,6 @@ import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
-/**
- * @author Kadach Alexey
- */
 @Service
 class DefaultTransactionService(
         private val repository: TransactionRepository

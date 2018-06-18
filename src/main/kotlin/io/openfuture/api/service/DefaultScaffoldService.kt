@@ -7,16 +7,23 @@ import io.openfuture.api.domain.scaffold.*
 import io.openfuture.api.entity.auth.User
 import io.openfuture.api.entity.scaffold.Scaffold
 import io.openfuture.api.entity.scaffold.ScaffoldProperty
-import io.openfuture.api.exception.*
+import io.openfuture.api.exception.DeployException
+import io.openfuture.api.exception.FunctionCallException
+import io.openfuture.api.exception.NotFoundException
 import io.openfuture.api.repository.ScaffoldPropertyRepository
 import io.openfuture.api.repository.ScaffoldRepository
+import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import org.web3j.abi.*
-import org.web3j.abi.datatypes.*
+import org.web3j.abi.FunctionEncoder
+import org.web3j.abi.FunctionReturnDecoder
+import org.web3j.abi.TypeReference
+import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.Function
+import org.web3j.abi.datatypes.Type
+import org.web3j.abi.datatypes.Utf8String
 import org.web3j.abi.datatypes.generated.Uint256
 import org.web3j.crypto.RawTransaction
 import org.web3j.crypto.TransactionEncoder
@@ -34,10 +41,6 @@ import java.math.BigInteger.ZERO
 import java.util.Arrays.asList
 import javax.annotation.PostConstruct
 
-
-/**
- * @author Kadach Alexey
- */
 @Service
 class DefaultScaffoldService(
         private val web3: Web3j,
@@ -50,6 +53,7 @@ class DefaultScaffoldService(
 ) : ScaffoldService {
 
     companion object {
+        private val log = LoggerFactory.getLogger(DefaultScaffoldService::class.java)
         private const val ALLOWED_DISABLED_SCAFFOLDS = 10L
         private const val ENABLED_SCAFFOLD_TOKEN_COUNT = 10L
         private const val GET_SCAFFOLD_SUMMARY_METHOD_NAME = "getScaffoldSummary"
@@ -59,13 +63,17 @@ class DefaultScaffoldService(
 
     @PostConstruct
     fun init() {
-        web3.transactionObservable().subscribe {
-            val transactionReceipt = web3.ethGetTransactionReceipt(it.hash).send().transactionReceipt
-            if (transactionReceipt.isPresent) {
-                transactionReceipt.get().logs.forEach {
-                    transactionHandler.handle(it)
+        try {
+            web3.transactionObservable().subscribe {
+                val transactionReceipt = web3.ethGetTransactionReceipt(it.hash).send().transactionReceipt
+                if (transactionReceipt.isPresent) {
+                    transactionReceipt.get().logs.forEach {
+                        transactionHandler.handle(it)
+                    }
                 }
             }
+        } catch (e: Exception) {
+            log.warn(e.message)
         }
     }
 
