@@ -5,9 +5,6 @@ import io.openfuture.api.entity.base.BaseModel
 import io.openfuture.api.util.DictionaryUtils
 import javax.persistence.*
 
-/**
- * @author Kadach Alexey
- */
 @Entity
 @Table(name = "scaffold_properties")
 class ScaffoldProperty(
@@ -17,13 +14,13 @@ class ScaffoldProperty(
         val scaffold: Scaffold,
 
         @Column(name = "name", nullable = false)
-        var name: String,
+        val name: String,
 
         @Column(name = "type_id", nullable = false)
-        private var typeId: Int,
+        private val typeId: Int,
 
         @Column(name = "default_value", nullable = false)
-        var defaultValue: String
+        val defaultValue: String
 
 ) : BaseModel() {
 

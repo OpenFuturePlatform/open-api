@@ -1,14 +1,9 @@
 package io.openfuture.api.entity.auth
 
 import io.openfuture.api.entity.base.BaseModel
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.OneToMany
-import javax.persistence.Table
+import javax.persistence.*
+import javax.persistence.FetchType.EAGER
 
-/**
- * @author Kadach Alexey
- */
 @Entity
 @Table(name = "users")
 class User(
@@ -19,7 +14,15 @@ class User(
         @Column(name = "credits", nullable = false)
         val credits: Int = 0,
 
-        @OneToMany(mappedBy = "user")
-        val openKeys: MutableSet<OpenKey> = mutableSetOf()
+        @OneToMany(mappedBy = "user", fetch = EAGER)
+        val openKeys: MutableSet<OpenKey> = mutableSetOf(),
 
-): BaseModel()
+        @ManyToMany(fetch = EAGER)
+        @JoinTable(
+                name = "users2roles",
+                joinColumns = [(JoinColumn(name = "user_id", nullable = false))],
+                inverseJoinColumns = [(JoinColumn(name = "role_id", nullable = false))]
+        )
+        val roles: Set<Role> = setOf()
+
+) : BaseModel()

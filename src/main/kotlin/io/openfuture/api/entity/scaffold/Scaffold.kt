@@ -1,14 +1,12 @@
 package io.openfuture.api.entity.scaffold
 
-import io.openfuture.api.domain.scaffold.DeployScaffoldRequest
+import io.openfuture.api.domain.scaffold.SaveScaffoldRequest
 import io.openfuture.api.entity.auth.OpenKey
 import io.openfuture.api.entity.base.BaseModel
 import io.openfuture.api.util.DictionaryUtils
+import org.apache.commons.lang3.StringUtils.EMPTY
 import javax.persistence.*
 
-/**
- * @author Kadach Alexey
- */
 @Entity
 @Table(name = "scaffolds")
 class Scaffold(
@@ -27,7 +25,7 @@ class Scaffold(
         val developerAddress: String,
 
         @Column(name = "description", nullable = false)
-        val description: String,
+        var description: String,
 
         @Column(name = "fiat_amount", nullable = false)
         val fiatAmount: String,
@@ -38,29 +36,30 @@ class Scaffold(
         @Column(name = "conversion_amount", nullable = false)
         val conversionAmount: String,
 
+        @Column(name = "web_hook")
+        var webHook: String? = null,
+
         @OneToMany(mappedBy = "scaffold")
         val property: MutableList<ScaffoldProperty> = mutableListOf(),
 
         @Column(name = "enabled", nullable = false)
-        var enabled: Boolean = false,
-
-        @Column(name = "web_hook")
-        var webHook: String? = null
+        var enabled: Boolean = false
 
 ) : BaseModel() {
 
     fun getCurrency() = DictionaryUtils.valueOf(Currency::class.java, currencyId)
 
     companion object {
-        fun of(address: String, openKey: OpenKey, abi: String, scaffold: DeployScaffoldRequest): Scaffold = Scaffold(
-                address,
+        fun of(scaffold: SaveScaffoldRequest, openKey: OpenKey): Scaffold = Scaffold(
+                scaffold.address!!,
                 openKey,
-                abi,
+                scaffold.abi!!,
                 scaffold.developerAddress!!,
                 scaffold.description!!,
                 scaffold.fiatAmount!!,
                 scaffold.currency!!.getId(),
-                scaffold.conversionAmount!!
+                scaffold.conversionAmount!!,
+                if (EMPTY == scaffold.webHook?.trim()) null else scaffold.webHook
         )
     }
 

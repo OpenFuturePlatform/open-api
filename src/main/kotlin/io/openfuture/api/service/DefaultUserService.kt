@@ -5,9 +5,6 @@ import io.openfuture.api.repository.UserRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
-/**
- * @author Kadach Alexey
- */
 @Service
 class DefaultUserService(
         private val repository: UserRepository,
@@ -21,7 +18,9 @@ class DefaultUserService(
     override fun save(user: User): User {
         val persistUser = repository.save(user)
 
-        openKeyService.generate(persistUser)
+        val openKey = openKeyService.generate(persistUser)
+
+        persistUser.openKeys.add(openKey)
 
         return persistUser
     }
