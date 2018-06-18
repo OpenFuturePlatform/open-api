@@ -9,6 +9,8 @@
 
 This API is running on https://api.openfuture.io.
 
+Documentation is available at https://docs.openfuture.io.
+
 ## Running the application
 
 ### Environment Variables
