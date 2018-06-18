@@ -7,9 +7,6 @@ import org.springframework.data.domain.Sort.Direction.ASC
 import javax.validation.constraints.Max
 import javax.validation.constraints.Min
 
-/**
- * @author Kadach Alexey
- */
 open class PageRequest(
         @field:Min(value = 0) private var offset: Long = 0,
         @field:Min(value = 1) @field:Max(100) private var limit: Int = 100

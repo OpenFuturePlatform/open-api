@@ -2,9 +2,6 @@ package io.openfuture.api.domain.scaffold
 
 import io.openfuture.api.entity.scaffold.Transaction
 
-/**
- * @author Kadach Alexey
- */
 data class TransactionDto(
         val scaffold: ScaffoldDto,
         val data: String,

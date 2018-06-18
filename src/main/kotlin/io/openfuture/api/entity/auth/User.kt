@@ -4,9 +4,6 @@ import io.openfuture.api.entity.base.BaseModel
 import javax.persistence.*
 import javax.persistence.FetchType.EAGER
 
-/**
- * @author Kadach Alexey
- */
 @Entity
 @Table(name = "users")
 class User(

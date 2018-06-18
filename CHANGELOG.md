@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Active Ethereum network recognition
 - Stateless authentication
 - Setting Webhooks
+- OPEN API Keys management
+- Scaffold templates functionality
+- Functionality for updating Scaffold Information
 - Scaffold activation
 
 ## [2.0.0] - 2018-06-04

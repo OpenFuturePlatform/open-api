@@ -4,9 +4,6 @@ import io.openfuture.api.domain.auth.UserDto
 import io.openfuture.api.entity.scaffold.Currency
 import io.openfuture.api.entity.scaffold.Scaffold
 
-/**
- * @author Kadach Alexey
- */
 data class ScaffoldDto(
         val address: String,
         val user: UserDto,

@@ -3,9 +3,6 @@ package io.openfuture.api.domain.scaffold
 import java.math.BigDecimal
 import java.math.BigInteger
 
-/**
- * @author Kadach Alexey
- */
 data class ScaffoldSummaryDto(
         val abi: String,
         val description: String,
