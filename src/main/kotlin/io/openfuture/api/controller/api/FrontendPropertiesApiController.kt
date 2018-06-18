@@ -7,9 +7,6 @@ import org.springframework.web.bind.annotation.RestController
 import org.web3j.protocol.Web3j
 import org.web3j.spring.autoconfigure.Web3jProperties
 
-/**
- * @author Kadach Alexey
- */
 @RestController
 @RequestMapping("/api/properties")
 class FrontendPropertiesApiController(

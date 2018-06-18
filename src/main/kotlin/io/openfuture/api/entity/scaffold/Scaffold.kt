@@ -7,9 +7,6 @@ import io.openfuture.api.util.DictionaryUtils
 import org.apache.commons.lang3.StringUtils.EMPTY
 import javax.persistence.*
 
-/**
- * @author Kadach Alexey
- */
 @Entity
 @Table(name = "scaffolds")
 class Scaffold(

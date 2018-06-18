@@ -7,9 +7,6 @@ import io.openfuture.api.repository.OpenKeyRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
-/**
- * @author Kadach Alexey
- */
 @Service
 class DefaultOpenKeyService(
         private val repository: OpenKeyRepository

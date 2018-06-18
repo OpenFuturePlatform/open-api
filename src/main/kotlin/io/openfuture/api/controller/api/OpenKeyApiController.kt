@@ -8,9 +8,6 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
-/**
- * @author Kadach Alexey
- */
 @RestController
 @RequestMapping("/api/keys")
 class OpenKeyApiController(

@@ -10,9 +10,6 @@ import org.springframework.security.web.authentication.SavedRequestAwareAuthenti
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-/**
- * @author Kadach Alexey
- */
 class AuthenticationSuccessHandler(
         private val properties: AuthorizationProperties,
         private val service: UserService

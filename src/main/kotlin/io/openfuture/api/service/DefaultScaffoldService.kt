@@ -41,10 +41,6 @@ import java.math.BigInteger.ZERO
 import java.util.Arrays.asList
 import javax.annotation.PostConstruct
 
-
-/**
- * @author Kadach Alexey
- */
 @Service
 class DefaultScaffoldService(
         private val web3: Web3j,

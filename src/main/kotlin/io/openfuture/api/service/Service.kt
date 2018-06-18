@@ -9,9 +9,6 @@ import io.openfuture.api.entity.scaffold.Transaction
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
-/**
- * @author Kadach Alexey
- */
 interface ScaffoldService {
 
     fun getAll(user: User, pageRequest: Pageable): Page<Scaffold>
