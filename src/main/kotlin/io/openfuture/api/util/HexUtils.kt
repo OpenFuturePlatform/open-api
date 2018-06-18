@@ -1,8 +1,5 @@
 package io.openfuture.api.util
 
-/**
- * @author Kadach Alexey
- */
 object HexUtils {
 
     fun decode(hex: String): String = hex.substring(2)

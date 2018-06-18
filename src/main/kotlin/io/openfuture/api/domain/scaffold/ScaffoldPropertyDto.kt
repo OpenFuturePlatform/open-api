@@ -5,9 +5,6 @@ import io.openfuture.api.entity.scaffold.ScaffoldProperty
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
 
-/**
- * @author Kadach Alexey
- */
 data class ScaffoldPropertyDto(
         @field:NotBlank var name: String? = null,
         @field:NotNull var type: PropertyType? = null,

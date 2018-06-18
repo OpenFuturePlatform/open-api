@@ -11,9 +11,6 @@ import org.ethereum.solidity.compiler.SolidityCompiler.Options.*
 import org.springframework.stereotype.Component
 import java.nio.charset.Charset
 
-/**
- * @author Kadach Alexey
- */
 @Component
 class ScaffoldCompiler(
         private val templateProcessor: TemplateProcessor,

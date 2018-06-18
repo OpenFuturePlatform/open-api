@@ -2,9 +2,7 @@ package io.openfuture.api.repository
 
 import io.openfuture.api.entity.auth.OpenKey
 import io.openfuture.api.entity.auth.User
-import io.openfuture.api.entity.scaffold.Scaffold
-import io.openfuture.api.entity.scaffold.ScaffoldProperty
-import io.openfuture.api.entity.scaffold.Transaction
+import io.openfuture.api.entity.scaffold.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
@@ -52,3 +50,15 @@ interface TransactionRepository : BaseRepository<Transaction> {
     fun findAllByScaffold(scaffold: Scaffold, pageable: Pageable): Page<Transaction>
 
 }
+
+@Repository
+interface ScaffoldTemplateRepository : BaseRepository<ScaffoldTemplate> {
+
+    fun findAllByUserAndDeletedIsFalse(user: User): List<ScaffoldTemplate>
+
+    fun findByIdAndUser(id: Long, user: User): ScaffoldTemplate?
+
+}
+
+@Repository
+interface ScaffoldTemplatePropertyRepository : BaseRepository<ScaffoldTemplateProperty>

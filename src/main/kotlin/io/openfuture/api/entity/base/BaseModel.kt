@@ -6,9 +6,6 @@ import javax.persistence.GenerationType.IDENTITY
 import javax.persistence.Id
 import javax.persistence.MappedSuperclass
 
-/**
- * @author Kadach Alexey
- */
 @MappedSuperclass
 abstract class BaseModel(@Id @GeneratedValue(strategy = IDENTITY) var id: Long = 0) : Serializable {
 
