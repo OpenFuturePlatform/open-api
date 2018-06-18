@@ -25,7 +25,7 @@ class Scaffold(
         val developerAddress: String,
 
         @Column(name = "description", nullable = false)
-        val description: String,
+        var description: String,
 
         @Column(name = "fiat_amount", nullable = false)
         val fiatAmount: String,
