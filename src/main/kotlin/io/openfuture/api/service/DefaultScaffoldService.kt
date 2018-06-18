@@ -99,15 +99,16 @@ class DefaultScaffoldService(
     @Transactional
     override fun deploy(request: DeployScaffoldRequest): Scaffold {
         val compiledScaffold = compile(CompileScaffoldRequest(request.openKey, request.properties))
+        val credentials = properties.getCredentials()
         val encodedConstructor = FunctionEncoder.encodeConstructor(asList<Type<*>>(
                 Address(request.developerAddress),
+                Address(credentials.address),
                 Utf8String(request.description),
                 Utf8String(request.fiatAmount),
                 Utf8String(request.currency!!.getValue()),
                 Uint256(toWei(request.conversionAmount, ETHER).toBigInteger()))
         )
 
-        val credentials = properties.getCredentials()
         val nonce = web3.ethGetTransactionCount(credentials.address, LATEST).send().transactionCount
         val rawTransaction = RawTransaction.createContractTransaction(nonce, GAS_PRICE, GAS_LIMIT, ZERO,
                 compiledScaffold.bin + encodedConstructor)
