@@ -1,4 +1,3 @@
-// ScaffoldField contains logic to render a single feild
 import React from 'react';
 import {Input, Message} from 'semantic-ui-react';
 

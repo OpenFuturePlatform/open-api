@@ -9,9 +9,6 @@ import org.springframework.stereotype.Component
 import org.springframework.web.client.RestTemplate
 import org.web3j.protocol.core.methods.response.Log
 
-/**
- * @author Kadach Alexey
- */
 @Component
 class TransactionHandler(
         private val service: TransactionService,

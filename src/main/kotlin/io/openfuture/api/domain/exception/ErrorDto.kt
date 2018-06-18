@@ -5,9 +5,6 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL
 import org.springframework.validation.FieldError
 import org.springframework.validation.ObjectError
 
-/**
- * @author Kadach Alexey
- */
 @Suppress("MemberVisibilityCanPrivate")
 @JsonInclude(NON_NULL)
 data class ErrorDto(

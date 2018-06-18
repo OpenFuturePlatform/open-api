@@ -7,9 +7,6 @@ import io.openfuture.api.util.DictionaryUtils
 import org.apache.commons.lang3.StringUtils.EMPTY
 import javax.persistence.*
 
-/**
- * @author Kadach Alexey
- */
 @Entity
 @Table(name = "scaffolds")
 class Scaffold(
@@ -28,7 +25,7 @@ class Scaffold(
         val developerAddress: String,
 
         @Column(name = "description", nullable = false)
-        val description: String,
+        var description: String,
 
         @Column(name = "fiat_amount", nullable = false)
         val fiatAmount: String,

@@ -10,9 +10,6 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
-/**
- * @author Kadach Alexey
- */
 @RestController
 @RequestMapping("/api/scaffolds")
 class ScaffoldApiController(
@@ -45,6 +42,12 @@ class ScaffoldApiController(
     @PostMapping
     fun save(@Valid @RequestBody request: SaveScaffoldRequest): ScaffoldDto {
         val scaffold = service.save(request)
+        return ScaffoldDto(scaffold)
+    }
+
+    @PostMapping("/{address}")
+    fun update(@CurrentUser user: User, @PathVariable address: String, @Valid @RequestBody request: UpdateScaffoldRequest): ScaffoldDto {
+        val scaffold = service.update(address, user, request)
         return ScaffoldDto(scaffold)
     }
 

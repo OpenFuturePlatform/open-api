@@ -1,9 +1,9 @@
-import '../css/main.css';
+import './css/main.css';
 import React from 'react';
 import {BrowserRouter, Redirect, Route, Switch} from 'react-router-dom';
 
-import Landing from './Landing';
-import Scaffolds from "./Scaffolds";
+import Landing from './scenes/Landing';
+import Scaffolds from './scenes/Scaffolds';
 
 const App = () => (
   <BrowserRouter>

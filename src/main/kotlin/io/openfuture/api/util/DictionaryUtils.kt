@@ -2,9 +2,6 @@ package io.openfuture.api.util
 
 import io.openfuture.api.entity.base.Dictionary
 
-/**
- * @author Kadach Alexey
- */
 object DictionaryUtils {
 
     @Suppress("UNCHECKED_CAST")
