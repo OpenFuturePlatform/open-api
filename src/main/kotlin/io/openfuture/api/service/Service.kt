@@ -29,6 +29,12 @@ interface ScaffoldService {
 
     fun getQuota(user: User): ScaffoldQuotaDto
 
+    fun addShareHolder(address: String, user: User, request: AddShareHolderRequest)
+
+    fun updateShareHolder(address: String, user: User, request: UpdateShareHolderRequest)
+
+    fun removeShareHolder(address: String, user: User, request: RemoveShareHolderRequest)
+
 }
 
 interface ScaffoldTemplateService {

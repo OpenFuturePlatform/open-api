@@ -25,6 +25,7 @@ import org.web3j.abi.datatypes.Function
 import org.web3j.abi.datatypes.Type
 import org.web3j.abi.datatypes.Utf8String
 import org.web3j.abi.datatypes.generated.Uint256
+import org.web3j.abi.datatypes.generated.Uint8
 import org.web3j.crypto.RawTransaction
 import org.web3j.crypto.TransactionEncoder
 import org.web3j.protocol.Web3j
@@ -58,6 +59,9 @@ class DefaultScaffoldService(
         private const val ENABLED_SCAFFOLD_TOKEN_COUNT = 10L
         private const val GET_SCAFFOLD_SUMMARY_METHOD_NAME = "getScaffoldSummary"
         private const val DEACTIVATE_SCAFFOLD_METHOD_NAME = "deactivate"
+        private const val ADD_SHARE_HOLDER_METHOD_NAME = "addShareHolder"
+        private const val UPDATE_SHARE_HOLDER_METHOD_NAME = "editPartnerShare"
+        private const val REMOVE_SHARE_HOLDER_METHOD_NAME = "deleteShareHolder"
     }
 
 
@@ -203,6 +207,50 @@ class DefaultScaffoldService(
     override fun getQuota(user: User): ScaffoldQuotaDto {
         val scaffoldCount = repository.countByEnabledIsFalseAndOpenKeyUser(user)
         return ScaffoldQuotaDto(scaffoldCount, ENABLED_SCAFFOLD_TOKEN_COUNT)
+    }
+
+    @Transactional(readOnly = true)
+    override fun addShareHolder(address: String, user: User, request: AddShareHolderRequest) {
+        val scaffold = get(address, user)
+        val function = Function(
+                ADD_SHARE_HOLDER_METHOD_NAME,
+                asList<Type<*>>(
+                        Utf8String(request.address),
+                        Uint8(request.percent.toLong())
+                ),
+                asList()
+        )
+
+        callFunction(function, scaffold.address)
+    }
+
+    @Transactional(readOnly = true)
+    override fun updateShareHolder(address: String, user: User, request: UpdateShareHolderRequest) {
+        val scaffold = get(address, user)
+        val function = Function(
+                UPDATE_SHARE_HOLDER_METHOD_NAME,
+                asList<Type<*>>(
+                        Utf8String(request.address),
+                        Uint8(request.percent.toLong())
+                ),
+                asList()
+        )
+
+        callFunction(function, scaffold.address)
+    }
+
+    @Transactional(readOnly = true)
+    override fun removeShareHolder(address: String, user: User, request: RemoveShareHolderRequest) {
+        val scaffold = get(address, user)
+        val function = Function(
+                REMOVE_SHARE_HOLDER_METHOD_NAME,
+                asList<Type<*>>(
+                        Utf8String(request.address)
+                ),
+                asList()
+        )
+
+        callFunction(function, scaffold.address)
     }
 
     private fun callFunction(function: Function, address: String): MutableList<Type<Any>> {

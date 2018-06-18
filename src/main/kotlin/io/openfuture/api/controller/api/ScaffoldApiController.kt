@@ -63,4 +63,22 @@ class ScaffoldApiController(
     @GetMapping("/quota")
     fun getQuota(@CurrentUser user: User): ScaffoldQuotaDto = service.getQuota(user)
 
+    @PostMapping("/{address}/holders")
+    fun addShareHolder(@CurrentUser user: User, @Valid @RequestBody request: AddShareHolderRequest,
+                       @PathVariable address: String) {
+        service.addShareHolder(address, user, request)
+    }
+
+    @PutMapping("/{address}/holders")
+    fun updateShareHolder(@CurrentUser user: User, @Valid @RequestBody request: UpdateShareHolderRequest,
+                          @PathVariable address: String) {
+        service.updateShareHolder(address, user, request)
+    }
+
+    @DeleteMapping("/{address}/holders")
+    fun removeShareHolder(@CurrentUser user: User, @Valid @RequestBody request: RemoveShareHolderRequest,
+                          @PathVariable address: String) {
+        service.removeShareHolder(address, user, request)
+    }
+
 }
