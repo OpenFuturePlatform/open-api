@@ -49,7 +49,12 @@ contract OpenScaffold {
     // on-chain transaction storage
     struct OpenScaffoldTransaction {
         address customerAddress;
-        ${SCAFFOLD_STRUCT_PROPERTIES}
+        ${SCAFFOLD_STRUCT_PROPERTIES};
+    }
+    // shareholder struct
+    struct PartnerStruct {
+    uint8 partnerShare;
+    uint index;
     }
 
     // events
@@ -61,17 +66,30 @@ contract OpenScaffold {
         );
     event fundsDeposited(uint _amount, address _toAddress);
     event activatedScaffold(bool activated);
+    // shareholders events
+    event addShareHolderLog(address userAddress, uint partnerShare);
+    event editShareHolderLog(address userAddress, uint partnerShare);
+    event deleteShareHolderLog(address userAddress);
+    event payForShareHolderLog(address userAddress, uint amount);
 
-    // custom dataTypes - array for storage of transactions
+    // custom dataTypes
+    // array for storage of transactions
     OpenScaffoldTransaction[] public openScaffoldTransactions;
+    // array of shareholders addresses
+    address[] private shareHolderIndex;
+    // mapping for storage of partners( shareholders )
+    mapping(address => PartnerStruct) private partnerStructs;
+
 
     // constructor variables
     address public  vendorAddress;
     address private developerAddress;
     string public   scaffoldDescription;
     string public   fiatAmount;
-    string          fiatCurrency;
+    string public   fiatCurrency;
     uint public     scaffoldAmount;
+    // summarize all the shares that would not exceed the limit
+    uint8 private totalAmountShares   = 0;
 
     // generated internally by contract
     uint public scaffoldTransactionIndex;
@@ -79,7 +97,7 @@ contract OpenScaffold {
 
     // OPEN token
     uint constant private ACTIVATING_TOKENS_AMOUNT = 10 * 10**8;
-    address constant private OPEN_TOKEN_ADDRESS = ${OPEN_TOKEN_ADDRESS};
+     address constant private OPEN_TOKEN_ADDRESS = ${OPEN_TOKEN_ADDRESS};
     ERC20Token public OPENToken = ERC20Token(OPEN_TOKEN_ADDRESS);
 
 
@@ -120,15 +138,149 @@ contract OpenScaffold {
         activatedScaffold(false);
     }
 
+    // check of the partner's address
+    function isShareHolder(address shareHolderAddress)
+        public
+        constant
+        returns(bool alreadyExists) {
+        if(shareHolderIndex.length == 0) return false;
+        // the list is empty, so “the” key to test isn’t present
+       return (shareHolderIndex[partnerStructs[shareHolderAddress].index] == shareHolderAddress);
+
+    }
+
+    // get shareholder share by address
+    function getHoldersShare(address shareHolderAddress)
+        public
+        constant
+        returns(uint8 partnerShare) {
+            require(isShareHolder(shareHolderAddress));
+
+            return(partnerStructs[shareHolderAddress].partnerShare);
+  }
+
+  // get shareholders at index
+  function getShareHolderAtIndex(uint index)
+        public
+        constant
+    returns(address shareHolderAddress) {
+        return shareHolderIndex[index];
+    }
+
+  // get shareholders count
+  function getShareHolderCount()
+        public
+        constant
+        returns(uint count) {
+            return shareHolderIndex.length;
+    }
+
+    // add new shareholder
+    function addShareHolder(
+        address shareHolderAddress,
+        uint8 partnerShare)
+    public
+    returns(uint index){
+        require( !isShareHolder(shareHolderAddress) );
+        require( totalAmountShares + partnerShare <= 100 );
+
+        partnerStructs[shareHolderAddress].partnerShare = partnerShare;
+        //.push() returns the new array length
+        partnerStructs[shareHolderAddress].index = shareHolderIndex.push(shareHolderAddress)-1;
+
+        // add share for summing
+        totalAmountShares += partnerShare;
+
+        addShareHolderLog(
+            shareHolderAddress,
+            partnerShare);
+
+        return getShareHolderCount() ;
+    }
+
+    // edit partner share
+    function editPartnerShare(address shareHolderAddress, uint8 partnerShare)
+        public
+        returns(bool success) {
+            require(isShareHolder(shareHolderAddress));
+
+            // update share percent
+            uint8 updatedShareAmount = totalAmountShares - partnerStructs[shareHolderAddress].partnerShare;
+            updatedShareAmount += partnerShare;
+
+            require( updatedShareAmount <= 100 );
+
+            totalAmountShares = updatedShareAmount;
+
+            partnerStructs[shareHolderAddress].partnerShare = partnerShare;
+
+        emit editShareHolderLog(
+            shareHolderAddress,
+            partnerShare);
+
+        return true;
+    }
+
+
+    function deleteShareHolder(address shareHolderAddress)
+        public
+        returns(uint index){
+            require(isShareHolder(shareHolderAddress));
+
+            // delete share percent
+            totalAmountShares -= partnerStructs[shareHolderAddress].partnerShare;
+
+            uint rowToDelete = partnerStructs[shareHolderAddress].index;
+            address keyToMove = shareHolderIndex[shareHolderIndex.length-1];
+
+            shareHolderIndex[rowToDelete] = keyToMove;
+            partnerStructs[keyToMove].index = rowToDelete;
+
+            shareHolderIndex.length--;
+
+        emit deleteShareHolderLog(shareHolderAddress);
+
+
+        return rowToDelete;
+    }
+
     function payVendor(${CUSTOM_SCAFFOLD_PARAMETERS}) public payable activated {
         require(msg.value == scaffoldAmount);
         scaffoldTransactionIndex++;
 
         address customerAddress = msg.sender;
         uint256 transactionAmount = msg.value;
+                uint256 shareHolderIndexLength = getShareHolderCount();
+
         // developer fee
         uint256 developerFee = transactionAmount.div(100).mul(3);
-        uint256 vendorAmount = transactionAmount.sub(developerFee);
+        uint256 unpaidBalance = transactionAmount.sub(developerFee);
+        // vendor fee
+        uint256 vendorAmount = unpaidBalance;
+        /*
+
+
+        //reduces the Vendor amount in favor of the partner
+            vendorAmount -= shHoldrAmount;
+        */
+
+        if(shareHolderIndexLength > 0){
+            for(uint8 row=0; row < shareHolderIndexLength; row++) {
+
+            address shHoldrAddress = getShareHolderAtIndex(row);
+
+            uint256 shHoldrAmount = unpaidBalance.div(100).mul(partnerStructs[shHoldrAddress].partnerShare);
+
+            vendorAmount -= shHoldrAmount;
+
+            withdrawFunds(shHoldrAddress, shHoldrAmount);
+
+
+          emit payForShareHolderLog (
+              shHoldrAddress,
+              shHoldrAmount);
+         }
+        }
 
         OpenScaffoldTransaction memory newTransaction = OpenScaffoldTransaction({
             customerAddress: customerAddress,
@@ -137,9 +289,11 @@ contract OpenScaffold {
 
         openScaffoldTransactions.push(newTransaction);
 
-        // transfer amount
-        withdrawFunds(vendorAddress, vendorAmount);
+        // transfer amount for developer
         withdrawFunds(developerAddress, developerFee);
+        // transfer amount for vendor
+        withdrawFunds(vendorAddress, vendorAmount);
+
 
         paymentComplete(
             customerAddress,
