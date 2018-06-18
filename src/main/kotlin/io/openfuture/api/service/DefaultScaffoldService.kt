@@ -62,6 +62,14 @@ class DefaultScaffoldService(
     @PostConstruct
     fun init() {
         web3 = Web3j.build(HttpService(properties.infura))
+        web3.transactionObservable().subscribe {
+            val transactionReceipt = web3.ethGetTransactionReceipt(it.hash).send().transactionReceipt
+            if (transactionReceipt.isPresent) {
+                transactionReceipt.get().logs.forEach {
+                    transactionHandler.handle(it)
+                }
+            }
+        }
     }
 
     @Transactional(readOnly = true)
