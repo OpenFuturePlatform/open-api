@@ -144,7 +144,7 @@ class DefaultScaffoldService(
 
         scaffold.description = request.description!!
 
-        return scaffold
+        return repository.save(scaffold)
     }
 
     @Transactional
@@ -153,7 +153,7 @@ class DefaultScaffoldService(
 
         scaffold.webHook = request.webHook
 
-        return scaffold
+        return repository.save(scaffold)
     }
 
     @Transactional(readOnly = true)
