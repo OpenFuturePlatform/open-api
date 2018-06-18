@@ -3,10 +3,7 @@ package io.openfuture.api.util
 import org.assertj.core.api.Java6Assertions.assertThat
 import org.junit.Test
 
-/**
- * @author Yauheni Efimenko
- */
-class HexUtilsTest {
+class HexUtilsTests {
 
     @Test
     fun decode() {

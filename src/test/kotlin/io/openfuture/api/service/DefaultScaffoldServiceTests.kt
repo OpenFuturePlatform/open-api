@@ -1,10 +1,8 @@
 package io.openfuture.api.service
 
-import io.openfuture.api.*
 import io.openfuture.api.component.ScaffoldCompiler
 import io.openfuture.api.component.TransactionHandler
-import io.openfuture.api.config.any
-import io.openfuture.api.config.anyString
+import io.openfuture.api.config.*
 import io.openfuture.api.config.propety.EthereumProperties
 import io.openfuture.api.domain.scaffold.*
 import io.openfuture.api.entity.auth.OpenKey
@@ -39,10 +37,7 @@ import org.web3j.protocol.core.methods.response.*
 import java.math.BigInteger
 import java.util.*
 
-/**
- * @author Alexey Skadorva
- */
-internal class DefaultScaffoldServiceTest : UnitTest() {
+internal class DefaultScaffoldServiceTests : UnitTest() {
 
     @Mock private lateinit var compiler: ScaffoldCompiler
     @Mock private lateinit var repository: ScaffoldRepository
@@ -137,13 +132,16 @@ internal class DefaultScaffoldServiceTest : UnitTest() {
     fun deploy() {
         val expectedScaffold = getScaffold()
         val scaffoldPropertyDto = ScaffoldPropertyDto("name", PropertyType.STRING, "value")
-        val scaffoldProperty = ScaffoldProperty.of(expectedScaffold, scaffoldPropertyDto)
-        val request = DeployScaffoldRequest(OPEN_KEY_VALUE, "1", "description", "1", Currency.USD, "1", listOf(scaffoldPropertyDto))
+        val request = DeployScaffoldRequest(OPEN_KEY_VALUE, ADDRESS_VALUE, "description", "1", Currency.USD, "1", listOf(scaffoldPropertyDto))
         val optionalTransactionReceipt = Optional.of(TransactionReceipt().apply { contractAddress = ADDRESS_VALUE })
+        val contractMetadata = CompilationResult.ContractMetadata().apply { abi = "abi"; bin = "bin" }
 
         mockDeploy()
-        given(repository.save(any(Scaffold::class.java))).willReturn(expectedScaffold.apply { id = ID })
-        given(propertyRepository.save(any(ScaffoldProperty::class.java))).willReturn(scaffoldProperty.apply { id = ID })
+
+        given(repository.save(any(Scaffold::class.java))).will {invocation -> invocation.arguments[0] }
+        given(propertyRepository.save(any(ScaffoldProperty::class.java))).will {invocation -> invocation.arguments[0] }
+        given(openKeyService.get(OPEN_KEY_VALUE)).willReturn(expectedScaffold.openKey)
+        given(compiler.compile(request.properties)).willReturn(contractMetadata)
         given(transaction.hasError()).willReturn(false)
         given(web3j.ethGetTransactionReceipt(transaction.transactionHash)).willReturn(transactionReceiptRequest)
         given(transactionReceiptRequest.send()).willReturn(transactionReceipt)
@@ -170,24 +168,23 @@ internal class DefaultScaffoldServiceTest : UnitTest() {
 
     @Test
     fun save() {
-        val openKey = OpenKey(user, OPEN_KEY_VALUE)
+        val openKey = OpenKey(user.apply { id = ID }, OPEN_KEY_VALUE).apply { id = ID }
         val scaffold = getScaffold()
         val scaffoldPropertyDto = ScaffoldPropertyDto("name", PropertyType.STRING, "value")
         val scaffoldProperty = ScaffoldProperty.of(scaffold, scaffoldPropertyDto)
         val request = SaveScaffoldRequest(ADDRESS_VALUE, "abi", OPEN_KEY_VALUE, "developerAddress",
                 "description", "1", Currency.USD, "1").apply { properties = listOf(scaffoldPropertyDto) }
-        val expectedScaffold = getScaffold().apply { id = ID; property.add(scaffoldProperty) }
+        val expectedScaffold = getScaffold().apply { property.add(scaffoldProperty) }
 
         given(openKeyService.get(OPEN_KEY_VALUE)).willReturn(openKey)
-        given(repository.save(any(Scaffold::class.java))).willReturn(scaffold.apply { id = ID })
-        given(propertyRepository.save(any(ScaffoldProperty::class.java))).willReturn(scaffoldProperty.apply { id = ID })
+        given(repository.save(any(Scaffold::class.java))).will { invocation -> invocation.arguments[0] }
+        given(propertyRepository.save(any(ScaffoldProperty::class.java))).will { invocation -> invocation.arguments[0] }
 
         val actualScaffold = service.save(request)
 
-        assertThat(actualScaffold.id).isEqualTo(expectedScaffold.id)
         assertThat(actualScaffold.abi).isEqualTo(expectedScaffold.abi)
-        assertThat(actualScaffold.property).isEqualTo(expectedScaffold.property)
         assertThat(actualScaffold.openKey).isEqualTo(expectedScaffold.openKey)
+        assertThat(actualScaffold.property[0].name).isEqualTo(expectedScaffold.property[0].name)
     }
 
     @Test
@@ -303,10 +300,10 @@ internal class DefaultScaffoldServiceTest : UnitTest() {
     }
 
     private fun getScaffold(): Scaffold {
-        val openKey = OpenKey(User(GOOGLE_ID), OPEN_KEY_VALUE).apply { id = ID }
+        val openKey = OpenKey(user.apply { id = ID }, OPEN_KEY_VALUE).apply { id = ID }
 
-        return Scaffold(ADDRESS_VALUE, openKey, "abi", "developerAddress", "description", "fiatAmount", 1,
-                "conversionAmount", "webHook", mutableListOf(), true)
+        return Scaffold(ADDRESS_VALUE, openKey, "abi", ADDRESS_VALUE, "description", "1", 1,
+                "1", "webHook", mutableListOf(), true)
     }
 
 }

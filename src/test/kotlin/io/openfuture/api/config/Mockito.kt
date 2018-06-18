@@ -2,10 +2,6 @@ package io.openfuture.api.config
 
 import org.mockito.Mockito
 
-/**
- * @author Alexey Skadorva
- */
-
 fun <T> any(clazz: Class<T>): T = Mockito.any<T>(clazz)
 
 fun <T> anyList(clazz: Class<T>): List<T>  = Mockito.anyListOf(clazz)

@@ -1,8 +1,9 @@
 package io.openfuture.api.service
 
-import io.openfuture.api.GOOGLE_ID
-import io.openfuture.api.ID
-import io.openfuture.api.UnitTest
+import io.openfuture.api.config.GOOGLE_ID
+import io.openfuture.api.config.ID
+import io.openfuture.api.config.UnitTest
+import io.openfuture.api.config.any
 import io.openfuture.api.entity.auth.OpenKey
 import io.openfuture.api.entity.auth.User
 import io.openfuture.api.entity.scaffold.Scaffold
@@ -17,10 +18,7 @@ import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import java.util.*
 
-/**
- * @author Alexey Skadorva
- */
-internal class DefaultTransactionServiceTest : UnitTest() {
+internal class DefaultTransactionServiceTests : UnitTest() {
 
     @Mock private lateinit var pageable: Pageable
     @Mock private lateinit var repository: TransactionRepository
@@ -49,11 +47,14 @@ internal class DefaultTransactionServiceTest : UnitTest() {
     fun save() {
         val transaction = getTransaction()
 
-        given(repository.save(transaction)).willReturn(transaction.apply { id = ID })
+        given(repository.save(any(Transaction::class.java))).will { invocation -> invocation.arguments[0] }
 
         val actualTransaction = service.save(transaction)
 
-        assertThat(actualTransaction).isEqualTo(transaction)
+        assertThat(actualTransaction.data).isEqualTo(transaction.data)
+        assertThat(actualTransaction.type).isEqualTo(transaction.type)
+        assertThat(actualTransaction.scaffold).isEqualTo(transaction.scaffold)
+
 
     }
 
@@ -63,7 +64,7 @@ internal class DefaultTransactionServiceTest : UnitTest() {
         val openKey = OpenKey(User(GOOGLE_ID))
 
         return Scaffold("address", openKey, "abi", "developerAddress", "description", "fiatAmount", 1,
-                "conversionAmount", "webHook", Collections.emptyList(), true)
+                "conversionAmount", "webHook", Collections.emptyList(), true).apply { id = ID }
     }
 
 }

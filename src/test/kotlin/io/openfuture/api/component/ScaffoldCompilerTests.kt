@@ -1,23 +1,19 @@
 package io.openfuture.api.component
 
-import io.openfuture.api.ADDRESS_VALUE
-import io.openfuture.api.UnitTest
+import io.openfuture.api.config.ADDRESS_VALUE
+import io.openfuture.api.config.UnitTest
+import io.openfuture.api.config.anyString
 import io.openfuture.api.config.propety.EthereumProperties
 import io.openfuture.api.domain.scaffold.ScaffoldPropertyDto
 import io.openfuture.api.entity.scaffold.PropertyType
 import io.openfuture.api.exception.CompileException
 import org.junit.Before
 import org.junit.Test
-import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.anyMap
-import org.mockito.ArgumentMatchers.anyString
 import org.mockito.BDDMockito.given
 import org.mockito.Mock
 
-/**
- * @author Alexey Skadorva
- */
-internal class ScaffoldCompilerTest : UnitTest() {
+internal class ScaffoldCompilerTests : UnitTest() {
 
     @Mock private lateinit var templateProcessor: TemplateProcessor
     @Mock private lateinit var properties: EthereumProperties
@@ -35,7 +31,7 @@ internal class ScaffoldCompilerTest : UnitTest() {
         val scaffoldPropertyDto = ScaffoldPropertyDto("SCAFFOLD_STRUCT_PROPERTIES", PropertyType.STRING, "value")
 
         given(properties.openTokenAddress).willReturn(ADDRESS_VALUE)
-        given(templateProcessor.getContent(ArgumentMatchers.anyString(), ArgumentMatchers.anyMap())).willReturn(
+        given(templateProcessor.getContent(anyString(), anyMap())).willReturn(
                 """pragma solidity ^0.4.19;
 
                 library SafeMath {

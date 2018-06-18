@@ -11,9 +11,6 @@ import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
 import java.util.*
 
-/**
- * @author Alexey Skadorva
- */
 internal class TransactionRepositoryTests : RepositoryTests() {
 
     @Autowired private lateinit var repository: TransactionRepository

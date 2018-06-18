@@ -1,10 +1,7 @@
 package io.openfuture.api.service
 
-import io.openfuture.api.ADDRESS_VALUE
-import io.openfuture.api.GOOGLE_ID
-import io.openfuture.api.ID
-import io.openfuture.api.UnitTest
-import io.openfuture.api.config.any
+
+import io.openfuture.api.config.*
 import io.openfuture.api.domain.scaffold.SaveScaffoldTemplateRequest
 import io.openfuture.api.domain.scaffold.ScaffoldTemplatePropertyDto
 import io.openfuture.api.entity.auth.User
@@ -51,20 +48,23 @@ internal class DefaultScaffoldTemplateServiceTest : UnitTest() {
 
     @Test
     fun save() {
-        val user = User(GOOGLE_ID)
+        val user = User(GOOGLE_ID).apply { id = ID }
         val request = SaveScaffoldTemplateRequest("request_name")
-        val scaffoldTemplate = ScaffoldTemplate.of(request, user)
-        val scaffoldTemplateProperty = ScaffoldTemplateProperty(scaffoldTemplate, "name", PropertyType.STRING.getId(), "value")
         val scaffoldTemplatePropertyDto = ScaffoldTemplatePropertyDto("name", PropertyType.STRING, "value")
         request.apply { properties = listOf(scaffoldTemplatePropertyDto) }
-        val expectedScaffoldTemplate = ScaffoldTemplate.of(request, user).apply { id = ID; property.add(scaffoldTemplateProperty) }
 
-        given(repository.save(any(ScaffoldTemplate::class.java))).willReturn(scaffoldTemplate.apply { id = ID })
-        given(propertyRepository.save(any(ScaffoldTemplateProperty::class.java))).willReturn(scaffoldTemplateProperty.apply { id = ID })
+        given(repository.save(any(ScaffoldTemplate::class.java))).will { invocation ->
+            invocation.arguments[0] as ScaffoldTemplate
+        }
+        given(propertyRepository.save(any(ScaffoldTemplateProperty::class.java))).will { invocation ->
+            invocation.arguments[0] as ScaffoldTemplateProperty
+        }
 
         val actualScaffoldTemplate = service.save(request, user)
 
-        assertThat(actualScaffoldTemplate).isEqualTo(expectedScaffoldTemplate)
+        assertThat(actualScaffoldTemplate.name).isEqualTo(request.name)
+        assertThat(actualScaffoldTemplate.user).isEqualTo(user)
+        assertThat(actualScaffoldTemplate.property[0].name).isEqualTo(scaffoldTemplatePropertyDto.name)
     }
 
 }

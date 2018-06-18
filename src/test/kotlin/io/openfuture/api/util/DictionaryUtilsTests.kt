@@ -4,10 +4,7 @@ import io.openfuture.api.entity.scaffold.PropertyType
 import org.assertj.core.api.Assertions
 import org.junit.Test
 
-/**
- * @author Yauheni Efimenko
- */
-class DictionaryUtilsTest {
+class DictionaryUtilsTests {
 
     @Test
     fun valueOfShouldReturnEnum() {

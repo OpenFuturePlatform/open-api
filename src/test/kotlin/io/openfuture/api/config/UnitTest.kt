@@ -1,11 +1,8 @@
-package io.openfuture.api
+package io.openfuture.api.config
 
 import org.junit.runner.RunWith
 import org.mockito.junit.MockitoJUnitRunner
 
-/**
- * @author Alexey Skadorva
- */
 @RunWith(MockitoJUnitRunner::class)
 abstract class UnitTest
 

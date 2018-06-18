@@ -10,9 +10,6 @@ import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
 import java.util.*
 
-/**
- * @author Alexey Skadorva
- */
 internal class ScaffoldRepositoryTests : RepositoryTests() {
 
     @Autowired private lateinit var repository: ScaffoldRepository

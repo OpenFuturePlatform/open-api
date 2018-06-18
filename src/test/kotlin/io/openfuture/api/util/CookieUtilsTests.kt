@@ -11,11 +11,8 @@ import org.mockito.junit.MockitoJUnitRunner
 import javax.servlet.http.Cookie
 import javax.servlet.http.HttpServletResponse
 
-/**
- * @author Yauheni Efimenko
- */
 @RunWith(MockitoJUnitRunner::class)
-class CookieUtilsTest {
+class CookieUtilsTests {
 
     @Mock private lateinit var response: HttpServletResponse
 

@@ -7,9 +7,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
 
-/**
- * @author Alexey Skadorva
- */
 internal class ScaffoldTemplateRepositoryTests : RepositoryTests() {
 
     @Autowired private lateinit var repository: ScaffoldTemplateRepository

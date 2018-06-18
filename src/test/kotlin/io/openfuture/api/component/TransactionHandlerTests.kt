@@ -1,16 +1,15 @@
 package io.openfuture.api.component
 
-import io.openfuture.api.ADDRESS_VALUE
-import io.openfuture.api.GOOGLE_ID
-import io.openfuture.api.ID
-import io.openfuture.api.UnitTest
+import io.openfuture.api.config.ADDRESS_VALUE
+import io.openfuture.api.config.GOOGLE_ID
+import io.openfuture.api.config.UnitTest
 import io.openfuture.api.config.any
 import io.openfuture.api.entity.auth.OpenKey
 import io.openfuture.api.entity.auth.User
 import io.openfuture.api.entity.scaffold.Scaffold
 import io.openfuture.api.entity.scaffold.Transaction
 import io.openfuture.api.repository.ScaffoldRepository
-import io.openfuture.api.service.*
+import io.openfuture.api.service.TransactionService
 import org.junit.Before
 import org.junit.Test
 import org.mockito.BDDMockito.given
@@ -19,10 +18,7 @@ import org.mockito.Mock
 import org.mockito.Mockito.never
 import org.web3j.protocol.core.methods.response.Log
 
-/**
- * @author Alexey Skadorva
- */
-class TransactionHandlerTest : UnitTest() {
+internal class TransactionHandlerTests : UnitTest() {
 
     @Mock private lateinit var transactionService: TransactionService
     @Mock private lateinit var scaffoldRepository: ScaffoldRepository
@@ -44,13 +40,13 @@ class TransactionHandlerTest : UnitTest() {
         val transaction = Transaction.of(scaffold, log)
 
         given(scaffoldRepository.findByAddress(log.address)).willReturn(scaffold)
-        given(transactionService.save(any(Transaction::class.java))).willReturn(transaction.apply { id = ID })
+        given(transactionService.save(any(Transaction::class.java))).will { invocation -> invocation.arguments[0] }
 
         transactionHandler.handle(log)
     }
 
     @Test
-    fun handleWitEmptyScaffold() {
+    fun handleWithEmptyScaffold() {
         val log = Log().apply { address = ADDRESS_VALUE }
 
         given(scaffoldRepository.findByAddress(log.address)).willReturn(null)

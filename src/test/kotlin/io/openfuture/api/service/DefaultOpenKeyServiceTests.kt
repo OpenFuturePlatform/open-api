@@ -1,8 +1,9 @@
 package io.openfuture.api.service
 
-import io.openfuture.api.GOOGLE_ID
-import io.openfuture.api.OPEN_KEY_VALUE
-import io.openfuture.api.UnitTest
+import io.openfuture.api.config.GOOGLE_ID
+import io.openfuture.api.config.OPEN_KEY_VALUE
+import io.openfuture.api.config.UnitTest
+import io.openfuture.api.config.any
 import io.openfuture.api.entity.auth.OpenKey
 import io.openfuture.api.entity.auth.User
 import io.openfuture.api.exception.NotFoundException
@@ -10,15 +11,11 @@ import io.openfuture.api.repository.OpenKeyRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
-import org.mockito.ArgumentMatchers.refEq
 import org.mockito.BDDMockito.given
 import org.mockito.Mock
 import java.util.*
 
-/**
- * @author Alexey Skadorva
- */
-class DefaultOpenKeyServiceTest : UnitTest() {
+class DefaultOpenKeyServiceTests : UnitTest() {
 
     @Mock private lateinit var repository: OpenKeyRepository
 
@@ -74,13 +71,13 @@ class DefaultOpenKeyServiceTest : UnitTest() {
     @Test
     fun generate() {
         val user = getUser()
-        val expectedOpenKey = OpenKey(user)
 
-        given(repository.save(refEq(expectedOpenKey, "value", "expiredDate"))).willReturn(expectedOpenKey)
+        given(repository.save(any(OpenKey::class.java))).will { invocation -> invocation.arguments[0] }
 
         val actualOpenKey = service.generate(user)
 
-        assertThat(actualOpenKey).isEqualTo(expectedOpenKey)
+        assertThat(actualOpenKey.user).isEqualTo(user)
+        assertThat(actualOpenKey.value).isNotNull()
     }
 
     private fun getOpenKey(): OpenKey = OpenKey(getUser(), OPEN_KEY_VALUE, true, Date())
