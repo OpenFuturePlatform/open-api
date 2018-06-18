@@ -30,7 +30,6 @@ export const fetchScaffolds = (page = 1, limit = 10) => async dispatch => {
 };
 
 export const fetchScaffoldItem = (scaffoldAddress) => async dispatch => {
-  dispatch({type: FETCH_ONCHAIN_SCAFFOLD_SUMMARY, payload: {}});
   try {
     const res = await axios.get(`/api/scaffolds/${scaffoldAddress}/summary`);
     dispatch({type: FETCH_ONCHAIN_SCAFFOLD_SUMMARY, payload: res.data});

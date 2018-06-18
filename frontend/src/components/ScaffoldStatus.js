@@ -16,10 +16,11 @@ class ScaffoldStatus extends Component {
   }
 
   componentDidMount() {
+    const {scaffoldAddress} = this.props;
     const {activating, activatingHash} = this.props.ethAccount;
     this.props.actions.subscribeEthAccount();
     if (activating) {
-      this.props.actions.subscribeScaffoldActivation(activatingHash);
+      this.props.actions.subscribeScaffoldActivation(activatingHash, scaffoldAddress);
     }
   }
 

@@ -23,6 +23,10 @@ export const deactivateScaffold = (scaffoldAddress) => async dispatch => {
 let interval;
 
 export const subscribeScaffoldActivation = (hash, scaffoldAddress) => async dispatch => {
+  if (!hash) {
+    dispatch({type: SET_CURRENT_ETH_ACCOUNT, payload: {activating: false, activatingHash: null}});
+  }
+
   if (interval || !hash) {
     return;
   }

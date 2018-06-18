@@ -20,6 +20,10 @@ class ScaffoldSummary extends Component {
     const scaffoldAddress = this.getScaffoldAddress();
     const {onchainScaffoldSummary} = this.props;
 
+    if (!onchainScaffoldSummary) {
+      return null;
+    }
+
     return (
       <div style={{marginTop: '20px'}}>
         <Grid>
