@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Functionality for updating Scaffold Information
 - Scaffold activation via MetaMask
 - Public API Specification and Implementation
+- Scaffold template saving
 
 ## [2.0.0] - 2018-06-04
 ### Added

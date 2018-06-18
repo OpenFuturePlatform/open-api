@@ -12,9 +12,10 @@ import ScaffoldField from '../components-ui/inputs/Field';
 import ScaffoldPropertyFields from '../components-ui/inputs/PropertyFields';
 import WrappedInput from '../components-ui/inputs/WrappedInput';
 import {convertCurrencies, deployContract, compileContract, deployContractByApi} from '../actions/deploy-contract';
-import {subscribeEthAccount, unsubscribeEthAccount} from "../actions/eth-account";
-import {MIN_BALANCE} from "../const/index";
+import {subscribeEthAccount, unsubscribeEthAccount} from '../actions/eth-account';
+import {MIN_BALANCE} from '../const/index';
 import {getMetaMaskError} from '../selectors/getMetaMaskError';
+import {TemplateSave} from '../components/TemplateSave';
 
 class ScaffoldForm extends Component {
 
@@ -250,15 +251,18 @@ class ScaffoldForm extends Component {
               </Grid.Column>
             </Grid.Row>
             <Grid.Row>
-              <Grid.Column width={3} floated="right">
-                <Button type="submit" primary disabled={disableSubmit}
-                        style={{
-                          marginBottom: '10px',
-                          marginRight: '15px',
-                          backgroundColor: '#3193F5',
-                        }}>
-                  Submit
-                </Button>
+              <Grid.Column width={5} floated="right">
+                <div style={{width: 250}}>
+                  <TemplateSave fields={formValues} />
+                  <Button type="submit" primary disabled={disableSubmit}
+                          style={{
+                            marginBottom: '10px',
+                            marginRight: '15px',
+                            backgroundColor: '#3193F5',
+                          }}>
+                    Submit
+                  </Button>
+                </div>
               </Grid.Column>
             </Grid.Row>
           </Grid>
