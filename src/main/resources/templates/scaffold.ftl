@@ -159,6 +159,14 @@ contract OpenScaffold {
             return shareHolderAddresses[index];
     }
 
+    // get shareholders count
+    function getShareHolderCount()
+        public
+        constant
+        returns(uint count) {
+            return shareHolderAddresses.length;
+    }
+
     // add new shareholder
     function addShareHolder(address shareHolderAddress, uint8 partnerShare)
         public onlyVendor
@@ -290,14 +298,6 @@ contract OpenScaffold {
             if(shareHolderAddresses.length == 0) return false;
 
             return (shareHolderAddresses[partners[shareHolderAddress].index] == shareHolderAddress);
-    }
-
-    // get shareholders count
-    function getShareHolderCount()
-        private
-        constant
-        returns(uint count) {
-            return shareHolderAddresses.length;
     }
 
     // view current state of scaffold
