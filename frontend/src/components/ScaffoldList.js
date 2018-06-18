@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {fetchScaffolds} from '../../actions';
+import {fetchScaffolds} from '../actions/index';
 import {Card, Divider, Grid, Pagination} from 'semantic-ui-react';
 import {Link} from 'react-router-dom';
 

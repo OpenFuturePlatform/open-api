@@ -152,12 +152,21 @@ class DefaultScaffoldService(
     }
 
     @Transactional
+    override fun update(address: String, user: User, request: UpdateScaffoldRequest): Scaffold {
+        val scaffold = get(address, user)
+
+        scaffold.description = request.description!!
+
+        return repository.save(scaffold)
+    }
+
+    @Transactional
     override fun setWebHook(address: String, request: SetWebHookRequest, user: User): Scaffold {
         val scaffold = get(address, user)
 
         scaffold.webHook = request.webHook
 
-        return scaffold
+        return repository.save(scaffold)
     }
 
     @Transactional(readOnly = true)
@@ -179,6 +188,7 @@ class DefaultScaffoldService(
 
         val result = callFunction(function, scaffold.address)
         return ScaffoldSummaryDto(
+                scaffold.abi,
                 result[0].value as String,
                 result[1].value as String,
                 result[2].value as String,
