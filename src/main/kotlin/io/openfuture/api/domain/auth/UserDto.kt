@@ -2,9 +2,6 @@ package io.openfuture.api.domain.auth
 
 import io.openfuture.api.entity.auth.User
 
-/**
- * @author Kadach Alexey
- */
 data class UserDto(
         val id: Long,
         val credits: Int,

@@ -9,10 +9,6 @@ import org.springframework.security.core.context.SecurityContextHolder
 import javax.servlet.*
 import javax.servlet.http.HttpServletRequest
 
-
-/**
- * @author Kadach Alexey
- */
 class AuthorizationFilter(
         private val properties: AuthorizationProperties,
         private val keyService: OpenKeyService

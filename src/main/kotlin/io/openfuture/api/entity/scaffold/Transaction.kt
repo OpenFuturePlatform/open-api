@@ -4,9 +4,6 @@ import io.openfuture.api.entity.base.BaseModel
 import org.web3j.protocol.core.methods.response.Log
 import javax.persistence.*
 
-/**
- * @author Kadach Alexey
- */
 @Entity
 @Table(name = "transactions")
 class Transaction(
