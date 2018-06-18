@@ -21,6 +21,8 @@ interface ScaffoldService {
 
     fun save(request: SaveScaffoldRequest): Scaffold
 
+    fun update(address: String, user: User, request: UpdateScaffoldRequest): Scaffold
+
     fun setWebHook(address: String, request: SetWebHookRequest, user: User): Scaffold
 
     fun getScaffoldSummary(address: String, user: User): ScaffoldSummaryDto
