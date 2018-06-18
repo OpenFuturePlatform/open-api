@@ -10,22 +10,9 @@ This API is running on https://api.openfuture.io.
 
 ## Running the application
 
-### Via docker deploy
-
-In order to deploy and run the application you need  to run several
-commands at the root of the project:
-> 1. $ `./gradlew clean assemble`
-> 2. $ `sh deploy.sh`
-
-In order to clean environment you need to run a command:
-> $ `sh docker/clean.sh`
-
 ### Environment Variables
-In order to fine tune the environment you can override some variables.
 The OPEN Platform API uses several environment variables. All
 variables are required.
-
-They are in the file **deploy.sh** in section **ENVIRONMENT VARIABLES**
 
 #### Google service
 
