@@ -80,7 +80,7 @@ contract OpenScaffold {
     // array for storage of transactions
     OpenScaffoldTransaction[] public openScaffoldTransactions;
     // array of shareholders addresses
-    address[] private shareHolderAddresses;
+    address[] public shareHolderAddresses;
     // mapping for storage of partners(shareholders)
     mapping(address => Partner) public partners;
 
@@ -150,6 +150,14 @@ contract OpenScaffold {
 
             return(partners[shareHolderAddress].share);
   }
+
+    // get shareholders at index
+    function getShareHolderAtIndex(uint index)
+        public
+        constant
+        returns(address shareHolderAddress) {
+            return shareHolderAddresses[index];
+    }
 
     // add new shareholder
     function addShareHolder(address shareHolderAddress, uint8 partnerShare)
@@ -227,13 +235,14 @@ contract OpenScaffold {
 
         // developer fee
         uint256 developerFee = transactionAmount.div(100).mul(3);
-        uint256 vendorAmount = transactionAmount.sub(developerFee);
+        uint256 unpaidBalance = transactionAmount.sub(developerFee);
+        uint256 vendorAmount  = unpaidBalance;
 
         if(shareHolderIndexLength > 0) {
             for(uint8 row = 0; row < shareHolderIndexLength; row++) {
 
             address shHoldrAddress = getShareHolderAtIndex(row);
-            uint256 shHoldrAmount = vendorAmount.div(100).mul(partners[shHoldrAddress].share);
+            uint256 shHoldrAmount = unpaidBalance.div(100).mul(partners[shHoldrAddress].share);
 
             vendorAmount = vendorAmount.sub(shHoldrAmount);
 
@@ -281,14 +290,6 @@ contract OpenScaffold {
             if(shareHolderAddresses.length == 0) return false;
 
             return (shareHolderAddresses[partners[shareHolderAddress].index] == shareHolderAddress);
-    }
-
-    // get shareholders at index
-    function getShareHolderAtIndex(uint index)
-        private
-        constant
-        returns(address shareHolderAddress) {
-            return shareHolderAddresses[index];
     }
 
     // get shareholders count
