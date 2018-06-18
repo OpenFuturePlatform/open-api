@@ -1,7 +1,5 @@
 package io.openfuture.api.component
 
-import io.openfuture.api.config.ADDRESS_VALUE
-import io.openfuture.api.config.GOOGLE_ID
 import io.openfuture.api.config.UnitTest
 import io.openfuture.api.config.any
 import io.openfuture.api.entity.auth.OpenKey
@@ -34,8 +32,10 @@ internal class TransactionHandlerTests : UnitTest() {
 
     @Test
     fun handle() {
-        val log = Log().apply { address = ADDRESS_VALUE; data = "data" ; type = "type"}
-        val scaffold = Scaffold(ADDRESS_VALUE, OpenKey(User(GOOGLE_ID)), "abi", "developerAddress", "description", "fiatAmount", 1,
+        val addressValue = "0xba37163625b3f2e96112562858c12b75963af138"
+        val log = Log().apply { address = addressValue; data = "data" ; type = "type"}
+        val user = User("104113085667282103363")
+        val scaffold = Scaffold(addressValue, OpenKey(user), "abi", "developerAddress", "description", "fiatAmount", 1,
                 "conversionAmount", "https://test.com", mutableListOf(), true)
         val transaction = Transaction.of(scaffold, log)
 
@@ -47,7 +47,7 @@ internal class TransactionHandlerTests : UnitTest() {
 
     @Test
     fun handleWithEmptyScaffold() {
-        val log = Log().apply { address = ADDRESS_VALUE }
+        val log = Log().apply { address = "0xba37163625b3f2e96112562858c12b75963af138" }
 
         given(scaffoldRepository.findByAddress(log.address)).willReturn(null)
 

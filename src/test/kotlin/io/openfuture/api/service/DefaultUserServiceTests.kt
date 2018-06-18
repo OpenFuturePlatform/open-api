@@ -1,6 +1,7 @@
 package io.openfuture.api.service
 
-import io.openfuture.api.config.*
+import io.openfuture.api.config.UnitTest
+import io.openfuture.api.config.any
 import io.openfuture.api.entity.auth.OpenKey
 import io.openfuture.api.entity.auth.User
 import io.openfuture.api.repository.UserRepository
@@ -25,19 +26,20 @@ internal class DefaultUserServiceTests : UnitTest() {
 
     @Test
     fun findByGoogleId() {
-        val expectedUser = getUser(GOOGLE_ID)
+        val googleId = "104113085667282103363"
+        val expectedUser = getUser(googleId)
 
-        given(repository.findByGoogleId(GOOGLE_ID)).willReturn(expectedUser)
+        given(repository.findByGoogleId(googleId)).willReturn(expectedUser)
 
-        val actualUser = service.findByGoogleId(GOOGLE_ID)
+        val actualUser = service.findByGoogleId(googleId)
 
         assertThat(actualUser).isEqualTo(expectedUser)
     }
 
     @Test
     fun save() {
-        val user = User(GOOGLE_ID)
-        val openKey = OpenKey(user, OPEN_KEY_VALUE)
+        val user = User("104113085667282103363")
+        val openKey = OpenKey(user, "op_pk_9de7cbb4-857c-49e9-87d2-fc91428c4c12")
 
         given(repository.save(any(User::class.java))).will { invocation -> invocation.arguments[0] }
         given(openKeyService.generate(user)).willReturn(openKey)
@@ -48,6 +50,6 @@ internal class DefaultUserServiceTests : UnitTest() {
         assertThat(actualUser.googleId).isEqualTo(user.googleId)
     }
 
-    private fun getUser(googleId: String): User = User(googleId).apply { id = ID }
+    private fun getUser(googleId: String): User = User(googleId).apply { id = 1L }
 
 }

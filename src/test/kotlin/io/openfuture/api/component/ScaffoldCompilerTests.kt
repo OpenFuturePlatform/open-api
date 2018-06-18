@@ -1,6 +1,5 @@
 package io.openfuture.api.component
 
-import io.openfuture.api.config.ADDRESS_VALUE
 import io.openfuture.api.config.UnitTest
 import io.openfuture.api.config.anyString
 import io.openfuture.api.config.propety.EthereumProperties
@@ -30,7 +29,7 @@ internal class ScaffoldCompilerTests : UnitTest() {
     fun compile() {
         val scaffoldPropertyDto = ScaffoldPropertyDto("SCAFFOLD_STRUCT_PROPERTIES", PropertyType.STRING, "value")
 
-        given(properties.openTokenAddress).willReturn(ADDRESS_VALUE)
+        given(properties.openTokenAddress).willReturn("0xba37163625b3f2e96112562858c12b75963af138")
         given(templateProcessor.getContent(anyString(), anyMap())).willReturn(
                 """pragma solidity ^0.4.19;
 
@@ -184,7 +183,7 @@ internal class ScaffoldCompilerTests : UnitTest() {
     fun compileWithIncorrectScaffold() {
         val scaffoldPropertyDto = ScaffoldPropertyDto("SCAFFOLD_STRUCT_PROPERTIES", PropertyType.STRING, "value")
 
-        given(properties.openTokenAddress).willReturn(ADDRESS_VALUE)
+        given(properties.openTokenAddress).willReturn("0xba37163625b3f2e96112562858c12b75963af138")
         given(templateProcessor.getContent(anyString(), anyMap())).willReturn(
                 """function getScaffoldSummary() public view returns (string, string, string, uint, uint, address, uint) {
                         return (

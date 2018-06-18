@@ -1,7 +1,5 @@
 package io.openfuture.api.service
 
-import io.openfuture.api.config.GOOGLE_ID
-import io.openfuture.api.config.ID
 import io.openfuture.api.config.UnitTest
 import io.openfuture.api.config.any
 import io.openfuture.api.entity.auth.OpenKey
@@ -61,10 +59,10 @@ internal class DefaultTransactionServiceTests : UnitTest() {
     private fun getTransaction(): Transaction = Transaction(getScaffold(), "data binary", "type")
 
     private fun getScaffold(): Scaffold {
-        val openKey = OpenKey(User(GOOGLE_ID))
+        val openKey = OpenKey(User("104113085667282103363"))
 
         return Scaffold("address", openKey, "abi", "developerAddress", "description", "fiatAmount", 1,
-                "conversionAmount", "webHook", Collections.emptyList(), true).apply { id = ID }
+                "conversionAmount", "webHook", Collections.emptyList(), true).apply { id = 1L }
     }
 
 }

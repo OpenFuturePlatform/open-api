@@ -1,7 +1,5 @@
 package io.openfuture.api.service
 
-import io.openfuture.api.config.GOOGLE_ID
-import io.openfuture.api.config.OPEN_KEY_VALUE
 import io.openfuture.api.config.UnitTest
 import io.openfuture.api.config.any
 import io.openfuture.api.entity.auth.OpenKey
@@ -20,6 +18,8 @@ class DefaultOpenKeyServiceTests : UnitTest() {
     @Mock private lateinit var repository: OpenKeyRepository
 
     private lateinit var service: OpenKeyService
+
+    private val openKeyValue = "op_pk_9de7cbb4-857c-49e9-87d2-fc91428c4c12"
 
 
     @Before
@@ -43,27 +43,27 @@ class DefaultOpenKeyServiceTests : UnitTest() {
     fun get() {
         val expectedOpenKey = getOpenKey()
 
-        given(repository.findByValue(OPEN_KEY_VALUE)).willReturn(expectedOpenKey)
+        given(repository.findByValue(openKeyValue)).willReturn(expectedOpenKey)
 
-        val actualOpenKey = service.get(OPEN_KEY_VALUE)
+        val actualOpenKey = service.get(openKeyValue)
 
         assertThat(actualOpenKey).isEqualTo(expectedOpenKey)
     }
 
     @Test(expected = NotFoundException::class)
     fun getWithNotFoundException() {
-        given(repository.findByValue(OPEN_KEY_VALUE)).willReturn(null)
+        given(repository.findByValue(openKeyValue)).willReturn(null)
 
-        service.get(OPEN_KEY_VALUE)
+        service.get(openKeyValue)
     }
 
     @Test
     fun find() {
         val expectedOpenKey = getOpenKey()
 
-        given(repository.findByValue(OPEN_KEY_VALUE)).willReturn(expectedOpenKey)
+        given(repository.findByValue(openKeyValue)).willReturn(expectedOpenKey)
 
-        val actualOpenKey = service.find(OPEN_KEY_VALUE)
+        val actualOpenKey = service.find(openKeyValue)
 
         assertThat(actualOpenKey).isEqualTo(expectedOpenKey)
     }
@@ -80,8 +80,8 @@ class DefaultOpenKeyServiceTests : UnitTest() {
         assertThat(actualOpenKey.value).isNotNull()
     }
 
-    private fun getOpenKey(): OpenKey = OpenKey(getUser(), OPEN_KEY_VALUE, true, Date())
+    private fun getOpenKey(): OpenKey = OpenKey(getUser(), openKeyValue, true, Date())
 
-    private fun getUser(): User = User(GOOGLE_ID, 0, Collections.emptySet(), Collections.emptySet())
+    private fun getUser(): User = User("104113085667282103363", 0, Collections.emptySet(), Collections.emptySet())
 
 }
