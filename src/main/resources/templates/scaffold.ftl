@@ -90,7 +90,7 @@ contract OpenScaffold {
     string public   fiatAmount;
     string public   fiatCurrency;
     uint public     scaffoldAmount;
-    address private developerAddress;
+    address private platformAddress;
 
     // generated internally by contract
     uint public scaffoldTransactionIndex;
@@ -104,9 +104,9 @@ contract OpenScaffold {
     ERC20Token public OPENToken = ERC20Token(OPEN_TOKEN_ADDRESS);
 
 
-    // Throws if called by any account other than the developer.
+    // Throws if called by any account other than the vendor or OPEN platform addresses.
     modifier onlyVendor() {
-        require(msg.sender == developerAddress);
+        require(msg.sender == vendorAddress || msg.sender == platformAddress);
         _;
     }
 
@@ -119,7 +119,7 @@ contract OpenScaffold {
 
     function OpenScaffold(
         address _vendorAddress,
-        address _developerAddress,
+        address _platformAddress,
         string _description,
         string _fiatAmount,
         string _fiatCurrency,
@@ -128,7 +128,7 @@ contract OpenScaffold {
         public
     {
         vendorAddress = _vendorAddress;
-        developerAddress = _developerAddress;
+        platformAddress = _platformAddress;
         scaffoldDescription = _description;
         fiatAmount = _fiatAmount;
         fiatCurrency = _fiatCurrency;
@@ -241,9 +241,9 @@ contract OpenScaffold {
         uint256 transactionAmount = msg.value;
         uint256 shareHolderIndexLength = getShareHolderCount();
 
-        // developer fee
-        uint256 developerFee = transactionAmount.div(100).mul(3);
-        uint256 unpaidBalance = transactionAmount.sub(developerFee);
+        // platform fee
+        uint256 platformFee = transactionAmount.div(100).mul(3);
+        uint256 unpaidBalance = transactionAmount.sub(platformFee);
         uint256 vendorAmount  = unpaidBalance;
 
         if(shareHolderIndexLength > 0) {
@@ -269,8 +269,8 @@ contract OpenScaffold {
 
         openScaffoldTransactions.push(newTransaction);
 
-        // transfer amount for developer
-        withdrawFunds(developerAddress, developerFee);
+        // transfer amount for platform
+        withdrawFunds(platformAddress, platformFee);
         // transfer amount for vendor
         if(vendorAmount > 0) {
             withdrawFunds(vendorAddress, vendorAmount);
