@@ -61,7 +61,7 @@ internal class ScaffoldRepositoryTests : RepositoryTests() {
         val user = User("googleId")
         entityManager.persist(user)
 
-        val openKey = OpenKey(user, "op_pk_9de7cbb4-857c-49e9-87d2-fc91428c4c12")
+        val openKey = OpenKey(user, Date(), "op_pk_9de7cbb4-857c-49e9-87d2-fc91428c4c12")
         entityManager.persist(openKey)
 
         val scaffold = Scaffold(address, openKey, "abi", "developerAddress", "description", "fiatAmount", 1,

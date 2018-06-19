@@ -136,7 +136,8 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
     fun deploy() {
         val expectedScaffold = getScaffold()
         val scaffoldPropertyDto = ScaffoldPropertyDto("name", PropertyType.STRING, "value")
-        val request = DeployScaffoldRequest(openKeyValue, addressValue, "description", "1", Currency.USD, "1", listOf(scaffoldPropertyDto))
+        val request = DeployScaffoldRequest(openKeyValue, addressValue, "description", "1", Currency.USD, "1",
+                null, listOf(scaffoldPropertyDto))
         val optionalTransactionReceipt = Optional.of(TransactionReceipt().apply { contractAddress = addressValue })
         val contractMetadata = CompilationResult.ContractMetadata().apply { abi = "abi"; bin = "bin" }
 
@@ -160,7 +161,7 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
     @Test(expected = DeployException::class)
     fun deployWithDeployException() {
         val scaffoldPropertyDto = ScaffoldPropertyDto("name", PropertyType.STRING, "value")
-        val request = DeployScaffoldRequest(openKeyValue, "1", "description", "1", Currency.USD, "1", listOf(scaffoldPropertyDto))
+        val request = DeployScaffoldRequest(openKeyValue, "1", "description", "1", Currency.USD, "1", null, listOf(scaffoldPropertyDto))
 
         mockDeploy()
         given(transaction.hasError()).willReturn(true)
@@ -172,7 +173,7 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
 
     @Test
     fun save() {
-        val openKey = OpenKey(user.apply { id = 1L }, openKeyValue).apply { id = 1L }
+        val openKey = OpenKey(user.apply { id = 1L }, null, openKeyValue).apply { id = 1L }
         val scaffold = getScaffold()
         val scaffoldPropertyDto = ScaffoldPropertyDto("name", PropertyType.STRING, "value")
         val scaffoldProperty = ScaffoldProperty.of(scaffold, scaffoldPropertyDto)
@@ -199,6 +200,7 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
         val request = SetWebHookRequest(webHookValue)
 
         given(repository.findByAddressAndOpenKeyUser(addressValue, user)).willReturn(expectedScaffold)
+        given(repository.save(expectedScaffold)).will { invocation -> invocation.arguments[0] }
 
         val actualScaffold = service.setWebHook(addressValue, request, user)
 
@@ -304,7 +306,7 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
     }
 
     private fun getScaffold(): Scaffold {
-        val openKey = OpenKey(user.apply { id = 1L }, openKeyValue).apply { id = 1L }
+        val openKey = OpenKey(user.apply { id = 1L }, null, openKeyValue).apply { id = 1L }
 
         return Scaffold(addressValue, openKey, "abi", addressValue, "description", "1", 1,
                 "1", "webHook", mutableListOf(), true)

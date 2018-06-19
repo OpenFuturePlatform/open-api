@@ -2,6 +2,7 @@ package io.openfuture.api.service
 
 import io.openfuture.api.config.UnitTest
 import io.openfuture.api.config.any
+import io.openfuture.api.config.eq
 import io.openfuture.api.entity.auth.OpenKey
 import io.openfuture.api.entity.auth.User
 import io.openfuture.api.exception.NotFoundException
@@ -43,7 +44,8 @@ class DefaultOpenKeyServiceTests : UnitTest() {
     fun get() {
         val expectedOpenKey = getOpenKey()
 
-        given(repository.findByValue(openKeyValue)).willReturn(expectedOpenKey)
+        given(repository.findByValueAndEnabledIsTrueAndExpiredDateIsNullOrExpiredDateAfter(eq(openKeyValue),
+                any(Date::class.java))).willReturn(expectedOpenKey)
 
         val actualOpenKey = service.get(openKeyValue)
 
@@ -52,7 +54,8 @@ class DefaultOpenKeyServiceTests : UnitTest() {
 
     @Test(expected = NotFoundException::class)
     fun getWithNotFoundException() {
-        given(repository.findByValue(openKeyValue)).willReturn(null)
+        given(repository.findByValueAndEnabledIsTrueAndExpiredDateIsNullOrExpiredDateAfter(eq(openKeyValue),
+                any(Date::class.java))).willReturn(null)
 
         service.get(openKeyValue)
     }
@@ -61,7 +64,8 @@ class DefaultOpenKeyServiceTests : UnitTest() {
     fun find() {
         val expectedOpenKey = getOpenKey()
 
-        given(repository.findByValue(openKeyValue)).willReturn(expectedOpenKey)
+        given(repository.findByValueAndEnabledIsTrueAndExpiredDateIsNullOrExpiredDateAfter(eq(openKeyValue),
+                any(Date::class.java))).willReturn(expectedOpenKey)
 
         val actualOpenKey = service.find(openKeyValue)
 
@@ -80,7 +84,7 @@ class DefaultOpenKeyServiceTests : UnitTest() {
         assertThat(actualOpenKey.value).isNotNull()
     }
 
-    private fun getOpenKey(): OpenKey = OpenKey(getUser(), openKeyValue, true, Date())
+    private fun getOpenKey(): OpenKey = OpenKey(getUser(), null, openKeyValue, true)
 
     private fun getUser(): User = User("104113085667282103363", 0, Collections.emptySet(), Collections.emptySet())
 

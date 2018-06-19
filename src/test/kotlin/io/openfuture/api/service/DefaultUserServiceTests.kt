@@ -39,7 +39,7 @@ internal class DefaultUserServiceTests : UnitTest() {
     @Test
     fun save() {
         val user = User("104113085667282103363")
-        val openKey = OpenKey(user, "op_pk_9de7cbb4-857c-49e9-87d2-fc91428c4c12")
+        val openKey = OpenKey(user, null, "op_pk_9de7cbb4-857c-49e9-87d2-fc91428c4c12")
 
         given(repository.save(any(User::class.java))).will { invocation -> invocation.arguments[0] }
         given(openKeyService.generate(user)).willReturn(openKey)
