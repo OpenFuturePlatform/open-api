@@ -12,8 +12,8 @@ stages:
 
 variables:
     DOCKER_DRIVER: overlay2
-    IMAGE_NAME: gcr.io/zinc-computer-205115/apiopenfuture
-    IMAGE_TAG: ${CI_COMMIT_REF_NAME}-${CI_PIPELINE_ID}
+    IMAGE_NAME: openplatform/api
+    IMAGE_TAG: sprint
 
 
 ###########################
@@ -84,14 +84,11 @@ build-jar:
 ###########################
 # Packaging
 ###########################
-.registry-auth-script: &registry_auth
-  - docker login -u _json_key -p "${GOOGLE_JSON_TOKEN}" https://gcr.io
-
-
 package-docker:
   stage: package
-  before_script: *registry_auth
   script:
+    - if [[ ${CI_COMMIT_REF_NAME} == master ]]; then export IMAGE_TAG=latest; else export IMAGE_TAG=${CI_COMMIT_REF_NAME}; fi;
+    - docker login -u ${DOCKER_LOGIN} -p ${DOCKER_PASS}
     - docker build -t ${IMAGE_NAME}:${IMAGE_TAG} -f docker/Dockerfile .
     - docker push ${IMAGE_NAME}:${IMAGE_TAG}
   only:
@@ -115,7 +112,6 @@ package-docker:
 
 
 .deploy-to-host-script: &deploy_to_host
-  - ssh ${DEPLOY_USER}@${DEPLOY_HOST} "docker login -u _json_key -p '${GOOGLE_JSON_TOKEN}' https://gcr.io"
   - ssh ${DEPLOY_USER}@${DEPLOY_HOST} "docker pull ${IMAGE_NAME}:${IMAGE_TAG}"
   - |
     ssh ${DEPLOY_USER}@${DEPLOY_HOST} "
@@ -158,6 +154,7 @@ deploy-development:
     NETWORK_URL: $NETWORK_URL_DEV
     ETHEREUM_PRIVATE_KEY: $ETHEREUM_PRIVATE_KEY_DEV
     OPEN_TOKEN_ADDRESS: $OPEN_TOKEN_ADDRESS_DEV
+    IMAGE_TAG: sprint
   before_script: *prepare_key
   script: *deploy_to_host
   only:
@@ -183,6 +180,7 @@ deploy-production:
     NETWORK_URL: $NETWORK_URL_PROD
     ETHEREUM_PRIVATE_KEY: $ETHEREUM_PRIVATE_KEY_PROD
     OPEN_TOKEN_ADDRESS: $OPEN_TOKEN_ADDRESS_PROD
+    IMAGE_TAG: latest
   before_script: *prepare_key
   script: *deploy_to_host
   only:
@@ -198,7 +196,7 @@ deploy-production:
 .update-certificates-script: &update_certificates
   - |
     ssh ${DEPLOY_USER}@${DEPLOY_HOST} "
-      docker run --rm -t --name certbot  \
+      docker run --rm --name certbot  \
                  -v /etc/letsencrypt:/etc/letsencrypt \
                  -v /var/www/certbot:/var/www/certbot \
                  -v /var/log/letsencrypt:/var/log/letsencrypt \
