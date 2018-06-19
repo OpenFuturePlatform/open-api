@@ -9,7 +9,7 @@ import org.mockito.BDDMockito.given
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.http.MediaType.APPLICATION_JSON_UTF8
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
@@ -53,7 +53,7 @@ class OpenKeyApiControllerTest : ControllerTests() {
 
         given(keyService.find(invalidToken)).willReturn(null)
 
-        mvc.perform(MockMvcRequestBuilders.get("/api/keys")
+        mvc.perform(get("/api/keys")
                 .header(AUTHORIZATION, invalidToken))
 
                 .andExpect(status().is3xxRedirection)

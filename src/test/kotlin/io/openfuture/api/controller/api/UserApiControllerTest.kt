@@ -6,7 +6,6 @@ import org.junit.Test
 import org.mockito.BDDMockito.given
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpHeaders.AUTHORIZATION
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
@@ -54,7 +53,7 @@ class UserApiControllerTest : ControllerTests() {
 
         given(keyService.find(invalidToken)).willReturn(null)
 
-        mvc.perform(MockMvcRequestBuilders.get("/api/users/current")
+        mvc.perform(get("/api/users/current")
                 .header(AUTHORIZATION, invalidToken))
 
                 .andExpect(status().is3xxRedirection)
