@@ -165,8 +165,6 @@ deploy-development:
   environment:
     name: development
     url: http://api.open-platform.zensoft.io
-  except:
-    - schedules
 
 
 deploy-production:
@@ -188,12 +186,10 @@ deploy-production:
   before_script: *prepare_key
   script: *deploy_to_host
   only:
-    - master
+    - tags
   environment:
     name: production
     url: https://api.openfuture.io
-  except:
-    - schedules
 
 
 ###########################
