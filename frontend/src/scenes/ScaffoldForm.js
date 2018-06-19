@@ -69,7 +69,7 @@ class ScaffoldForm extends Component {
   handleOnConvert = async (newCurrency, fiatAmount) => {
     const {actions, formValues, change} = this.props;
     const conversionAmount = await actions.convertCurrencies({
-      fromAmount: !isNaN(Number(fiatAmount)) ? fiatAmount : formValues.fiatAmount,
+      fromAmount: (fiatAmount || fiatAmount === 0) ? fiatAmount : formValues.fiatAmount,
       fromCurrency: newCurrency || formValues.currency,
       toCurrency: 'eth'
     });
