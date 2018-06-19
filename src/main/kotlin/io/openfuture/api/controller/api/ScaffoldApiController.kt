@@ -58,10 +58,12 @@ class ScaffoldApiController(
         return ScaffoldDto(scaffold)
     }
 
+    @PreAuthorize("hasRole('DEPLOY')")
     @GetMapping("/{address}/summary")
     fun getScaffoldSummary(@CurrentUser user: User, @PathVariable address: String): ScaffoldSummaryDto =
             service.getScaffoldSummary(address, user)
 
+    @PreAuthorize("hasRole('DEPLOY')")
     @PostMapping("/{address}/doDeactivate")
     fun deactivate(@CurrentUser user: User, @PathVariable address: String): ScaffoldSummaryDto =
             service.deactivate(address, user)

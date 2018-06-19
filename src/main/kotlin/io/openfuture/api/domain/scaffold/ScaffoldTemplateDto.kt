@@ -4,7 +4,6 @@ import io.openfuture.api.entity.scaffold.Currency
 import io.openfuture.api.entity.scaffold.ScaffoldTemplate
 
 class ScaffoldTemplateDto(
-        val id: Long,
         val name: String,
         val developerAddress: String?,
         val description: String?,
@@ -16,7 +15,6 @@ class ScaffoldTemplateDto(
 ) {
 
     constructor(scaffold: ScaffoldTemplate) : this(
-            scaffold.id,
             scaffold.name,
             scaffold.developerAddress,
             scaffold.description,
