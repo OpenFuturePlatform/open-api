@@ -7,7 +7,6 @@ stages:
   - test
   - build
   - package
-  - rinkeby
   - deploy
   - certificates
 
@@ -142,33 +141,6 @@ package-docker:
                  ${IMAGE_NAME}:${IMAGE_TAG}
     "
 
-deploy-rinkeby:
-  stage: rinkeby
-  variables:
-    DEPLOY_USER: $DEPLOY_USER_DEV
-    DEPLOY_HOST: $DEPLOY_HOST_DEV
-    DEPLOY_KEY: $DEPLOY_KEY_DEV
-    CONTAINER_NAME: rinkeby
-  before_script: *prepare_key
-  script:
-    - |
-      ssh ${DEPLOY_USER}@${DEPLOY_HOST} "
-        docker rm -f ${CONTAINER_NAME}; \
-        exit 0
-      "
-    - |
-      ssh ${DEPLOY_USER}@${DEPLOY_HOST} "
-        docker run -d --name ${CONTAINER_NAME} -p 8545:8545 \
-        ethereum/client-go:alpine --rpc --light --rpcapi="admin,debug,miner,shh,txpool,personal,eth,net,web3" --rinkeby --rpcaddr=0.0.0.0
-      "
-    - |
-      ssh ${DEPLOY_USER}@${DEPLOY_HOST} '
-        sleep 20; docker exec rinkeby /geth --exec "personal.importRawKey('${RINKEBY_KEY}')" attach rpc:http://127.0.0.1:8545
-      '
-  only:
-    - sprint
-  except:
-    - schedules
 
 deploy-development:
   stage: deploy
