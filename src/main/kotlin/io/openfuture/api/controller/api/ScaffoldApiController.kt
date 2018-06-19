@@ -10,9 +10,6 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
-/**
- * @author Kadach Alexey
- */
 @RestController
 @RequestMapping("/api/scaffolds")
 class ScaffoldApiController(
@@ -48,6 +45,12 @@ class ScaffoldApiController(
         return ScaffoldDto(scaffold)
     }
 
+    @PostMapping("/{address}")
+    fun update(@CurrentUser user: User, @PathVariable address: String, @Valid @RequestBody request: UpdateScaffoldRequest): ScaffoldDto {
+        val scaffold = service.update(address, user, request)
+        return ScaffoldDto(scaffold)
+    }
+
     @PatchMapping("/{address}")
     fun setWebHook(@CurrentUser user: User, @Valid @RequestBody request: SetWebHookRequest,
                    @PathVariable address: String): ScaffoldDto {
@@ -65,5 +68,23 @@ class ScaffoldApiController(
 
     @GetMapping("/quota")
     fun getQuota(@CurrentUser user: User): ScaffoldQuotaDto = service.getQuota(user)
+
+    @PostMapping("/{address}/holders")
+    fun addShareHolder(@CurrentUser user: User, @Valid @RequestBody request: AddShareHolderRequest,
+                       @PathVariable address: String) {
+        service.addShareHolder(address, user, request)
+    }
+
+    @PutMapping("/{address}/holders")
+    fun updateShareHolder(@CurrentUser user: User, @Valid @RequestBody request: UpdateShareHolderRequest,
+                          @PathVariable address: String) {
+        service.updateShareHolder(address, user, request)
+    }
+
+    @DeleteMapping("/{address}/holders")
+    fun removeShareHolder(@CurrentUser user: User, @Valid @RequestBody request: RemoveShareHolderRequest,
+                          @PathVariable address: String) {
+        service.removeShareHolder(address, user, request)
+    }
 
 }

@@ -7,7 +7,6 @@ stages:
   - test
   - build
   - package
-  - rinkeby
   - deploy
   - certificates
 
@@ -30,7 +29,7 @@ unit-tests:
     POSTGRES_PASSWORD: "open-api"
     GOOGLE_CLIENT_ID: $GOOGLE_CLIENT_ID_DEV
     GOOGLE_CLIENT_SECRET: $GOOGLE_CLIENT_SECRET_DEV
-    INFURA_URL: $INFURA_URL_DEV
+    NETWORK_URL: $NETWORK_URL_DEV
     ETHEREUM_PRIVATE_KEY: $ETHEREUM_PRIVATE_KEY_DEV
     OPEN_TOKEN_ADDRESS: $OPEN_TOKEN_ADDRESS_DEV
   services:
@@ -136,39 +135,12 @@ package-docker:
                  -e "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}" \
                  -e "GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}" \
                  -e "GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}" \
-                 -e "INFURA_URL=${INFURA_URL}" \
+                 -e "NETWORK_URL=${NETWORK_URL}" \
                  -e "ETHEREUM_PRIVATE_KEY=${ETHEREUM_PRIVATE_KEY}" \
                  -e "OPEN_TOKEN_ADDRESS=${OPEN_TOKEN_ADDRESS}" \
                  ${IMAGE_NAME}:${IMAGE_TAG}
     "
 
-deploy-rinkeby:
-  stage: rinkeby
-  variables:
-    DEPLOY_USER: $DEPLOY_USER_DEV
-    DEPLOY_HOST: $DEPLOY_HOST_DEV
-    DEPLOY_KEY: $DEPLOY_KEY_DEV
-    CONTAINER_NAME: rinkeby
-  before_script: *prepare_key
-  script:
-    - |
-      ssh ${DEPLOY_USER}@${DEPLOY_HOST} "
-        docker rm -f ${CONTAINER_NAME}; \
-        exit 0
-      "
-    - |
-      ssh ${DEPLOY_USER}@${DEPLOY_HOST} "
-        docker run -d --name ${CONTAINER_NAME} -p 8545:8545 \
-        ethereum/client-go:alpine --rpc --light --rpcapi="admin,debug,miner,shh,txpool,personal,eth,net,web3" --rinkeby --rpcaddr=0.0.0.0
-      "
-    - |
-      ssh ${DEPLOY_USER}@${DEPLOY_HOST} '
-        sleep 20; docker exec rinkeby /geth --exec "personal.importRawKey('${RINKEBY_KEY}')" attach rpc:http://127.0.0.1:8545
-      '
-  only:
-    - sprint
-  except:
-    - schedules
 
 deploy-development:
   stage: deploy
@@ -183,7 +155,7 @@ deploy-development:
     POSTGRES_PASSWORD: $POSTGRES_PASSWORD_DEV
     GOOGLE_CLIENT_ID: $GOOGLE_CLIENT_ID_DEV
     GOOGLE_CLIENT_SECRET: $GOOGLE_CLIENT_SECRET_DEV
-    INFURA_URL: $INFURA_URL_DEV
+    NETWORK_URL: $NETWORK_URL_DEV
     ETHEREUM_PRIVATE_KEY: $ETHEREUM_PRIVATE_KEY_DEV
     OPEN_TOKEN_ADDRESS: $OPEN_TOKEN_ADDRESS_DEV
   before_script: *prepare_key
@@ -210,7 +182,7 @@ deploy-production:
     POSTGRES_PASSWORD: $POSTGRES_PASSWORD_PROD
     GOOGLE_CLIENT_ID: $GOOGLE_CLIENT_ID_PROD
     GOOGLE_CLIENT_SECRET: $GOOGLE_CLIENT_SECRET_PROD
-    INFURA_URL: $INFURA_URL_PROD
+    NETWORK_URL: $NETWORK_URL_PROD
     ETHEREUM_PRIVATE_KEY: $ETHEREUM_PRIVATE_KEY_PROD
     OPEN_TOKEN_ADDRESS: $OPEN_TOKEN_ADDRESS_PROD
   before_script: *prepare_key

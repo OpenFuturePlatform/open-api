@@ -6,9 +6,6 @@ import io.openfuture.api.exception.TemplateProcessingException
 import org.springframework.stereotype.Component
 import java.io.StringWriter
 
-/**
- * @author Kadach Alexey
- */
 @Component
 class TemplateProcessor(private val freemarkerConfig: Configuration) {
 

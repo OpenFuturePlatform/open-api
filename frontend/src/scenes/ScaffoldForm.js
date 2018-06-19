@@ -6,15 +6,15 @@ import {withRouter} from 'react-router-dom';
 import {Button, Dropdown, Grid, Input} from 'semantic-ui-react';
 import {DropdownField} from 'react-semantic-redux-form';
 import _ from 'lodash';
-import {validate, validateScaffoldProperties, warn} from '../../utils/validation';
-import ScaffoldActionField from './ScaffoldActionField';
-import ScaffoldField from './ScaffoldField';
-import ScaffoldPropertyFields from './ScaffoldPropertyFields';
-import WrappedInput from './wrappedComponents/WrappedInput';
-import {convertCurrencies, deployContract, subscribeEthAccount} from '../../actions';
-import {compileContract, deployContractByApi, unsubscribeEthAccount} from "../../actions/index";
-import {MIN_BALANCE} from "../../const/index";
-import web3 from "../../utils/web3";
+import {validate, validateScaffoldProperties, warn} from '../utils/validation';
+import ScaffoldActionField from '../components-ui/inputs/ActionField';
+import ScaffoldField from '../components-ui/inputs/Field';
+import ScaffoldPropertyFields from '../components-ui/inputs/PropertyFields';
+import WrappedInput from '../components-ui/inputs/WrappedInput';
+import {convertCurrencies, deployContract, compileContract, deployContractByApi} from '../actions/deploy-contract';
+import {subscribeEthAccount, unsubscribeEthAccount} from "../actions/eth-account";
+import {MIN_BALANCE} from "../const/index";
+import {getMetaMaskError} from '../selectors/getMetaMaskError';
 
 class ScaffoldForm extends Component {
 
@@ -27,7 +27,6 @@ class ScaffoldForm extends Component {
 
     this.handleOnConvert = this.handleOnConvert.bind(this);
     this.handleOnSubmit = this.handleOnSubmit.bind(this);
-    this.validateMetaMask = this.validateMetaMask.bind(this);
     this.validateBalance = this.validateBalance.bind(this);
     this.renderWalletSelect = this.renderWalletSelect.bind(this);
     this.handleOnWalletChange = this.handleOnWalletChange.bind(this);
@@ -61,28 +60,14 @@ class ScaffoldForm extends Component {
     dispatch(blur('developerAddress', ethAccount.account));
   }
 
-  validateMetaMask() {
-    if (!web3) {
-      return 'Install MetaMask and refresh page.'
+  validateBalance() {
+    const {ethAccount, metaMaskError} = this.props;
+
+    if (metaMaskError) {
+      return metaMaskError;
     }
 
-    const {activeNetworkId} = this.props.ethAccount;
-    const {targetNetwork} = this.props;
-
-    if (!activeNetworkId) {
-      return 'Log in to MetaMask';
-    }
-
-    return activeNetworkId !== targetNetwork.id ? `Choose ${targetNetwork.name} MetaMask network` : null;
-  }
-
-  validateBalance(value) {
-    const {ethAccount} = this.props;
-    if (!value) {
-      return null;
-    }
-
-    return ethAccount.balance < MIN_BALANCE ?
+    return ethAccount.ethBalance < MIN_BALANCE ?
       'Minimum balance: 0,0087 Eth. Change MetaMask account or top up the balance.'
       : null;
   }
@@ -145,15 +130,11 @@ class ScaffoldForm extends Component {
   }
 
   render() {
-    const {formValues, invalid, scaffoldFieldsErrors, openKeyOptions, targetNetwork} = this.props;
+    const {formValues, invalid, scaffoldFieldsErrors, openKeyOptions} = this.props;
     const {isDeployByApi} = this.state;
     const fieldErrors = _.flatten(scaffoldFieldsErrors).length !== 0 ? true : false;
     const disableSubmit = invalid || fieldErrors;
-    const developerAddressValidations = !isDeployByApi ? [this.validateMetaMask, this.validateBalance] : [];
-
-    if (!targetNetwork) {
-      return <div>Network from globalProperties is not allowed</div>;
-    }
+    const developerAddressValidations = !isDeployByApi ? [this.validateBalance] : [];
 
     return (
       <div>
@@ -298,10 +279,10 @@ const mapStateToProps = (state) => {
   const ethAccount = state.ethAccount;
   const roles = state.auth ? state.auth.roles : [];
   const isDeployByApiAllowed = roles.includes('ROLE_DEPLOY');
-  const targetNetwork = state.globalProperties.network;
+  const metaMaskError = getMetaMaskError(state);
 
   return {
-    targetNetwork,
+    metaMaskError,
     isDeployByApiAllowed,
     ethAccount,
     formValues,

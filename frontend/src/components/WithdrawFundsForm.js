@@ -5,9 +5,8 @@ import {Field, formValueSelector, reduxForm} from 'redux-form';
 import {Button, Form, Input, Message} from 'semantic-ui-react';
 import {DropdownField} from 'react-semantic-redux-form';
 import {withRouter} from 'react-router-dom';
-// Actions
 import {withdrawFunds} from '../actions';
-import ScaffoldPropertyField from "./scaffolds/ScaffoldPropertyField";
+import ScaffoldPropertyField from "../components-ui/inputs/PropertyField";
 
 class WithdrawFundsForm extends Component {
   render() {
