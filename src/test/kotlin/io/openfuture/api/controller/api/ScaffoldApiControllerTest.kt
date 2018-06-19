@@ -5,7 +5,6 @@ import io.openfuture.api.domain.PageRequest
 import io.openfuture.api.domain.scaffold.*
 import io.openfuture.api.entity.auth.OpenKey
 import io.openfuture.api.entity.auth.Role
-import io.openfuture.api.entity.auth.User
 import io.openfuture.api.entity.scaffold.Currency
 import io.openfuture.api.entity.scaffold.PropertyType
 import io.openfuture.api.entity.scaffold.Scaffold
@@ -101,7 +100,7 @@ class ScaffoldApiControllerTest : ControllerTests() {
         val openKey = createOpenKey(setOf(Role("ROLE_DEPLOY")))
         val scaffold = createScaffold(openKey)
         val request = DeployScaffoldRequest("openKey", "developerAddress", "description",
-                "2", Currency.USD, "0.0023", listOf(createScaffoldPropertyDto()))
+                "2", Currency.USD, "0.0023", "webHook", listOf(createScaffoldPropertyDto()))
         val requestJson = objectMapper.writeValueAsString(request)
 
         given(keyService.find(openKey.value)).willReturn(openKey)
@@ -120,7 +119,7 @@ class ScaffoldApiControllerTest : ControllerTests() {
     fun deployWhenUserWithoutDeployRoleShouldRedirectToIndexPage() {
         val openKey = createOpenKey(setOf(Role("ROLE_INAPPROPRIATE")))
         val request = DeployScaffoldRequest("openKey", "developerAddress", "description",
-                "2", Currency.USD, "0.0023", listOf(createScaffoldPropertyDto()))
+                "2", Currency.USD, "0.0023", "webHook", listOf(createScaffoldPropertyDto()))
         val requestJson = objectMapper.writeValueAsString(request)
 
         given(keyService.find(openKey.value)).willReturn(openKey)
@@ -138,7 +137,7 @@ class ScaffoldApiControllerTest : ControllerTests() {
         val openKey = createOpenKey(setOf(Role("ROLE_DEPLOY")))
         val scaffold = createScaffold(openKey)
         val request = SaveScaffoldRequest("address", "abi", "openKey", "developerAddress",
-                "description", "2", Currency.USD, "0.0023",
+                "description", "2", Currency.USD, "0.0023", "webHook",
                 listOf(createScaffoldPropertyDto()))
         val requestJson = objectMapper.writeValueAsString(request)
 
@@ -176,7 +175,7 @@ class ScaffoldApiControllerTest : ControllerTests() {
     @Test
     fun getScaffoldSummary() {
         val scaffoldAddress = "address"
-        val scaffoldSummaryDto = ScaffoldSummaryDto("description", "2", Currency.USD.name,
+        val scaffoldSummaryDto = ScaffoldSummaryDto("abi", "description", "2", Currency.USD.name,
                 BigDecimal.ONE, BigInteger.ONE, "vendorAddress", BigInteger.ONE, true)
         val openKey = createOpenKey(setOf(Role("ROLE_DEPLOY")))
 
@@ -193,7 +192,7 @@ class ScaffoldApiControllerTest : ControllerTests() {
     @Test
     fun deactivate() {
         val scaffoldAddress = "address"
-        val scaffoldSummaryDto = ScaffoldSummaryDto("description", "2", Currency.USD.name,
+        val scaffoldSummaryDto = ScaffoldSummaryDto("abi", "description", "2", Currency.USD.name,
                 BigDecimal.ONE, BigInteger.ONE, "vendorAddress", BigInteger.ONE, true)
         val openKey = createOpenKey(setOf(Role("ROLE_DEPLOY")))
 
@@ -264,6 +263,7 @@ class ScaffoldApiControllerTest : ControllerTests() {
 
     private fun expectScaffoldSummaryDtoJson(scaffoldSummaryDto: ScaffoldSummaryDto) = """
                     {
+                      "abi": ${scaffoldSummaryDto.abi},
                       "description": ${scaffoldSummaryDto.description},
                       "fiatAmount": "${scaffoldSummaryDto.fiatAmount}",
                       "fiatCurrency": ${scaffoldSummaryDto.fiatCurrency},
@@ -274,15 +274,5 @@ class ScaffoldApiControllerTest : ControllerTests() {
                       "enabled": ${scaffoldSummaryDto.enabled}
                     }
                     """.trimIndent()
-
-    private fun createOpenKey(roles: Set<Role>): OpenKey {
-        val user = User("test", 0, mutableSetOf(), roles)
-        val openKey = OpenKey(user, value = "open_token_value")
-        openKey.id = 1
-        user.id = 1
-        user.openKeys.add(openKey)
-
-        return openKey
-    }
 
 }

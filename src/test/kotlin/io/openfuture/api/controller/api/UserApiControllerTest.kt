@@ -1,9 +1,7 @@
 package io.openfuture.api.controller.api
 
 import io.openfuture.api.config.ControllerTests
-import io.openfuture.api.entity.auth.OpenKey
 import io.openfuture.api.entity.auth.Role
-import io.openfuture.api.entity.auth.User
 import org.junit.Test
 import org.mockito.BDDMockito.given
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -61,16 +59,6 @@ class UserApiControllerTest : ControllerTests() {
 
                 .andExpect(status().is3xxRedirection)
                 .andExpect(MockMvcResultMatchers.redirectedUrl("http://localhost/"))
-    }
-
-    private fun createOpenKey(roles: Set<Role>): OpenKey {
-        val user = User("test", 0, mutableSetOf(), roles)
-        val openKey = OpenKey(user, value = "open_token_value")
-        openKey.id = 1
-        user.id = 1
-        user.openKeys.add(openKey)
-
-        return openKey
     }
 
 }

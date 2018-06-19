@@ -1,18 +1,20 @@
 package io.openfuture.api.controller.api
 
 import io.openfuture.api.config.ControllerTests
+import io.openfuture.api.domain.scaffold.GenerateOpenKeyRequest
 import io.openfuture.api.entity.auth.OpenKey
 import io.openfuture.api.entity.auth.Role
-import io.openfuture.api.entity.auth.User
 import org.junit.Test
 import org.mockito.BDDMockito.given
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpHeaders.AUTHORIZATION
+import org.springframework.http.MediaType.APPLICATION_JSON_UTF8
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.util.*
 
 /**
  * @author Yauheni Efimenko
@@ -23,20 +25,24 @@ class OpenKeyApiControllerTest : ControllerTests() {
     @Test
     fun generateToken() {
         val openKey = createOpenKey(setOf(Role("ROLE_DEPLOY")))
-        val newOpenKey = OpenKey(openKey.user)
+        val request = GenerateOpenKeyRequest(Date())
+        val newOpenKey = OpenKey(openKey.user, request.expireDate)
+        val requestJson = objectMapper.writeValueAsString(request)
 
         given(keyService.find(openKey.value)).willReturn(openKey)
-        given(keyService.generate(openKey.user)).willReturn(newOpenKey)
+        given(keyService.generate(request, openKey.user)).willReturn(newOpenKey)
 
         mvc.perform(post("/api/keys")
-                .header(AUTHORIZATION, openKey.value))
+                .header(AUTHORIZATION, openKey.value)
+                .contentType(APPLICATION_JSON_UTF8)
+                .content(requestJson))
 
                 .andExpect(status().isOk)
                 .andExpect(content().json("""
                     {
                       "value": ${newOpenKey.value},
                       "enabled": ${newOpenKey.enabled},
-                      "expiredDate": ${newOpenKey.expiredDate}
+                      "expiredDate": ${objectMapper.writeValueAsString(newOpenKey.expiredDate)}
                     }
                     """.trimIndent(), true))
     }
@@ -52,16 +58,6 @@ class OpenKeyApiControllerTest : ControllerTests() {
 
                 .andExpect(status().is3xxRedirection)
                 .andExpect(MockMvcResultMatchers.redirectedUrl("http://localhost/"))
-    }
-
-    private fun createOpenKey(roles: Set<Role>): OpenKey {
-        val user = User("test", 0, mutableSetOf(), roles)
-        val openKey = OpenKey(user, value = "open_token_value")
-        openKey.id = 1
-        user.id = 1
-        user.openKeys.add(openKey)
-
-        return openKey
     }
 
 }

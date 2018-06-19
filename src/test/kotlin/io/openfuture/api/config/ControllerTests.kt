@@ -2,6 +2,9 @@ package io.openfuture.api.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.openfuture.api.config.propety.AuthorizationProperties
+import io.openfuture.api.entity.auth.OpenKey
+import io.openfuture.api.entity.auth.Role
+import io.openfuture.api.entity.auth.User
 import io.openfuture.api.service.OpenKeyService
 import io.openfuture.api.service.UserService
 import org.junit.runner.RunWith
@@ -36,5 +39,16 @@ abstract class ControllerTests {
 
     @MockBean
     private lateinit var properties: AuthorizationProperties
+
+
+    protected fun createOpenKey(roles: Set<Role>): OpenKey {
+        val user = User("test", 0, mutableSetOf(), roles)
+        val openKey = OpenKey(user, value = "open_token_value")
+        openKey.id = 1
+        user.id = 1
+        user.openKeys.add(openKey)
+
+        return openKey
+    }
 
 }

@@ -4,7 +4,6 @@ import io.openfuture.api.config.ControllerTests
 import io.openfuture.api.domain.PageRequest
 import io.openfuture.api.entity.auth.OpenKey
 import io.openfuture.api.entity.auth.Role
-import io.openfuture.api.entity.auth.User
 import io.openfuture.api.entity.scaffold.Currency
 import io.openfuture.api.entity.scaffold.Scaffold
 import io.openfuture.api.entity.scaffold.Transaction
@@ -96,15 +95,5 @@ class TransactionApiControllerTest : ControllerTests() {
                         "type": ${transaction.type}
                     }
                     """.trimIndent()
-
-    private fun createOpenKey(roles: Set<Role>): OpenKey {
-        val user = User("test", 0, mutableSetOf(), roles)
-        val openKey = OpenKey(user, value = "open_token_value")
-        openKey.id = 1
-        user.id = 1
-        user.openKeys.add(openKey)
-
-        return openKey
-    }
 
 }
