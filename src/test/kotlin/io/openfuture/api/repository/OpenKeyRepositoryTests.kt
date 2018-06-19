@@ -16,7 +16,6 @@ internal class OpenKeyRepositoryTests : RepositoryTests() {
     @Test
     fun findByValueAndEnabledIsTrueAndExpiredDateIsNullOrExpiredDateAfter() {
         val user = persistUser()
-
         val openKeyValue = "op_pk_9de7cbb4-857c-49e9-87d2-fc91428c4c12"
         val expectedOpenKey = OpenKey(user, null, openKeyValue)
         entityManager.persist(expectedOpenKey)
@@ -29,9 +28,7 @@ internal class OpenKeyRepositoryTests : RepositoryTests() {
     @Test
     fun findAllByUser() {
         val user = persistUser()
-
         val expectedOpenKeys = listOf(OpenKey(user), OpenKey(user))
-
         entityManager.persist(expectedOpenKeys[0])
         entityManager.persist(expectedOpenKeys[1])
 

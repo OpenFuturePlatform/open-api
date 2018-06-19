@@ -29,7 +29,6 @@ internal class TransactionHandlerTests : UnitTest() {
         transactionHandler = TransactionHandler(transactionService, scaffoldRepository)
     }
 
-
     @Test
     fun handle() {
         val addressValue = "0xba37163625b3f2e96112562858c12b75963af138"
