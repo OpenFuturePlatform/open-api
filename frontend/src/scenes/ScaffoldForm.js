@@ -15,22 +15,14 @@ import {convertCurrencies, deployContract, compileContract, deployContractByApi}
 import {subscribeEthAccount, unsubscribeEthAccount} from '../actions/eth-account';
 import {MIN_BALANCE} from '../const/index';
 import {getMetaMaskError} from '../selectors/getMetaMaskError';
+import {fetchTemplates} from '../actions/contract-templates';
+import {TemplateSelect} from '../components/TemplateSelect';
 
 class ScaffoldForm extends Component {
 
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      isDeployByApi: false
-    };
-
-    this.handleOnConvert = this.handleOnConvert.bind(this);
-    this.handleOnSubmit = this.handleOnSubmit.bind(this);
-    this.validateBalance = this.validateBalance.bind(this);
-    this.renderWalletSelect = this.renderWalletSelect.bind(this);
-    this.handleOnWalletChange = this.handleOnWalletChange.bind(this);
-  }
+  state = {
+    isDeployByApi: false
+  };
 
   componentDidMount() {
     if (!this.state.isDeployByApi) {
@@ -45,22 +37,24 @@ class ScaffoldForm extends Component {
 
   componentDidUpdate(prevProps) {
     const prevEthAccount = prevProps.ethAccount;
-    const {ethAccount} = this.props;
+    const {ethAccount, initialValues} = this.props;
     const accountChanged = prevEthAccount.account !== ethAccount.account;
     const networkChanged = prevEthAccount.trueNetwork !== ethAccount.trueNetwork;
     const balanceChanged = prevEthAccount.balance !== ethAccount.balance;
+    const initialValuesChanged = prevProps.initialValues !== initialValues;
 
-    if (accountChanged || networkChanged || balanceChanged) {
+    if (accountChanged || networkChanged || balanceChanged || initialValuesChanged) {
       this.initDeveloperAddressValidation();
+      this.handleOnConvert(initialValues.currency, initialValues.fiatAmount || 0);
     }
   }
 
-  initDeveloperAddressValidation() {
+  initDeveloperAddressValidation = () => {
     const {ethAccount, blur, dispatch} = this.props;
     dispatch(blur('developerAddress', ethAccount.account));
-  }
+  };
 
-  validateBalance() {
+  validateBalance = () => {
     const {ethAccount, metaMaskError} = this.props;
 
     if (metaMaskError) {
@@ -70,19 +64,19 @@ class ScaffoldForm extends Component {
     return ethAccount.ethBalance < MIN_BALANCE ?
       'Minimum balance: 0,0087 Eth. Change MetaMask account or top up the balance.'
       : null;
-  }
+  };
 
-  async handleOnConvert(newCurrency) {
+  handleOnConvert = async (newCurrency, fiatAmount) => {
     const {actions, formValues, change} = this.props;
     const conversionAmount = await actions.convertCurrencies({
-      fromAmount: formValues.fiatAmount,
+      fromAmount: !isNaN(Number(fiatAmount)) ? fiatAmount : formValues.fiatAmount,
       fromCurrency: newCurrency || formValues.currency,
       toCurrency: 'eth'
     });
     change('conversionAmount', conversionAmount);
-  }
+  };
 
-  async handleOnSubmit(e) {
+  handleOnSubmit = async (e) => {
     const {actions, history, formValues} = this.props;
     const {isDeployByApi} = this.state;
     e.preventDefault();
@@ -98,9 +92,9 @@ class ScaffoldForm extends Component {
     } catch (e) {
       console.warn('Deployment Error: ', e);
     }
-  }
+  };
 
-  handleOnWalletChange(event, {value}) {
+  handleOnWalletChange = (event, {value}) => {
     const {dispatch, blur} = this.props;
     if (value === 'open') {
       this.setState({isDeployByApi: true});
@@ -109,9 +103,9 @@ class ScaffoldForm extends Component {
       this.setState({isDeployByApi: false});
       this.initDeveloperAddressValidation();
     }
-  }
+  };
 
-  renderWalletSelect() {
+  renderWalletSelect = () => {
     if (!this.props.isDeployByApiAllowed) {
       return null;
     }
@@ -127,7 +121,7 @@ class ScaffoldForm extends Component {
         ]}/>
       </Grid.Column>
     )
-  }
+  };
 
   render() {
     const {formValues, invalid, scaffoldFieldsErrors, openKeyOptions} = this.props;
@@ -141,6 +135,9 @@ class ScaffoldForm extends Component {
         <form onSubmit={this.handleOnSubmit}>
           <Grid style={{paddingLeft: '15px'}}>
             <Grid.Row>
+              <Grid.Column width={16} style={{paddingTop: '10px'}}>
+                <TemplateSelect/>
+              </Grid.Column>
               {this.renderWalletSelect()}
               <Grid.Column width={16} style={{paddingTop: '10px'}}>
                 <Field key={1}
@@ -250,7 +247,7 @@ class ScaffoldForm extends Component {
               </Grid.Column>
             </Grid.Row>
             <Grid.Row>
-              <Grid.Column width={5} floated="right">
+              <Grid.Column width={2} floated="right">
                 <Button type="submit" primary disabled={disableSubmit}
                         style={{
                           marginBottom: '10px',
@@ -272,6 +269,7 @@ const getValues = getFormValues('scaffoldCreationForm');
 
 const mapStateToProps = (state) => {
   const formValues = getValues(state) || {};
+  const initialValues = state.scaffoldFeilds;
   const openKey = state.auth ? state.auth.openKeys : undefined;
   const scaffoldFieldsErrors = validateScaffoldProperties(formValues.properties || []);
   const openKeyOptions = state.auth ? state.auth.openKeys
@@ -282,6 +280,7 @@ const mapStateToProps = (state) => {
   const metaMaskError = getMetaMaskError(state);
 
   return {
+    initialValues,
     metaMaskError,
     isDeployByApiAllowed,
     ethAccount,
@@ -294,7 +293,15 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = dispatch => ({
   actions: bindActionCreators(
-    {convertCurrencies, deployContract, subscribeEthAccount, compileContract, unsubscribeEthAccount, deployContractByApi},
+    {
+      convertCurrencies,
+      deployContract,
+      subscribeEthAccount,
+      compileContract,
+      unsubscribeEthAccount,
+      deployContractByApi,
+      fetchTemplates
+    },
     dispatch,
   ),
 });
@@ -304,22 +311,6 @@ ScaffoldForm = reduxForm({
   warn,
   form: 'scaffoldCreationForm',
   enableReinitialize: true,
-  initialValues: {
-    currency: 'USD',
-    properties: []
-
-    // conversionAmount: 2.0346416588,
-    // currency: "USD",
-    // description: "hello " + Math.round(Math.random()*1000),
-    // developerAddress: "",
-    // fiatAmount: "555",
-    // openKey: "op_pk_9d3e3c1e-2770-4eca-8453-0cef89b51591",
-    // properties: [{
-    //   defaultValue: "1",
-    //   name: "prop1",
-    //   type: "NUMBER"
-    // }],
-  }
 })(ScaffoldForm);
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(ScaffoldForm));
