@@ -10,9 +10,6 @@ import io.openfuture.api.repository.ScaffoldTemplateRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
-/**
- * @author Kadach Alexey
- */
 @Service
 class DefaultScaffoldTemplateService(
         private val repository: ScaffoldTemplateRepository,

@@ -5,11 +5,26 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-- Dropdown for deployment method
-- Active Ethereum network recognition
-- Stateless authentication
-- Setting Webhooks
 - Unit tests for services, components, utils
+
+## [2.1.0] - 2018-06-18
+### Added
+- Public API Specification
+- Scaffold deployment via MetaMask
+- Scaffold activation via MetaMask
+- The number of inactive Scaffolds is limited to 10 Scaffolds
+- Choose Scaffold deployment method
+- Active Ethereum network recognition
+- Off-chain data synchronization
+- Receive Scaffolds
+- Receive Scaffold transactions
+- Set Scaffold webhooks
+- Receive Scaffold state
+- Backend: OPEN API Keys management
+- Backend: Update Scaffold Information
+- Backend: Scaffold templates
+- Backend: Split Transaction
+- Scaffold: Split Transaction
 
 ## [2.0.0] - 2018-06-04
 ### Added
@@ -47,4 +62,5 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - "Withdraw" button is removed
 
 [Unreleased]: https://github.com/OpenFuturePlatform/open-api/compare/master...sprint
+[2.1.0]: https://github.com/OpenFuturePlatform/open-api/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/OpenFuturePlatform/open-api/compare/8ea69084ef657f66976518827873c9c922970ce6...v2.0.0

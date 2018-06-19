@@ -2,8 +2,11 @@ import {SET_CURRENT_ETH_ACCOUNT} from '../actions/types';
 
 const initialState = {
   account: '',
-  balance: null,
-  trueNetwork: false
+  ethAccount: null,
+  tokenBalance: null,
+  activeNetworkId: null,
+  activating: false,
+  activatingHash: null
 };
 
 const ethAccount = (state = initialState, action) => {

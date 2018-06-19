@@ -2,7 +2,7 @@ import React from 'react';
 import {Field} from 'redux-form';
 import {Button, Grid, Input, Message} from 'semantic-ui-react';
 import {DropdownField} from 'react-semantic-redux-form';
-import ScaffoldPropertyField from "./ScaffoldPropertyField";
+import ScaffoldPropertyField from "./PropertyField";
 
 const renderRemoveButton = (index, fields, onRemove) => {
   if (index === 0 && fields.length === 1) {

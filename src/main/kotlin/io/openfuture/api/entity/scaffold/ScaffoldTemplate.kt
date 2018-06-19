@@ -6,9 +6,6 @@ import io.openfuture.api.entity.base.BaseModel
 import io.openfuture.api.util.DictionaryUtils
 import javax.persistence.*
 
-/**
- * @author Kadach Alexey
- */
 @Entity
 @Table(name = "scaffold_templates")
 class ScaffoldTemplate(

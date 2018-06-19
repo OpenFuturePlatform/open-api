@@ -9,9 +9,6 @@ import io.openfuture.api.entity.scaffold.Transaction
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
-/**
- * @author Kadach Alexey
- */
 interface ScaffoldService {
 
     fun getAll(user: User, pageRequest: Pageable): Page<Scaffold>
@@ -24,6 +21,8 @@ interface ScaffoldService {
 
     fun save(request: SaveScaffoldRequest): Scaffold
 
+    fun update(address: String, user: User, request: UpdateScaffoldRequest): Scaffold
+
     fun setWebHook(address: String, request: SetWebHookRequest, user: User): Scaffold
 
     fun getScaffoldSummary(address: String, user: User): ScaffoldSummaryDto
@@ -31,6 +30,12 @@ interface ScaffoldService {
     fun deactivate(address: String, user: User): ScaffoldSummaryDto
 
     fun getQuota(user: User): ScaffoldQuotaDto
+
+    fun addShareHolder(address: String, user: User, request: AddShareHolderRequest)
+
+    fun updateShareHolder(address: String, user: User, request: UpdateShareHolderRequest)
+
+    fun removeShareHolder(address: String, user: User, request: RemoveShareHolderRequest)
 
 }
 
@@ -54,7 +59,11 @@ interface OpenKeyService {
 
     fun find(key: String): OpenKey?
 
+    fun generate(request: GenerateOpenKeyRequest, user: User): OpenKey
+
     fun generate(user: User): OpenKey
+
+    fun disable(key: String): OpenKey
 
 }
 

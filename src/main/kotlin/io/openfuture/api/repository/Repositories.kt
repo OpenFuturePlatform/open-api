@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.repository.NoRepositoryBean
 import org.springframework.stereotype.Repository
+import java.util.*
 
 @NoRepositoryBean
 interface BaseRepository<T> : JpaRepository<T, Long>
@@ -38,7 +39,7 @@ interface ScaffoldPropertyRepository : BaseRepository<ScaffoldProperty>
 @Repository
 interface OpenKeyRepository : BaseRepository<OpenKey> {
 
-    fun findByValue(value: String): OpenKey?
+    fun findByValueAndEnabledIsTrueAndExpiredDateIsNullOrExpiredDateAfter(value: String, date: Date): OpenKey?
 
     fun findAllByUser(user: User): List<OpenKey>
 

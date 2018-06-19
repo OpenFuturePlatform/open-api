@@ -5,9 +5,6 @@ import org.springframework.stereotype.Component
 import org.springframework.validation.annotation.Validated
 import javax.validation.constraints.NotEmpty
 
-/**
- * @author Kadach Alexey
- */
 @ConfigurationProperties(prefix = "auth")
 @Validated
 @Component
