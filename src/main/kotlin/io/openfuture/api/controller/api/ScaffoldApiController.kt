@@ -71,18 +71,21 @@ class ScaffoldApiController(
     @GetMapping("/quota")
     fun getQuota(@CurrentUser user: User): ScaffoldQuotaDto = service.getQuota(user)
 
+    @PreAuthorize("hasRole('DEPLOY')")
     @PostMapping("/{address}/holders")
     fun addShareHolder(@CurrentUser user: User, @Valid @RequestBody request: AddShareHolderRequest,
                        @PathVariable address: String) {
         service.addShareHolder(address, user, request)
     }
 
+    @PreAuthorize("hasRole('DEPLOY')")
     @PutMapping("/{address}/holders")
     fun updateShareHolder(@CurrentUser user: User, @Valid @RequestBody request: UpdateShareHolderRequest,
                           @PathVariable address: String) {
         service.updateShareHolder(address, user, request)
     }
 
+    @PreAuthorize("hasRole('DEPLOY')")
     @DeleteMapping("/{address}/holders")
     fun removeShareHolder(@CurrentUser user: User, @Valid @RequestBody request: RemoveShareHolderRequest,
                           @PathVariable address: String) {
