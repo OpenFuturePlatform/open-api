@@ -106,7 +106,7 @@ contract OpenScaffold {
 
     // Throws if called by any account other than the vendor or OPEN platform addresses.
     modifier onlyVendor() {
-        require(msg.sender == vendorAddress || msg.sender == platformAddress);
+        require(vendorAddress == msg.sender || platformAddress == msg.sender);
         _;
     }
 
