@@ -37,7 +37,6 @@ internal class TransactionHandlerTests : UnitTest() {
         val user = User("104113085667282103363")
         val scaffold = Scaffold(addressValue, OpenKey(user), "abi", "developerAddress", "description", "fiatAmount", 1,
                 "conversionAmount", "https://test.com", mutableListOf(), true)
-        val transaction = Transaction.of(scaffold, log)
 
         given(scaffoldRepository.findByAddress(log.address)).willReturn(scaffold)
         given(transactionService.save(any(Transaction::class.java))).will { invocation -> invocation.arguments[0] }
