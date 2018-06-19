@@ -26,7 +26,7 @@ abstract class ControllerTests {
     protected lateinit var objectMapper: ObjectMapper
 
     @MockBean
-    private lateinit var clientRegictrationRepository: ClientRegistrationRepository
+    private lateinit var clientRegistrationRepository: ClientRegistrationRepository
 
     @MockBean
     private lateinit var userService: UserService
