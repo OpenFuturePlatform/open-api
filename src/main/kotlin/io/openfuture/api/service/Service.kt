@@ -35,13 +35,13 @@ interface ScaffoldService {
 
 interface ScaffoldTemplateService {
 
-    fun getAll(user: User): List<ScaffoldTemplate>
+    fun getAll(): List<ScaffoldTemplate>
 
-    fun get(id: Long, user: User): ScaffoldTemplate
+    fun get(id: Long): ScaffoldTemplate
 
-    fun save(request: SaveScaffoldTemplateRequest, user: User): ScaffoldTemplate
+    fun save(request: SaveScaffoldTemplateRequest): ScaffoldTemplate
 
-    fun delete(id: Long, user: User): ScaffoldTemplate
+    fun delete(id: Long): ScaffoldTemplate
 
 }
 
