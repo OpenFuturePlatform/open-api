@@ -50,7 +50,7 @@ contract OpenScaffold {
     // on-chain transaction storage
     struct OpenScaffoldTransaction {
         address customerAddress;
-${SCAFFOLD_STRUCT_PROPERTIES};
+//${SCAFFOLD_STRUCT_PROPERTIES};
 }
 
 // shareholder struct
@@ -61,19 +61,19 @@ uint index;
 
 
 // events
-event PaymentCompleted(
-address customerAddress,
-uint transactionAmount,
-uint scaffoldTransactionIndex,
-${CUSTOM_SCAFFOLD_PARAMETERS}
-);
-event FundsDeposited(uint _amount, address _toAddress);
-event ActivatedScaffold(bool activated);
-// shareholders events
-event AddedShareHolder(address userAddress, uint partnerShare);
-event EditedShareHolder(address userAddress, uint partnerShare);
-event DeletedShareHolder(address userAddress);
-event PayedForShareHolder(address userAddress, uint amount);
+    event PaymentCompleted(
+    address customerAddress,
+    uint transactionAmount,
+    uint scaffoldTransactionIndex/*,
+    ${CUSTOM_SCAFFOLD_PARAMETERS}*/
+    );
+    event FundsDeposited(uint _amount, address _toAddress);
+    event ActivatedScaffold(bool activated);
+    // shareholders events
+    event AddedShareHolder(address userAddress, uint partnerShare);
+    event EditedShareHolder(address userAddress, uint partnerShare);
+    event DeletedShareHolder(address userAddress);
+    event PayedForShareHolder(address userAddress, uint amount);
 
 
 // custom dataTypes
@@ -100,7 +100,7 @@ uint8 private totalAmountShares = 0;
 
 // OPEN token
 uint constant private ACTIVATING_TOKENS_AMOUNT = 10 * 10**8;
-address constant private OPEN_TOKEN_ADDRESS = ${OPEN_TOKEN_ADDRESS};
+address constant private OPEN_TOKEN_ADDRESS = 0x0/*${OPEN_TOKEN_ADDRESS}*/;
 ERC20Token public OPENToken = ERC20Token(OPEN_TOKEN_ADDRESS);
 
 
@@ -233,7 +233,7 @@ return rowToDelete;
 }
 
 // payable function for receiving customer funds
-function payVendor(${CUSTOM_SCAFFOLD_PARAMETERS}) public payable activated {
+function payVendor(/*${CUSTOM_SCAFFOLD_PARAMETERS}*/) public payable activated {
 require(msg.value == scaffoldAmount);
 scaffoldTransactionIndex++;
 
@@ -263,8 +263,8 @@ shHoldrAmount);
 }
 
 OpenScaffoldTransaction memory newTransaction = OpenScaffoldTransaction({
-customerAddress: customerAddress,
-${SCAFFOLD_STRUCT_TRANSACTION_ARGUMENTS}
+customerAddress: customerAddress/*,
+${SCAFFOLD_STRUCT_TRANSACTION_ARGUMENTS}*/
 });
 
 openScaffoldTransactions.push(newTransaction);
@@ -279,8 +279,8 @@ withdrawFunds(vendorAddress, vendorAmount);
 PaymentCompleted(
 customerAddress,
 vendorAmount,
-scaffoldTransactionIndex,
-${CUSTOM_RETURN_VARIABLES}
+scaffoldTransactionIndex/*,
+${CUSTOM_RETURN_VARIABLES}*/
 );
 }
 
