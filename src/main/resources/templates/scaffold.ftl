@@ -50,7 +50,7 @@ contract OpenScaffold {
     // on-chain transaction storage
     struct OpenScaffoldTransaction {
         address customerAddress;
-        ${SCAFFOLD_STRUCT_PROPERTIES};
+        ${SCAFFOLD_STRUCT_PROPERTIES}
     }
 
     // shareholder struct
@@ -116,7 +116,7 @@ contract OpenScaffold {
         _;
     }
 
-
+    // constructor
     function OpenScaffold(
         address _vendorAddress,
         address _platformAddress,
@@ -133,6 +133,13 @@ contract OpenScaffold {
         fiatAmount = _fiatAmount;
         fiatCurrency = _fiatCurrency;
         scaffoldAmount = _scaffoldAmount;
+    }
+
+    // set Scaffold description by vendor
+    function setDescription(string _description)
+        public
+        onlyVendor {
+        scaffoldDescription = _description;
     }
 
     // deactivate Scaffold contract by vendor
