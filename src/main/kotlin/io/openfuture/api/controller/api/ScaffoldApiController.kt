@@ -60,13 +60,16 @@ class ScaffoldApiController(
 
     @PreAuthorize("hasRole('DEPLOY')")
     @GetMapping("/{address}/summary")
-    fun getScaffoldSummary(@CurrentUser user: User, @PathVariable address: String): ScaffoldSummaryDto =
-            service.getScaffoldSummary(address, user)
+    fun getScaffoldSummary(@CurrentUser user: User, @PathVariable address: String): ScaffoldSummaryDto {
+        val summary = service.getScaffoldSummary(address, user)
+        return ScaffoldSummaryDto(summary)
+    }
 
     @PreAuthorize("hasRole('DEPLOY')")
     @PostMapping("/{address}/doDeactivate")
-    fun deactivate(@CurrentUser user: User, @PathVariable address: String): ScaffoldSummaryDto =
-            service.deactivate(address, user)
+    fun deactivate(@CurrentUser user: User, @PathVariable address: String) {
+        service.deactivate(address, user)
+    }
 
     @GetMapping("/quota")
     fun getQuota(@CurrentUser user: User): ScaffoldQuotaDto = service.getQuota(user)

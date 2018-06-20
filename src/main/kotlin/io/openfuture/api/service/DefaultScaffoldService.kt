@@ -7,11 +7,14 @@ import io.openfuture.api.domain.scaffold.*
 import io.openfuture.api.entity.auth.User
 import io.openfuture.api.entity.scaffold.Scaffold
 import io.openfuture.api.entity.scaffold.ScaffoldProperty
+import io.openfuture.api.entity.scaffold.ScaffoldSummary
 import io.openfuture.api.exception.DeployException
 import io.openfuture.api.exception.FunctionCallException
 import io.openfuture.api.exception.NotFoundException
 import io.openfuture.api.repository.ScaffoldPropertyRepository
 import io.openfuture.api.repository.ScaffoldRepository
+import io.openfuture.api.repository.ScaffoldSummaryRepository
+import org.apache.commons.lang3.time.DateUtils.*
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -34,11 +37,11 @@ import org.web3j.protocol.core.methods.request.Transaction
 import org.web3j.tx.Contract.GAS_LIMIT
 import org.web3j.tx.ManagedTransaction.GAS_PRICE
 import org.web3j.utils.Convert.Unit.ETHER
-import org.web3j.utils.Convert.fromWei
 import org.web3j.utils.Convert.toWei
 import org.web3j.utils.Numeric
 import java.math.BigInteger
 import java.math.BigInteger.ZERO
+import java.util.*
 import java.util.Arrays.asList
 import javax.annotation.PostConstruct
 
@@ -47,6 +50,7 @@ class DefaultScaffoldService(
         private val web3: Web3j,
         private val repository: ScaffoldRepository,
         private val propertyRepository: ScaffoldPropertyRepository,
+        private val summaryRepository: ScaffoldSummaryRepository,
         private val compiler: ScaffoldCompiler,
         private val properties: EthereumProperties,
         private val openKeyService: OpenKeyService,
@@ -55,13 +59,19 @@ class DefaultScaffoldService(
 
     companion object {
         private val log = LoggerFactory.getLogger(DefaultScaffoldService::class.java)
+
+        // Validation
         private const val ALLOWED_DISABLED_SCAFFOLDS = 10L
         private const val ENABLED_SCAFFOLD_TOKEN_COUNT = 10L
+        private const val CACHE_PERIOD_IN_MINUTES = 3
+
+        // Method Names
         private const val GET_SCAFFOLD_SUMMARY_METHOD_NAME = "getScaffoldSummary"
         private const val DEACTIVATE_SCAFFOLD_METHOD_NAME = "deactivate"
         private const val ADD_SHARE_HOLDER_METHOD_NAME = "addShareHolder"
-        private const val UPDATE_SHARE_HOLDER_METHOD_NAME = "editPartnerShare"
+        private const val UPDATE_SHARE_HOLDER_METHOD_NAME = "editShareHolder"
         private const val REMOVE_SHARE_HOLDER_METHOD_NAME = "deleteShareHolder"
+        private const val SET_DESCRIPTION_METHOD_NAME = "setDescription"
     }
 
 
@@ -154,7 +164,15 @@ class DefaultScaffoldService(
     @Transactional
     override fun update(address: String, user: User, request: UpdateScaffoldRequest): Scaffold {
         val scaffold = get(address, user)
+        val function = Function(
+                SET_DESCRIPTION_METHOD_NAME,
+                asList<Type<*>>(
+                        Utf8String(request.description!!)
+                ),
+                asList()
+        )
 
+        callFunction(function, scaffold.address)
         scaffold.description = request.description!!
 
         return repository.save(scaffold)
@@ -170,8 +188,20 @@ class DefaultScaffoldService(
     }
 
     @Transactional(readOnly = true)
-    override fun getScaffoldSummary(address: String, user: User): ScaffoldSummaryDto {
+    override fun getQuota(user: User): ScaffoldQuotaDto {
+        val scaffoldCount = repository.countByEnabledIsFalseAndOpenKeyUser(user)
+        return ScaffoldQuotaDto(scaffoldCount, ENABLED_SCAFFOLD_TOKEN_COUNT)
+    }
+
+    @Transactional(readOnly = true)
+    override fun getScaffoldSummary(address: String, user: User): ScaffoldSummary {
         val scaffold = get(address, user)
+        val summary = summaryRepository.findByScaffoldAndDateAfter(scaffold,
+                addMinutes(Date(), -1 * CACHE_PERIOD_IN_MINUTES))
+        if (null != summary) {
+            return summary
+        }
+
         val function = Function(
                 GET_SCAFFOLD_SUMMARY_METHOD_NAME,
                 asList(),
@@ -187,21 +217,16 @@ class DefaultScaffoldService(
         )
 
         val result = callFunction(function, scaffold.address)
-        return ScaffoldSummaryDto(
-                scaffold.abi,
-                result[0].value as String,
-                result[1].value as String,
-                result[2].value as String,
-                fromWei((result[3].value as BigInteger).toBigDecimal(), ETHER),
+        return summaryRepository.save(ScaffoldSummary(
+                scaffold,
                 result[4].value as BigInteger,
-                result[5].value as String,
                 result[6].value as BigInteger,
                 result[6].value as BigInteger >= BigInteger.valueOf(ENABLED_SCAFFOLD_TOKEN_COUNT)
-        )
+        ))
     }
 
     @Transactional(readOnly = true)
-    override fun deactivate(address: String, user: User): ScaffoldSummaryDto {
+    override fun deactivate(address: String, user: User) {
         val scaffold = get(address, user)
         val function = Function(
                 DEACTIVATE_SCAFFOLD_METHOD_NAME,
@@ -210,13 +235,6 @@ class DefaultScaffoldService(
         )
 
         callFunction(function, scaffold.address)
-        return getScaffoldSummary(scaffold.address, user)
-    }
-
-    @Transactional(readOnly = true)
-    override fun getQuota(user: User): ScaffoldQuotaDto {
-        val scaffoldCount = repository.countByEnabledIsFalseAndOpenKeyUser(user)
-        return ScaffoldQuotaDto(scaffoldCount, ENABLED_SCAFFOLD_TOKEN_COUNT)
     }
 
     @Transactional(readOnly = true)

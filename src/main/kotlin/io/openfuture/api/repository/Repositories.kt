@@ -61,3 +61,10 @@ interface ScaffoldTemplateRepository : BaseRepository<ScaffoldTemplate> {
 
 @Repository
 interface ScaffoldTemplatePropertyRepository : BaseRepository<ScaffoldTemplateProperty>
+
+@Repository
+interface ScaffoldSummaryRepository : BaseRepository<ScaffoldSummary> {
+
+    fun findByScaffoldAndDateAfter(scaffold: Scaffold, date: Date): ScaffoldSummary?
+
+}
