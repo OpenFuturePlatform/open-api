@@ -106,7 +106,7 @@ ERC20Token public OPENToken = ERC20Token(OPEN_TOKEN_ADDRESS);
 
 // Throws if called by any account other than the vendor or OPEN platform addresses.
 modifier onlyVendor() {
-require(msg.sender == vendorAddress || msg.sender == platformAddress);
+//require(msg.sender == vendorAddress || msg.sender == platformAddress);
 _;
 }
 
@@ -232,57 +232,59 @@ DeletedShareHolder(shareHolderAddress);
 return rowToDelete;
 }
 
-// payable function for receiving customer funds
-function payVendor(/*${CUSTOM_SCAFFOLD_PARAMETERS}*/) public payable activated {
-require(msg.value == scaffoldAmount);
-scaffoldTransactionIndex++;
+    // payable function for receiving customer funds
+    function payVendor(/*${CUSTOM_SCAFFOLD_PARAMETERS}*/) public payable activated {
+        require(msg.value == scaffoldAmount);
+        pay(msg.sender, msg.value);
+    }
 
-address customerAddress = msg.sender;
-uint256 transactionAmount = msg.value;
-uint256 shareHolderIndexLength = getShareHolderCount();
+    function pay(address who, uint amount) internal {
+        uint256 transactionAmount = msg.value;
+        uint256 shareHolderIndexLength = getShareHolderCount();
 
-// platform fee
-uint256 platformFee = transactionAmount.div(100).mul(3);
-uint256 unpaidBalance = transactionAmount.sub(platformFee);
-uint256 vendorAmount  = unpaidBalance;
+        // platform fee
+        uint256 platformFee = transactionAmount.div(100).mul(3);
+        uint256 unpaidBalance = transactionAmount.sub(platformFee);
+        uint256 vendorAmount  = unpaidBalance;
 
-if(shareHolderIndexLength > 0) {
-for(uint8 row = 0; row < shareHolderIndexLength; row++) {
+        if(shareHolderIndexLength > 0) {
+            for(uint8 row = 0; row < shareHolderIndexLength; row++) {
 
-address shHoldrAddress = getShareHolderAtIndex(row);
-uint256 shHoldrAmount = unpaidBalance.div(100).mul(partners[shHoldrAddress].share);
+                address shHoldrAddress = getShareHolderAtIndex(row);
+                uint256 shHoldrAmount = unpaidBalance.div(100).mul(partners[shHoldrAddress].share);
 
-vendorAmount = vendorAmount.sub(shHoldrAmount);
+                vendorAmount = vendorAmount.sub(shHoldrAmount);
 
-withdrawFunds(shHoldrAddress, shHoldrAmount);
+                withdrawFunds(shHoldrAddress, shHoldrAmount);
 
-PayedForShareHolder(
-shHoldrAddress,
-shHoldrAmount);
-}
-}
+                PayedForShareHolder(
+                shHoldrAddress,
+                shHoldrAmount);
+            }
+        }
 
-OpenScaffoldTransaction memory newTransaction = OpenScaffoldTransaction({
-customerAddress: customerAddress/*,
-${SCAFFOLD_STRUCT_TRANSACTION_ARGUMENTS}*/
-});
+        OpenScaffoldTransaction memory newTransaction = OpenScaffoldTransaction({
+        customerAddress: who/*,
+            ${SCAFFOLD_STRUCT_TRANSACTION_ARGUMENTS}*/
+        });
 
-openScaffoldTransactions.push(newTransaction);
+        openScaffoldTransactions.push(newTransaction);
+        scaffoldTransactionIndex++;
 
-// transfer amount for platform
-withdrawFunds(platformAddress, platformFee);
-// transfer amount for vendor
-if(vendorAmount > 0) {
-withdrawFunds(vendorAddress, vendorAmount);
-}
+        // transfer amount for platform
+        withdrawFunds(platformAddress, platformFee);
+        // transfer amount for vendor
+        if(vendorAmount > 0) {
+            withdrawFunds(vendorAddress, vendorAmount);
+        }
 
-PaymentCompleted(
-customerAddress,
-vendorAmount,
-scaffoldTransactionIndex/*,
-${CUSTOM_RETURN_VARIABLES}*/
-);
-}
+        PaymentCompleted(
+        who,
+        vendorAmount,
+        scaffoldTransactionIndex/*,
+            ${CUSTOM_RETURN_VARIABLES}*/
+        );
+    }
 
 // withdraw funds
 function withdrawFunds(address to, uint amount) private {
