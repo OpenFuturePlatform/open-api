@@ -10,6 +10,7 @@ import scaffoldsReducer from './scaffoldsReducer';
 import withdrawModalReducer from './withdrawModalReducer';
 import globalProperties from "./globalProperties";
 import ethAccount from "./ethAccount";
+import devShares from './devShares';
 
 export default combineReducers({
   form: reduxForm,
@@ -22,5 +23,6 @@ export default combineReducers({
   scaffolds: scaffoldsReducer,
   withdrawModalInfo: withdrawModalReducer,
   ethAccount,
-  globalProperties
+  globalProperties,
+  devShares
 });

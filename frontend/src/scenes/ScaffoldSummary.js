@@ -2,14 +2,15 @@ import React, {Component} from 'react';
 import {Card, Grid} from 'semantic-ui-react';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
-import {fetchScaffoldItem} from "../actions/index";
 import {ScaffoldStatusContainer} from '../components/ScaffoldStatus';
+import {DevShares} from '../components/DevShares';
+import {fetchScaffoldItemFromApi} from '../actions/scaffolds';
 
 class ScaffoldSummary extends Component {
 
   componentDidMount() {
     const scaffoldAddress = this.getScaffoldAddress();
-    this.props.actions.fetchScaffoldItem(scaffoldAddress);
+    this.props.actions.fetchScaffoldItemFromApi(scaffoldAddress);
   }
 
   getScaffoldAddress() {
@@ -56,6 +57,7 @@ class ScaffoldSummary extends Component {
             <Grid.Column/>
           </Grid.Row>
         </Grid>
+        <DevShares scaffold={{...onchainScaffoldSummary, address: scaffoldAddress}}/>
       </div>
     );
   }
@@ -63,6 +65,6 @@ class ScaffoldSummary extends Component {
 
 const mapStateToProps = ({onchainScaffoldSummary}) => ({onchainScaffoldSummary});
 
-const mapDispatchToProps = dispatch => ({actions: bindActionCreators({fetchScaffoldItem}, dispatch)});
+const mapDispatchToProps = dispatch => ({actions: bindActionCreators({fetchScaffoldItemFromApi}, dispatch)});
 
 export const ScaffoldSummaryContainer = connect(mapStateToProps, mapDispatchToProps)(ScaffoldSummary);

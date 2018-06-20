@@ -50,7 +50,7 @@ contract OpenScaffold {
     // on-chain transaction storage
     struct OpenScaffoldTransaction {
         address customerAddress;
-        ${SCAFFOLD_STRUCT_PROPERTIES};
+        ${SCAFFOLD_STRUCT_PROPERTIES}
     }
 
     // shareholder struct

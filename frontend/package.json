@@ -21,6 +21,7 @@
         "react-router-dom": "^4.1.1",
         "react-scripts": "1.0.10",
         "react-semantic-redux-form": "^1.2.6",
+        "react-table": "^6.8.6",
         "redux": "^3.7.1",
         "redux-form": "^7.0.1",
         "redux-thunk": "^2.2.0",

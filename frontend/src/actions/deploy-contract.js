@@ -50,11 +50,7 @@ export const processDeploy = async (contract, bin, formValues) => {
       formValues.fiatAmount,
       formValues.currency,
       web3.utils.toWei(formValues.conversionAmount.toString())]
-  }).send({
-    from: formValues.developerAddress,
-    gas: 1700000,
-    gasPrice: '10000000000'
-  }).on('error', (error) => console.log('>> ', error));
+  }).send({from: formValues.developerAddress}).on('error', (error) => console.log('>> ', error));
 };
 
 export const deployContract = (formValues) => async dispatch => {
