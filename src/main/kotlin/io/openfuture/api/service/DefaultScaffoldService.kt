@@ -14,7 +14,7 @@ import io.openfuture.api.exception.NotFoundException
 import io.openfuture.api.repository.ScaffoldPropertyRepository
 import io.openfuture.api.repository.ScaffoldRepository
 import io.openfuture.api.repository.ScaffoldSummaryRepository
-import org.apache.commons.lang3.time.DateUtils.*
+import org.apache.commons.lang3.time.DateUtils.addMinutes
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -23,17 +23,15 @@ import org.springframework.transaction.annotation.Transactional
 import org.web3j.abi.FunctionEncoder
 import org.web3j.abi.FunctionReturnDecoder
 import org.web3j.abi.TypeReference
-import org.web3j.abi.datatypes.Address
+import org.web3j.abi.datatypes.*
 import org.web3j.abi.datatypes.Function
-import org.web3j.abi.datatypes.Type
-import org.web3j.abi.datatypes.Utf8String
 import org.web3j.abi.datatypes.generated.Uint256
 import org.web3j.abi.datatypes.generated.Uint8
 import org.web3j.crypto.RawTransaction
 import org.web3j.crypto.TransactionEncoder
 import org.web3j.protocol.Web3j
 import org.web3j.protocol.core.DefaultBlockParameterName.LATEST
-import org.web3j.protocol.core.methods.request.Transaction
+import org.web3j.protocol.core.methods.request.Transaction.createFunctionCallTransaction
 import org.web3j.tx.Contract.GAS_LIMIT
 import org.web3j.tx.ManagedTransaction.GAS_PRICE
 import org.web3j.utils.Convert.Unit.ETHER
@@ -59,11 +57,6 @@ class DefaultScaffoldService(
 
     companion object {
         private val log = LoggerFactory.getLogger(DefaultScaffoldService::class.java)
-
-        // Validation
-        private const val ALLOWED_DISABLED_SCAFFOLDS = 10L
-        private const val ENABLED_SCAFFOLD_TOKEN_COUNT = 10L
-        private const val CACHE_PERIOD_IN_MINUTES = 3
 
         // Method Names
         private const val GET_SCAFFOLD_SUMMARY_METHOD_NAME = "getScaffoldSummary"
@@ -102,7 +95,7 @@ class DefaultScaffoldService(
     @Transactional(readOnly = true)
     override fun compile(request: CompileScaffoldRequest): CompiledScaffoldDto {
         val openKey = openKeyService.get(request.openKey!!)
-        if (repository.countByEnabledIsFalseAndOpenKeyUser(openKey.user) >= ALLOWED_DISABLED_SCAFFOLDS) {
+        if (repository.countByEnabledIsFalseAndOpenKeyUser(openKey.user) >= properties.allowedDisabledContracts) {
             throw IllegalStateException("Disabled scaffold count is more than allowed")
         }
 
@@ -172,7 +165,7 @@ class DefaultScaffoldService(
                 asList()
         )
 
-        callFunction(function, scaffold.address)
+        callTransaction(function, scaffold.address)
         scaffold.description = request.description!!
 
         return repository.save(scaffold)
@@ -190,14 +183,14 @@ class DefaultScaffoldService(
     @Transactional(readOnly = true)
     override fun getQuota(user: User): ScaffoldQuotaDto {
         val scaffoldCount = repository.countByEnabledIsFalseAndOpenKeyUser(user)
-        return ScaffoldQuotaDto(scaffoldCount, ENABLED_SCAFFOLD_TOKEN_COUNT)
+        return ScaffoldQuotaDto(scaffoldCount, properties.enabledContactTokenCount)
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     override fun getScaffoldSummary(address: String, user: User): ScaffoldSummary {
         val scaffold = get(address, user)
         val summary = summaryRepository.findByScaffoldAndDateAfter(scaffold,
-                addMinutes(Date(), -1 * CACHE_PERIOD_IN_MINUTES))
+                addMinutes(Date(), -1 * properties.cachePeriodInMinutest))
         if (null != summary) {
             return summary
         }
@@ -221,7 +214,7 @@ class DefaultScaffoldService(
                 scaffold,
                 result[4].value as BigInteger,
                 result[6].value as BigInteger,
-                result[6].value as BigInteger >= BigInteger.valueOf(ENABLED_SCAFFOLD_TOKEN_COUNT)
+                result[6].value as BigInteger >= BigInteger.valueOf(properties.enabledContactTokenCount.toLong())
         ))
     }
 
@@ -234,7 +227,7 @@ class DefaultScaffoldService(
                 asList()
         )
 
-        callFunction(function, scaffold.address)
+        callTransaction(function, scaffold.address)
     }
 
     @Transactional(readOnly = true)
@@ -249,7 +242,7 @@ class DefaultScaffoldService(
                 asList()
         )
 
-        callFunction(function, scaffold.address)
+        callTransaction(function, scaffold.address)
     }
 
     @Transactional(readOnly = true)
@@ -264,7 +257,7 @@ class DefaultScaffoldService(
                 asList()
         )
 
-        callFunction(function, scaffold.address)
+        callTransaction(function, scaffold.address)
     }
 
     @Transactional(readOnly = true)
@@ -278,21 +271,35 @@ class DefaultScaffoldService(
                 asList()
         )
 
-        callFunction(function, scaffold.address)
+        callTransaction(function, scaffold.address)
     }
 
     private fun callFunction(function: Function, address: String): MutableList<Type<Any>> {
         val encodedFunction = FunctionEncoder.encode(function)
         val credentials = properties.getCredentials()
         val nonce = web3.ethGetTransactionCount(credentials.address, LATEST).send().transactionCount
-        val result = web3.ethCall(Transaction.createFunctionCallTransaction(credentials.address, nonce, GAS_PRICE,
-                GAS_LIMIT, address, encodedFunction), LATEST).send()
+        val result = web3.ethCall(createFunctionCallTransaction(credentials.address, nonce, GAS_PRICE, GAS_LIMIT,
+                address, encodedFunction), LATEST).send()
 
         if (result.hasError()) {
             throw FunctionCallException(result.error.message)
         }
 
         return FunctionReturnDecoder.decode(result.value, function.outputParameters)
+    }
+
+    private fun callTransaction(function: Function, address: String): String {
+        val encodedFunction = FunctionEncoder.encode(function)
+        val credentials = properties.getCredentials()
+        val nonce = web3.ethGetTransactionCount(credentials.address, LATEST).send().transactionCount
+        val result = web3.ethSendTransaction(createFunctionCallTransaction(credentials.address, nonce, GAS_PRICE,
+                GAS_LIMIT, address, encodedFunction)).send()
+
+        if (result.hasError()) {
+            throw FunctionCallException(result.error.message)
+        }
+
+        return result.transactionHash
     }
 
 }
