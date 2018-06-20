@@ -1,11 +1,10 @@
 package io.openfuture.api.controller.api
 
-import io.openfuture.api.annotation.CurrentUser
-import io.openfuture.api.domain.scaffold.SaveScaffoldTemplateRequest
 import io.openfuture.api.domain.scaffold.ScaffoldTemplateDto
-import io.openfuture.api.entity.auth.User
 import io.openfuture.api.service.ScaffoldTemplateService
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/scaffolds/templates")
@@ -14,18 +13,6 @@ class ScaffoldTemplateApiController(
 ) {
 
     @GetMapping
-    fun getAll(@CurrentUser user: User): List<ScaffoldTemplateDto> = service.getAll(user).map { ScaffoldTemplateDto(it) }
-
-    @PostMapping
-    fun save(@RequestBody request: SaveScaffoldTemplateRequest, @CurrentUser user: User): ScaffoldTemplateDto {
-        val template = service.save(request, user)
-        return ScaffoldTemplateDto(template)
-    }
-
-    @DeleteMapping("/{id}")
-    fun delete(@PathVariable id: Long, @CurrentUser user: User): ScaffoldTemplateDto {
-        val template = service.delete(id, user)
-        return ScaffoldTemplateDto(template)
-    }
+    fun getAll(): List<ScaffoldTemplateDto> = service.getAll().map { ScaffoldTemplateDto(it) }
 
 }
