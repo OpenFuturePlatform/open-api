@@ -92,7 +92,7 @@ class DefaultScaffoldService(
     @Transactional(readOnly = true)
     override fun compile(request: CompileScaffoldRequest): CompiledScaffoldDto {
         val openKey = openKeyService.get(request.openKey!!)
-        if (repository.countByEnabledIsFalseAndOpenKeyUser(openKey.user) > ALLOWED_DISABLED_SCAFFOLDS) {
+        if (repository.countByEnabledIsFalseAndOpenKeyUser(openKey.user) >= ALLOWED_DISABLED_SCAFFOLDS) {
             throw IllegalStateException("Disabled scaffold count is more than allowed")
         }
 
