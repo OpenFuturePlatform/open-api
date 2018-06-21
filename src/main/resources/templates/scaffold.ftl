@@ -116,7 +116,7 @@ contract OpenScaffold {
         _;
     }
 
-
+    // constructor
     function OpenScaffold(
         address _vendorAddress,
         address _platformAddress,
@@ -135,6 +135,13 @@ contract OpenScaffold {
         scaffoldAmount = _scaffoldAmount;
     }
 
+    // set Scaffold description by vendor
+    function setDescription(string _description)
+        public
+        onlyVendor {
+        scaffoldDescription = _description;
+    }
+
     // deactivate Scaffold contract by vendor
     function deactivate() onlyVendor public activated {
         OPENToken.transfer(vendorAddress, OPENToken.balanceOf(address(this)));
@@ -151,12 +158,22 @@ contract OpenScaffold {
             return(partners[shareHolderAddress].share);
   }
 
-    // get shareholders at index
+    // get shareholder address at index
     function getShareHolderAtIndex(uint index)
         public
         constant
         returns(address shareHolderAddress) {
             return shareHolderAddresses[index];
+    }
+
+    // get shareholder address and share amount at index
+    function getShareHolderAddressAndShareAtIndex(uint index)
+        public
+        constant
+        returns(address, uint8) {
+            address shareHolderAddress = getShareHolderAtIndex(index);
+            uint8 share = getHoldersShare(shareHolderAddress);
+            return (shareHolderAddress, share);
     }
 
     // get shareholders count
