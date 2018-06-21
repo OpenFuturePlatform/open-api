@@ -158,12 +158,22 @@ contract OpenScaffold {
             return(partners[shareHolderAddress].share);
   }
 
-    // get shareholders at index
+    // get shareholder address at index
     function getShareHolderAtIndex(uint index)
         public
         constant
         returns(address shareHolderAddress) {
             return shareHolderAddresses[index];
+    }
+
+    // get shareholder address and share amount at index
+    function getShareHolderAddressAndShareAtIndex(uint index)
+        public
+        constant
+        returns(address, uint8) {
+            address shareHolderAddress = getShareHolderAtIndex(index);
+            uint8 share = getHoldersShare(shareHolderAddress);
+            return (shareHolderAddress, share);
     }
 
     // get shareholders count
