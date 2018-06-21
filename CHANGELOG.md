@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Front-end: Scaffold templates
 - Unit tests for services, components, utils
 
 ## [2.1.0] - 2018-06-18

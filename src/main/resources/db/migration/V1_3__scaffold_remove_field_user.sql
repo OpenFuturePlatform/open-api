@@ -1,0 +1,1 @@
+ALTER TABLE scaffold_templates DROP COLUMN user_id;

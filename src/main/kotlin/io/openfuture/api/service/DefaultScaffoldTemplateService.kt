@@ -1,7 +1,6 @@
 package io.openfuture.api.service
 
 import io.openfuture.api.domain.scaffold.SaveScaffoldTemplateRequest
-import io.openfuture.api.entity.auth.User
 import io.openfuture.api.entity.scaffold.ScaffoldTemplate
 import io.openfuture.api.entity.scaffold.ScaffoldTemplateProperty
 import io.openfuture.api.exception.NotFoundException
@@ -17,23 +16,23 @@ class DefaultScaffoldTemplateService(
 ) : ScaffoldTemplateService {
 
     @Transactional(readOnly = true)
-    override fun getAll(user: User): List<ScaffoldTemplate> = repository.findAllByUserAndDeletedIsFalse(user)
+    override fun getAll(): List<ScaffoldTemplate> = repository.findAllByDeletedIsFalse()
 
     @Transactional(readOnly = true)
-    override fun get(id: Long, user: User): ScaffoldTemplate = repository.findByIdAndUser(id, user)
-            ?: throw NotFoundException("Not found scaffold template with id $id")
+    override fun get(id: Long): ScaffoldTemplate = repository.findById(id)
+            .orElseThrow { throw NotFoundException("Not found scaffold template with id $id") }
 
     @Transactional
-    override fun save(request: SaveScaffoldTemplateRequest, user: User): ScaffoldTemplate {
-        val template = repository.save(ScaffoldTemplate.of(request, user))
+    override fun save(request: SaveScaffoldTemplateRequest): ScaffoldTemplate {
+        val template = repository.save(ScaffoldTemplate.of(request))
         val properties = request.properties.map { propertyRepository.save(ScaffoldTemplateProperty.of(template, it)) }
         template.property.addAll(properties)
         return template
     }
 
     @Transactional
-    override fun delete(id: Long, user: User): ScaffoldTemplate {
-        val template = get(id, user)
+    override fun delete(id: Long): ScaffoldTemplate {
+        val template = get(id)
 
         template.deleted = true
 
