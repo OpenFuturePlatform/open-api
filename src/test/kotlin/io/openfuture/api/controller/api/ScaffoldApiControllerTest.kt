@@ -16,9 +16,7 @@ import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.data.domain.PageImpl
 import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.http.MediaType.APPLICATION_JSON_UTF8
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.math.BigDecimal.ONE
@@ -44,7 +42,7 @@ class ScaffoldApiControllerTest : ControllerTests() {
         given(keyService.find(openKey.value)).willReturn(openKey)
         given(service.getAll(openKey.user, pageRequest)).willReturn(PageImpl(listOf(scaffold)))
 
-        mvc.perform(MockMvcRequestBuilders.get("/api/scaffolds")
+        mvc.perform(get("/api/scaffolds")
                 .header(AUTHORIZATION, openKey.value))
 
                 .andExpect(status().isOk)
@@ -59,14 +57,14 @@ class ScaffoldApiControllerTest : ControllerTests() {
     }
 
     @Test
-    fun get() {
+    fun getTest() {
         val openKey = createOpenKey(setOf(Role("ROLE_DEPLOY")))
         val scaffold = createScaffold(openKey)
 
         given(keyService.find(openKey.value)).willReturn(openKey)
         given(service.get(scaffold.address, openKey.user)).willReturn(scaffold)
 
-        mvc.perform(MockMvcRequestBuilders.get("/api/scaffolds/" + scaffold.address)
+        mvc.perform(get("/api/scaffolds/" + scaffold.address)
                 .header(AUTHORIZATION, openKey.value))
 
                 .andExpect(status().isOk)
@@ -184,7 +182,7 @@ class ScaffoldApiControllerTest : ControllerTests() {
         given(keyService.find(openKey.value)).willReturn(openKey)
         given(service.getScaffoldSummary(scaffoldAddress, openKey.user)).willReturn(scaffoldSummaryDto)
 
-        mvc.perform(MockMvcRequestBuilders.get("/api/scaffolds/$scaffoldAddress/summary")
+        mvc.perform(get("/api/scaffolds/$scaffoldAddress/summary")
                 .header(AUTHORIZATION, openKey.value))
 
                 .andExpect(status().isOk)
@@ -216,7 +214,7 @@ class ScaffoldApiControllerTest : ControllerTests() {
         given(keyService.find(openKey.value)).willReturn(openKey)
         given(service.getQuota(openKey.user)).willReturn(scaffoldQuotaDto)
 
-        mvc.perform(MockMvcRequestBuilders.get("/api/scaffolds/quota")
+        mvc.perform(get("/api/scaffolds/quota")
                 .header(AUTHORIZATION, openKey.value))
 
                 .andExpect(status().isOk)

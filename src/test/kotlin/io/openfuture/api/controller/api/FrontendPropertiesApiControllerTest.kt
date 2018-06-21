@@ -7,7 +7,7 @@ import org.mockito.BDDMockito.given
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.HttpHeaders.AUTHORIZATION
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import org.web3j.protocol.Web3j
 import org.web3j.protocol.core.Request
@@ -34,7 +34,7 @@ class FrontendPropertiesApiControllerTest : ControllerTests() {
 
 
     @Test
-    fun get() {
+    fun getTest() {
         val openKey = createOpenKey(setOf(Role("ROLE_DEPLOY")))
         val version = "version"
         val clientAddress = "clientAddress"
@@ -45,7 +45,7 @@ class FrontendPropertiesApiControllerTest : ControllerTests() {
         given(netVersion.netVersion).willReturn(version)
         given(properties.clientAddress).willReturn(clientAddress)
 
-        mvc.perform(MockMvcRequestBuilders.get("/api/properties")
+        mvc.perform(get("/api/properties")
                 .header(AUTHORIZATION, openKey.value))
 
                 .andExpect(status().isOk)
@@ -63,7 +63,7 @@ class FrontendPropertiesApiControllerTest : ControllerTests() {
 
         given(keyService.find(invalidToken)).willReturn(null)
 
-        mvc.perform(MockMvcRequestBuilders.get("/api/properties")
+        mvc.perform(get("/api/properties")
                 .header(AUTHORIZATION, invalidToken))
 
                 .andExpect(status().is3xxRedirection)
