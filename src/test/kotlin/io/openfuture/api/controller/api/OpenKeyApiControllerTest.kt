@@ -11,9 +11,7 @@ import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.http.MediaType.APPLICATION_JSON_UTF8
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import java.util.*
 
 /**
@@ -57,7 +55,7 @@ class OpenKeyApiControllerTest : ControllerTests() {
                 .header(AUTHORIZATION, invalidToken))
 
                 .andExpect(status().is3xxRedirection)
-                .andExpect(MockMvcResultMatchers.redirectedUrl("http://localhost/"))
+                .andExpect(redirectedUrl("http://localhost/"))
     }
 
 }

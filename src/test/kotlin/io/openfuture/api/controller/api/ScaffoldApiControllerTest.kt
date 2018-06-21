@@ -5,7 +5,7 @@ import io.openfuture.api.domain.PageRequest
 import io.openfuture.api.domain.scaffold.*
 import io.openfuture.api.entity.auth.OpenKey
 import io.openfuture.api.entity.auth.Role
-import io.openfuture.api.entity.scaffold.Currency
+import io.openfuture.api.entity.scaffold.Currency.USD
 import io.openfuture.api.entity.scaffold.PropertyType
 import io.openfuture.api.entity.scaffold.Scaffold
 import io.openfuture.api.service.ScaffoldService
@@ -17,10 +17,12 @@ import org.springframework.data.domain.PageImpl
 import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.http.MediaType.APPLICATION_JSON_UTF8
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import java.math.BigDecimal
-import java.math.BigInteger
+import java.math.BigDecimal.ONE
+import java.math.BigInteger.TEN
 import java.util.*
 
 /**
@@ -81,7 +83,7 @@ class ScaffoldApiControllerTest : ControllerTests() {
         given(keyService.find(openKey.value)).willReturn(openKey)
         given(service.compile(request)).willReturn(compiledScaffoldDto)
 
-        mvc.perform(MockMvcRequestBuilders.post("/api/scaffolds/doCompile")
+        mvc.perform(post("/api/scaffolds/doCompile")
                 .header(AUTHORIZATION, openKey.value)
                 .contentType(APPLICATION_JSON_UTF8)
                 .content(requestJson))
@@ -100,13 +102,13 @@ class ScaffoldApiControllerTest : ControllerTests() {
         val openKey = createOpenKey(setOf(Role("ROLE_DEPLOY")))
         val scaffold = createScaffold(openKey)
         val request = DeployScaffoldRequest("openKey", "developerAddress", "description",
-                "2", Currency.USD, "0.0023", "webHook", listOf(createScaffoldPropertyDto()))
+                "2", USD, "0.0023", "webHook", listOf(createScaffoldPropertyDto()))
         val requestJson = objectMapper.writeValueAsString(request)
 
         given(keyService.find(openKey.value)).willReturn(openKey)
         given(service.deploy(request)).willReturn(scaffold)
 
-        mvc.perform(MockMvcRequestBuilders.post("/api/scaffolds/doDeploy")
+        mvc.perform(post("/api/scaffolds/doDeploy")
                 .header(AUTHORIZATION, openKey.value)
                 .contentType(APPLICATION_JSON_UTF8)
                 .content(requestJson))
@@ -119,12 +121,12 @@ class ScaffoldApiControllerTest : ControllerTests() {
     fun deployWhenUserWithoutDeployRoleShouldRedirectToIndexPage() {
         val openKey = createOpenKey(setOf(Role("ROLE_INAPPROPRIATE")))
         val request = DeployScaffoldRequest("openKey", "developerAddress", "description",
-                "2", Currency.USD, "0.0023", "webHook", listOf(createScaffoldPropertyDto()))
+                "2", USD, "0.0023", "webHook", listOf(createScaffoldPropertyDto()))
         val requestJson = objectMapper.writeValueAsString(request)
 
         given(keyService.find(openKey.value)).willReturn(openKey)
 
-        mvc.perform(MockMvcRequestBuilders.post("/api/scaffolds/doDeploy")
+        mvc.perform(post("/api/scaffolds/doDeploy")
                 .header(AUTHORIZATION, openKey.value)
                 .contentType(APPLICATION_JSON_UTF8)
                 .content(requestJson))
@@ -137,14 +139,14 @@ class ScaffoldApiControllerTest : ControllerTests() {
         val openKey = createOpenKey(setOf(Role("ROLE_DEPLOY")))
         val scaffold = createScaffold(openKey)
         val request = SaveScaffoldRequest("address", "abi", "openKey", "developerAddress",
-                "description", "2", Currency.USD, "0.0023", "webHook",
+                "description", "2", USD, "0.0023", "webHook",
                 listOf(createScaffoldPropertyDto()))
         val requestJson = objectMapper.writeValueAsString(request)
 
         given(keyService.find(openKey.value)).willReturn(openKey)
         given(service.save(request)).willReturn(scaffold)
 
-        mvc.perform(MockMvcRequestBuilders.post("/api/scaffolds")
+        mvc.perform(post("/api/scaffolds")
                 .header(AUTHORIZATION, openKey.value)
                 .contentType(APPLICATION_JSON_UTF8)
                 .content(requestJson))
@@ -163,7 +165,7 @@ class ScaffoldApiControllerTest : ControllerTests() {
         given(keyService.find(openKey.value)).willReturn(openKey)
         given(service.setWebHook(scaffold.address, request, openKey.user)).willReturn(scaffold)
 
-        mvc.perform(MockMvcRequestBuilders.patch("/api/scaffolds/" + scaffold.address)
+        mvc.perform(patch("/api/scaffolds/" + scaffold.address)
                 .header(AUTHORIZATION, openKey.value)
                 .contentType(APPLICATION_JSON_UTF8)
                 .content(requestJson))
@@ -175,8 +177,8 @@ class ScaffoldApiControllerTest : ControllerTests() {
     @Test
     fun getScaffoldSummary() {
         val scaffoldAddress = "address"
-        val scaffoldSummaryDto = ScaffoldSummaryDto("abi", "description", "2", Currency.USD.name,
-                BigDecimal.ONE, BigInteger.ONE, "vendorAddress", BigInteger.ONE, true)
+        val scaffoldSummaryDto = ScaffoldSummaryDto("abi", "description", "2", USD.name,
+                ONE, TEN, "vendorAddress", TEN, true)
         val openKey = createOpenKey(setOf(Role("ROLE_DEPLOY")))
 
         given(keyService.find(openKey.value)).willReturn(openKey)
@@ -192,14 +194,14 @@ class ScaffoldApiControllerTest : ControllerTests() {
     @Test
     fun deactivate() {
         val scaffoldAddress = "address"
-        val scaffoldSummaryDto = ScaffoldSummaryDto("abi", "description", "2", Currency.USD.name,
-                BigDecimal.ONE, BigInteger.ONE, "vendorAddress", BigInteger.ONE, true)
+        val scaffoldSummaryDto = ScaffoldSummaryDto("abi", "description", "2", USD.name,
+                ONE, TEN, "vendorAddress", TEN, true)
         val openKey = createOpenKey(setOf(Role("ROLE_DEPLOY")))
 
         given(keyService.find(openKey.value)).willReturn(openKey)
         given(service.deactivate(scaffoldAddress, openKey.user)).willReturn(scaffoldSummaryDto)
 
-        mvc.perform(MockMvcRequestBuilders.post("/api/scaffolds/$scaffoldAddress/doDeactivate")
+        mvc.perform(post("/api/scaffolds/$scaffoldAddress/doDeactivate")
                 .header(AUTHORIZATION, openKey.value))
 
                 .andExpect(status().isOk)
@@ -227,7 +229,7 @@ class ScaffoldApiControllerTest : ControllerTests() {
     }
 
     private fun createScaffold(openKey: OpenKey) = Scaffold("address", openKey, "abi", "developerAddress",
-            "description", "2", Currency.USD.getId(), "0.00023")
+            "description", "2", USD.getId(), "0.00023")
 
     private fun createScaffoldPropertyDto() = ScaffoldPropertyDto("name", PropertyType.STRING, "value")
 

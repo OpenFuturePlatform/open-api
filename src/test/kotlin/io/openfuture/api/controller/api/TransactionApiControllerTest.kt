@@ -4,7 +4,7 @@ import io.openfuture.api.config.ControllerTests
 import io.openfuture.api.domain.PageRequest
 import io.openfuture.api.entity.auth.OpenKey
 import io.openfuture.api.entity.auth.Role
-import io.openfuture.api.entity.scaffold.Currency
+import io.openfuture.api.entity.scaffold.Currency.USD
 import io.openfuture.api.entity.scaffold.Scaffold
 import io.openfuture.api.entity.scaffold.Transaction
 import io.openfuture.api.service.ScaffoldService
@@ -59,7 +59,7 @@ class TransactionApiControllerTest : ControllerTests() {
     }
 
     private fun createScaffold(openKey: OpenKey) = Scaffold("address", openKey, "abi", "developerAddress",
-            "description", "2", Currency.USD.getId(), "0.00023")
+            "description", "2", USD.getId(), "0.00023")
 
 
     private fun expectTransactionJson(transaction: Transaction) = """

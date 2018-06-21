@@ -8,9 +8,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import org.web3j.protocol.Web3j
 import org.web3j.protocol.core.Request
 import org.web3j.protocol.core.methods.response.NetVersion
@@ -69,7 +67,7 @@ class FrontendPropertiesApiControllerTest : ControllerTests() {
                 .header(AUTHORIZATION, invalidToken))
 
                 .andExpect(status().is3xxRedirection)
-                .andExpect(MockMvcResultMatchers.redirectedUrl("http://localhost/"))
+                .andExpect(redirectedUrl("http://localhost/"))
     }
 
 }
