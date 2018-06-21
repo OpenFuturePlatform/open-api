@@ -1,7 +1,6 @@
 package io.openfuture.api.repository
 
 import io.openfuture.api.config.RepositoryTests
-import io.openfuture.api.entity.auth.User
 import io.openfuture.api.entity.scaffold.ScaffoldTemplate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -14,16 +13,16 @@ internal class ScaffoldTemplateRepositoryTests : RepositoryTests() {
 
     @Test
     fun findAllByUserAndDeletedIsFalse() {
-        val user = User("googleId")
-        entityManager.persist(user)
-
-        val expectedScaffoldTemplate = ScaffoldTemplate("name", user, "developerAddress", "description", "fiat_amount",
+        val scaffoldTemplate = ScaffoldTemplate("template", "developerAddress", "description", "fiat_amount",
                 1, "conversionAmount", "webHook")
-        val savedId = entityManager.persistAndGetId(expectedScaffoldTemplate) as Long
+        val deletedScaffoldTemplate = ScaffoldTemplate("deleted_template", "developerAddress", "description", "fiat_amount",
+                1, "conversionAmount", "webHook", mutableListOf(), true)
+        entityManager.persist(scaffoldTemplate)
+        entityManager.persist(deletedScaffoldTemplate)
 
-        val actualScaffoldTemplate = repository.findByIdAndUser(savedId, user)
+        val actualScaffoldTemplate = repository.findAllByDeletedIsFalse()
 
-        assertThat(actualScaffoldTemplate).isEqualTo(expectedScaffoldTemplate)
+        assertThat(actualScaffoldTemplate).isEqualTo(listOf(scaffoldTemplate))
     }
 
 }

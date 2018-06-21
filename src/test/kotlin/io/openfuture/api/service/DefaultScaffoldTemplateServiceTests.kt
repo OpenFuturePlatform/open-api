@@ -5,7 +5,6 @@ import io.openfuture.api.config.UnitTest
 import io.openfuture.api.config.any
 import io.openfuture.api.domain.scaffold.SaveScaffoldTemplateRequest
 import io.openfuture.api.domain.scaffold.ScaffoldTemplatePropertyDto
-import io.openfuture.api.entity.auth.User
 import io.openfuture.api.entity.scaffold.PropertyType
 import io.openfuture.api.entity.scaffold.ScaffoldTemplate
 import io.openfuture.api.entity.scaffold.ScaffoldTemplateProperty
@@ -35,21 +34,19 @@ internal class DefaultScaffoldTemplateServiceTests : UnitTest() {
 
     @Test
     fun getAll() {
-        val user = User("104113085667282103363")
-        val scaffoldTemplate = ScaffoldTemplate("template_name", user, "0xba37163625b3f2e96112562858c12b75963af138",
+        val scaffoldTemplate = ScaffoldTemplate("template_name", "0xba37163625b3f2e96112562858c12b75963af138",
                 "description", "1", 1, "1", "webHook", mutableListOf())
         val expectedScaffoldTemplates = listOf(scaffoldTemplate)
 
-        given(repository.findAllByUserAndDeletedIsFalse(user)).willReturn(expectedScaffoldTemplates)
+        given(repository.findAllByDeletedIsFalse()).willReturn(expectedScaffoldTemplates)
 
-        val actualScaffoldTemplates = service.getAll(user)
+        val actualScaffoldTemplates = service.getAll()
 
         assertThat(actualScaffoldTemplates).isEqualTo(expectedScaffoldTemplates)
     }
 
     @Test
     fun save() {
-        val user = User("104113085667282103363").apply { id = 1L }
         val request = SaveScaffoldTemplateRequest("request_name")
         val scaffoldTemplatePropertyDto = ScaffoldTemplatePropertyDto("name", PropertyType.STRING, "value")
         request.apply { properties = listOf(scaffoldTemplatePropertyDto) }
@@ -61,10 +58,9 @@ internal class DefaultScaffoldTemplateServiceTests : UnitTest() {
             invocation.arguments[0] as ScaffoldTemplateProperty
         }
 
-        val actualScaffoldTemplate = service.save(request, user)
+        val actualScaffoldTemplate = service.save(request)
 
         assertThat(actualScaffoldTemplate.name).isEqualTo(request.name)
-        assertThat(actualScaffoldTemplate.user).isEqualTo(user)
         assertThat(actualScaffoldTemplate.property[0].name).isEqualTo(scaffoldTemplatePropertyDto.name)
     }
 
