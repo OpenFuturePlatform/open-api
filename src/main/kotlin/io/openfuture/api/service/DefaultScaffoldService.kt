@@ -8,12 +8,14 @@ import io.openfuture.api.entity.auth.User
 import io.openfuture.api.entity.scaffold.Scaffold
 import io.openfuture.api.entity.scaffold.ScaffoldProperty
 import io.openfuture.api.entity.scaffold.ScaffoldSummary
+import io.openfuture.api.entity.scaffold.ShareHolder
 import io.openfuture.api.exception.DeployException
 import io.openfuture.api.exception.FunctionCallException
 import io.openfuture.api.exception.NotFoundException
 import io.openfuture.api.repository.ScaffoldPropertyRepository
 import io.openfuture.api.repository.ScaffoldRepository
 import io.openfuture.api.repository.ScaffoldSummaryRepository
+import io.openfuture.api.repository.ShareHolderRepository
 import org.apache.commons.lang3.time.DateUtils.addMinutes
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
@@ -40,7 +42,6 @@ import org.web3j.utils.Numeric
 import java.math.BigInteger
 import java.math.BigInteger.ZERO
 import java.util.*
-import java.util.Arrays.asList
 import javax.annotation.PostConstruct
 
 @Service
@@ -49,6 +50,7 @@ class DefaultScaffoldService(
         private val repository: ScaffoldRepository,
         private val propertyRepository: ScaffoldPropertyRepository,
         private val summaryRepository: ScaffoldSummaryRepository,
+        private val shareHolderRepository: ShareHolderRepository,
         private val compiler: ScaffoldCompiler,
         private val properties: EthereumProperties,
         private val openKeyService: OpenKeyService,
@@ -65,6 +67,8 @@ class DefaultScaffoldService(
         private const val UPDATE_SHARE_HOLDER_METHOD_NAME = "editShareHolder"
         private const val REMOVE_SHARE_HOLDER_METHOD_NAME = "deleteShareHolder"
         private const val SET_DESCRIPTION_METHOD_NAME = "setDescription"
+        private const val GET_SHARE_HOLDER_NUMBER_METHOD_NAME = "getShareHolderCount"
+        private const val GET_SHARE_HOLDER_AT_INDEX_METHOD_NAME = "getShareHolderAddressAndShareAtIndex"
     }
 
 
@@ -95,7 +99,7 @@ class DefaultScaffoldService(
     @Transactional(readOnly = true)
     override fun compile(request: CompileScaffoldRequest): CompiledScaffoldDto {
         val openKey = openKeyService.get(request.openKey!!)
-        if (repository.countByEnabledIsFalseAndOpenKeyUser(openKey.user) >= properties.allowedDisabledContracts) {
+        if (summaryRepository.countByEnabledIsFalseAndScaffoldOpenKeyUser(openKey.user) >= properties.allowedDisabledContracts) {
             throw IllegalStateException("Disabled scaffold count is more than allowed")
         }
 
@@ -107,7 +111,7 @@ class DefaultScaffoldService(
     override fun deploy(request: DeployScaffoldRequest): Scaffold {
         val compiledScaffold = compile(CompileScaffoldRequest(request.openKey, request.properties))
         val credentials = properties.getCredentials()
-        val encodedConstructor = FunctionEncoder.encodeConstructor(asList<Type<*>>(
+        val encodedConstructor = FunctionEncoder.encodeConstructor(listOf(
                 Address(request.developerAddress),
                 Address(credentials.address),
                 Utf8String(request.description),
@@ -157,15 +161,9 @@ class DefaultScaffoldService(
     @Transactional
     override fun update(address: String, user: User, request: UpdateScaffoldRequest): Scaffold {
         val scaffold = get(address, user)
-        val function = Function(
-                SET_DESCRIPTION_METHOD_NAME,
-                asList<Type<*>>(
-                        Utf8String(request.description!!)
-                ),
-                asList()
-        )
 
-        callTransaction(function, scaffold.address)
+        callTransaction(SET_DESCRIPTION_METHOD_NAME, listOf(Utf8String(request.description!!)), listOf(),
+                scaffold.address)
         scaffold.description = request.description!!
 
         return repository.save(scaffold)
@@ -182,23 +180,63 @@ class DefaultScaffoldService(
 
     @Transactional(readOnly = true)
     override fun getQuota(user: User): ScaffoldQuotaDto {
-        val scaffoldCount = repository.countByEnabledIsFalseAndOpenKeyUser(user)
+        val scaffoldCount = summaryRepository.countByEnabledIsFalseAndScaffoldOpenKeyUser(user)
         return ScaffoldQuotaDto(scaffoldCount, properties.enabledContactTokenCount)
     }
 
     @Transactional
     override fun getScaffoldSummary(address: String, user: User): ScaffoldSummary {
         val scaffold = get(address, user)
-        val summary = summaryRepository.findByScaffoldAndDateAfter(scaffold,
-                addMinutes(Date(), -1 * properties.cachePeriodInMinutest))
-        if (null != summary) {
-            return summary
+        val cacheSummary = summaryRepository.findByScaffold(scaffold)
+        if (null != cacheSummary && addMinutes(cacheSummary.date, properties.cachePeriodInMinutest).after(Date())) {
+            return cacheSummary
         }
 
-        val function = Function(
+        val summary = getScaffoldSummary(scaffold)
+        cacheSummary?.let { summary.id = it.id }
+        val persistSummary = summaryRepository.save(summary)
+        val shareHolders = getShareHolders(persistSummary)
+        val persistShareHolders = shareHolders.map { shareHolder ->
+            val cacheShareHolder = shareHolderRepository.findBySummaryAndAddress(summary, shareHolder.address)
+            cacheShareHolder?.let { shareHolder.id = it.id }
+            shareHolderRepository.save(shareHolder)
+        }
+        persistSummary.shareHolders.addAll(persistShareHolders)
+        return persistSummary
+    }
+
+    @Transactional(readOnly = true)
+    override fun deactivate(address: String, user: User) {
+        val scaffold = get(address, user)
+        callTransaction(DEACTIVATE_SCAFFOLD_METHOD_NAME, listOf(), listOf(), scaffold.address)
+    }
+
+    @Transactional(readOnly = true)
+    override fun addShareHolder(address: String, user: User, request: AddShareHolderRequest) {
+        val scaffold = get(address, user)
+        callTransaction(ADD_SHARE_HOLDER_METHOD_NAME, listOf(Address(request.address),
+                Uint8(request.percent.toLong())), listOf(), scaffold.address)
+    }
+
+    @Transactional(readOnly = true)
+    override fun updateShareHolder(address: String, user: User, request: UpdateShareHolderRequest) {
+        val scaffold = get(address, user)
+        callTransaction(UPDATE_SHARE_HOLDER_METHOD_NAME, listOf(Address(request.address),
+                Uint8(request.percent.toLong())), listOf(), scaffold.address)
+    }
+
+    @Transactional(readOnly = true)
+    override fun removeShareHolder(address: String, user: User, request: RemoveShareHolderRequest) {
+        val scaffold = get(address, user)
+        callTransaction(REMOVE_SHARE_HOLDER_METHOD_NAME, listOf(Address(request.address)), listOf(),
+                scaffold.address)
+    }
+
+    private fun getScaffoldSummary(scaffold: Scaffold): ScaffoldSummary {
+        val result = callFunction(
                 GET_SCAFFOLD_SUMMARY_METHOD_NAME,
-                asList(),
-                asList(
+                listOf(),
+                listOf(
                         object : TypeReference<Utf8String>() {},
                         object : TypeReference<Utf8String>() {},
                         object : TypeReference<Utf8String>() {},
@@ -206,75 +244,48 @@ class DefaultScaffoldService(
                         object : TypeReference<Uint256>() {},
                         object : TypeReference<Address>() {},
                         object : TypeReference<Uint256>() {}
-                )
+                ),
+                scaffold.address
         )
 
-        val result = callFunction(function, scaffold.address)
-        return summaryRepository.save(ScaffoldSummary(
+        return ScaffoldSummary(
                 scaffold,
                 result[4].value as BigInteger,
                 result[6].value as BigInteger,
                 result[6].value as BigInteger >= BigInteger.valueOf(properties.enabledContactTokenCount.toLong())
-        ))
-    }
-
-    @Transactional(readOnly = true)
-    override fun deactivate(address: String, user: User) {
-        val scaffold = get(address, user)
-        val function = Function(
-                DEACTIVATE_SCAFFOLD_METHOD_NAME,
-                asList(),
-                asList()
         )
-
-        callTransaction(function, scaffold.address)
     }
 
-    @Transactional(readOnly = true)
-    override fun addShareHolder(address: String, user: User, request: AddShareHolderRequest) {
-        val scaffold = get(address, user)
-        val function = Function(
-                ADD_SHARE_HOLDER_METHOD_NAME,
-                asList<Type<*>>(
-                        Utf8String(request.address),
-                        Uint8(request.percent.toLong())
-                ),
-                asList()
+    private fun getShareHolders(summary: ScaffoldSummary): List<ShareHolder> {
+        val countResult = callFunction(
+                GET_SHARE_HOLDER_NUMBER_METHOD_NAME,
+                listOf(),
+                listOf(object : TypeReference<Uint256>() {}),
+                summary.scaffold.address
         )
+        val count = (countResult[0].value as BigInteger).toInt()
 
-        callTransaction(function, scaffold.address)
+        val shareHolders = mutableListOf<ShareHolder>()
+        for (i in 0 until count) {
+            val shareHolderResult = callFunction(
+                    GET_SHARE_HOLDER_AT_INDEX_METHOD_NAME,
+                    listOf(Uint256(i.toLong())),
+                    listOf(object : TypeReference<Address>() {}, object : TypeReference<Uint256>() {}),
+                    summary.scaffold.address
+            )
+            shareHolders.add(ShareHolder(
+                    summary,
+                    shareHolderResult[0].value as String,
+                    (shareHolderResult[1].value as BigInteger).toInt()
+            ))
+        }
+
+        return shareHolders
     }
 
-    @Transactional(readOnly = true)
-    override fun updateShareHolder(address: String, user: User, request: UpdateShareHolderRequest) {
-        val scaffold = get(address, user)
-        val function = Function(
-                UPDATE_SHARE_HOLDER_METHOD_NAME,
-                asList<Type<*>>(
-                        Utf8String(request.address),
-                        Uint8(request.percent.toLong())
-                ),
-                asList()
-        )
-
-        callTransaction(function, scaffold.address)
-    }
-
-    @Transactional(readOnly = true)
-    override fun removeShareHolder(address: String, user: User, request: RemoveShareHolderRequest) {
-        val scaffold = get(address, user)
-        val function = Function(
-                REMOVE_SHARE_HOLDER_METHOD_NAME,
-                asList<Type<*>>(
-                        Utf8String(request.address)
-                ),
-                asList()
-        )
-
-        callTransaction(function, scaffold.address)
-    }
-
-    private fun callFunction(function: Function, address: String): MutableList<Type<Any>> {
+    private fun callFunction(methodName: String, inputParams: List<Type<*>>, outputParams: List<TypeReference<*>>,
+                             address: String): MutableList<Type<Any>> {
+        val function = Function(methodName, inputParams, outputParams)
         val encodedFunction = FunctionEncoder.encode(function)
         val credentials = properties.getCredentials()
         val nonce = web3.ethGetTransactionCount(credentials.address, LATEST).send().transactionCount
@@ -288,7 +299,9 @@ class DefaultScaffoldService(
         return FunctionReturnDecoder.decode(result.value, function.outputParameters)
     }
 
-    private fun callTransaction(function: Function, address: String): String {
+    private fun callTransaction(methodName: String, inputParams: List<Type<*>>, outputParams: List<TypeReference<*>>,
+                                address: String): String {
+        val function = Function(methodName, inputParams, outputParams)
         val encodedFunction = FunctionEncoder.encode(function)
         val credentials = properties.getCredentials()
         val nonce = web3.ethGetTransactionCount(credentials.address, LATEST).send().transactionCount

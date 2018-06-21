@@ -9,8 +9,8 @@ import javax.persistence.*
 @Table(name = "scaffold_summaries")
 class ScaffoldSummary(
 
-        @ManyToOne
-        @JoinColumn(name = "scaffold_id", nullable = false)
+        @OneToOne
+        @JoinColumn(name = "scaffold_id", nullable = false, unique = true)
         val scaffold: Scaffold,
 
         @Column(name = "transaction_index")
@@ -23,6 +23,9 @@ class ScaffoldSummary(
         val enabled: Boolean,
 
         @Column(name = "date", nullable = false)
-        val date: Date = Date()
+        val date: Date = Date(),
+
+        @OneToMany(mappedBy = "summary")
+        val shareHolders: MutableList<ShareHolder> = mutableListOf()
 
 ) : BaseModel()
