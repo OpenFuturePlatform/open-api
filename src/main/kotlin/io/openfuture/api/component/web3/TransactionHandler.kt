@@ -1,4 +1,4 @@
-package io.openfuture.api.component
+package io.openfuture.api.component.web3
 
 import io.openfuture.api.domain.scaffold.TransactionDto
 import io.openfuture.api.entity.scaffold.Transaction
@@ -6,13 +6,14 @@ import io.openfuture.api.repository.ScaffoldRepository
 import io.openfuture.api.service.TransactionService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.client.RestTemplate
 import org.web3j.protocol.core.methods.response.Log
 
 @Component
 class TransactionHandler(
         private val service: TransactionService,
-        private val scaffoldRepository: ScaffoldRepository
+        private val repository: ScaffoldRepository
 ) {
 
     companion object {
@@ -20,17 +21,18 @@ class TransactionHandler(
     }
 
 
+    @Transactional
     fun handle(transactionLog: Log) {
-        val scaffold = scaffoldRepository.findByAddress(transactionLog.address)
+        val contact = repository.findByAddress(transactionLog.address)
 
-        if (null == scaffold) {
+        if (null == contact) {
             log.warn("Scaffold with address ${transactionLog.address} not found")
             return
         }
 
         try {
-            val transaction = service.save(Transaction.of(scaffold, transactionLog))
-            scaffold.webHook?.let { RestTemplate().postForLocation(it, TransactionDto(transaction)) }
+            val transaction = service.save(Transaction.of(contact, transactionLog))
+            contact.webHook?.let { RestTemplate().postForLocation(it, TransactionDto(transaction)) }
         } catch (e: Exception) {
             log.warn(e.message)
         }
