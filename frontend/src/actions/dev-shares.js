@@ -1,9 +1,14 @@
 import {getContract} from '../utils/eth';
-import web3 from '../utils/web3';
+import {getWeb3Contract} from '../utils/web3';
 import {SET_DEV_SHARES} from './types';
 
-export const fetchDevShares = (scaffold) => async dispatch => {
+export const fetchShareHolders = (scaffold) => async dispatch => {
   const contract = getContract(scaffold);
+
+  if (!contract) {
+    return;
+  }
+
   const shareHolderCountResult = await contract.getShareHolderCount();
   const shareHolderCount = shareHolderCountResult[0].toString(10);
   const shareHolders = [];
@@ -20,16 +25,23 @@ export const fetchDevShares = (scaffold) => async dispatch => {
 };
 
 export const addShareHolder = (scaffold, shareHolder) => async dispatch => {
-  console.log(scaffold, shareHolder);
-  const contract = new web3.eth.Contract(JSON.parse(scaffold.abi), scaffold.address);
+  const contract = getWeb3Contract(scaffold);
   await contract.methods
     .addShareHolder(shareHolder.address, shareHolder.share)
     .send({from: scaffold.vendorAddress});
-  dispatch(fetchDevShares(scaffold));
+  dispatch(fetchShareHolders(scaffold));
+};
+
+export const editShareHolder = (scaffold, shareHolder) => async dispatch => {
+  const contract = getWeb3Contract(scaffold);
+  await contract.methods
+    .editShareHolder(shareHolder.address, shareHolder.share)
+    .send({from: scaffold.vendorAddress});
+  dispatch(fetchShareHolders(scaffold));
 };
 
 export const removeShareHolder = (scaffold, holderAddress) => async dispatch => {
-  const contract = new web3.eth.Contract(JSON.parse(scaffold.abi), scaffold.address);
+  const contract = getWeb3Contract(scaffold);
   await contract.methods.deleteShareHolder(holderAddress).send({from: scaffold.vendorAddress});
-  dispatch(fetchDevShares(scaffold));
+  dispatch(fetchShareHolders(scaffold));
 };

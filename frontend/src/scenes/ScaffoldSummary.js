@@ -3,8 +3,8 @@ import {Card, Grid} from 'semantic-ui-react';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import {ScaffoldStatusContainer} from '../components/ScaffoldStatus';
-import {DevShares} from '../components/DevShares';
 import {fetchScaffoldItemFromApi} from '../actions/scaffolds';
+import {ShareHolders} from '../components/ShareHolders';
 
 class ScaffoldSummary extends Component {
 
@@ -57,7 +57,7 @@ class ScaffoldSummary extends Component {
             <Grid.Column/>
           </Grid.Row>
         </Grid>
-        <DevShares scaffold={{...onchainScaffoldSummary, address: scaffoldAddress}}/>
+        <ShareHolders scaffold={{...onchainScaffoldSummary, address: scaffoldAddress}}/>
       </div>
     );
   }

@@ -1,9 +1,6 @@
 import React from 'react';
-import {connect} from 'react-redux';
 import {withVisible} from '../components-ui/withVisible';
-import {Button, Icon, Modal} from 'semantic-ui-react';
-import {bindActionCreators} from 'redux';
-import {removeShareHolder} from '../actions/dev-shares';
+import {Button, Divider, Icon, Modal} from 'semantic-ui-react';
 
 class RemoveDevShareComponent extends React.Component {
 
@@ -12,10 +9,9 @@ class RemoveDevShareComponent extends React.Component {
   };
 
   onSubmit = async e => {
-    const {scaffold, holderAddress} = this.props;
     this.setState({isSaving: true});
     try {
-      await this.props.actions.removeShareHolder(scaffold, holderAddress);
+      await this.props.onSubmit();
       this.props.onHide();
     } catch (e) {
       console.log(e);
@@ -24,7 +20,7 @@ class RemoveDevShareComponent extends React.Component {
   };
 
   render() {
-    const {isVisible, onShow, onHide, holderAddress} = this.props;
+    const {isVisible, onShow, onHide} = this.props;
     const {isSaving} = this.state;
 
     return (
@@ -33,7 +29,9 @@ class RemoveDevShareComponent extends React.Component {
         <Modal size="tiny" open={isVisible} onClose={isSaving ? () => {} : onHide}>
           <Modal.Header>Remove Share Holder</Modal.Header>
             <Modal.Content>
-              You are removing Share Holder {holderAddress}. Are you sure?
+              You are removing Share Holder. Are you sure?
+              <Divider />
+              <span>PS: Please be patient this may take a while...</span>
             </Modal.Content>
             <Modal.Actions>
               <Button negative disabled={isSaving} onClick={onHide}>Cancel</Button>
@@ -46,10 +44,4 @@ class RemoveDevShareComponent extends React.Component {
   }
 }
 
-const mapStateToProps = (state, {scaffold, holderAddress}) => ({scaffold, holderAddress});
-
-const mapDispatchToProps = dispatch => ({
-  actions: bindActionCreators({removeShareHolder}, dispatch)
-});
-
-export const RemoveDevShare = connect(mapStateToProps, mapDispatchToProps)(withVisible(RemoveDevShareComponent));
+export const RemoveDevShare = withVisible(RemoveDevShareComponent);

@@ -5,12 +5,12 @@ import ReactTable from 'react-table';
 import 'react-table/react-table.css';
 import '../css/table.css';
 import {EtherscanLink} from '../components-ui/EtherscanLink';
-import {Icon, Segment} from 'semantic-ui-react';
-import {addShareHolder, fetchDevShares, removeShareHolder} from '../actions/dev-shares';
-import {AddDevShares} from './AddDevShares';
+import {Segment} from 'semantic-ui-react';
+import {addShareHolder, editShareHolder, fetchShareHolders, removeShareHolder} from '../actions/dev-shares';
+import {AddEditShareHolder} from './AddEditShareHolder';
 import {RemoveDevShare} from './RemoveDevShare';
 
-const getColumns = (scaffold) => [
+const getColumns = (scaffold, onEdit, onRemove) => [
   {
     Header: 'Share Holder Address',
     accessor: 'address',
@@ -28,10 +28,10 @@ const getColumns = (scaffold) => [
     Header: '',
     accessor: 'address',
     width: 150,
-    Cell: ({value}) => (
+    Cell: ({value, original}) => (
       <span>
-        <Icon link name='edit' size='large'/>{' '}
-        <RemoveDevShare scaffold={scaffold} holderAddress={value} />
+        <AddEditShareHolder editType devShare={original} onSubmit={(devShare) => onEdit(devShare)} />{' '}
+        <RemoveDevShare onSubmit={() => onRemove(value)} />
       </span>
     ),
     sortable: false,
@@ -42,10 +42,20 @@ export class DevSharesComponent extends Component {
 
   componentDidMount() {
     const {scaffold} = this.props;
-    this.props.actions.fetchDevShares(scaffold);
+    this.props.actions.fetchShareHolders(scaffold);
   }
 
-  handleOnRemoveShareHolder = (holderAddress) => {
+  onAddShareHolder = (shareHolder) => {
+    const {scaffold} = this.props;
+    return this.props.actions.addShareHolder(scaffold, shareHolder);
+  };
+
+  onEditShareHolder = (shareHolder) => {
+    const {scaffold} = this.props;
+    return this.props.actions.editShareHolder(scaffold, shareHolder);
+  };
+
+  onRemoveShareHolder = (holderAddress) => {
     const {scaffold} = this.props;
     return this.props.actions.removeShareHolder(scaffold, holderAddress);
   };
@@ -55,9 +65,9 @@ export class DevSharesComponent extends Component {
 
     return (
       <div className="table-with-add">
-        <AddDevShares scaffold={scaffold}/>
+        <AddEditShareHolder onSubmit={this.onAddShareHolder}/>
         <Segment attached styles={{padding: 0}}>
-          <ReactTable data={devShares} columns={getColumns(scaffold)}
+          <ReactTable data={devShares} columns={getColumns(scaffold, this.onEditShareHolder, this.onRemoveShareHolder)}
                       className="-striped" showPagination={false} resizable={false} minRows={1}
                       pageSize={devShares.length}
           />
@@ -71,10 +81,11 @@ const mapStateToProps = ({devShares}, {scaffold}) => ({scaffold, devShares});
 
 const mapDispatchToProps = dispatch => ({
   actions: bindActionCreators({
-    fetchDevShares,
+    fetchShareHolders,
     addShareHolder,
+    editShareHolder,
     removeShareHolder
   }, dispatch)
 });
 
-export const DevShares = connect(mapStateToProps, mapDispatchToProps)(DevSharesComponent);
+export const ShareHolders = connect(mapStateToProps, mapDispatchToProps)(DevSharesComponent);
