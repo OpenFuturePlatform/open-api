@@ -3,14 +3,26 @@ import {Card, Grid} from 'semantic-ui-react';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import {ScaffoldStatusContainer} from '../components/ScaffoldStatus';
-import {fetchScaffoldItemFromApi} from '../actions/scaffolds';
+import {fetchScaffoldSummary} from '../actions/scaffolds';
 import {ShareHolders} from '../components/ShareHolders';
+import {WalletSelect} from '../components/WalletSelect';
+import scaffold from '../utils/scaffold';
 
 class ScaffoldSummary extends Component {
 
   componentDidMount() {
     const scaffoldAddress = this.getScaffoldAddress();
-    this.props.actions.fetchScaffoldItemFromApi(scaffoldAddress);
+    this.props.actions.fetchScaffoldSummary(scaffoldAddress);
+  }
+
+  componentDidUpdate(prevProps) {
+    const {byApiMethod} = this.props;
+    const byApiMethodChanged = prevProps.byApiMethod !== byApiMethod;
+
+    if (byApiMethodChanged) {
+      const scaffoldAddress = this.getScaffoldAddress();
+      this.props.actions.fetchScaffoldSummary(scaffoldAddress);
+    }
   }
 
   getScaffoldAddress() {
@@ -18,37 +30,37 @@ class ScaffoldSummary extends Component {
   }
 
   render() {
-    const scaffoldAddress = this.getScaffoldAddress();
-    const {onchainScaffoldSummary} = this.props;
+    const {address, scaffold, summary, error, byApiMethod} = this.props;
 
-    if (!onchainScaffoldSummary) {
+    if (!scaffold) {
       return null;
     }
 
     return (
       <div style={{marginTop: '20px'}}>
+        <WalletSelect/>
         <Grid>
           <Grid.Row>
             <Grid.Column width={16}>
               <Card fluid>
                 <Card.Content header="On-chain Scaffold Summary" meta="This data is coming from the Ethereum Network"/>
                 <Card.Content>
-                  <ScaffoldStatusContainer scaffoldAddress={scaffoldAddress} scaffold={onchainScaffoldSummary}/>
+                  <ScaffoldStatusContainer scaffoldAddress={address} summary={summary || {}} error={error}/>
                 </Card.Content>
                 <Card.Content>
-                  <div>Scaffold Description: {onchainScaffoldSummary.description}</div>
-                  <div>Scaffold Owner Address: {onchainScaffoldSummary.vendorAddress}</div>
+                  <div>Scaffold Description: {scaffold.description}</div>
+                  <div>Scaffold Owner Address: {scaffold.vendorAddress}</div>
                 </Card.Content>
                 <Card.Content>
                   <div>
                     <div style={{width: '64%', display: 'inline-block'}}>
-                      Scaffold Amount: {(Number.parseFloat(onchainScaffoldSummary.amount)).toFixed(5)} ether
+                      Scaffold Amount: {(Number.parseFloat(scaffold.conversionAmount)).toFixed(5)} ether
                     </div>
                     <div style={{width: '34%', display: 'inline-block'}}>
-                      {onchainScaffoldSummary.fiatAmount} {onchainScaffoldSummary.fiatCurrency}
+                      {scaffold.fiatAmount} {scaffold.currency}
                     </div>
                   </div>
-                  <div>Scaffold Transactions: {onchainScaffoldSummary.transactionIndex}</div>
+                  <div>Scaffold Transactions: {summary ? summary.transactionIndex : ''}</div>
                 </Card.Content>
               </Card>
             </Grid.Column>
@@ -57,14 +69,17 @@ class ScaffoldSummary extends Component {
             <Grid.Column/>
           </Grid.Row>
         </Grid>
-        <ShareHolders scaffold={{...onchainScaffoldSummary, address: scaffoldAddress}}/>
+        {!byApiMethod && <ShareHolders scaffold={{...scaffold}}/>}
       </div>
     );
   }
 }
 
-const mapStateToProps = ({onchainScaffoldSummary}) => ({onchainScaffoldSummary});
+const mapStateToProps = ({ScaffoldsById, auth: {byApiMethod}}, {match: {params: {scaffoldAddress}}}) => {
+  const scaffoldSet = ScaffoldsById[scaffoldAddress] || {};
+  return ({byApiMethod, ...scaffoldSet});
+};
 
-const mapDispatchToProps = dispatch => ({actions: bindActionCreators({fetchScaffoldItemFromApi}, dispatch)});
+const mapDispatchToProps = dispatch => ({actions: bindActionCreators({fetchScaffoldSummary}, dispatch)});
 
 export const ScaffoldSummaryContainer = connect(mapStateToProps, mapDispatchToProps)(ScaffoldSummary);

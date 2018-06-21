@@ -7,7 +7,7 @@ import '../css/table.css';
 import {EtherscanLink} from '../components-ui/EtherscanLink';
 import {Segment} from 'semantic-ui-react';
 import {addShareHolder, editShareHolder, fetchShareHolders, removeShareHolder} from '../actions/dev-shares';
-import {AddEditShareHolder} from './AddEditShareHolder';
+import {ShareHolderSave} from './ShareHolderSave';
 import {RemoveDevShare} from './RemoveDevShare';
 
 const getColumns = (scaffold, onEdit, onRemove) => [
@@ -30,7 +30,7 @@ const getColumns = (scaffold, onEdit, onRemove) => [
     width: 150,
     Cell: ({value, original}) => (
       <span>
-        <AddEditShareHolder editType devShare={original} onSubmit={(devShare) => onEdit(devShare)} />{' '}
+        <ShareHolderSave editType devShare={original} onSubmit={(devShare) => onEdit(devShare)} />{' '}
         <RemoveDevShare onSubmit={() => onRemove(value)} />
       </span>
     ),
@@ -65,7 +65,7 @@ export class DevSharesComponent extends Component {
 
     return (
       <div className="table-with-add">
-        <AddEditShareHolder onSubmit={this.onAddShareHolder}/>
+        <ShareHolderSave onSubmit={this.onAddShareHolder}/>
         <Segment attached styles={{padding: 0}}>
           <ReactTable data={devShares} columns={getColumns(scaffold, this.onEditShareHolder, this.onRemoveShareHolder)}
                       className="-striped" showPagination={false} resizable={false} minRows={1}

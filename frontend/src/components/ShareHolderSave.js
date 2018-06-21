@@ -1,8 +1,9 @@
 import React from 'react';
 import {withVisible} from '../components-ui/withVisible';
-import {Button, Divider, Icon, Input, Modal} from 'semantic-ui-react';
+import {Button, Divider, Icon, Input, Message, Modal} from 'semantic-ui-react';
+import {validateAddress} from '../utils/validation';
 
-class AddEditShareHolderComponent extends React.Component {
+class ShareHolderSaveComponent extends React.Component {
 
   constructor(props) {
     super(props);
@@ -18,6 +19,7 @@ class AddEditShareHolderComponent extends React.Component {
       isAddressErrorVisible: false,
       isShareErrorVisible: false,
       isSaving: false,
+      transactionError: ''
     };
   }
 
@@ -32,9 +34,42 @@ class AddEditShareHolderComponent extends React.Component {
       await onSubmit({address, share});
       this.props.onHide();
     } catch (e) {
-      console.log(e);
+      this.setState({transactionError: e.message})
     }
     this.setState({isSaving: false});
+  };
+
+  renderAddressError = () => {
+    const {address} = this.state;
+    const errorList =  validateAddress(address);
+    if (!errorList.length) {
+      return null;
+    }
+
+    return (
+      <Message style={{
+        paddingLeft: '14px',
+        paddingTop: '7px',
+        paddingBottom: '7px',
+        marginTop: '4px',
+        marginBottom: '10px'
+      }} error list={errorList}/>
+    );
+  };
+
+  renderTransactionError = () => {
+    if (!this.state.transactionError) {
+      return null
+    }
+
+    return (
+      <div>
+        <Divider/>
+        <div style={{color: 'red'}}>
+          {this.state.transactionError}
+        </div>
+      </div>
+    )
   };
 
   render() {
@@ -44,6 +79,7 @@ class AddEditShareHolderComponent extends React.Component {
     const button = editType ?
       <Icon link name='edit' size='large' onClick={onShow}/> :
       <Button fluid attached='top' onClick={onShow}>Add Share</Button>;
+    const submitDisabled = isSaving || !address || !share;
 
     return (
       <span>
@@ -58,10 +94,11 @@ class AddEditShareHolderComponent extends React.Component {
                      onChange={this.onShareChange}/>
               <Divider />
               <span>PS: Please be patient this may take a while...</span>
+              {this.renderTransactionError()}
             </Modal.Content>
             <Modal.Actions>
               <Button negative disabled={isSaving} onClick={onHide}>Cancel</Button>
-              <Button positive loading={isSaving} disabled={isSaving} icon='checkmark' labelPosition='right'
+              <Button positive loading={isSaving} disabled={submitDisabled} icon='checkmark' labelPosition='right'
                       content='Save' onClick={this.onSubmit}/>
             </Modal.Actions>
         </Modal>
@@ -70,4 +107,4 @@ class AddEditShareHolderComponent extends React.Component {
   }
 }
 
-export const AddEditShareHolder = withVisible(AddEditShareHolderComponent);
+export const ShareHolderSave = withVisible(ShareHolderSaveComponent);

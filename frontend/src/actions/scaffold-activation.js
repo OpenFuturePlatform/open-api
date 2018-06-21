@@ -2,7 +2,7 @@ import axios from 'axios';
 import eth from '../utils/eth';
 import openToken from '../utils/open-token';
 import {SET_CURRENT_ETH_ACCOUNT} from './types';
-import {fetchScaffoldItemFromApi} from './scaffolds';
+import {fetchScaffoldSummary} from './scaffolds';
 
 export const activateScaffold = (scaffoldAddress, fromAddress, amount = '10.0') => async dispatch => {
   const hash = await openToken.transfer(scaffoldAddress, amount * 100000000, {from: fromAddress});
@@ -22,7 +22,7 @@ export const deactivateScaffold = (scaffoldAddress, abi, developerAddress) => as
 export const deactivateScaffoldByApi = (scaffoldAddress) => async dispatch => {
   try {
     await axios.post(`/api/scaffolds/${scaffoldAddress}/doDeactivate`);
-    fetchScaffoldItemFromApi(scaffoldAddress)(dispatch);
+    dispatch(fetchScaffoldSummary(scaffoldAddress));
   } catch (err) {
     console.log('Error deactivating scaffolds', err);
   }
@@ -46,7 +46,7 @@ export const subscribeScaffoldActivation = (hash, scaffoldAddress) => async disp
       clearInterval(interval);
       interval = null;
       dispatch({type: SET_CURRENT_ETH_ACCOUNT, payload: {activating: false, activatingHash: null}});
-      dispatch(fetchScaffoldItemFromApi(scaffoldAddress));
+      dispatch(fetchScaffoldSummary(scaffoldAddress));
     } catch (reason) {
       clearInterval(interval);
     }

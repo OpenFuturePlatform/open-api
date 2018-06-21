@@ -3,7 +3,7 @@ import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import {Field, FieldArray, getFormValues, reduxForm} from 'redux-form';
 import {withRouter} from 'react-router-dom';
-import {Button, Dropdown, Grid, Input} from 'semantic-ui-react';
+import {Button, Grid, Input} from 'semantic-ui-react';
 import {DropdownField} from 'react-semantic-redux-form';
 import _ from 'lodash';
 import {validate, validateScaffoldProperties, warn} from '../utils/validation';
@@ -17,15 +17,12 @@ import {MIN_BALANCE} from '../const/index';
 import {getMetaMaskError} from '../selectors/getMetaMaskError';
 import {fetchTemplates} from '../actions/contract-templates';
 import {TemplateSelect} from '../components/TemplateSelect';
+import {WalletSelect} from '../components/WalletSelect';
 
 class ScaffoldForm extends Component {
 
-  state = {
-    isDeployByApi: false
-  };
-
   componentDidMount() {
-    if (!this.state.isDeployByApi) {
+    if (!this.props.byApiMethod) {
       this.props.actions.subscribeEthAccount();
       this.initDeveloperAddressValidation();
     }
@@ -37,15 +34,24 @@ class ScaffoldForm extends Component {
 
   componentDidUpdate(prevProps) {
     const prevEthAccount = prevProps.ethAccount;
-    const {ethAccount, initialValues} = this.props;
+    const {ethAccount, initialValues, byApiMethod, dispatch, blur} = this.props;
     const accountChanged = prevEthAccount.account !== ethAccount.account;
     const networkChanged = prevEthAccount.trueNetwork !== ethAccount.trueNetwork;
     const balanceChanged = prevEthAccount.balance !== ethAccount.balance;
     const initialValuesChanged = prevProps.initialValues !== initialValues;
+    const byApiMethodChanged = prevProps.byApiMethod !== byApiMethod;
 
     if (accountChanged || networkChanged || balanceChanged || initialValuesChanged) {
       this.initDeveloperAddressValidation();
       this.handleOnConvert(initialValues.currency, initialValues.fiatAmount || 0);
+    }
+
+    if (byApiMethodChanged && byApiMethod) {
+      dispatch(blur('developerAddress', ''));
+    }
+
+    if (byApiMethodChanged && !byApiMethod) {
+      this.initDeveloperAddressValidation();
     }
   }
 
@@ -77,13 +83,12 @@ class ScaffoldForm extends Component {
   };
 
   handleOnSubmit = async (e) => {
-    const {actions, history, formValues} = this.props;
-    const {isDeployByApi} = this.state;
+    const {actions, history, formValues, byApiMethod} = this.props;
     e.preventDefault();
     try {
       let contractAddress;
 
-      if (isDeployByApi) {
+      if (byApiMethod) {
         contractAddress = await actions.deployContractByApi(formValues);
       } else {
         contractAddress = await actions.deployContract(formValues);
@@ -94,51 +99,21 @@ class ScaffoldForm extends Component {
     }
   };
 
-  handleOnWalletChange = (event, {value}) => {
-    const {dispatch, blur} = this.props;
-    if (value === 'open') {
-      this.setState({isDeployByApi: true});
-      dispatch(blur('developerAddress', ''));
-    } else {
-      this.setState({isDeployByApi: false});
-      this.initDeveloperAddressValidation();
-    }
-  };
-
-  renderWalletSelect = () => {
-    if (!this.props.isDeployByApiAllowed) {
-      return null;
-    }
-
-    const isDeployByApi =  this.state.isDeployByApi;
-    const value = isDeployByApi ? 'open' : 'private';
-
-    return (
-      <Grid.Column width={16} style={{paddingTop: '10px'}}>
-        <Dropdown fluid search selection value={value} onChange={this.handleOnWalletChange} options={[
-          {key: 'private', text: 'Private Wallet', value: 'private'},
-          {key: 'open', text: 'OPEN Platform Wallet', value: 'open'},
-        ]}/>
-      </Grid.Column>
-    )
-  };
-
   render() {
-    const {formValues, invalid, scaffoldFieldsErrors, openKeyOptions} = this.props;
-    const {isDeployByApi} = this.state;
+    const {formValues, invalid, scaffoldFieldsErrors, openKeyOptions, byApiMethod} = this.props;
     const fieldErrors = _.flatten(scaffoldFieldsErrors).length !== 0 ? true : false;
     const disableSubmit = invalid || fieldErrors;
-    const developerAddressValidations = !isDeployByApi ? [this.validateBalance] : [];
+    const developerAddressValidations = !byApiMethod ? [this.validateBalance] : [];
 
     return (
       <div>
+        <WalletSelect/>
         <form onSubmit={this.handleOnSubmit}>
           <Grid style={{paddingLeft: '15px'}}>
             <Grid.Row>
               <Grid.Column width={16} style={{paddingTop: '10px'}}>
                 <TemplateSelect/>
               </Grid.Column>
-              {this.renderWalletSelect()}
               <Grid.Column width={16} style={{paddingTop: '10px'}}>
                 <Field key={1}
                        className="ui selection fluid dropdown"
@@ -275,14 +250,13 @@ const mapStateToProps = (state) => {
   const openKeyOptions = state.auth ? state.auth.openKeys
     .filter(it => it.enabled).map(it => ({text: it.value, value: it.value})) : [];
   const ethAccount = state.ethAccount;
-  const roles = state.auth ? state.auth.roles : [];
-  const isDeployByApiAllowed = roles.includes('ROLE_DEPLOY');
+  const byApiMethod = state.auth.byApiMethod;
   const metaMaskError = getMetaMaskError(state);
 
   return {
     initialValues,
     metaMaskError,
-    isDeployByApiAllowed,
+    byApiMethod,
     ethAccount,
     formValues,
     openKey,

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import {
-  FETCH_USER,
+  FETCH_USER, SET_WALLET_METHOD,
   SHOW_MODAL,
   SHOW_WITHDRAWAL_MODAL,
 } from './types';
@@ -14,6 +14,8 @@ export const fetchUser = () => async dispatch => {
     throw err;
   }
 };
+
+export const setWalletMethod = (byApiMethod) => ({type: SET_WALLET_METHOD, payload: byApiMethod});
 
 export const closeModal = () => async dispatch => {
   dispatch({type: SHOW_MODAL, payload: {showModal: false, error: '', contract: '', showLoader: true}});

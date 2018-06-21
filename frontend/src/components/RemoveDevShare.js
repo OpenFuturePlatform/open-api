@@ -6,6 +6,7 @@ class RemoveDevShareComponent extends React.Component {
 
   state = {
     isSaving: false,
+    transactionError: ''
   };
 
   onSubmit = async e => {
@@ -14,9 +15,24 @@ class RemoveDevShareComponent extends React.Component {
       await this.props.onSubmit();
       this.props.onHide();
     } catch (e) {
-      console.log(e);
+      this.setState({transactionError: e.message})
     }
     this.setState({isSaving: false});
+  };
+
+  renderTransactionError = () => {
+    if (!this.state.transactionError) {
+      return null
+    }
+
+    return (
+      <div>
+        <Divider/>
+        <div style={{color: 'red'}}>
+          {this.state.transactionError}
+        </div>
+      </div>
+    )
   };
 
   render() {
@@ -32,6 +48,7 @@ class RemoveDevShareComponent extends React.Component {
               You are removing Share Holder. Are you sure?
               <Divider />
               <span>PS: Please be patient this may take a while...</span>
+              {this.renderTransactionError()}
             </Modal.Content>
             <Modal.Actions>
               <Button negative disabled={isSaving} onClick={onHide}>Cancel</Button>

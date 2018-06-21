@@ -27,15 +27,20 @@ export const validateScaffoldProperties = values => {
   return scaffoldFieldsArrayErrors;
 };
 
+export const validateAddress = address => {
+  let errors = [];
+  if (!address.startsWith('0x')) errors.push('A developer address should beging with 0x');
+  if (address.length !== 42) errors.push('A developer address should be 42 characters long');
+  return errors;
+};
+
 export const warn = values => {
   const warnings = {};
   const digitRegex = /[^0-9.]/g;
   const regexTest = values.fiatAmount === undefined ? false : digitRegex.test(values.fiatAmount);
 
   if (values.developerAddress) {
-    warnings.developerAddress = [];
-    if (!values.developerAddress.startsWith('0x')) warnings.developerAddress.push('A developer address should beging with 0x');
-    if (values.developerAddress.length !== 42) warnings.developerAddress.push('A developer address should be 42 characters long');
+    warnings.developerAddress = validateAddress(values.developerAddress);
   }
   if (values.fiatAmount && regexTest) {
     warnings.fiatAmount = 'Fiat amount should be a number';
