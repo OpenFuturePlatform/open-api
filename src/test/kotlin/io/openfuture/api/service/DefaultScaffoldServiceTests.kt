@@ -54,10 +54,6 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
 
     private lateinit var service: ScaffoldService
 
-    private val user = User("104113085667282103363")
-    private val openKeyValue = "op_pk_9de7cbb4-857c-49e9-87d2-fc91428c4c12"
-    private val addressValue = "0xba37163625b3f2e96112562858c12b75963af138"
-
 
     @Before
     fun setUp() {
@@ -67,6 +63,7 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
 
     @Test
     fun getAll() {
+        val user = createUser()
         val expectedScaffoldPages = PageImpl(Collections.singletonList(createScaffold()), pageable, 1)
 
         given(repository.findAllByOpenKeyUser(user, pageable)).willReturn(expectedScaffoldPages)
@@ -78,7 +75,10 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
 
     @Test
     fun get() {
+        val addressValue = "0xba37163625b3f2e96112562858c12b75963af138"
+        val user = createUser()
         val expectedScaffold = createScaffold()
+
         given(repository.findByAddressAndOpenKeyUser(addressValue, user)).willReturn(expectedScaffold)
 
         val actualScaffold = service.get(addressValue, user)
@@ -88,6 +88,9 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
 
     @Test(expected = NotFoundException::class)
     fun getWithNotFoundException() {
+        val addressValue = "0xba37163625b3f2e96112562858c12b75963af138"
+        val user = createUser()
+
         given(repository.findByAddressAndOpenKeyUser(addressValue, user)).willReturn(null)
 
         service.get(addressValue, user)
@@ -95,7 +98,9 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
 
     @Test
     fun compile() {
-        val openKey = OpenKey(user)
+        val openKeyValue = "op_pk_9de7cbb4-857c-49e9-87d2-fc91428c4c12"
+        val user = createUser()
+        val openKey = OpenKey(user, Date(), openKeyValue)
         val request = CompileScaffoldRequest(openKeyValue)
         val contractMetadata = CompilationResult.ContractMetadata().apply { abi = "abi"; bin = "bin" }
         val expectedContractMetadata = CompiledScaffoldDto(contractMetadata)
@@ -112,7 +117,9 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
 
     @Test(expected = IllegalStateException::class)
     fun compileWithExceedingNumberOfAvailableDisabledScaffolds() {
-        val openKey = OpenKey(user)
+        val openKeyValue = "op_pk_9de7cbb4-857c-49e9-87d2-fc91428c4c12"
+        val user = createUser()
+        val openKey = OpenKey(user, Date(), openKeyValue)
         val request = CompileScaffoldRequest(openKeyValue)
 
         given(openKeyService.get(openKeyValue)).willReturn(openKey)
@@ -126,6 +133,9 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
 
     @Test
     fun deploy() {
+        val openKeyValue = "op_pk_9de7cbb4-857c-49e9-87d2-fc91428c4c12"
+        val addressValue = "0xba37163625b3f2e96112562858c12b75963af138"
+        val user = createUser()
         val expectedScaffold = createScaffold()
         val request = DeployScaffoldRequest(openKeyValue, addressValue, "description", "1", USD, "1",
                 null, listOf(createScaffoldPropertyDto()))
@@ -141,7 +151,6 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
 
         given(openKeyService.get(openKeyValue)).willReturn(expectedScaffold.openKey)
         given(properties.allowedDisabledContracts).willReturn(10)
-        given(scaffoldSummaryRepository.countByEnabledIsFalseAndScaffoldOpenKeyUser(user)).willReturn(1)
         given(compiler.compile(request.properties)).willReturn(contractMetadata)
         given(properties.getCredentials()).willReturn(credentials)
         given(credentials.address).willReturn(addressValue)
@@ -158,6 +167,9 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
 
     @Test
     fun save() {
+        val openKeyValue = "op_pk_9de7cbb4-857c-49e9-87d2-fc91428c4c12"
+        val addressValue = "0xba37163625b3f2e96112562858c12b75963af138"
+        val user = createUser()
         val openKey = OpenKey(user.apply { id = 1L }, null, openKeyValue).apply { id = 1L }
         val scaffold = createScaffold()
         val scaffoldPropertyDto = createScaffoldPropertyDto()
@@ -179,6 +191,8 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
 
     @Test
     fun update() {
+        val addressValue = "0xba37163625b3f2e96112562858c12b75963af138"
+        val user = createUser()
         val description = "description"
         val scaffold = createScaffold()
         val request = UpdateScaffoldRequest(description)
@@ -194,6 +208,8 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
 
     @Test
     fun setWebHook() {
+        val addressValue = "0xba37163625b3f2e96112562858c12b75963af138"
+        val user = createUser()
         val webHookValue = "webHook"
         val expectedScaffold = createScaffold()
         expectedScaffold.webHook = webHookValue
@@ -209,6 +225,8 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
 
     @Test
     fun getScaffoldSummaryWithExpiredCachePeriod() {
+        val addressValue = "0xba37163625b3f2e96112562858c12b75963af138"
+        val user = createUser()
         val scaffold = createScaffold()
         val scaffoldSummary = ScaffoldSummary(scaffold, BigInteger.ONE, BigInteger.ONE, false)
 
@@ -223,6 +241,8 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
 
     @Test
     fun deactivate() {
+        val addressValue = "0xba37163625b3f2e96112562858c12b75963af138"
+        val user = createUser()
         val expectedScaffold = createScaffold()
 
         given(repository.findByAddressAndOpenKeyUser(addressValue, user)).willReturn(expectedScaffold)
@@ -234,6 +254,7 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
 
     @Test
     fun getQuota() {
+        val user = createUser()
         val currentCount = 1
         val expectedQuota = ScaffoldQuotaDto(currentCount, 10)
 
@@ -247,6 +268,8 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
 
     @Test
     fun addShareHolder() {
+        val addressValue = "0xba37163625b3f2e96112562858c12b75963af138"
+        val user = createUser()
         val scaffold = createScaffold()
         val request = AddShareHolderRequest(addressValue, 5)
 
@@ -260,6 +283,8 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
 
     @Test
     fun updateShareHolder() {
+        val addressValue = "0xba37163625b3f2e96112562858c12b75963af138"
+        val user = createUser()
         val scaffold = createScaffold()
         val request = UpdateShareHolderRequest(addressValue, 10)
 
@@ -273,6 +298,8 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
 
     @Test
     fun removeShareHolder() {
+        val addressValue = "0xba37163625b3f2e96112562858c12b75963af138"
+        val user = createUser()
         val scaffold = createScaffold()
         val request = RemoveShareHolderRequest(addressValue)
 
@@ -284,12 +311,16 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
     }
 
     private fun createScaffold(): Scaffold {
-        val openKey = OpenKey(user.apply { id = 1L }, null, openKeyValue).apply { id = 1L }
+        val addressValue = "0xba37163625b3f2e96112562858c12b75963af138"
+        val user = createUser()
+        val openKey = OpenKey(user.apply { id = 1L }, null, "op_pk_9de7cbb4-857c-49e9-87d2-fc91428c4c12").apply { id = 1L }
 
         return Scaffold(addressValue, openKey, "abi", addressValue, "description", "1", 1,
                 "1", "webHook", mutableListOf())
     }
 
     private fun createScaffoldPropertyDto(): ScaffoldPropertyDto = ScaffoldPropertyDto("name", STRING, "value")
+
+    private fun createUser(): User = User("104113085667282103363")
 
 }

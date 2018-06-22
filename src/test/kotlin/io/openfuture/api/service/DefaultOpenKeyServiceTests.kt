@@ -20,8 +20,6 @@ class DefaultOpenKeyServiceTests : UnitTest() {
 
     private lateinit var service: OpenKeyService
 
-    private val openKeyValue = "op_pk_9de7cbb4-857c-49e9-87d2-fc91428c4c12"
-
 
     @Before
     fun setUp() {
@@ -42,6 +40,7 @@ class DefaultOpenKeyServiceTests : UnitTest() {
 
     @Test
     fun get() {
+        val openKeyValue = "op_pk_9de7cbb4-857c-49e9-87d2-fc91428c4c12"
         val expectedOpenKey = createOpenKey()
 
         given(repository.findByValueAndEnabledIsTrueAndExpiredDateIsNullOrExpiredDateAfter(eq(openKeyValue),
@@ -54,6 +53,8 @@ class DefaultOpenKeyServiceTests : UnitTest() {
 
     @Test(expected = NotFoundException::class)
     fun getWithNotFoundException() {
+        val openKeyValue = "op_pk_9de7cbb4-857c-49e9-87d2-fc91428c4c12"
+
         given(repository.findByValueAndEnabledIsTrueAndExpiredDateIsNullOrExpiredDateAfter(eq(openKeyValue),
                 any(Date::class.java))).willReturn(null)
 
@@ -62,6 +63,7 @@ class DefaultOpenKeyServiceTests : UnitTest() {
 
     @Test
     fun find() {
+        val openKeyValue = "op_pk_9de7cbb4-857c-49e9-87d2-fc91428c4c12"
         val expectedOpenKey = createOpenKey()
 
         given(repository.findByValueAndEnabledIsTrueAndExpiredDateIsNullOrExpiredDateAfter(eq(openKeyValue),
@@ -86,6 +88,7 @@ class DefaultOpenKeyServiceTests : UnitTest() {
 
     @Test
     fun disable() {
+        val openKeyValue = "op_pk_9de7cbb4-857c-49e9-87d2-fc91428c4c12"
         val expectedOpenKey = createOpenKey()
 
         given(repository.findByValueAndEnabledIsTrueAndExpiredDateIsNullOrExpiredDateAfter(eq(openKeyValue),
@@ -99,7 +102,7 @@ class DefaultOpenKeyServiceTests : UnitTest() {
         assertThat(actualOpenKey.enabled).isFalse()
     }
 
-    private fun createOpenKey(): OpenKey = OpenKey(createUser(), null, openKeyValue, true)
+    private fun createOpenKey(): OpenKey = OpenKey(createUser(), null, "op_pk_9de7cbb4-857c-49e9-87d2-fc91428c4c12", true)
 
     private fun createUser(): User = User("104113085667282103363", 0, Collections.emptySet(), Collections.emptySet())
 

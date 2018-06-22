@@ -91,7 +91,7 @@ class Web3Wrapper(
         val credentials = properties.getCredentials()
         val nonce = web3j.ethGetTransactionCount(credentials.address, LATEST).send().transactionCount
         val result = web3j.ethSendTransaction(createFunctionCallTransaction(credentials.address, nonce, GAS_PRICE,
-                GAS_LIMIT, address, encodedFunction)) .send()
+                GAS_LIMIT, address, encodedFunction)).send()
 
         if (result.hasError()) {
             throw FunctionCallException(result.error.message)
