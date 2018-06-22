@@ -151,13 +151,23 @@ require(isShareHolder(shareHolderAddress));
 return(partners[shareHolderAddress].share);
 }
 
-// get shareholders at index
-function getShareHolderAtIndex(uint index)
-public
-constant
-returns(address shareHolderAddress) {
-return shareHolderAddresses[index];
-}
+    // get shareholder address at index
+    function getShareHolderAtIndex(uint index)
+    public
+    constant
+    returns(address shareHolderAddress) {
+        return shareHolderAddresses[index];
+    }
+
+    // get shareholder address and share amount at index
+    function getShareHolderAddressAndShareAtIndex(uint index)
+    public
+    constant
+    returns(address s1, uint8 s2) {
+        address shareHolderAddress = getShareHolderAtIndex(index);
+        uint8 share = getHoldersShare(shareHolderAddress);
+        return (shareHolderAddress, share);
+    }
 
 // get shareholders count
 function getShareHolderCount()
@@ -235,55 +245,72 @@ return rowToDelete;
     // payable function for receiving customer funds
     function payVendor(/*${CUSTOM_SCAFFOLD_PARAMETERS}*/) public payable activated {
         require(msg.value == scaffoldAmount);
-        pay(msg.sender, msg.value);
+        payWithShares(msg.sender, msg.value);
     }
 
-    function pay(address who, uint amount) internal {
-        uint256 transactionAmount = msg.value;
-        uint256 shareHolderIndexLength = getShareHolderCount();
+    // transfer amount according shares
+    function payWithShares(address customerAddress, uint transactionAmount) internal {
+        // developer fee
+        uint256 developerFee = transactionAmount.div(100).mul(3);
+        // unpaid amount
+        uint256 unpaidAmount = transactionAmount.sub(developerFee);
+        // vendor amount
+        uint256 vendorAmount = payToShareHolders(unpaidAmount);
 
-        // platform fee
-        uint256 platformFee = transactionAmount.div(100).mul(3);
-        uint256 unpaidBalance = transactionAmount.sub(platformFee);
-        uint256 vendorAmount  = unpaidBalance;
+        // create transaction
+        uint256 transactionIndex  = createScaffoldTransaction(customerAddress);
 
-        if(shareHolderIndexLength > 0) {
-            for(uint8 row = 0; row < shareHolderIndexLength; row++) {
-
-                address shHoldrAddress = getShareHolderAtIndex(row);
-                uint256 shHoldrAmount = unpaidBalance.div(100).mul(partners[shHoldrAddress].share);
-
-                vendorAmount = vendorAmount.sub(shHoldrAmount);
-
-                withdrawFunds(shHoldrAddress, shHoldrAmount);
-
-                PayedForShareHolder(
-                shHoldrAddress,
-                shHoldrAmount);
-            }
-        }
-
-        OpenScaffoldTransaction memory newTransaction = OpenScaffoldTransaction({
-        customerAddress: who/*,
-            ${SCAFFOLD_STRUCT_TRANSACTION_ARGUMENTS}*/
-        });
-
-        openScaffoldTransactions.push(newTransaction);
-        scaffoldTransactionIndex++;
-
-        // transfer amount for platform
-        withdrawFunds(platformAddress, platformFee);
+        // transfer amount for developer
+        withdrawFunds(developerAddress, developerFee);
         // transfer amount for vendor
         if(vendorAmount > 0) {
             withdrawFunds(vendorAddress, vendorAmount);
         }
 
         PaymentCompleted(
-        who,
+        customerAddress,
         vendorAmount,
-        scaffoldTransactionIndex/*,
+        transactionIndex/*,
             ${CUSTOM_RETURN_VARIABLES}*/
         );
+    }
+
+    // pay to shareholders according to their shares
+    function payToShareHolders(uint256 unpaidAmount) internal returns(uint256) {
+        uint256 shareHolderIndexLength = getShareHolderCount();
+
+        if(0 == shareHolderIndexLength) {
+            return unpaidAmount;
+        }
+
+        uint256 vendorAmount = unpaidAmount;
+        for(uint8 row = 0; row < shareHolderIndexLength; row++) {
+            address shareHolderAddress = getShareHolderAtIndex(row);
+            uint256 shareHolderAmount = unpaidAmount.div(100).mul(partners[shareHolderAddress].share);
+
+            // reduce vendor amount
+            vendorAmount = vendorAmount.sub(shareHolderAmount);
+
+            // transfer amount for shareholder
+            withdrawFunds(shareHolderAddress, shareHolderAmount);
+
+            PayedForShareHolder(
+            shareHolderAddress,
+            shareHolderAmount);
+        }
+
+        return vendorAmount;
+    }
+
+    // generate Scaffold transaction and add to array
+    function createScaffoldTransaction(address customerAddress) internal returns(uint) {
+        OpenScaffoldTransaction memory newTransaction = OpenScaffoldTransaction({
+        customerAddress: customerAddress/*,
+            ${SCAFFOLD_STRUCT_TRANSACTION_ARGUMENTS}*/
+        });
+
+        openScaffoldTransactions.push(newTransaction);
+        return scaffoldTransactionIndex++;
     }
 
 // withdraw funds

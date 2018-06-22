@@ -7,7 +7,22 @@ import "../contracts/OpenScaffold.sol";
 
 contract ExposedContract is OpenScaffold {
 
-    function ExposedContract() public {}
+    function ExposedContract(
+        address _vendorAddress,
+        address _platformAddress,
+        string _description,
+        string _fiatAmount,
+        string _fiatCurrency,
+        uint _scaffoldAmount
+        ) OpenScaffold(
+            _vendorAddress,
+            _platformAddress,
+            _description,
+            _fiatAmount,
+            _fiatCurrency,
+            _scaffoldAmount)
+        public {
+    }
 
     function _pay(address who, uint amount) public {
         pay(who, amount);
@@ -35,7 +50,7 @@ contract TestOpenScaffold {
         scaffold.addShareHolder(shareHolderAddress1, holderShare1);
 
         uint expectedCount = 1;
-        Assert.equal(scaffold.getShareHolderCount(), expectedCount, "Wrong!");
+        Assert.equal(scaffold.getShareHolderCount(), expectedCount, "Shareholder wasn't added.");
     }
 
     function testGetShareHolderAtIndex() public {
@@ -43,7 +58,8 @@ contract TestOpenScaffold {
         scaffold.addShareHolder(shareHolderAddress1, holderShare1);
 
         address expectedAddress = shareHolderAddress1;
-        Assert.equal(scaffold.getShareHolderAtIndex(0), expectedAddress, "Wrong!");
+        Assert.isNotZero(scaffold.getShareHolderAtIndex(0), "Shareholder address can not be empty.");
+        Assert.equal(scaffold.getShareHolderAtIndex(0), expectedAddress, "Shareholder does not exist.");
     }
 
     function testGetShareHolderCount() public {
@@ -53,7 +69,7 @@ contract TestOpenScaffold {
         scaffold.addShareHolder(shareHolderAddress2, holderShare2);
 
         uint expectedCount = 2;
-        Assert.equal(scaffold.getShareHolderCount(), expectedCount, "Wrong!");
+        Assert.equal(scaffold.getShareHolderCount(), expectedCount, "Shareholders are not exist");
     }
 
     function testGetHoldersShare() public {
@@ -61,7 +77,7 @@ contract TestOpenScaffold {
         scaffold.addShareHolder(shareHolderAddress1, holderShare1);
 
         uint expectedShare = holderShare1;
-        Assert.equal(scaffold.getHoldersShare(shareHolderAddress1), expectedShare, "Wrong!");
+        Assert.equal(scaffold.getHoldersShare(shareHolderAddress1), expectedShare, "Shareholder doesn't have expected share amount");
     }
 
     function testEditShareHolder() public {
@@ -71,7 +87,7 @@ contract TestOpenScaffold {
         scaffold.editShareHolder(shareHolderAddress1, holderShare2);
 
         uint expectedShare = holderShare2;
-        Assert.equal(scaffold.getHoldersShare(shareHolderAddress1), expectedShare, "Wrong!");
+        Assert.equal(scaffold.getHoldersShare(shareHolderAddress1), expectedShare, "Edited shareholder doesn't have expected share amount");
     }
 
     function testDeleteShareHolder() public {
@@ -81,12 +97,14 @@ contract TestOpenScaffold {
         scaffold.deleteShareHolder(shareHolderAddress1);
 
         uint expectedCount = 0;
-        Assert.equal(scaffold.getShareHolderCount(), expectedCount, "Wrong!");
+        Assert.equal(scaffold.getShareHolderCount(), expectedCount, "Shareholder wasn't removed");
     }
 
 //    function testPay() public {
-//        ExposedContract eScaffold = new ExposedContract();
-//        OpenScaffold scaffold = createScaffold();
+//        ExposedContract eScaffold = new ExposedContract(0x32539E7cd412335BeA8256e9f3dCf8288253326f,
+//        0x32539E7cd412335BeA8256e9f3dCf8288253326f,
+//        "description", "100", "usd", 10000);
+//
 //        eScaffold._pay(0x32539E7cd412335BeA8256e9f3dCf8288253326f, 10000);
 //    }
 
