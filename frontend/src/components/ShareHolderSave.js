@@ -14,10 +14,7 @@ class ShareHolderSaveComponent extends React.Component {
     this.state = {
       address,
       share,
-      addressError: '',
-      shareError: '',
       isAddressErrorVisible: false,
-      isShareErrorVisible: false,
       isSaving: false,
       transactionError: ''
     };
@@ -25,6 +22,7 @@ class ShareHolderSaveComponent extends React.Component {
 
   onAddressChange = e => this.setState({address: e.target.value});
   onShareChange = e => this.setState({share: Math.abs(e.target.value)});
+  onAddressBlur = e => this.setState({isAddressErrorVisible: true});
 
   onSubmit = async e => {
     const {onSubmit} = this.props;
@@ -40,9 +38,9 @@ class ShareHolderSaveComponent extends React.Component {
   };
 
   renderAddressError = () => {
-    const {address} = this.state;
+    const {address, isAddressErrorVisible} = this.state;
     const errorList =  validateAddress(address);
-    if (!errorList.length) {
+    if (!errorList.length || !isAddressErrorVisible) {
       return null;
     }
 
@@ -88,7 +86,8 @@ class ShareHolderSaveComponent extends React.Component {
           <Modal.Header>{title}</Modal.Header>
             <Modal.Content>
               <div>Address:</div>
-              <Input fluid value={address} disabled={isSaving || editType} onChange={this.onAddressChange}/>
+              <Input fluid value={address} disabled={isSaving || editType} onChange={this.onAddressChange} onBlur={this.onAddressBlur}/>
+              {this.renderAddressError()}
               <div>Share:</div>
               <Input type="number" min={0} step={1} fluid value={share} disabled={isSaving}
                      onChange={this.onShareChange}/>

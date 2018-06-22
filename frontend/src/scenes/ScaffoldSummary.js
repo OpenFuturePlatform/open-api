@@ -6,7 +6,6 @@ import {ScaffoldStatusContainer} from '../components/ScaffoldStatus';
 import {fetchScaffoldSummary} from '../actions/scaffolds';
 import {ShareHolders} from '../components/ShareHolders';
 import {WalletSelect} from '../components/WalletSelect';
-import scaffold from '../utils/scaffold';
 
 class ScaffoldSummary extends Component {
 
