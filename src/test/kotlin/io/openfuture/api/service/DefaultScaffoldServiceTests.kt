@@ -8,7 +8,7 @@ import io.openfuture.api.config.propety.EthereumProperties
 import io.openfuture.api.domain.scaffold.*
 import io.openfuture.api.entity.auth.OpenKey
 import io.openfuture.api.entity.auth.User
-import io.openfuture.api.entity.scaffold.Currency
+import io.openfuture.api.entity.scaffold.Currency.USD
 import io.openfuture.api.entity.scaffold.PropertyType.STRING
 import io.openfuture.api.entity.scaffold.Scaffold
 import io.openfuture.api.entity.scaffold.ScaffoldProperty
@@ -127,7 +127,7 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
     @Test
     fun deploy() {
         val expectedScaffold = createScaffold()
-        val request = DeployScaffoldRequest(openKeyValue, addressValue, "description", "1", Currency.USD, "1",
+        val request = DeployScaffoldRequest(openKeyValue, addressValue, "description", "1", USD, "1",
                 null, listOf(createScaffoldPropertyDto()))
         val contractMetadata = CompilationResult.ContractMetadata().apply { abi = "abi"; bin = "bin" }
         val encodedConstructor = FunctionEncoder.encodeConstructor(listOf(
@@ -163,7 +163,7 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
         val scaffoldPropertyDto = createScaffoldPropertyDto()
         val scaffoldProperty = ScaffoldProperty.of(scaffold, scaffoldPropertyDto)
         val request = SaveScaffoldRequest(addressValue, "abi", openKeyValue, "developerAddress",
-                "description", "1", Currency.USD, "1").apply { properties = listOf(scaffoldPropertyDto) }
+                "description", "1", USD, "1").apply { properties = listOf(scaffoldPropertyDto) }
         val expectedScaffold = createScaffold().apply { property.add(scaffoldProperty) }
 
         given(openKeyService.get(openKeyValue)).willReturn(openKey)
