@@ -80,13 +80,13 @@ class TransactionApiControllerTest : ControllerTests() {
                             ]
                           },
                           "abi": ${transaction.scaffold.abi},
-                          "developerAddress": ${transaction.scaffold.developerAddress},
+                          "vendorAddress": ${transaction.scaffold.vendorAddress},
                           "description": ${transaction.scaffold.description},
                           "fiatAmount": "${transaction.scaffold.fiatAmount}",
                           "currency": ${transaction.scaffold.getCurrency().name},
                           "conversionAmount": "${transaction.scaffold.conversionAmount}",
-                          "properties": ${Arrays.toString(transaction.scaffold.property.toTypedArray())},
-                          "enabled": ${transaction.scaffold.enabled}
+                          "webHook": ${transaction.scaffold.webHook},
+                          "properties": ${Arrays.toString(transaction.scaffold.property.toTypedArray())}
                         },
                         "data": ${transaction.data},
                         "type": ${transaction.type}

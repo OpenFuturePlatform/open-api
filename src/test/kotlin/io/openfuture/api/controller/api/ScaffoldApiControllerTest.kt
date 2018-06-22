@@ -8,9 +8,11 @@ import io.openfuture.api.entity.auth.Role
 import io.openfuture.api.entity.scaffold.Currency.USD
 import io.openfuture.api.entity.scaffold.PropertyType
 import io.openfuture.api.entity.scaffold.Scaffold
+import io.openfuture.api.entity.scaffold.ScaffoldSummary
 import io.openfuture.api.service.ScaffoldService
 import org.junit.Test
 import org.mockito.BDDMockito.given
+import org.mockito.BDDMockito.verify
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.data.domain.PageImpl
@@ -19,8 +21,7 @@ import org.springframework.http.MediaType.APPLICATION_JSON_UTF8
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import java.math.BigDecimal.ONE
-import java.math.BigInteger.TEN
+import java.math.BigInteger.ONE
 import java.util.*
 
 @WebMvcTest(ScaffoldApiController::class)
@@ -172,35 +173,33 @@ class ScaffoldApiControllerTest : ControllerTests() {
     @Test
     fun getScaffoldSummaryTest() {
         val scaffoldAddress = "address"
-        val scaffoldSummaryDto = ScaffoldSummaryDto("abi", "description", "2", USD.name,
-                ONE, TEN, "vendorAddress", TEN, true)
         val openKey = createOpenKey(setOf(Role("ROLE_DEPLOY")))
+        val scaffold = createScaffold(openKey)
+        val scaffoldSummary = ScaffoldSummary(scaffold, ONE, ONE, true)
 
         given(keyService.find(openKey.value)).willReturn(openKey)
-        given(service.getScaffoldSummary(scaffoldAddress, openKey.user)).willReturn(scaffoldSummaryDto)
+        given(service.getScaffoldSummary(scaffoldAddress, openKey.user)).willReturn(scaffoldSummary)
 
         mvc.perform(get("/api/scaffolds/$scaffoldAddress/summary")
                 .header(AUTHORIZATION, openKey.value))
 
                 .andExpect(status().isOk)
-                .andExpect(content().json(expectScaffoldSummaryDtoJson(scaffoldSummaryDto), true))
+                .andExpect(content().json(expectScaffoldSummaryDtoJson(scaffoldSummary), true))
     }
 
     @Test
     fun deactivateTest() {
         val scaffoldAddress = "address"
-        val scaffoldSummaryDto = ScaffoldSummaryDto("abi", "description", "2", USD.name,
-                ONE, TEN, "vendorAddress", TEN, true)
         val openKey = createOpenKey(setOf(Role("ROLE_DEPLOY")))
 
         given(keyService.find(openKey.value)).willReturn(openKey)
-        given(service.deactivate(scaffoldAddress, openKey.user)).willReturn(scaffoldSummaryDto)
 
         mvc.perform(post("/api/scaffolds/$scaffoldAddress/doDeactivate")
                 .header(AUTHORIZATION, openKey.value))
 
                 .andExpect(status().isOk)
-                .andExpect(content().json(expectScaffoldSummaryDtoJson(scaffoldSummaryDto), true))
+
+        verify(service).deactivate(scaffoldAddress, openKey.user)
     }
 
     @Test
@@ -248,27 +247,23 @@ class ScaffoldApiControllerTest : ControllerTests() {
                         ]
                       },
                       "abi": ${scaffold.abi},
-                      "developerAddress": ${scaffold.developerAddress},
+                      "vendorAddress": ${scaffold.vendorAddress},
                       "description": ${scaffold.description},
                       "fiatAmount": "${scaffold.fiatAmount}",
                       "currency": ${scaffold.getCurrency().name},
                       "conversionAmount": "${scaffold.conversionAmount}",
-                      "properties": ${Arrays.toString(scaffold.property.toTypedArray())},
-                      "enabled": ${scaffold.enabled}
+                      "webHook": ${scaffold.webHook},
+                      "properties": ${Arrays.toString(scaffold.property.toTypedArray())}
                     }
                     """.trimIndent()
 
-    private fun expectScaffoldSummaryDtoJson(scaffoldSummaryDto: ScaffoldSummaryDto) = """
+    private fun expectScaffoldSummaryDtoJson(scaffoldSummary: ScaffoldSummary) = """
                     {
-                      "abi": ${scaffoldSummaryDto.abi},
-                      "description": ${scaffoldSummaryDto.description},
-                      "fiatAmount": "${scaffoldSummaryDto.fiatAmount}",
-                      "fiatCurrency": ${scaffoldSummaryDto.fiatCurrency},
-                      "amount": ${scaffoldSummaryDto.amount},
-                      "transactionIndex": ${scaffoldSummaryDto.transactionIndex},
-                      "vendorAddress": ${scaffoldSummaryDto.vendorAddress},
-                      "tokenBalance": ${scaffoldSummaryDto.tokenBalance},
-                      "enabled": ${scaffoldSummaryDto.enabled}
+                      "scaffold": ${expectScaffoldJson(scaffoldSummary.scaffold)},
+                      "transactionIndex": ${scaffoldSummary.transactionIndex},
+                      "tokenBalance": ${scaffoldSummary.tokenBalance},
+                      "enabled": ${scaffoldSummary.enabled},
+                      "shareHolders": ${Arrays.toString(scaffoldSummary.shareHolders.toTypedArray())}
                     }
                     """.trimIndent()
 
