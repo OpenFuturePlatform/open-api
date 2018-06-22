@@ -1,4 +1,4 @@
-package io.openfuture.api.component
+package io.openfuture.api.component.template
 
 import freemarker.template.Configuration
 import freemarker.template.Template

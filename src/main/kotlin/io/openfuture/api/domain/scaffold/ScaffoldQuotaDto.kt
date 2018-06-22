@@ -1,6 +1,6 @@
 package io.openfuture.api.domain.scaffold
 
 data class ScaffoldQuotaDto(
-        val currentCount: Long,
-        val limitCount: Long
+        val currentCount: Int,
+        val limitCount: Int
 )

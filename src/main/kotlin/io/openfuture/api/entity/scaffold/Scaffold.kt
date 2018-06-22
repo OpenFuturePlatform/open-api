@@ -21,8 +21,8 @@ class Scaffold(
         @Column(name = "abi", nullable = false)
         val abi: String,
 
-        @Column(name = "developer_address", nullable = false)
-        val developerAddress: String,
+        @Column(name = "vendor_address", nullable = false)
+        val vendorAddress: String,
 
         @Column(name = "description", nullable = false)
         var description: String,
@@ -40,26 +40,23 @@ class Scaffold(
         var webHook: String? = null,
 
         @OneToMany(mappedBy = "scaffold")
-        val property: MutableList<ScaffoldProperty> = mutableListOf(),
-
-        @Column(name = "enabled", nullable = false)
-        var enabled: Boolean = false
+        val property: MutableList<ScaffoldProperty> = mutableListOf()
 
 ) : BaseModel() {
 
     fun getCurrency() = DictionaryUtils.valueOf(Currency::class.java, currencyId)
 
     companion object {
-        fun of(scaffold: SaveScaffoldRequest, openKey: OpenKey): Scaffold = Scaffold(
-                scaffold.address!!,
+        fun of(request: SaveScaffoldRequest, openKey: OpenKey): Scaffold = Scaffold(
+                request.address!!,
                 openKey,
-                scaffold.abi!!,
-                scaffold.developerAddress!!,
-                scaffold.description!!,
-                scaffold.fiatAmount!!,
-                scaffold.currency!!.getId(),
-                scaffold.conversionAmount!!,
-                if (EMPTY == scaffold.webHook?.trim()) null else scaffold.webHook
+                request.abi!!,
+                request.developerAddress!!,
+                request.description!!,
+                request.fiatAmount!!,
+                request.currency!!.getId(),
+                request.conversionAmount!!,
+                if (EMPTY == request.webHook?.trim()) null else request.webHook
         )
     }
 
