@@ -4,10 +4,16 @@ import {Button, Divider, Icon, Modal} from 'semantic-ui-react';
 
 class RemoveDevShareComponent extends React.Component {
 
-  state = {
+  constructor(props) {
+    super(props);
+
+    this.state = this.getDefaultState();
+  }
+
+  getDefaultState = () => ({
     isSaving: false,
     transactionError: ''
-  };
+  });
 
   onSubmit = async e => {
     this.setState({isSaving: true});
@@ -18,6 +24,12 @@ class RemoveDevShareComponent extends React.Component {
       this.setState({transactionError: e.message})
     }
     this.setState({isSaving: false});
+  };
+
+  onShowHandle = () => {
+    const {onShow} = this.props;
+    this.setState(this.getDefaultState());
+    onShow();
   };
 
   renderTransactionError = () => {
@@ -36,12 +48,12 @@ class RemoveDevShareComponent extends React.Component {
   };
 
   render() {
-    const {isVisible, onShow, onHide} = this.props;
+    const {isVisible, onHide} = this.props;
     const {isSaving} = this.state;
 
     return (
       <span>
-        <Icon link name='remove' size='large' onClick={onShow}/>
+        <Icon link name='remove' size='large' onClick={this.onShowHandle}/>
         <Modal size="tiny" open={isVisible} onClose={isSaving ? () => {} : onHide}>
           <Modal.Header>Remove Share Holder</Modal.Header>
             <Modal.Content>

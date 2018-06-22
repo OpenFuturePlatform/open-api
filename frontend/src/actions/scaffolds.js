@@ -1,9 +1,11 @@
+import eth from '../utils/eth';
 import axios from 'axios';
 import {getContract} from '../utils/eth';
 import {
-  SET_SCAFFOLD_ITEM,
+  SET_SCAFFOLD_SET,
   FETCH_SCAFFOLDS,
 } from './types';
+import {setShareHolders} from './shareHolders';
 
 export const fetchScaffolds = (page = 1, limit = 10) => async dispatch => {
   const offset = (Math.max(page, 1) - 1) * limit;
@@ -18,60 +20,62 @@ export const fetchScaffolds = (page = 1, limit = 10) => async dispatch => {
 };
 
 const fetchScaffoldItem = (address) => async dispatch => {
-  dispatch({type: SET_SCAFFOLD_ITEM, payload: {address, loading: true}});
+  dispatch({type: SET_SCAFFOLD_SET, payload: {address, loading: true}});
   try {
     const {data: scaffold} = await axios.get(`/api/scaffolds/${address}`);
     const error = '';
-    dispatch({type: SET_SCAFFOLD_ITEM, payload: {address, scaffold, error, loading: false}});
+    dispatch({type: SET_SCAFFOLD_SET, payload: {address, scaffold, error, loading: false}});
     return scaffold;
   } catch (e) {
     const error = `${e.response.status}: ${e.response.message || e.response.statusText}`;
-    dispatch({type: SET_SCAFFOLD_ITEM, payload: {address, error, loading: false}});
+    dispatch({type: SET_SCAFFOLD_SET, payload: {address, error, loading: false}});
     throw e;
   }
 };
 
 export const fetchScaffoldSummaryFromChain = (scaffold) => async dispatch => {
   const {address} = scaffold;
-  dispatch({type: SET_SCAFFOLD_ITEM, payload: {address, loading: true}});
+  dispatch({type: SET_SCAFFOLD_SET, payload: {address, loading: true}});
   const contract = getContract(scaffold);
 
   if (!contract) {
     const error = 'To view Scaffold Summary you need to install MetaMask and refresh page';
-    dispatch({type: SET_SCAFFOLD_ITEM, payload: {address, loading: false, error}});
+    dispatch({type: SET_SCAFFOLD_SET, payload: {address, loading: false, error}});
     return;
   }
 
   try {
     const summaryResponse = await contract.getScaffoldSummary();
     const summary = mapScaffoldSummary(summaryResponse);
-    dispatch({type: SET_SCAFFOLD_ITEM, payload: {address, summary, loading: false}});
+    dispatch({type: SET_SCAFFOLD_SET, payload: {address, summary, loading: false}});
   } catch (e) {
     const error = e;
-    dispatch({type: SET_SCAFFOLD_ITEM, payload: {address, error, loading: false}});
+    dispatch({type: SET_SCAFFOLD_SET, payload: {address, error, loading: false}});
     throw e;
   }
 };
 
 export const fetchScaffoldSummaryFromApi = (scaffold) => async dispatch => {
   const {address} = scaffold;
-  dispatch({type: SET_SCAFFOLD_ITEM, payload: {address, loading: true}});
+  dispatch({type: SET_SCAFFOLD_SET, payload: {address, loading: true}});
 
   try {
     const {data: summary} = await axios.get(`/api/scaffolds/${address}/summary`);
-    dispatch({type: SET_SCAFFOLD_ITEM, payload: {address, summary, loading: false}});
+    const shareHolders = summary.shareHolders.map(it => ({...it, share: it.percent}));
+    dispatch({type: SET_SCAFFOLD_SET, payload: {address, summary, loading: false}});
+    dispatch(setShareHolders(address, shareHolders));
   } catch(e) {
     const error = `${e.response.status}: ${e.response.message || e.response.statusText}`;
-    dispatch({type: SET_SCAFFOLD_ITEM, payload: {address, error, loading: false}});
+    dispatch({type: SET_SCAFFOLD_SET, payload: {address, error, loading: false}});
     throw e;
   }
 };
 
 export const fetchScaffoldSummary = (scaffoldAddress) => async (dispatch, getState) => {
-  const {auth: {isApiAllowed, byApiMethod}} = getState();
+  const {auth: {isApiAllowed}} = getState();
   const scaffold = await dispatch(fetchScaffoldItem(scaffoldAddress));
 
-  if (byApiMethod && isApiAllowed) {
+  if (isApiAllowed && !eth) {
     console.log('>> back fetch');
     await dispatch(fetchScaffoldSummaryFromApi(scaffold));
   } else {

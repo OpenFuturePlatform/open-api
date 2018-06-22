@@ -218,7 +218,7 @@ class ScaffoldForm extends Component {
                 <FieldArray name="properties"
                             component={ScaffoldPropertyFields}
                             scaffoldFieldsErrors={scaffoldFieldsErrors}
-                            formValues={formValues.properties || []}/>
+                            scaffoldProperties={formValues.properties || []}/>
               </Grid.Column>
             </Grid.Row>
             <Grid.Row>

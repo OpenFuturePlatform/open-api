@@ -8,21 +8,31 @@ class ShareHolderSaveComponent extends React.Component {
   constructor(props) {
     super(props);
 
-    const address = props.editType ? props.devShare.address : '';
-    const share = props.editType ? props.devShare.share : '';
+    this.state = this.getDefaultState();
+  }
 
-    this.state = {
+  getDefaultState = () => {
+    const address = this.props.editType ? this.props.shareHolder.address : '';
+    const share = this.props.editType ? this.props.shareHolder.share : '';
+
+    return {
       address,
       share,
       isAddressErrorVisible: false,
       isSaving: false,
       transactionError: ''
-    };
-  }
+    }
+  };
 
   onAddressChange = e => this.setState({address: e.target.value});
   onShareChange = e => this.setState({share: Math.abs(e.target.value)});
   onAddressBlur = e => this.setState({isAddressErrorVisible: true});
+
+  onShowHandle = () => {
+    const {onShow} = this.props;
+    this.setState(this.getDefaultState());
+    onShow();
+  };
 
   onSubmit = async e => {
     const {onSubmit} = this.props;
@@ -71,12 +81,12 @@ class ShareHolderSaveComponent extends React.Component {
   };
 
   render() {
-    const {isVisible, onShow, onHide, editType} = this.props;
+    const {isVisible, onHide, editType} = this.props;
     const {isSaving, share, address} = this.state;
     const title = editType ? 'Edit Share Holder' : 'New Share Holder';
     const button = editType ?
-      <Icon link name='edit' size='large' onClick={onShow}/> :
-      <Button fluid attached='top' onClick={onShow}>Add Share</Button>;
+      <Icon link name='edit' size='large' onClick={this.onShowHandle}/> :
+      <Button fluid attached='top' onClick={this.onShowHandle}>Add Share</Button>;
     const submitDisabled = isSaving || !address || !share;
 
     return (

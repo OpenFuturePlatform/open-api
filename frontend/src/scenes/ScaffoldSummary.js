@@ -29,7 +29,7 @@ class ScaffoldSummary extends Component {
   }
 
   render() {
-    const {address, scaffold, summary, error, byApiMethod} = this.props;
+    const {address, scaffold, summary, error} = this.props;
 
     if (!scaffold) {
       return null;
@@ -68,7 +68,7 @@ class ScaffoldSummary extends Component {
             <Grid.Column/>
           </Grid.Row>
         </Grid>
-        {!byApiMethod && <ShareHolders scaffold={{...scaffold}}/>}
+        <ShareHolders scaffold={scaffold} />
       </div>
     );
   }

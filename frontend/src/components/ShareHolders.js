@@ -6,7 +6,7 @@ import 'react-table/react-table.css';
 import '../css/table.css';
 import {EtherscanLink} from '../components-ui/EtherscanLink';
 import {Segment} from 'semantic-ui-react';
-import {addShareHolder, editShareHolder, fetchShareHolders, removeShareHolder} from '../actions/dev-shares';
+import {addShareHolder, editShareHolder, fetchShareHolders, removeShareHolder} from '../actions/shareHolders';
 import {ShareHolderSave} from './ShareHolderSave';
 import {RemoveDevShare} from './RemoveDevShare';
 
@@ -30,7 +30,7 @@ const getColumns = (scaffold, onEdit, onRemove) => [
     width: 150,
     Cell: ({value, original}) => (
       <span>
-        <ShareHolderSave editType devShare={original} onSubmit={(devShare) => onEdit(devShare)} />{' '}
+        <ShareHolderSave editType shareHolder={original} onSubmit={(devShare) => onEdit(devShare)} />{' '}
         <RemoveDevShare onSubmit={() => onRemove(value)} />
       </span>
     ),
@@ -38,7 +38,7 @@ const getColumns = (scaffold, onEdit, onRemove) => [
   }
 ];
 
-export class DevSharesComponent extends Component {
+export class ShareHoldersComponent extends Component {
 
   componentDidMount() {
     const {scaffold} = this.props;
@@ -61,15 +61,15 @@ export class DevSharesComponent extends Component {
   };
 
   render() {
-    const {devShares, scaffold} = this.props;
+    const {shareHolders, scaffold} = this.props;
 
     return (
       <div className="table-with-add">
         <ShareHolderSave onSubmit={this.onAddShareHolder}/>
         <Segment attached styles={{padding: 0}}>
-          <ReactTable data={devShares} columns={getColumns(scaffold, this.onEditShareHolder, this.onRemoveShareHolder)}
+          <ReactTable data={shareHolders} columns={getColumns(scaffold, this.onEditShareHolder, this.onRemoveShareHolder)}
                       className="-striped" showPagination={false} resizable={false} minRows={1}
-                      pageSize={devShares.length}
+                      pageSize={shareHolders.length}
           />
         </Segment>
       </div>
@@ -77,7 +77,11 @@ export class DevSharesComponent extends Component {
   }
 }
 
-const mapStateToProps = ({devShares}, {scaffold}) => ({scaffold, devShares});
+const mapStateToProps = ({ScaffoldsById, byApiMethod}, {scaffold}) => {
+  const scaffoldSet = ScaffoldsById[scaffold.address] || {};
+  const shareHolders = scaffoldSet.shareHolders || [];
+  return ({scaffold, shareHolders, byApiMethod});
+};
 
 const mapDispatchToProps = dispatch => ({
   actions: bindActionCreators({
@@ -88,4 +92,4 @@ const mapDispatchToProps = dispatch => ({
   }, dispatch)
 });
 
-export const ShareHolders = connect(mapStateToProps, mapDispatchToProps)(DevSharesComponent);
+export const ShareHolders = connect(mapStateToProps, mapDispatchToProps)(ShareHoldersComponent);

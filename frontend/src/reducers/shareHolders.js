@@ -1,6 +1,6 @@
 import {SET_DEV_SHARES} from '../actions/types';
 
-const devShares = (state = [], action) => {
+const shareHolders = (state = [], action) => {
   switch (action.type) {
     case SET_DEV_SHARES:
       return action.payload;
@@ -9,4 +9,4 @@ const devShares = (state = [], action) => {
   }
 };
 
-export default devShares;
+export default shareHolders;
