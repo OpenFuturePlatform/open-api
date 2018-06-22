@@ -1,0 +1,7 @@
+.ReactTable .rt-tbody .rt-td {
+    text-align: center;
+}
+
+.table-with-add .ui.segment {
+    padding: 0;
+}

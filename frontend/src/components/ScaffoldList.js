@@ -1,8 +1,9 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {fetchScaffolds} from '../actions/index';
 import {Card, Divider, Grid, Pagination} from 'semantic-ui-react';
 import {Link} from 'react-router-dom';
+import {EtherscanLink} from '../components-ui/EtherscanLink';
+import {fetchScaffolds} from '../actions/scaffolds';
 
 const LIMIT = 10;
 
@@ -30,9 +31,7 @@ class ScaffoldList extends Component {
             </Link>
             <div className="meta">
               Scaffold Address:{' '}
-              <a href={`https://etherscan.io/address/${scaffold.address}`} target="_blank">
-                {scaffold.address}
-              </a>
+              <EtherscanLink>{scaffold.address}</EtherscanLink>
             </div>
           </Card.Content>
           <Card.Content>

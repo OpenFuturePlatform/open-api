@@ -6,9 +6,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Added
-- Front-end: Scaffold templates
-- Back-end: Functionality for management share holders
 - Back-end: Tests to controllers
+
+## [2.2.0] - 2018-06-22
+### Added
+- Scaffold templates. Now you can fill in scaffold fields and add additional scaffold properties in one click using predefined templates
+- Scaffold templates samples
+- Transaction split. Now you can add several transaction recipients and set recipients shares after scaffold deployment
+- Transaction split: add an additional recipient
+- Transaction split: set additional recipient's share
+- Transaction split: edit additional recipient's share
+- Transaction split: delete an additional recipient
 
 ## [2.1.0] - 2018-06-18
 ### Added
