@@ -67,6 +67,9 @@ export const validate = values => {
   if (!values.fiatAmount) {
     errors.fiatAmount = 'Fiat Amount is required.';
   }
+  if (!values.currency) {
+    errors.currency = 'Currency is required.';
+  }
   if (values.webHook && !isUrl(values.webHook)) {
     errors.webHook = 'Webhook needs to be valid url';
   }
