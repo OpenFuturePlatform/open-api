@@ -15,7 +15,7 @@ class EthereumProperties(
         @field:NotEmpty var openTokenAddress: String? = null,
         @field:NotNull var allowedDisabledContracts: Int = 10,
         @field:NotNull var enabledContactTokenCount: Int = 10,
-        @field:NotNull var cachePeriodInMinutest: Int = 3
+        @field:NotNull var cachePeriodInMinutest: Int = 1
 ) {
 
     fun getCredentials(): Credentials = Credentials.create(privateKey)
