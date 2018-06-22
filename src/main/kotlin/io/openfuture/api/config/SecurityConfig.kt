@@ -1,6 +1,6 @@
 package io.openfuture.api.config
 
-import io.openfuture.api.config.filters.AuthorizationFilter
+import io.openfuture.api.config.filter.AuthorizationFilter
 import io.openfuture.api.config.handler.AuthenticationSuccessHandler
 import io.openfuture.api.config.propety.AuthorizationProperties
 import io.openfuture.api.config.repository.OAuth2AuthorizationRequestRepository

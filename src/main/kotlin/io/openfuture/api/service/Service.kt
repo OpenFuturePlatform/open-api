@@ -4,6 +4,7 @@ import io.openfuture.api.domain.scaffold.*
 import io.openfuture.api.entity.auth.OpenKey
 import io.openfuture.api.entity.auth.User
 import io.openfuture.api.entity.scaffold.Scaffold
+import io.openfuture.api.entity.scaffold.ScaffoldSummary
 import io.openfuture.api.entity.scaffold.ScaffoldTemplate
 import io.openfuture.api.entity.scaffold.Transaction
 import org.springframework.data.domain.Page
@@ -25,11 +26,11 @@ interface ScaffoldService {
 
     fun setWebHook(address: String, request: SetWebHookRequest, user: User): Scaffold
 
-    fun getScaffoldSummary(address: String, user: User): ScaffoldSummaryDto
-
-    fun deactivate(address: String, user: User): ScaffoldSummaryDto
-
     fun getQuota(user: User): ScaffoldQuotaDto
+
+    fun getScaffoldSummary(address: String, user: User): ScaffoldSummary
+
+    fun deactivate(address: String, user: User)
 
     fun addShareHolder(address: String, user: User, request: AddShareHolderRequest)
 

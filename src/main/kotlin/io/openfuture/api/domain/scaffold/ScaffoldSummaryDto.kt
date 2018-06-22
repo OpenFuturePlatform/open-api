@@ -1,16 +1,22 @@
 package io.openfuture.api.domain.scaffold
 
-import java.math.BigDecimal
+import io.openfuture.api.entity.scaffold.ScaffoldSummary
 import java.math.BigInteger
 
 data class ScaffoldSummaryDto(
-        val abi: String,
-        val description: String,
-        val fiatAmount: String,
-        val fiatCurrency: String,
-        val amount: BigDecimal,
+        val scaffold: ScaffoldDto,
         val transactionIndex: BigInteger,
-        val vendorAddress: String,
         val tokenBalance: BigInteger,
-        val enabled: Boolean
-)
+        val enabled: Boolean,
+        val shareHolders: List<ShareHolderDto>
+) {
+
+    constructor(summary: ScaffoldSummary) : this(
+            ScaffoldDto(summary.scaffold),
+            summary.transactionIndex,
+            summary.tokenBalance,
+            summary.enabled,
+            summary.shareHolders.map { ShareHolderDto(it) }
+    )
+
+}
