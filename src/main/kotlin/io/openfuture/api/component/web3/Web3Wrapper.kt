@@ -11,6 +11,7 @@ import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Function
 import org.web3j.abi.datatypes.Type
 import org.web3j.crypto.RawTransaction.createContractTransaction
+import org.web3j.crypto.RawTransaction.createTransaction
 import org.web3j.crypto.TransactionEncoder.signMessage
 import org.web3j.protocol.Web3j
 import org.web3j.protocol.core.DefaultBlockParameterName.LATEST
@@ -90,8 +91,9 @@ class Web3Wrapper(
         val encodedFunction = FunctionEncoder.encode(function)
         val credentials = properties.getCredentials()
         val nonce = web3j.ethGetTransactionCount(credentials.address, LATEST).send().transactionCount
-        val result = web3j.ethSendTransaction(createFunctionCallTransaction(credentials.address, nonce, GAS_PRICE,
-                GAS_LIMIT, address, encodedFunction)).send()
+        val transaction = createTransaction(nonce, GAS_PRICE, GAS_LIMIT, address, encodedFunction)
+        val encodedTransaction = signMessage(transaction, credentials)
+        val result = web3j.ethSendRawTransaction(toHexString(encodedTransaction)).send()
 
         if (result.hasError()) {
             throw FunctionCallException(result.error.message)
