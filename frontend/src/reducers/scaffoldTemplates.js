@@ -4,7 +4,7 @@ const scaffoldTemplates = (state = [], action) => {
   switch (action.type) {
     case SET_SCAFFOLD_TEMPLATES:
       const newTemplates = action.payload.map(it => ({...it, currency: it.currency || 'USD'}));
-      return [...state, ...newTemplates];
+      return newTemplates;
     default:
       return state;
   }
