@@ -31,7 +31,7 @@ class TransactionApiControllerTest : ControllerTests() {
 
 
     @Test
-    fun getAll() {
+    fun getAllTest() {
         val openKey = createOpenKey(setOf(Role("ROLE_DEPLOY")))
         val scaffold = createScaffold(openKey)
         val pageRequest = PageRequest()

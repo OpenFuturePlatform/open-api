@@ -13,7 +13,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 class UserApiControllerTest : ControllerTests() {
 
     @Test
-    fun getCurrent() {
+    fun getCurrentTest() {
         val openKey = createOpenKey(setOf(Role("ROLE_DEPLOY")))
 
         given(keyService.find(openKey.value)).willReturn(openKey)

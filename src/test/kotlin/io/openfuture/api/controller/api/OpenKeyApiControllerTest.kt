@@ -18,7 +18,7 @@ import java.util.*
 class OpenKeyApiControllerTest : ControllerTests() {
 
     @Test
-    fun generateToken() {
+    fun generateTokenTest() {
         val openKey = createOpenKey(setOf(Role("ROLE_DEPLOY")))
         val request = GenerateOpenKeyRequest(Date())
         val newOpenKey = OpenKey(openKey.user, request.expireDate)

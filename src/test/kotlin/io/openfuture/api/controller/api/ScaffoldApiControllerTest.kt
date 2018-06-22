@@ -31,7 +31,7 @@ class ScaffoldApiControllerTest : ControllerTests() {
 
 
     @Test
-    fun getAll() {
+    fun getAllTest() {
         val openKey = createOpenKey(setOf(Role("ROLE_DEPLOY")))
         val scaffold = createScaffold(openKey)
         val pageRequest = PageRequest()
@@ -69,7 +69,7 @@ class ScaffoldApiControllerTest : ControllerTests() {
     }
 
     @Test
-    fun compile() {
+    fun compileTest() {
         val openKey = createOpenKey(setOf(Role("ROLE_DEPLOY")))
         val request = CompileScaffoldRequest("openKey", listOf(createScaffoldPropertyDto()))
         val requestJson = objectMapper.writeValueAsString(request)
@@ -93,7 +93,7 @@ class ScaffoldApiControllerTest : ControllerTests() {
     }
 
     @Test
-    fun deploy() {
+    fun deployTest() {
         val openKey = createOpenKey(setOf(Role("ROLE_DEPLOY")))
         val scaffold = createScaffold(openKey)
         val request = DeployScaffoldRequest("openKey", "developerAddress", "description",
@@ -130,7 +130,7 @@ class ScaffoldApiControllerTest : ControllerTests() {
     }
 
     @Test
-    fun save() {
+    fun saveTest() {
         val openKey = createOpenKey(setOf(Role("ROLE_DEPLOY")))
         val scaffold = createScaffold(openKey)
         val request = SaveScaffoldRequest("address", "abi", "openKey", "developerAddress",
@@ -151,7 +151,7 @@ class ScaffoldApiControllerTest : ControllerTests() {
     }
 
     @Test
-    fun setWebHook() {
+    fun setWebHookTest() {
         val openKey = createOpenKey(setOf(Role("ROLE_DEPLOY")))
         val scaffold = createScaffold(openKey)
         val request = SetWebHookRequest("https://test.com")
@@ -170,7 +170,7 @@ class ScaffoldApiControllerTest : ControllerTests() {
     }
 
     @Test
-    fun getScaffoldSummary() {
+    fun getScaffoldSummaryTest() {
         val scaffoldAddress = "address"
         val scaffoldSummaryDto = ScaffoldSummaryDto("abi", "description", "2", USD.name,
                 ONE, TEN, "vendorAddress", TEN, true)
@@ -187,7 +187,7 @@ class ScaffoldApiControllerTest : ControllerTests() {
     }
 
     @Test
-    fun deactivate() {
+    fun deactivateTest() {
         val scaffoldAddress = "address"
         val scaffoldSummaryDto = ScaffoldSummaryDto("abi", "description", "2", USD.name,
                 ONE, TEN, "vendorAddress", TEN, true)
@@ -204,7 +204,7 @@ class ScaffoldApiControllerTest : ControllerTests() {
     }
 
     @Test
-    fun getQuota() {
+    fun getQuotaTest() {
         val scaffoldQuotaDto = ScaffoldQuotaDto(1, 10)
         val openKey = createOpenKey(setOf(Role("ROLE_DEPLOY")))
 
