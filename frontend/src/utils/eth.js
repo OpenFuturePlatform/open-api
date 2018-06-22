@@ -8,4 +8,6 @@ if (typeof window !== 'undefined' && typeof window.web3 !== 'undefined' && windo
   eth = null;
 }
 
+export const getContract = ({abi, address}) => eth ? eth.contract(JSON.parse(abi)).at(address) : null;
+
 export default eth;

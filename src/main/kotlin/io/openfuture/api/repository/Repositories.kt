@@ -29,8 +29,6 @@ interface ScaffoldRepository : BaseRepository<Scaffold> {
 
     fun findAllByOpenKeyUser(user: User, pageable: Pageable): Page<Scaffold>
 
-    fun countByEnabledIsFalseAndOpenKeyUser(user: User): Long
-
 }
 
 @Repository
@@ -55,11 +53,25 @@ interface TransactionRepository : BaseRepository<Transaction> {
 @Repository
 interface ScaffoldTemplateRepository : BaseRepository<ScaffoldTemplate> {
 
-    fun findAllByUserAndDeletedIsFalse(user: User): List<ScaffoldTemplate>
-
-    fun findByIdAndUser(id: Long, user: User): ScaffoldTemplate?
+    fun findAllByDeletedIsFalse(): List<ScaffoldTemplate>
 
 }
 
 @Repository
 interface ScaffoldTemplatePropertyRepository : BaseRepository<ScaffoldTemplateProperty>
+
+@Repository
+interface ScaffoldSummaryRepository : BaseRepository<ScaffoldSummary> {
+
+    fun findByScaffold(scaffold: Scaffold): ScaffoldSummary?
+
+    fun countByEnabledIsFalseAndScaffoldOpenKeyUser(user: User): Int
+
+}
+
+@Repository
+interface ShareHolderRepository : BaseRepository<ShareHolder> {
+
+    fun findBySummaryAndAddress(summary: ScaffoldSummary, address: String): ShareHolder?
+
+}

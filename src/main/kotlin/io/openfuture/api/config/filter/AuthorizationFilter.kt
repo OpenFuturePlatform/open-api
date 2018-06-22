@@ -1,4 +1,4 @@
-package io.openfuture.api.config.filters
+package io.openfuture.api.config.filter
 
 import io.openfuture.api.config.propety.AuthorizationProperties
 import io.openfuture.api.service.OpenKeyService
