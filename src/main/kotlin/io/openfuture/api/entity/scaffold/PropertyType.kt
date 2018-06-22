@@ -9,7 +9,7 @@ enum class PropertyType(
 
     STRING(1, "string"),
     NUMBER(2, "uint"),
-    BOOLEAN(3, "boolean")
+    BOOLEAN(3, "bool")
     ;
 
     override fun getId(): Int = id
