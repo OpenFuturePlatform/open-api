@@ -31,11 +31,10 @@ internal class TransactionHandlerTests : UnitTest() {
 
     @Test
     fun handle() {
-        val addressValue = "0xba37163625b3f2e96112562858c12b75963af138"
-        val log = Log().apply { address = addressValue; data = "data" ; type = "type"}
+        val log = createLog()
         val user = User("104113085667282103363")
-        val scaffold = Scaffold(addressValue, OpenKey(user), "abi", "developerAddress", "description", "fiatAmount", 1,
-                "conversionAmount", "https://test.com", mutableListOf(), true)
+        val scaffold = Scaffold("0xba37163625b32e96112562858c12b75963af138", OpenKey(user), "abi", "developerAddress",
+                "description", "fiatAmount", 1, "conversionAmount", "https://test.com", mutableListOf(), true)
 
         given(scaffoldRepository.findByAddress(log.address)).willReturn(scaffold)
         given(transactionService.save(any(Transaction::class.java))).will { invocation -> invocation.arguments[0] }
@@ -45,7 +44,7 @@ internal class TransactionHandlerTests : UnitTest() {
 
     @Test
     fun handleWithEmptyScaffold() {
-        val log = Log().apply { address = "0xba37163625b3f2e96112562858c12b75963af138" }
+        val log = createLog()
 
         given(scaffoldRepository.findByAddress(log.address)).willReturn(null)
 
@@ -54,4 +53,5 @@ internal class TransactionHandlerTests : UnitTest() {
         verify(transactionService, never()).save(any(Transaction::class.java))
     }
 
+    private fun createLog(): Log = Log().apply { address = "0xba37163625b3f2e96112562858c12b75963af138"; data = "data" ; type = "type"}
 }

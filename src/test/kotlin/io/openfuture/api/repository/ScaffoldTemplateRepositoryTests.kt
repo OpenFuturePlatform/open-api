@@ -13,10 +13,8 @@ internal class ScaffoldTemplateRepositoryTests : RepositoryTests() {
 
     @Test
     fun findAllByUserAndDeletedIsFalse() {
-        val scaffoldTemplate = ScaffoldTemplate("template", "developerAddress", "description", "fiat_amount",
-                1, "conversionAmount", "webHook")
-        val deletedScaffoldTemplate = ScaffoldTemplate("deleted_template", "developerAddress", "description", "fiat_amount",
-                1, "conversionAmount", "webHook", mutableListOf(), true)
+        val scaffoldTemplate = createScaffoldTemplate("template")
+        val deletedScaffoldTemplate = createScaffoldTemplate("deleted_template").apply { deleted = true }
         entityManager.persist(scaffoldTemplate)
         entityManager.persist(deletedScaffoldTemplate)
 
@@ -24,5 +22,8 @@ internal class ScaffoldTemplateRepositoryTests : RepositoryTests() {
 
         assertThat(actualScaffoldTemplate).isEqualTo(listOf(scaffoldTemplate))
     }
+
+    private fun createScaffoldTemplate(scaffoldTemplateName: String): ScaffoldTemplate = ScaffoldTemplate(scaffoldTemplateName,
+            "developerAddress", "description", "fiat_amount", 1, "conversionAmount", "webHook", mutableListOf())
 
 }

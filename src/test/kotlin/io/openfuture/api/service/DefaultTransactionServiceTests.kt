@@ -31,8 +31,8 @@ internal class DefaultTransactionServiceTests : UnitTest() {
 
     @Test
     fun getAll() {
-        val scaffold = getScaffold()
-        val expectedTransactionPages = PageImpl(Collections.singletonList(getTransaction()), pageable, 1)
+        val scaffold = createScaffold()
+        val expectedTransactionPages = PageImpl(Collections.singletonList(createTransaction()), pageable, 1)
 
         given(repository.findAllByScaffold(scaffold, pageable)).willReturn(expectedTransactionPages)
 
@@ -43,7 +43,7 @@ internal class DefaultTransactionServiceTests : UnitTest() {
 
     @Test
     fun save() {
-        val transaction = getTransaction()
+        val transaction = createTransaction()
 
         given(repository.save(any(Transaction::class.java))).will { invocation -> invocation.arguments[0] }
 
@@ -52,13 +52,11 @@ internal class DefaultTransactionServiceTests : UnitTest() {
         assertThat(actualTransaction.data).isEqualTo(transaction.data)
         assertThat(actualTransaction.type).isEqualTo(transaction.type)
         assertThat(actualTransaction.scaffold).isEqualTo(transaction.scaffold)
-
-
     }
 
-    private fun getTransaction(): Transaction = Transaction(getScaffold(), "data binary", "type")
+    private fun createTransaction(): Transaction = Transaction(createScaffold(), "data binary", "type")
 
-    private fun getScaffold(): Scaffold {
+    private fun createScaffold(): Scaffold {
         val openKey = OpenKey(User("104113085667282103363"))
 
         return Scaffold("address", openKey, "abi", "developerAddress", "description", "fiatAmount", 1,

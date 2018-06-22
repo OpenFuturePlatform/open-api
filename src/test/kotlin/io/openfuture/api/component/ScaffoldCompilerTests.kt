@@ -1,16 +1,16 @@
 package io.openfuture.api.component
 
 import io.openfuture.api.config.UnitTest
-import io.openfuture.api.config.anyString
 import io.openfuture.api.config.propety.EthereumProperties
 import io.openfuture.api.domain.scaffold.ScaffoldPropertyDto
-import io.openfuture.api.entity.scaffold.PropertyType
+import io.openfuture.api.entity.scaffold.PropertyType.STRING
 import io.openfuture.api.exception.CompileException
+import org.apache.commons.io.IOUtils
 import org.junit.Before
 import org.junit.Test
-import org.mockito.ArgumentMatchers.anyMap
 import org.mockito.BDDMockito.given
 import org.mockito.Mock
+import java.nio.charset.Charset
 
 internal class ScaffoldCompilerTests : UnitTest() {
 
@@ -27,10 +27,11 @@ internal class ScaffoldCompilerTests : UnitTest() {
 
     @Test
     fun compile() {
-        val scaffoldPropertyDto = ScaffoldPropertyDto("SCAFFOLD_STRUCT_PROPERTIES", PropertyType.STRING, "value")
+        val parameters = createParameters()
+        val scaffoldContent = createScaffoldContent()
 
         given(properties.openTokenAddress).willReturn("0xba37163625b3f2e96112562858c12b75963af138")
-        given(templateProcessor.getContent(anyString(), anyMap())).willReturn(
+        given(templateProcessor.getContent(scaffoldContent, parameters)).willReturn(
                 """pragma solidity ^0.4.19;
 
                 library SafeMath {
@@ -176,15 +177,16 @@ internal class ScaffoldCompilerTests : UnitTest() {
                     }
                 }""")
 
-        scaffoldCompiler.compile(listOf(scaffoldPropertyDto))
+        scaffoldCompiler.compile(createScaffoldPropertyDtos())
     }
 
     @Test(expected = CompileException::class)
     fun compileWithIncorrectScaffold() {
-        val scaffoldPropertyDto = ScaffoldPropertyDto("SCAFFOLD_STRUCT_PROPERTIES", PropertyType.STRING, "value")
+        val parameters = createParameters()
+        val scaffoldContent = createScaffoldContent()
 
         given(properties.openTokenAddress).willReturn("0xba37163625b3f2e96112562858c12b75963af138")
-        given(templateProcessor.getContent(anyString(), anyMap())).willReturn(
+        given(templateProcessor.getContent(scaffoldContent, parameters)).willReturn(
                 """function getScaffoldSummary() public view returns (string, string, string, uint, uint, address, uint) {
                         return (
                           scaffoldDescription,
@@ -199,7 +201,25 @@ internal class ScaffoldCompilerTests : UnitTest() {
 
                 }""")
 
-        scaffoldCompiler.compile(listOf(scaffoldPropertyDto))
+        scaffoldCompiler.compile(createScaffoldPropertyDtos())
+    }
+
+    private fun createScaffoldPropertyDtos(): List<ScaffoldPropertyDto> = listOf(ScaffoldPropertyDto("value", STRING, "defaultValue"))
+
+    private fun createParameters(): Map<String, String> {
+        val params = HashMap<String, String>()
+        params["SCAFFOLD_STRUCT_PROPERTIES"] = "string value;"
+        params["CUSTOM_SCAFFOLD_PARAMETERS"] = "string value"
+        params["SCAFFOLD_STRUCT_TRANSACTION_ARGUMENTS"] = "value: value"
+        params["CUSTOM_RETURN_VARIABLES"] = "value"
+        params["OPEN_TOKEN_ADDRESS"] = "0xba37163625b3f2e96112562858c12b75963af138"
+
+        return params
+    }
+
+    private fun createScaffoldContent(): String {
+        val resource = javaClass.classLoader.getResource("templates/scaffold.ftl")
+        return IOUtils.toString(resource, Charset.defaultCharset())
     }
 
 }

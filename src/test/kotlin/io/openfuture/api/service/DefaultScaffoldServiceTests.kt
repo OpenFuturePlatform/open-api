@@ -10,7 +10,7 @@ import io.openfuture.api.domain.scaffold.*
 import io.openfuture.api.entity.auth.OpenKey
 import io.openfuture.api.entity.auth.User
 import io.openfuture.api.entity.scaffold.Currency
-import io.openfuture.api.entity.scaffold.PropertyType
+import io.openfuture.api.entity.scaffold.PropertyType.STRING
 import io.openfuture.api.entity.scaffold.Scaffold
 import io.openfuture.api.entity.scaffold.ScaffoldProperty
 import io.openfuture.api.exception.DeployException
@@ -18,7 +18,6 @@ import io.openfuture.api.exception.FunctionCallException
 import io.openfuture.api.exception.NotFoundException
 import io.openfuture.api.repository.ScaffoldPropertyRepository
 import io.openfuture.api.repository.ScaffoldRepository
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.ethereum.solidity.compiler.CompilationResult
 import org.junit.Before
@@ -78,23 +77,23 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
 
     @Test
     fun getAll() {
-        val expectedScaffoldPages = PageImpl(Collections.singletonList(getScaffold()), pageable, 1)
+        val expectedScaffoldPages = PageImpl(Collections.singletonList(createScaffold()), pageable, 1)
 
         given(repository.findAllByOpenKeyUser(user, pageable)).willReturn(expectedScaffoldPages)
 
         val actualScaffoldPages = service.getAll(user, pageable)
 
-        Assertions.assertThat(actualScaffoldPages).isEqualTo(expectedScaffoldPages)
+        assertThat(actualScaffoldPages).isEqualTo(expectedScaffoldPages)
     }
 
     @Test
     fun get() {
-        val expectedScaffold = getScaffold()
+        val expectedScaffold = createScaffold()
         given(repository.findByAddressAndOpenKeyUser(addressValue, user)).willReturn(expectedScaffold)
 
         val actualScaffold = service.get(addressValue, user)
 
-        Assertions.assertThat(actualScaffold).isEqualTo(expectedScaffold)
+        assertThat(actualScaffold).isEqualTo(expectedScaffold)
     }
 
     @Test(expected = NotFoundException::class)
@@ -134,10 +133,9 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
 
     @Test
     fun deploy() {
-        val expectedScaffold = getScaffold()
-        val scaffoldPropertyDto = ScaffoldPropertyDto("name", PropertyType.STRING, "value")
+        val expectedScaffold = createScaffold()
         val request = DeployScaffoldRequest(openKeyValue, addressValue, "description", "1", Currency.USD, "1",
-                null, listOf(scaffoldPropertyDto))
+                null, listOf(createScaffoldPropertyDto()))
         val optionalTransactionReceipt = Optional.of(TransactionReceipt().apply { contractAddress = addressValue })
         val contractMetadata = CompilationResult.ContractMetadata().apply { abi = "abi"; bin = "bin" }
 
@@ -160,8 +158,8 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
 
     @Test(expected = DeployException::class)
     fun deployWithDeployException() {
-        val scaffoldPropertyDto = ScaffoldPropertyDto("name", PropertyType.STRING, "value")
-        val request = DeployScaffoldRequest(openKeyValue, "1", "description", "1", Currency.USD, "1", null, listOf(scaffoldPropertyDto))
+        val request = DeployScaffoldRequest(openKeyValue, "1", "description", "1", Currency.USD, "1",
+                null, listOf(createScaffoldPropertyDto()))
 
         mockDeploy()
         given(transaction.hasError()).willReturn(true)
@@ -174,12 +172,12 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
     @Test
     fun save() {
         val openKey = OpenKey(user.apply { id = 1L }, null, openKeyValue).apply { id = 1L }
-        val scaffold = getScaffold()
-        val scaffoldPropertyDto = ScaffoldPropertyDto("name", PropertyType.STRING, "value")
+        val scaffold = createScaffold()
+        val scaffoldPropertyDto = createScaffoldPropertyDto()
         val scaffoldProperty = ScaffoldProperty.of(scaffold, scaffoldPropertyDto)
         val request = SaveScaffoldRequest(addressValue, "abi", openKeyValue, "developerAddress",
                 "description", "1", Currency.USD, "1").apply { properties = listOf(scaffoldPropertyDto) }
-        val expectedScaffold = getScaffold().apply { property.add(scaffoldProperty) }
+        val expectedScaffold = createScaffold().apply { property.add(scaffoldProperty) }
 
         given(openKeyService.get(openKeyValue)).willReturn(openKey)
         given(repository.save(any(Scaffold::class.java))).will { invocation -> invocation.arguments[0] }
@@ -193,9 +191,24 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
     }
 
     @Test
+    fun update() {
+        val description = "description"
+        val scaffold = createScaffold()
+        val request = UpdateScaffoldRequest(description)
+
+        given(repository.findByAddressAndOpenKeyUser(addressValue, user)).willReturn(scaffold)
+        given(repository.save(any(Scaffold::class.java))).will { invocation -> invocation.arguments[0] }
+
+        val actualScaffold = service.update(addressValue, user, request)
+
+        assertThat(actualScaffold.address).isEqualTo(scaffold.address)
+        assertThat(actualScaffold.description).isEqualTo(description)
+    }
+
+    @Test
     fun setWebHook() {
         val webHookValue = "webHook"
-        val expectedScaffold = getScaffold()
+        val expectedScaffold = createScaffold()
         expectedScaffold.webHook = webHookValue
         val request = SetWebHookRequest(webHookValue)
 
@@ -204,24 +217,24 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
 
         val actualScaffold = service.setWebHook(addressValue, request, user)
 
-        Assertions.assertThat(actualScaffold).isEqualTo(expectedScaffold)
+        assertThat(actualScaffold).isEqualTo(expectedScaffold)
     }
 
     @Test
     fun getScaffoldSummary() {
-        val expectedScaffold = getScaffold()
+        val expectedScaffold = createScaffold()
 
         mockGetCall()
         given(repository.findByAddressAndOpenKeyUser(addressValue, user)).willReturn(expectedScaffold)
 
         val actualScaffold = service.getScaffoldSummary(addressValue, user)
 
-        Assertions.assertThat(actualScaffold).isNotNull
+        assertThat(actualScaffold).isNotNull
     }
 
     @Test
     fun deactivate() {
-        val expectedScaffold = getScaffold()
+        val expectedScaffold = createScaffold()
 
         mockGetCall()
         given(repository.findByAddressAndOpenKeyUser(addressValue, user)).willReturn(expectedScaffold)
@@ -233,7 +246,7 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
 
     @Test(expected = FunctionCallException::class)
     fun deactivateWithError() {
-        val expectedScaffold = getScaffold()
+        val expectedScaffold = createScaffold()
         val nonce = BigInteger.ZERO
 
         given(repository.findByAddressAndOpenKeyUser(addressValue, user)).willReturn(expectedScaffold)
@@ -264,9 +277,8 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
     }
 
     private fun mockDeploy() {
-        val scaffoldPropertyDto = ScaffoldPropertyDto("name", PropertyType.STRING, "value")
         val openKey = OpenKey(user)
-        val compileScaffoldRequest = CompileScaffoldRequest(openKey.value, listOf(scaffoldPropertyDto))
+        val compileScaffoldRequest = CompileScaffoldRequest(openKey.value, listOf(createScaffoldPropertyDto()))
         val contractMetadata = CompilationResult.ContractMetadata().apply { abi = "abi"; bin = "bin" }
 
         given(openKeyService.get(openKeyValue)).willReturn(openKey)
@@ -287,6 +299,39 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
         given(transactionRequest.send()).willReturn(transaction)
     }
 
+    @Test
+    fun addShareHolder() {
+        val scaffold = createScaffold()
+        val request = AddShareHolderRequest(addressValue, 5)
+
+        mockGetCall()
+        given(repository.findByAddressAndOpenKeyUser(addressValue, user)).willReturn(scaffold)
+
+        service.addShareHolder(addressValue, user, request)
+    }
+
+    @Test
+    fun updateShareHolder() {
+        val scaffold = createScaffold()
+        val request = UpdateShareHolderRequest(addressValue, 10)
+
+        mockGetCall()
+        given(repository.findByAddressAndOpenKeyUser(addressValue, user)).willReturn(scaffold)
+
+        service.updateShareHolder(addressValue, user, request)
+    }
+
+    @Test
+    fun removeShareHolder() {
+        val scaffold = createScaffold()
+        val request = RemoveShareHolderRequest(addressValue)
+
+        mockGetCall()
+        given(repository.findByAddressAndOpenKeyUser(addressValue, user)).willReturn(scaffold)
+
+        service.removeShareHolder(addressValue, user, request)
+    }
+
     private fun mockGetCall() {
         given(properties.getCredentials()).willReturn(credentials)
         given(credentials.address).willReturn(addressValue)
@@ -305,11 +350,13 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
                 "00000000000000000000000000000000000000000000000000000003")
     }
 
-    private fun getScaffold(): Scaffold {
+    private fun createScaffold(): Scaffold {
         val openKey = OpenKey(user.apply { id = 1L }, null, openKeyValue).apply { id = 1L }
 
         return Scaffold(addressValue, openKey, "abi", addressValue, "description", "1", 1,
                 "1", "webHook", mutableListOf(), true)
     }
+
+    private fun createScaffoldPropertyDto(): ScaffoldPropertyDto = ScaffoldPropertyDto("name", STRING, "value")
 
 }

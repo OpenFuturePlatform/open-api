@@ -30,7 +30,7 @@ class DefaultOpenKeyServiceTests : UnitTest() {
 
     @Test
     fun getAllByUser() {
-        val user = getUser()
+        val user = createUser()
         val expectedOpenKeys = listOf(OpenKey(user), OpenKey(user))
 
         given(repository.findAllByUser(user)).willReturn(expectedOpenKeys)
@@ -42,7 +42,7 @@ class DefaultOpenKeyServiceTests : UnitTest() {
 
     @Test
     fun get() {
-        val expectedOpenKey = getOpenKey()
+        val expectedOpenKey = createOpenKey()
 
         given(repository.findByValueAndEnabledIsTrueAndExpiredDateIsNullOrExpiredDateAfter(eq(openKeyValue),
                 any(Date::class.java))).willReturn(expectedOpenKey)
@@ -62,7 +62,7 @@ class DefaultOpenKeyServiceTests : UnitTest() {
 
     @Test
     fun find() {
-        val expectedOpenKey = getOpenKey()
+        val expectedOpenKey = createOpenKey()
 
         given(repository.findByValueAndEnabledIsTrueAndExpiredDateIsNullOrExpiredDateAfter(eq(openKeyValue),
                 any(Date::class.java))).willReturn(expectedOpenKey)
@@ -74,7 +74,7 @@ class DefaultOpenKeyServiceTests : UnitTest() {
 
     @Test
     fun generate() {
-        val user = getUser()
+        val user = createUser()
 
         given(repository.save(any(OpenKey::class.java))).will { invocation -> invocation.arguments[0] }
 
@@ -84,8 +84,23 @@ class DefaultOpenKeyServiceTests : UnitTest() {
         assertThat(actualOpenKey.value).isNotNull()
     }
 
-    private fun getOpenKey(): OpenKey = OpenKey(getUser(), null, openKeyValue, true)
+    @Test
+    fun disable() {
+        val expectedOpenKey = createOpenKey()
 
-    private fun getUser(): User = User("104113085667282103363", 0, Collections.emptySet(), Collections.emptySet())
+        given(repository.findByValueAndEnabledIsTrueAndExpiredDateIsNullOrExpiredDateAfter(eq(openKeyValue),
+                any(Date::class.java))).willReturn(expectedOpenKey)
+
+        given(repository.save(any(OpenKey::class.java))).will { invocation -> invocation.arguments[0] }
+
+        val actualOpenKey = service.disable(openKeyValue)
+
+        assertThat(actualOpenKey.value).isEqualTo(openKeyValue)
+        assertThat(actualOpenKey.enabled).isFalse()
+    }
+
+    private fun createOpenKey(): OpenKey = OpenKey(createUser(), null, openKeyValue, true)
+
+    private fun createUser(): User = User("104113085667282103363", 0, Collections.emptySet(), Collections.emptySet())
 
 }

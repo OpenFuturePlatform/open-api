@@ -27,7 +27,7 @@ internal class DefaultUserServiceTests : UnitTest() {
     @Test
     fun findByGoogleId() {
         val googleId = "104113085667282103363"
-        val expectedUser = getUser(googleId)
+        val expectedUser = createUser(googleId).apply { id = 1L }
 
         given(repository.findByGoogleId(googleId)).willReturn(expectedUser)
 
@@ -38,7 +38,7 @@ internal class DefaultUserServiceTests : UnitTest() {
 
     @Test
     fun save() {
-        val user = User("104113085667282103363")
+        val user = createUser("104113085667282103363")
         val openKey = OpenKey(user, null, "op_pk_9de7cbb4-857c-49e9-87d2-fc91428c4c12")
 
         given(repository.save(any(User::class.java))).will { invocation -> invocation.arguments[0] }
@@ -50,6 +50,6 @@ internal class DefaultUserServiceTests : UnitTest() {
         assertThat(actualUser.googleId).isEqualTo(user.googleId)
     }
 
-    private fun getUser(googleId: String): User = User(googleId).apply { id = 1L }
+    private fun createUser(googleId: String): User = User(googleId, 1)
 
 }
