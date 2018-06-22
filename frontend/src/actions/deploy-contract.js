@@ -7,19 +7,18 @@ const setWebHook = async (address, webHook) => {
 };
 
 export const deployContractByApi = (formValues, history) => async dispatch => {
-  let res = {};
   dispatch({type: SHOW_MODAL, payload: {showModal: true}});
 
   try {
-    res = await axios.post('/api/scaffolds/doDeploy', formValues);
+    const {data: scaffold} = await axios.post('/api/scaffolds/doDeploy', formValues);
     if (formValues.webHook) {
-      await setWebHook(res.address, formValues.webHook);
+      await setWebHook(scaffold.address, formValues.webHook);
     }
     dispatch({
       type: SHOW_MODAL,
-      payload: {contract: res.data, showLoader: false},
+      payload: {contract: scaffold, showLoader: false},
     });
-    return res.address;
+    return scaffold.address;
   } catch (err) {
     const response = err ? err.response : null;
     const status = response ? response.status : '';
@@ -50,11 +49,7 @@ export const processDeploy = async (contract, bin, formValues) => {
       formValues.fiatAmount,
       formValues.currency,
       web3.utils.toWei(formValues.conversionAmount.toString())]
-  }).send({
-    from: formValues.developerAddress,
-    gas: 1700000,
-    gasPrice: '10000000000'
-  }).on('error', (error) => console.log('>> ', error));
+  }).send({from: formValues.developerAddress}).on('error', (error) => console.log('>> ', error));
 };
 
 export const deployContract = (formValues) => async dispatch => {
