@@ -1,0 +1,1 @@
+UPDATE roles SET key='ROLE_MASTER' WHERE key='ROLE_DEPLOY'
