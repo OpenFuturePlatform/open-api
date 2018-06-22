@@ -13,7 +13,8 @@ import java.util.*
 
 internal class TransactionRepositoryTests : RepositoryTests() {
 
-    @Autowired private lateinit var repository: TransactionRepository
+    @Autowired
+    private lateinit var repository: TransactionRepository
 
 
     @Test

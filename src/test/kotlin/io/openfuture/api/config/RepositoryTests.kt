@@ -13,6 +13,7 @@ import org.springframework.test.context.junit4.SpringRunner
 @AutoConfigureTestDatabase(replace = NONE)
 abstract class RepositoryTests {
 
-    @Autowired protected lateinit var entityManager: TestEntityManager
+    @Autowired
+    protected lateinit var entityManager: TestEntityManager
 
 }

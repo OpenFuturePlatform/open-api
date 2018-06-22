@@ -10,7 +10,8 @@ import java.util.*
 
 internal class OpenKeyRepositoryTests : RepositoryTests() {
 
-    @Autowired private lateinit var repository: OpenKeyRepository
+    @Autowired
+    private lateinit var repository: OpenKeyRepository
 
 
     @Test

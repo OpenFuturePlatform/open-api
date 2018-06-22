@@ -8,7 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired
 
 internal class ScaffoldTemplateRepositoryTests : RepositoryTests() {
 
-    @Autowired private lateinit var repository: ScaffoldTemplateRepository
+    @Autowired
+    private lateinit var repository: ScaffoldTemplateRepository
 
 
     @Test

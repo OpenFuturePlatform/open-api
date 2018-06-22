@@ -8,7 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired
 
 internal class UserRepositoryTests : RepositoryTests() {
 
-    @Autowired private lateinit var repository: UserRepository
+    @Autowired
+    private lateinit var repository: UserRepository
 
 
     @Test

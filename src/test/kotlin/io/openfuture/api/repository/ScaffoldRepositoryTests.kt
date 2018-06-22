@@ -12,7 +12,8 @@ import java.util.*
 
 internal class ScaffoldRepositoryTests : RepositoryTests() {
 
-    @Autowired private lateinit var repository: ScaffoldRepository
+    @Autowired
+    private lateinit var repository: ScaffoldRepository
 
 
     @Test
