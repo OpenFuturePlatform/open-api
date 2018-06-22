@@ -112,7 +112,7 @@ contract OpenScaffold {
 
     // Throws if contract is not activated.
     modifier activated() {
-        require(OPENToken.balanceOf(address(this)) >= ACTIVATING_TOKENS_AMOUNT);
+        //require(OPENToken.balanceOf(address(this)) >= ACTIVATING_TOKENS_AMOUNT);
         _;
     }
 
@@ -137,7 +137,7 @@ contract OpenScaffold {
 
     // deactivate Scaffold contract by vendor
     function deactivate() onlyVendor public activated {
-        OPENToken.transfer(vendorAddress, OPENToken.balanceOf(address(this)));
+        //OPENToken.transfer(vendorAddress, OPENToken.balanceOf(address(this)));
         ActivatedScaffold(false);
     }
 

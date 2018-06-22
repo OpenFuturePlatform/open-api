@@ -292,7 +292,7 @@ return rowToDelete;
             vendorAmount = vendorAmount.sub(shareHolderAmount);
 
             // transfer amount for shareholder
-            withdrawFunds(shareHolderAddress, shareHolderAmount);
+            //withdrawFunds(shareHolderAddress, shareHolderAmount);
 
             PayedForShareHolder(
             shareHolderAddress,
@@ -310,7 +310,9 @@ return rowToDelete;
         });
 
         openScaffoldTransactions.push(newTransaction);
-        return scaffoldTransactionIndex++;
+
+        scaffoldTransactionIndex++;
+        return scaffoldTransactionIndex;
     }
 
 // withdraw funds

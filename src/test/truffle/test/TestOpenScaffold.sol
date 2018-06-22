@@ -3,48 +3,23 @@ pragma solidity ^0.4.19;
 import "truffle/Assert.sol";
 import "truffle/DeployedAddresses.sol";
 import "../contracts/OpenScaffold.sol";
+import "../contracts/ExposedOpenScaffold.sol";
 
-
-contract ExposedContract is OpenScaffold {
-
-    function ExposedContract(
-        address _vendorAddress,
-        address _platformAddress,
-        string _description,
-        string _fiatAmount,
-        string _fiatCurrency,
-        uint _scaffoldAmount
-        ) OpenScaffold(
-            _vendorAddress,
-            _platformAddress,
-            _description,
-            _fiatAmount,
-            _fiatCurrency,
-            _scaffoldAmount)
-        public {
-    }
-
-    function _createScaffoldTransaction(address customerAddress) public returns(uint){
-        createScaffoldTransaction(customerAddress);
-    }
-
-}
 
 contract TestOpenScaffold {
 
-    address shareHolderAddress1 = 0x32539E7cd412335BeA8256e9f3dCf8288253326f;
-    address shareHolderAddress2 = 0x62A64e70277B9DFf1EDE0E0032b5e4291df1599d;
+    address shareHolderAddress1 = 0xc5fdf4076b8f3a5357c5e395ab970b5b54098fef;
+    address shareHolderAddress2 = 0x821aea9a577a9b44299b9c15c88cf3087f3b5544;
 
     uint8 holderShare1 = 30;
     uint8 holderShare2 = 40;
 
 
     function createScaffold() public returns(OpenScaffold) {
-        return new OpenScaffold(0x32539E7cd412335BeA8256e9f3dCf8288253326f,
-                                0x32539E7cd412335BeA8256e9f3dCf8288253326f,
+        return new OpenScaffold(0x627306090abab3a6e1400e9345bc60c78a8bef57,
+                                0xf17f52151ebef6c7334fad080c5704d77216b732,
                                 "description", "100", "usd", 10000);
     }
-
 
     function testAddShareHolder() public {
         OpenScaffold scaffold = createScaffold();
@@ -102,19 +77,28 @@ contract TestOpenScaffold {
     }
 
     function testCreateScaffoldTransaction() public {
-        ExposedContract eScaffold = new ExposedContract(0x32539E7cd412335BeA8256e9f3dCf8288253326f,
-                                                        0x32539E7cd412335BeA8256e9f3dCf8288253326f,
-                                                        "description", "100", "usd", 10000);
+        ExposedOpenScaffold eScaffold = ExposedOpenScaffold(DeployedAddresses.ExposedOpenScaffold());
 
-        eScaffold._createScaffoldTransaction(0x5aeda56215b167893e80b4fe645ba6d5bab767de);
+        uint index1 = eScaffold._createScaffoldTransaction(0x5aeda56215b167893e80b4fe645ba6d5bab767de);
+        uint index2 = eScaffold._createScaffoldTransaction(0x5aeda56215b167893e80b4fe645ba6d5bab767de);
+
+        uint expectedIndex = 2;
+        Assert.equal(index2, expectedIndex, "Wrong index!");
     }
 
-//    function testPay() public {
-//        ExposedContract eScaffold = new ExposedContract(0x32539E7cd412335BeA8256e9f3dCf8288253326f,
-//        0x32539E7cd412335BeA8256e9f3dCf8288253326f,
-//        "description", "100", "usd", 10000);
-//
-//        eScaffold._pay(0x32539E7cd412335BeA8256e9f3dCf8288253326f, 10000);
-//    }
+    function testPayToShareHoldersWithoutShareholders() public {
+        ExposedOpenScaffold eScaffold = ExposedOpenScaffold(DeployedAddresses.ExposedOpenScaffold());
+
+        uint expectedVendorAmount = 100;
+        Assert.equal(eScaffold._payToShareHolders(100), expectedVendorAmount, "Wrong vendor amount");
+    }
+
+    function testPayToShareHoldersWithShareholders() public {
+        ExposedOpenScaffold eScaffold = ExposedOpenScaffold(DeployedAddresses.ExposedOpenScaffold());
+        eScaffold.addShareHolder(shareHolderAddress1, holderShare1);
+
+        uint expectedVendorAmount = 100 - holderShare1;
+        Assert.equal(eScaffold._payToShareHolders(100), expectedVendorAmount, "Wrong vendor amount");
+    }
 
 }
