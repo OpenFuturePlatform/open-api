@@ -46,6 +46,15 @@ contract OpenScaffold {
 
     using SafeMath for uint256;
 
+    enum EventType {
+        PAYMENT_COMPLETED,
+        FUNDS_DEPOSITED,
+        ACTIVATED_SCAFFOLD,
+        ADDED_SHARE_HOLDER,
+        EDITED_SHARE_HOLDER,
+        DELETED_SHARE_HOLDER,
+        PAYED_FOR_SHARE_HOLDER
+    }
 
     // on-chain transaction storage
     struct OpenScaffoldTransaction {
@@ -62,18 +71,19 @@ contract OpenScaffold {
 
     // events
     event PaymentCompleted(
+        EventType eventType,
         address customerAddress,
         uint transactionAmount,
         uint scaffoldTransactionIndex,
         ${CUSTOM_SCAFFOLD_PARAMETERS}
         );
-    event FundsDeposited(uint _amount, address _toAddress);
-    event ActivatedScaffold(bool activated);
+    event FundsDeposited(EventType eventType, uint _amount, address _toAddress);
+    event ActivatedScaffold(EventType eventType, bool activated);
     // shareholders events
-    event AddedShareHolder(address userAddress, uint partnerShare);
-    event EditedShareHolder(address userAddress, uint partnerShare);
-    event DeletedShareHolder(address userAddress);
-    event PayedForShareHolder(address userAddress, uint amount);
+    event AddedShareHolder(EventType eventType, address userAddress, uint partnerShare);
+    event EditedShareHolder(EventType eventType, address userAddress, uint partnerShare);
+    event DeletedShareHolder(EventType eventType, address userAddress);
+    event PayedForShareHolder(EventType eventType, address userAddress, uint amount);
 
 
     // custom dataTypes
@@ -145,7 +155,7 @@ contract OpenScaffold {
     // deactivate Scaffold contract by vendor
     function deactivate() onlyVendor public activated {
         OPENToken.transfer(vendorAddress, OPENToken.balanceOf(address(this)));
-        ActivatedScaffold(false);
+        ActivatedScaffold(EventType.ACTIVATED_SCAFFOLD, false);
     }
 
     // get shareholder share by address
@@ -199,6 +209,7 @@ contract OpenScaffold {
             totalAmountShares += partnerShare;
 
             AddedShareHolder(
+                EventType.ADDED_SHARE_HOLDER,
                 shareHolderAddress,
                 partnerShare);
 
@@ -221,6 +232,7 @@ contract OpenScaffold {
             partners[shareHolderAddress].share = partnerShare;
 
             EditedShareHolder(
+                EventType.EDITED_SHARE_HOLDER,
                 shareHolderAddress,
                 partnerShare);
 
@@ -244,7 +256,7 @@ contract OpenScaffold {
 
             shareHolderAddresses.length--;
 
-            DeletedShareHolder(shareHolderAddress);
+            DeletedShareHolder(EventType.DELETED_SHARE_HOLDER, shareHolderAddress);
 
             return rowToDelete;
     }
@@ -274,6 +286,7 @@ contract OpenScaffold {
             withdrawFunds(shHoldrAddress, shHoldrAmount);
 
             PayedForShareHolder(
+                EventType.PAYED_FOR_SHARE_HOLDER,
                 shHoldrAddress,
                 shHoldrAmount);
             }
@@ -294,6 +307,7 @@ contract OpenScaffold {
         }
 
         PaymentCompleted(
+            EventType.PAYMENT_COMPLETED,
             customerAddress,
             vendorAmount,
             scaffoldTransactionIndex,
@@ -304,7 +318,7 @@ contract OpenScaffold {
     // withdraw funds
     function withdrawFunds(address to, uint amount) private {
         to.transfer(amount);
-        FundsDeposited(amount, to);
+        FundsDeposited(EventType.FUNDS_DEPOSITED,amount, to);
     }
 
     // check of the partner's address
