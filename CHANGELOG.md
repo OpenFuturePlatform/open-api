@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Added
+- Back-end: Tests to controllers
 
 ## [2.2.0] - 2018-06-22
 ### Added
