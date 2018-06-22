@@ -24,9 +24,10 @@ contract ExposedContract is OpenScaffold {
         public {
     }
 
-    function _pay(address who, uint amount) public {
-        pay(who, amount);
+    function _createScaffoldTransaction(address customerAddress) public returns(uint){
+        createScaffoldTransaction(customerAddress);
     }
+
 }
 
 contract TestOpenScaffold {
@@ -98,6 +99,14 @@ contract TestOpenScaffold {
 
         uint expectedCount = 0;
         Assert.equal(scaffold.getShareHolderCount(), expectedCount, "Shareholder wasn't removed");
+    }
+
+    function testCreateScaffoldTransaction() public {
+        ExposedContract eScaffold = new ExposedContract(0x32539E7cd412335BeA8256e9f3dCf8288253326f,
+                                                        0x32539E7cd412335BeA8256e9f3dCf8288253326f,
+                                                        "description", "100", "usd", 10000);
+
+        eScaffold._createScaffoldTransaction(0x5aeda56215b167893e80b4fe645ba6d5bab767de);
     }
 
 //    function testPay() public {

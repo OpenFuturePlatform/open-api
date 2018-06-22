@@ -250,18 +250,18 @@ return rowToDelete;
 
     // transfer amount according shares
     function payWithShares(address customerAddress, uint transactionAmount) internal {
-        // developer fee
-        uint256 developerFee = transactionAmount.div(100).mul(3);
+        // platform fee
+        uint256 platformFee = transactionAmount.div(100).mul(3);
         // unpaid amount
-        uint256 unpaidAmount = transactionAmount.sub(developerFee);
+        uint256 unpaidAmount = transactionAmount.sub(platformFee);
         // vendor amount
         uint256 vendorAmount = payToShareHolders(unpaidAmount);
 
         // create transaction
         uint256 transactionIndex  = createScaffoldTransaction(customerAddress);
 
-        // transfer amount for developer
-        withdrawFunds(developerAddress, developerFee);
+        // transfer amount for platform
+        withdrawFunds(platformAddress, platformFee);
         // transfer amount for vendor
         if(vendorAmount > 0) {
             withdrawFunds(vendorAddress, vendorAmount);
