@@ -10,7 +10,7 @@ import scaffoldsReducer from './scaffoldsReducer';
 import withdrawModalReducer from './withdrawModalReducer';
 import globalProperties from "./globalProperties";
 import ethAccount from "./ethAccount";
-import devShares from './devShares';
+import shareHolders from './shareHolders';
 import scaffoldTemplates from './scaffoldTemplates';
 
 export default combineReducers({
@@ -26,5 +26,5 @@ export default combineReducers({
   withdrawModalInfo: withdrawModalReducer,
   ethAccount,
   globalProperties,
-  devShares
+  shareHolders
 });
