@@ -47,15 +47,6 @@ internal class ScaffoldRepositoryTests : RepositoryTests() {
         assertThat(actualScaffold.content[0]).isEqualTo(expectedScaffold)
     }
 
-    @Test
-    fun countByEnabledIsFalseAndOpenKeyUser() {
-        val scaffold = persistEntities()
-        val user = scaffold.openKey.user
-
-        val actualCount = repository.countByEnabledIsFalseAndOpenKeyUser(user)
-
-        assertThat(actualCount).isEqualTo(1)
-    }
 
     private fun persistEntities(): Scaffold {
         val user = User("googleId")

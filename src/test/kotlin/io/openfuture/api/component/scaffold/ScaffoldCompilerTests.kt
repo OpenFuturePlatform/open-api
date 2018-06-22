@@ -1,5 +1,6 @@
-package io.openfuture.api.component
+package io.openfuture.api.component.scaffold
 
+import io.openfuture.api.component.template.TemplateProcessor
 import io.openfuture.api.config.UnitTest
 import io.openfuture.api.config.propety.EthereumProperties
 import io.openfuture.api.domain.scaffold.ScaffoldPropertyDto

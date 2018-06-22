@@ -1,4 +1,4 @@
-package io.openfuture.api.component
+package io.openfuture.api.component.web3
 
 import io.openfuture.api.config.UnitTest
 import io.openfuture.api.config.any
@@ -34,7 +34,7 @@ internal class TransactionHandlerTests : UnitTest() {
         val log = createLog()
         val user = User("104113085667282103363")
         val scaffold = Scaffold("0xba37163625b32e96112562858c12b75963af138", OpenKey(user), "abi", "developerAddress",
-                "description", "fiatAmount", 1, "conversionAmount", "https://test.com", mutableListOf(), true)
+                "description", "fiatAmount", 1, "conversionAmount", "https://test.com", mutableListOf())
 
         given(scaffoldRepository.findByAddress(log.address)).willReturn(scaffold)
         given(transactionService.save(any(Transaction::class.java))).will { invocation -> invocation.arguments[0] }

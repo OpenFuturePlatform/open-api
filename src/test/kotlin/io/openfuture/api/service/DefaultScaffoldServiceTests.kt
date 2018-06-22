@@ -1,10 +1,9 @@
 package io.openfuture.api.service
 
-import io.openfuture.api.component.ScaffoldCompiler
-import io.openfuture.api.component.TransactionHandler
+import io.openfuture.api.component.scaffold.ScaffoldCompiler
+import io.openfuture.api.component.web3.Web3Wrapper
 import io.openfuture.api.config.UnitTest
 import io.openfuture.api.config.any
-import io.openfuture.api.config.anyString
 import io.openfuture.api.config.propety.EthereumProperties
 import io.openfuture.api.domain.scaffold.*
 import io.openfuture.api.entity.auth.OpenKey
@@ -13,28 +12,29 @@ import io.openfuture.api.entity.scaffold.Currency
 import io.openfuture.api.entity.scaffold.PropertyType.STRING
 import io.openfuture.api.entity.scaffold.Scaffold
 import io.openfuture.api.entity.scaffold.ScaffoldProperty
-import io.openfuture.api.exception.DeployException
-import io.openfuture.api.exception.FunctionCallException
+import io.openfuture.api.entity.scaffold.ScaffoldSummary
 import io.openfuture.api.exception.NotFoundException
 import io.openfuture.api.repository.ScaffoldPropertyRepository
 import io.openfuture.api.repository.ScaffoldRepository
+import io.openfuture.api.repository.ScaffoldSummaryRepository
+import io.openfuture.api.repository.ShareHolderRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.ethereum.solidity.compiler.CompilationResult
 import org.junit.Before
 import org.junit.Test
 import org.mockito.BDDMockito.given
 import org.mockito.Mock
+import org.mockito.Mockito.never
+import org.mockito.Mockito.verify
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
+import org.web3j.abi.FunctionEncoder
+import org.web3j.abi.datatypes.Address
+import org.web3j.abi.datatypes.Utf8String
+import org.web3j.abi.datatypes.generated.Uint256
+import org.web3j.abi.datatypes.generated.Uint8
 import org.web3j.crypto.Credentials
-import org.web3j.crypto.ECKeyPair
-import org.web3j.protocol.Web3j
-import org.web3j.protocol.core.DefaultBlockParameter
-import org.web3j.protocol.core.DefaultBlockParameterName
-import org.web3j.protocol.core.Request
-import org.web3j.protocol.core.Response
-import org.web3j.protocol.core.methods.request.Transaction
-import org.web3j.protocol.core.methods.response.*
+import org.web3j.utils.Convert
 import java.math.BigInteger
 import java.util.*
 
@@ -44,22 +44,11 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
     @Mock private lateinit var repository: ScaffoldRepository
     @Mock private lateinit var properties: EthereumProperties
     @Mock private lateinit var openKeyService: OpenKeyService
-    @Mock private lateinit var transactionHandler: TransactionHandler
     @Mock private lateinit var propertyRepository: ScaffoldPropertyRepository
+    @Mock private lateinit var scaffoldSummaryRepository: ScaffoldSummaryRepository
+    @Mock private lateinit var shareHolderRepository: ShareHolderRepository
 
-    @Mock private lateinit var web3j: Web3j
-    @Mock private lateinit var call: EthCall
-    @Mock private lateinit var error: Response.Error
-
-    @Mock private lateinit var callRequest: Request<Transaction, EthCall>
-    @Mock private lateinit var transactionRequest: Request<String, EthSendTransaction>
-    @Mock private lateinit var transactionCountRequest: Request<String, EthGetTransactionCount>
-    @Mock private lateinit var transactionReceiptRequest: Request<String, EthGetTransactionReceipt>
-
-    @Mock private lateinit var transaction: EthSendTransaction
-    @Mock private lateinit var transactionCount: EthGetTransactionCount
-    @Mock private lateinit var transactionReceipt: EthGetTransactionReceipt
-
+    @Mock private lateinit var web3: Web3Wrapper
     @Mock private lateinit var pageable: Pageable
     @Mock private lateinit var credentials: Credentials
 
@@ -72,7 +61,8 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
 
     @Before
     fun setUp() {
-        service = DefaultScaffoldService(web3j, repository, propertyRepository, compiler, properties, openKeyService, transactionHandler)
+        service = DefaultScaffoldService(web3, repository, propertyRepository, scaffoldSummaryRepository,
+                shareHolderRepository ,compiler, properties, openKeyService)
     }
 
     @Test
@@ -103,7 +93,6 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
         service.get(addressValue, user)
     }
 
-
     @Test
     fun compile() {
         val openKey = OpenKey(user)
@@ -112,8 +101,9 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
         val expectedContractMetadata = CompiledScaffoldDto(contractMetadata)
 
         given(openKeyService.get(openKeyValue)).willReturn(openKey)
-        given(repository.countByEnabledIsFalseAndOpenKeyUser(user)).willReturn(1)
+        given(scaffoldSummaryRepository.countByEnabledIsFalseAndScaffoldOpenKeyUser(user)).willReturn(1)
         given(compiler.compile(request.properties)).willReturn(contractMetadata)
+        given(properties.allowedDisabledContracts).willReturn(10)
 
         val actualContractMetadata = service.compile(request)
 
@@ -126,9 +116,12 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
         val request = CompileScaffoldRequest(openKeyValue)
 
         given(openKeyService.get(openKeyValue)).willReturn(openKey)
-        given(repository.countByEnabledIsFalseAndOpenKeyUser(user)).willReturn(11)
+        given(scaffoldSummaryRepository.countByEnabledIsFalseAndScaffoldOpenKeyUser(user)).willReturn(11)
+        given(properties.allowedDisabledContracts).willReturn(10)
 
         service.compile(request)
+
+        verify(compiler, never()).compile(request.properties)
     }
 
     @Test
@@ -136,37 +129,31 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
         val expectedScaffold = createScaffold()
         val request = DeployScaffoldRequest(openKeyValue, addressValue, "description", "1", Currency.USD, "1",
                 null, listOf(createScaffoldPropertyDto()))
-        val optionalTransactionReceipt = Optional.of(TransactionReceipt().apply { contractAddress = addressValue })
         val contractMetadata = CompilationResult.ContractMetadata().apply { abi = "abi"; bin = "bin" }
+        val encodedConstructor = FunctionEncoder.encodeConstructor(listOf(
+                Address(request.developerAddress),
+                Address(addressValue),
+                Utf8String(request.description),
+                Utf8String(request.fiatAmount),
+                Utf8String(request.currency!!.getValue()),
+                Uint256(Convert.toWei(request.conversionAmount, Convert.Unit.ETHER).toBigInteger()))
+        )
 
-        mockDeploy()
+        given(openKeyService.get(openKeyValue)).willReturn(expectedScaffold.openKey)
+        given(properties.allowedDisabledContracts).willReturn(10)
+        given(scaffoldSummaryRepository.countByEnabledIsFalseAndScaffoldOpenKeyUser(user)).willReturn(1)
+        given(compiler.compile(request.properties)).willReturn(contractMetadata)
+        given(properties.getCredentials()).willReturn(credentials)
+        given(credentials.address).willReturn(addressValue)
+        given(web3.deploy(contractMetadata.bin + encodedConstructor)).willReturn(addressValue)
 
         given(repository.save(any(Scaffold::class.java))).will {invocation -> invocation.arguments[0] }
         given(propertyRepository.save(any(ScaffoldProperty::class.java))).will {invocation -> invocation.arguments[0] }
-        given(openKeyService.get(openKeyValue)).willReturn(expectedScaffold.openKey)
-        given(compiler.compile(request.properties)).willReturn(contractMetadata)
-        given(transaction.hasError()).willReturn(false)
-        given(web3j.ethGetTransactionReceipt(transaction.transactionHash)).willReturn(transactionReceiptRequest)
-        given(transactionReceiptRequest.send()).willReturn(transactionReceipt)
-        given(transactionReceipt.transactionReceipt).willReturn(optionalTransactionReceipt)
 
         val actualScaffold = service.deploy(request)
 
         assertThat(actualScaffold).isNotNull
         assertThat(actualScaffold.address).isEqualTo(addressValue)
-    }
-
-    @Test(expected = DeployException::class)
-    fun deployWithDeployException() {
-        val request = DeployScaffoldRequest(openKeyValue, "1", "description", "1", Currency.USD, "1",
-                null, listOf(createScaffoldPropertyDto()))
-
-        mockDeploy()
-        given(transaction.hasError()).willReturn(true)
-        given(transaction.error).willReturn(error)
-        given(error.message).willReturn("error")
-
-        service.deploy(request)
     }
 
     @Test
@@ -221,82 +208,41 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
     }
 
     @Test
-    fun getScaffoldSummary() {
-        val expectedScaffold = createScaffold()
+    fun getScaffoldSummaryWithExpiredCachePeriod() {
+        val scaffold = createScaffold()
+        val scaffoldSummary = ScaffoldSummary(scaffold, BigInteger.ONE, BigInteger.ONE, false)
 
-        mockGetCall()
-        given(repository.findByAddressAndOpenKeyUser(addressValue, user)).willReturn(expectedScaffold)
+        given(repository.findByAddressAndOpenKeyUser(addressValue, user)).willReturn(scaffold)
+        given(scaffoldSummaryRepository.findByScaffold(scaffold)).willReturn(scaffoldSummary)
+        given(properties.cachePeriodInMinutest).willReturn(10)
 
         val actualScaffold = service.getScaffoldSummary(addressValue, user)
 
-        assertThat(actualScaffold).isNotNull
+        assertThat(actualScaffold).isEqualTo(scaffoldSummary)
     }
 
     @Test
     fun deactivate() {
         val expectedScaffold = createScaffold()
 
-        mockGetCall()
         given(repository.findByAddressAndOpenKeyUser(addressValue, user)).willReturn(expectedScaffold)
-
-        val actualResult = service.deactivate(addressValue, user)
-
-        assertThat(actualResult).isNotNull
-    }
-
-    @Test(expected = FunctionCallException::class)
-    fun deactivateWithError() {
-        val expectedScaffold = createScaffold()
-        val nonce = BigInteger.ZERO
-
-        given(repository.findByAddressAndOpenKeyUser(addressValue, user)).willReturn(expectedScaffold)
-        given(properties.getCredentials()).willReturn(credentials)
-        given(credentials.address).willReturn(addressValue)
-        given(web3j.ethGetTransactionCount(addressValue, DefaultBlockParameterName.LATEST)).willReturn(transactionCountRequest)
-        given(transactionCountRequest.send()).willReturn(transactionCount)
-        given(transactionCount.transactionCount).willReturn(nonce)
-        given(web3j.ethCall(any(Transaction::class.java), any(DefaultBlockParameter::class.java))).willReturn(callRequest)
-        given(callRequest.send()).willReturn(call)
-        given(call.hasError()).willReturn(true)
-        given(call.error).willReturn(error)
-        given(error.message).willReturn("error")
 
         service.deactivate(addressValue, user)
+
+        verify(web3).callTransaction("deactivate", listOf(), listOf(), addressValue)
     }
 
     @Test
     fun getQuota() {
-        val currentCount = 1L
-        val expectedQuota = ScaffoldQuotaDto(currentCount, 10L)
+        val currentCount = 1
+        val expectedQuota = ScaffoldQuotaDto(currentCount, 10)
 
-        given(repository.countByEnabledIsFalseAndOpenKeyUser(user)).willReturn(currentCount)
+        given(scaffoldSummaryRepository.countByEnabledIsFalseAndScaffoldOpenKeyUser(user)).willReturn(currentCount)
+        given(properties.enabledContactTokenCount).willReturn(10)
 
         val actualQuota = service.getQuota(user)
 
         assertThat(actualQuota).isEqualTo(expectedQuota)
-    }
-
-    private fun mockDeploy() {
-        val openKey = OpenKey(user)
-        val compileScaffoldRequest = CompileScaffoldRequest(openKey.value, listOf(createScaffoldPropertyDto()))
-        val contractMetadata = CompilationResult.ContractMetadata().apply { abi = "abi"; bin = "bin" }
-
-        given(openKeyService.get(openKeyValue)).willReturn(openKey)
-        given(repository.countByEnabledIsFalseAndOpenKeyUser(user)).willReturn(1)
-        given(compiler.compile(compileScaffoldRequest.properties)).willReturn(contractMetadata)
-        given(web3j.ethGetTransactionCount(addressValue, DefaultBlockParameterName.LATEST)).willReturn(transactionCountRequest)
-        given(transactionCountRequest.send()).willReturn(transactionCount)
-        given(properties.getCredentials()).willReturn(credentials)
-        given(credentials.address).willReturn(addressValue)
-        given(credentials.ecKeyPair).willReturn(
-                ECKeyPair(BigInteger("70434874820561167833413314465717821912032224559303517602656935329389114250303"),
-                BigInteger("8552787867577691478484551058702821390038452396941523688407381362313198396896336414469416" +
-                        "913650107925323445523542038836977111416625597658430914944261355576")))
-        given(web3j.ethGetTransactionCount(addressValue, DefaultBlockParameterName.LATEST)).willReturn(transactionCountRequest)
-        given(transactionCountRequest.send()).willReturn(transactionCount)
-        given(transactionCount.transactionCount).willReturn(BigInteger.ZERO)
-        given(web3j.ethSendRawTransaction(anyString())).willReturn(transactionRequest)
-        given(transactionRequest.send()).willReturn(transaction)
     }
 
     @Test
@@ -304,10 +250,12 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
         val scaffold = createScaffold()
         val request = AddShareHolderRequest(addressValue, 5)
 
-        mockGetCall()
         given(repository.findByAddressAndOpenKeyUser(addressValue, user)).willReturn(scaffold)
 
         service.addShareHolder(addressValue, user, request)
+
+        verify(web3).callTransaction("addShareHolder", listOf(Address(request.address),
+                Uint8(request.percent.toLong())), listOf(), scaffold.address)
     }
 
     @Test
@@ -315,10 +263,12 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
         val scaffold = createScaffold()
         val request = UpdateShareHolderRequest(addressValue, 10)
 
-        mockGetCall()
         given(repository.findByAddressAndOpenKeyUser(addressValue, user)).willReturn(scaffold)
 
         service.updateShareHolder(addressValue, user, request)
+
+        verify(web3).callTransaction("editShareHolder", listOf(Address(request.address),
+                Uint8(request.percent.toLong())), listOf(), scaffold.address)
     }
 
     @Test
@@ -326,35 +276,18 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
         val scaffold = createScaffold()
         val request = RemoveShareHolderRequest(addressValue)
 
-        mockGetCall()
         given(repository.findByAddressAndOpenKeyUser(addressValue, user)).willReturn(scaffold)
 
         service.removeShareHolder(addressValue, user, request)
-    }
 
-    private fun mockGetCall() {
-        given(properties.getCredentials()).willReturn(credentials)
-        given(credentials.address).willReturn(addressValue)
-        given(web3j.ethGetTransactionCount(addressValue, DefaultBlockParameterName.LATEST)).willReturn(transactionCountRequest)
-        given(transactionCountRequest.send()).willReturn(transactionCount)
-        given(transactionCount.transactionCount).willReturn(BigInteger.ZERO)
-        given(web3j.ethCall(any(Transaction::class.java), any(DefaultBlockParameter::class.java))).willReturn(callRequest)
-        given(callRequest.send()).willReturn(call)
-        given(call.hasError()).willReturn(false)
-        given(call.value).willReturn("0xa5643bf2000000000000000000000000000000000000000000000000000000000000006" +
-                "0000000000000000000000000000000000000000000000000000000000000000100000000000000000000000" +
-                "000000000000000000000000000000000000000a0000000000000000000000000000000000000000000000000000" +
-                "00000000000046461766500000000000000000000000000000000000000000000000000000000000000000000000000" +
-                "0000000000000000000000000000000000000000000003000000000000000000000000000000000000000000000000000" +
-                "0000000000001000000000000000000000000000000000000000000000000000000000000000200000000" +
-                "00000000000000000000000000000000000000000000000000000003")
+        verify(web3).callTransaction("deleteShareHolder", listOf(Address(request.address)), listOf(), scaffold.address)
     }
 
     private fun createScaffold(): Scaffold {
         val openKey = OpenKey(user.apply { id = 1L }, null, openKeyValue).apply { id = 1L }
 
         return Scaffold(addressValue, openKey, "abi", addressValue, "description", "1", 1,
-                "1", "webHook", mutableListOf(), true)
+                "1", "webHook", mutableListOf())
     }
 
     private fun createScaffoldPropertyDto(): ScaffoldPropertyDto = ScaffoldPropertyDto("name", STRING, "value")

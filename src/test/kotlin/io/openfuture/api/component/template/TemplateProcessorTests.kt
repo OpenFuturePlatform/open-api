@@ -1,6 +1,7 @@
-package io.openfuture.api.component
+package io.openfuture.api.component.template
 
 import freemarker.template.Configuration
+import io.openfuture.api.component.template.TemplateProcessor
 import io.openfuture.api.config.UnitTest
 import io.openfuture.api.exception.TemplateProcessingException
 import org.apache.commons.lang3.StringUtils

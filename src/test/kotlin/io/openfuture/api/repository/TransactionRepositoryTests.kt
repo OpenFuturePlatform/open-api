@@ -26,7 +26,7 @@ internal class TransactionRepositoryTests : RepositoryTests() {
         entityManager.persist(expectedOpenKey)
 
         val scaffold = Scaffold("address", expectedOpenKey, "abi", "developerAddress", "description", "fiatAmount", 1,
-                "conversionAmount", "webHook", Collections.emptyList(), true)
+                "conversionAmount", "webHook", Collections.emptyList())
         entityManager.persist(scaffold)
 
         val transaction = Transaction(scaffold, "data binary", "type")
