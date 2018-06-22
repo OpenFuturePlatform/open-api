@@ -1,0 +1,1 @@
+UPDATE scaffold_template_properties SET name='service_or_goods_amount' WHERE name='service_or_goods_amour'
