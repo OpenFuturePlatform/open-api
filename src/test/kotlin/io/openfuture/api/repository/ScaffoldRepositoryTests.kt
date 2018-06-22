@@ -42,9 +42,9 @@ internal class ScaffoldRepositoryTests : RepositoryTests() {
         val expectedScaffold = persistEntities()
         val user = expectedScaffold.openKey.user
 
-        val actualScaffold = repository.findAllByOpenKeyUser(user, PageRequest())
+        val actualScaffolds = repository.findAllByOpenKeyUser(user, PageRequest())
 
-        assertThat(actualScaffold.content[0]).isEqualTo(expectedScaffold)
+        assertThat(actualScaffolds.contains(expectedScaffold)).isTrue()
     }
 
 

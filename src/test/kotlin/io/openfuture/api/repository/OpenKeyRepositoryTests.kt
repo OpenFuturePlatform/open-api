@@ -35,7 +35,7 @@ internal class OpenKeyRepositoryTests : RepositoryTests() {
 
         val actualOpenKeys = repository.findAllByUser(user)
 
-        assertThat(actualOpenKeys).isEqualTo(expectedOpenKeys)
+        assertThat(actualOpenKeys.containsAll(expectedOpenKeys)).isTrue()
     }
 
     private fun persistUser(): User = entityManager.persist(User("googleId"))

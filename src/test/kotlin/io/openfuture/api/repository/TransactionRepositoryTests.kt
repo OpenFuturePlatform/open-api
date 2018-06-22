@@ -32,9 +32,9 @@ internal class TransactionRepositoryTests : RepositoryTests() {
         val transaction = Transaction(scaffold, "data binary", "type")
         entityManager.persist(transaction)
 
-        val actualOpenKey = repository.findAllByScaffold(scaffold, PageRequest())
+        val actualOpenKeys = repository.findAllByScaffold(scaffold, PageRequest())
 
-        assertThat(actualOpenKey.content[0]).isEqualTo(transaction)
+        assertThat(actualOpenKeys.contains(transaction)).isTrue()
     }
 
 }

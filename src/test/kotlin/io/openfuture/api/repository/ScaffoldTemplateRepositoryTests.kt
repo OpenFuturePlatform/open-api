@@ -19,9 +19,9 @@ internal class ScaffoldTemplateRepositoryTests : RepositoryTests() {
         entityManager.persist(scaffoldTemplate)
         entityManager.persist(deletedScaffoldTemplate)
 
-        val actualScaffoldTemplate = repository.findAllByDeletedIsFalse()
+        val actualScaffoldTemplates = repository.findAllByDeletedIsFalse()
 
-        assertThat(actualScaffoldTemplate).isEqualTo(listOf(scaffoldTemplate))
+        assertThat(actualScaffoldTemplates.contains(scaffoldTemplate)).isTrue()
     }
 
     private fun createScaffoldTemplate(scaffoldTemplateName: String): ScaffoldTemplate = ScaffoldTemplate(scaffoldTemplateName,
