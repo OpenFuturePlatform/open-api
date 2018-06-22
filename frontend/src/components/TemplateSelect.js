@@ -16,20 +16,20 @@ class TemplateSelectView extends Component {
 
   handleOnSelectTemplate = (e, {value}) => {
     const {scaffoldTemplates} = this.props;
-    const activeTemplate = scaffoldTemplates.find(it => it.id === value);
+    const activeTemplate = scaffoldTemplates.find(it => it.name === value);
     if (!activeTemplate) {
       return;
     }
     const {id, name, conversionAmount, ...formValues} = activeTemplate;
-    this.setState({activeTemplate: id});
+    this.setState({activeTemplate: name});
     this.props.actions.setTemplate(formValues);
   };
 
   render() {
     const {scaffoldTemplates} = this.props;
     const templateOptions = scaffoldTemplates.map(template => ({
-      key: template.id,
-      value: template.id,
+      key: template.name,
+      value: template.name,
       text: template.name
     }));
 
