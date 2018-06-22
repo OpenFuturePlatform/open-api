@@ -14,9 +14,6 @@ import org.web3j.protocol.core.Request
 import org.web3j.protocol.core.methods.response.NetVersion
 import org.web3j.spring.autoconfigure.Web3jProperties
 
-/**
- * @author Yauheni Efimenko
- */
 @WebMvcTest(FrontendPropertiesApiController::class)
 class FrontendPropertiesApiControllerTest : ControllerTests() {
 

@@ -20,9 +20,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.util.*
 
-/**
- * @author Yauheni Efimenko
- */
 @WebMvcTest(TransactionApiController::class)
 class TransactionApiControllerTest : ControllerTests() {
 

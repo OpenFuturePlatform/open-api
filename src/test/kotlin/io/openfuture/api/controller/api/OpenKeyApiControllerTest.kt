@@ -14,9 +14,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import java.util.*
 
-/**
- * @author Yauheni Efimenko
- */
 @WebMvcTest(OpenKeyApiController::class)
 class OpenKeyApiControllerTest : ControllerTests() {
 

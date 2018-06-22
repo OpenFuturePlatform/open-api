@@ -9,9 +9,6 @@ import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 
-/**
- * @author Yauheni Efimenko
- */
 @WebMvcTest(UserApiController::class)
 class UserApiControllerTest : ControllerTests() {
 

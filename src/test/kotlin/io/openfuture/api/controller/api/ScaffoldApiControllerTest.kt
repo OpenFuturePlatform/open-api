@@ -23,9 +23,6 @@ import java.math.BigDecimal.ONE
 import java.math.BigInteger.TEN
 import java.util.*
 
-/**
- * @author Yauheni Efimenko
- */
 @WebMvcTest(ScaffoldApiController::class)
 class ScaffoldApiControllerTest : ControllerTests() {
 

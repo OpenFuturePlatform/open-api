@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 ### Added
 - Front-end: Scaffold templates
+- Back-end: Tests to controllers
 
 ## [2.1.0] - 2018-06-18
 ### Added
