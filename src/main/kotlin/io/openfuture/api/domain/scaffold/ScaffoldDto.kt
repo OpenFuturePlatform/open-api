@@ -8,26 +8,26 @@ data class ScaffoldDto(
         val address: String,
         val user: UserDto,
         val abi: String,
-        val developerAddress: String,
         val description: String,
         val fiatAmount: String,
         val currency: Currency,
         val conversionAmount: String,
-        val properties: List<ScaffoldPropertyDto>,
-        val enabled: Boolean
+        val vendorAddress: String,
+        val webHook: String?,
+        val properties: List<ScaffoldPropertyDto>
 ) {
 
     constructor(scaffold: Scaffold) : this(
             scaffold.address,
             UserDto(scaffold.openKey.user),
             scaffold.abi,
-            scaffold.developerAddress,
             scaffold.description,
             scaffold.fiatAmount,
             scaffold.getCurrency(),
             scaffold.conversionAmount,
-            scaffold.property.map { ScaffoldPropertyDto(it) },
-            scaffold.enabled
+            scaffold.vendorAddress,
+            scaffold.webHook,
+            scaffold.property.map { ScaffoldPropertyDto(it) }
     )
 
 }

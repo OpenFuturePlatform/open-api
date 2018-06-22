@@ -34,7 +34,7 @@ class ScaffoldApiController(
 
     @PreAuthorize("hasRole('DEPLOY')")
     @PostMapping("/doDeploy")
-    fun deploy(@CurrentUser user: User, @Valid @RequestBody request: DeployScaffoldRequest): ScaffoldDto {
+    fun deploy(@Valid @RequestBody request: DeployScaffoldRequest, @CurrentUser user: User): ScaffoldDto {
         val scaffold = service.deploy(request)
         return ScaffoldDto(scaffold)
     }
@@ -45,14 +45,15 @@ class ScaffoldApiController(
         return ScaffoldDto(scaffold)
     }
 
-    @PostMapping("/{address}")
-    fun update(@CurrentUser user: User, @PathVariable address: String, @Valid @RequestBody request: UpdateScaffoldRequest): ScaffoldDto {
+    @PutMapping("/{address}")
+    fun update(@Valid @RequestBody request: UpdateScaffoldRequest, @CurrentUser user: User,
+               @PathVariable address: String): ScaffoldDto {
         val scaffold = service.update(address, user, request)
         return ScaffoldDto(scaffold)
     }
 
     @PatchMapping("/{address}")
-    fun setWebHook(@CurrentUser user: User, @Valid @RequestBody request: SetWebHookRequest,
+    fun setWebHook(@Valid @RequestBody request: SetWebHookRequest, @CurrentUser user: User,
                    @PathVariable address: String): ScaffoldDto {
         val scaffold = service.setWebHook(address, request, user)
         return ScaffoldDto(scaffold)
@@ -60,34 +61,37 @@ class ScaffoldApiController(
 
     @PreAuthorize("hasRole('DEPLOY')")
     @GetMapping("/{address}/summary")
-    fun getScaffoldSummary(@CurrentUser user: User, @PathVariable address: String): ScaffoldSummaryDto =
-            service.getScaffoldSummary(address, user)
+    fun getScaffoldSummary(@CurrentUser user: User, @PathVariable address: String): ScaffoldSummaryDto {
+        val summary = service.getScaffoldSummary(address, user)
+        return ScaffoldSummaryDto(summary)
+    }
 
     @PreAuthorize("hasRole('DEPLOY')")
     @PostMapping("/{address}/doDeactivate")
-    fun deactivate(@CurrentUser user: User, @PathVariable address: String): ScaffoldSummaryDto =
-            service.deactivate(address, user)
+    fun deactivate(@CurrentUser user: User, @PathVariable address: String) {
+        service.deactivate(address, user)
+    }
 
     @GetMapping("/quota")
     fun getQuota(@CurrentUser user: User): ScaffoldQuotaDto = service.getQuota(user)
 
     @PreAuthorize("hasRole('DEPLOY')")
     @PostMapping("/{address}/holders")
-    fun addShareHolder(@CurrentUser user: User, @Valid @RequestBody request: AddShareHolderRequest,
+    fun addShareHolder(@Valid @RequestBody request: AddShareHolderRequest, @CurrentUser user: User,
                        @PathVariable address: String) {
         service.addShareHolder(address, user, request)
     }
 
     @PreAuthorize("hasRole('DEPLOY')")
     @PutMapping("/{address}/holders")
-    fun updateShareHolder(@CurrentUser user: User, @Valid @RequestBody request: UpdateShareHolderRequest,
+    fun updateShareHolder(@Valid @RequestBody request: UpdateShareHolderRequest, @CurrentUser user: User,
                           @PathVariable address: String) {
         service.updateShareHolder(address, user, request)
     }
 
     @PreAuthorize("hasRole('DEPLOY')")
     @DeleteMapping("/{address}/holders")
-    fun removeShareHolder(@CurrentUser user: User, @Valid @RequestBody request: RemoveShareHolderRequest,
+    fun removeShareHolder(@Valid @RequestBody request: RemoveShareHolderRequest, @CurrentUser user: User,
                           @PathVariable address: String) {
         service.removeShareHolder(address, user, request)
     }
