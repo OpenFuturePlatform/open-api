@@ -1,5 +1,3 @@
-// validation.js
-
 const solidityReservedWords = ['address', 'contract', 'function', 'struct', 'uint', 'returns', 'abstract', 'after', 'case', 'catch', 'final', 'in', 'inline', 'interface', 'let', 'match', 'of', 'pure', 'relocatable', 'static', 'switch', 'try', 'type', 'typeof', 'view', 'index', 'storage', 'state', 'variable', 'mapping', 'block', 'coinbase', 'difficulty', 'number', 'block', 'number', 'timestamp', 'msg', 'data', 'gas', 'sender', 'value', 'now', 'gas', 'price', 'origin', 'keccak256', 'ripemd160', 'sha256', 'ecrecover', 'addmod', 'mulmod', 'cryptography', 'this', 'super', 'selfdestruct', 'balance', 'send'];
 
 export const validateScaffoldProperties = values => {
@@ -57,6 +55,9 @@ export const validate = values => {
   const errors = {};
   errors.properties = [];
 
+  if (!values.openKey) {
+    errors.openKey = 'A Open Key is required.';
+  }
   if (!values.developerAddress) {
     errors.developerAddress = 'A developer address is required.';
   }
