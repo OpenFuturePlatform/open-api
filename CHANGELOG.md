@@ -18,6 +18,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Transaction split: edit additional recipient's share
 - Transaction split: delete an additional recipient
 
+### Changed
+- Unit tests
+
 ## [2.1.0] - 2018-06-18
 ### Added
 - Public API Specification
