@@ -272,23 +272,6 @@ contract OpenScaffold {
         generateTransaction(customerAddress, vendorAmount, ${CUSTOM_RETURN_VARIABLES});
     }
 
-    function generateTransaction(
-        address customerAddress,
-        uint vendorAmount,
-        ${CUSTOM_SCAFFOLD_PARAMETERS}
-        ) internal {
-
-        // create transaction
-        uint256 transactionIndex  = createScaffoldTransaction(customerAddress);
-
-        PaymentCompleted(
-            customerAddress,
-            vendorAmount,
-            scaffoldTransactionIndex,
-            ${CUSTOM_RETURN_VARIABLES}
-            );
-    }
-
     // pay to shareholders according to their shares
     function payToShareHolders(uint256 unpaidAmount) internal returns(uint256) {
         uint256 shareHolderIndexLength = getShareHolderCount();
@@ -316,7 +299,24 @@ contract OpenScaffold {
         return vendorAmount;
     }
 
-    // generate Scaffold transaction and add to array
+    function generateTransaction(
+        address customerAddress,
+        uint vendorAmount,
+        ${CUSTOM_SCAFFOLD_PARAMETERS}
+        ) internal {
+
+        // create transaction
+        uint256 transactionIndex  = createScaffoldTransaction(customerAddress);
+
+        PaymentCompleted(
+            customerAddress,
+            vendorAmount,
+            scaffoldTransactionIndex,
+            ${CUSTOM_RETURN_VARIABLES}
+            );
+    }
+
+    // create Scaffold transaction and add to array
     function createScaffoldTransaction(address customerAddress) internal returns(uint) {
         OpenScaffoldTransaction memory newTransaction = OpenScaffoldTransaction({
             customerAddress: customerAddress,
