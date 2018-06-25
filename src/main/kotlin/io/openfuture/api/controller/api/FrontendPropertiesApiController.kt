@@ -2,7 +2,7 @@ package io.openfuture.api.controller.api
 
 import io.openfuture.api.component.web3.Web3Wrapper
 import io.openfuture.api.config.propety.EthereumProperties
-import io.openfuture.api.domain.FrontendPropertiesDto
+import io.openfuture.api.domain.property.FrontendPropertiesDto
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController

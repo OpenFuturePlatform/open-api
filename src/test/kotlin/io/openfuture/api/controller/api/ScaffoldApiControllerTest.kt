@@ -33,7 +33,7 @@ class ScaffoldApiControllerTest : ControllerTests() {
 
     @Test
     fun getAllTest() {
-        val openKey = createOpenKey(setOf(Role("ROLE_DEPLOY")))
+        val openKey = createOpenKey(setOf(Role("ROLE_MASTER")))
         val scaffold = createScaffold(openKey)
         val pageRequest = PageRequest()
 
@@ -56,7 +56,7 @@ class ScaffoldApiControllerTest : ControllerTests() {
 
     @Test
     fun getTest() {
-        val openKey = createOpenKey(setOf(Role("ROLE_DEPLOY")))
+        val openKey = createOpenKey(setOf(Role("ROLE_MASTER")))
         val scaffold = createScaffold(openKey)
 
         given(keyService.find(openKey.value)).willReturn(openKey)
@@ -71,7 +71,7 @@ class ScaffoldApiControllerTest : ControllerTests() {
 
     @Test
     fun compileTest() {
-        val openKey = createOpenKey(setOf(Role("ROLE_DEPLOY")))
+        val openKey = createOpenKey(setOf(Role("ROLE_MASTER")))
         val request = CompileScaffoldRequest("openKey", listOf(createScaffoldPropertyDto()))
         val requestJson = objectMapper.writeValueAsString(request)
         val compiledScaffoldDto = CompiledScaffoldDto("abi", "bin")
@@ -95,7 +95,7 @@ class ScaffoldApiControllerTest : ControllerTests() {
 
     @Test
     fun deployTest() {
-        val openKey = createOpenKey(setOf(Role("ROLE_DEPLOY")))
+        val openKey = createOpenKey(setOf(Role("ROLE_MASTER")))
         val scaffold = createScaffold(openKey)
         val request = DeployScaffoldRequest("openKey", "developerAddress", "description",
                 "2", USD, "0.0023", "webHook", listOf(createScaffoldPropertyDto()))
@@ -132,7 +132,7 @@ class ScaffoldApiControllerTest : ControllerTests() {
 
     @Test
     fun saveTest() {
-        val openKey = createOpenKey(setOf(Role("ROLE_DEPLOY")))
+        val openKey = createOpenKey(setOf(Role("ROLE_MASTER")))
         val scaffold = createScaffold(openKey)
         val request = SaveScaffoldRequest("address", "abi", "openKey", "developerAddress",
                 "description", "2", USD, "0.0023", "webHook",
@@ -153,9 +153,9 @@ class ScaffoldApiControllerTest : ControllerTests() {
 
     @Test
     fun setWebHookTest() {
-        val openKey = createOpenKey(setOf(Role("ROLE_DEPLOY")))
+        val openKey = createOpenKey(setOf(Role("ROLE_MASTER")))
         val scaffold = createScaffold(openKey)
-        val request = SetWebHookRequest("https://test.com")
+        val request = SetWebHookRequest("https://test.com/test")
         val requestJson = objectMapper.writeValueAsString(request)
 
         given(keyService.find(openKey.value)).willReturn(openKey)
@@ -173,7 +173,7 @@ class ScaffoldApiControllerTest : ControllerTests() {
     @Test
     fun getScaffoldSummaryTest() {
         val scaffoldAddress = "address"
-        val openKey = createOpenKey(setOf(Role("ROLE_DEPLOY")))
+        val openKey = createOpenKey(setOf(Role("ROLE_MASTER")))
         val scaffold = createScaffold(openKey)
         val scaffoldSummary = ScaffoldSummary(scaffold, ONE, ONE, true)
 
@@ -190,7 +190,7 @@ class ScaffoldApiControllerTest : ControllerTests() {
     @Test
     fun deactivateTest() {
         val scaffoldAddress = "address"
-        val openKey = createOpenKey(setOf(Role("ROLE_DEPLOY")))
+        val openKey = createOpenKey(setOf(Role("ROLE_MASTER")))
 
         given(keyService.find(openKey.value)).willReturn(openKey)
 
@@ -205,7 +205,7 @@ class ScaffoldApiControllerTest : ControllerTests() {
     @Test
     fun getQuotaTest() {
         val scaffoldQuotaDto = ScaffoldQuotaDto(1, 10)
-        val openKey = createOpenKey(setOf(Role("ROLE_DEPLOY")))
+        val openKey = createOpenKey(setOf(Role("ROLE_MASTER")))
 
         given(keyService.find(openKey.value)).willReturn(openKey)
         given(service.getQuota(openKey.user)).willReturn(scaffoldQuotaDto)

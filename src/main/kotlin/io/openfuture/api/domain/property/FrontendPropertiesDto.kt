@@ -1,4 +1,4 @@
-package io.openfuture.api.domain
+package io.openfuture.api.domain.property
 
 data class FrontendPropertiesDto(
         val networkAddress: String,
