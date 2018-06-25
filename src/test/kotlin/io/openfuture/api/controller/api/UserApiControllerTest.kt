@@ -14,7 +14,7 @@ class UserApiControllerTest : ControllerTests() {
 
     @Test
     fun getCurrentTest() {
-        val openKey = createOpenKey(setOf(Role("ROLE_DEPLOY")))
+        val openKey = createOpenKey(setOf(Role("ROLE_MASTER")))
 
         given(keyService.find(openKey.value)).willReturn(openKey)
 

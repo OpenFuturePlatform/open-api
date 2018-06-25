@@ -6,7 +6,7 @@ import {withRouter} from 'react-router-dom';
 import {Button, Grid, Input} from 'semantic-ui-react';
 import {DropdownField} from 'react-semantic-redux-form';
 import _ from 'lodash';
-import {validate, validateScaffoldProperties, warn} from '../utils/validation';
+import {validate, asyncValidate, validateScaffoldProperties, warn} from '../utils/validation';
 import ScaffoldActionField from '../components-ui/inputs/ActionField';
 import ScaffoldField from '../components-ui/inputs/Field';
 import ScaffoldPropertyFields from '../components-ui/inputs/PropertyFields';
@@ -285,6 +285,8 @@ ScaffoldForm = reduxForm({
   warn,
   form: 'scaffoldCreationForm',
   enableReinitialize: true,
+  asyncValidate,
+  asyncBlurFields: ['webHook']
 })(ScaffoldForm);
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(ScaffoldForm));
