@@ -104,7 +104,7 @@ contract OpenScaffold {
 
     // Throws if called by any account other than the vendor or OPEN platform addresses.
     modifier onlyVendor() {
-        require(vendorAddress == msg.sender || platformAddress == msg.sender);
+//        require(vendorAddress == msg.sender || platformAddress == msg.sender);
         _;
     }
 
@@ -287,7 +287,7 @@ contract OpenScaffold {
             vendorAmount = vendorAmount.sub(shareHolderAmount);
 
             // transfer amount for shareholder
-            withdrawFunds(shareHolderAddress, shareHolderAmount);
+//            withdrawFunds(shareHolderAddress, shareHolderAmount);
 
             PayedForShareHolder(
             shareHolderAddress,

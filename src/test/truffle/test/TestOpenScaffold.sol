@@ -8,8 +8,8 @@ import "../contracts/ExposedOpenScaffold.sol";
 
 contract TestOpenScaffold {
 
-    address shareHolderAddress1 = 0xc5fdf4076b8f3a5357c5e395ab970b5b54098fef;
-    address shareHolderAddress2 = 0x821aea9a577a9b44299b9c15c88cf3087f3b5544;
+    address shareHolderAddress1 = 0x2932b7a2355d6fecc4b5c0b6bd44cc31df247a2e;
+    address shareHolderAddress2 = 0x2191ef87e392377ec08e7c08eb105ef5448eced5;
 
     uint8 holderShare1 = 30;
     uint8 holderShare2 = 40;
@@ -96,8 +96,9 @@ contract TestOpenScaffold {
     function testPayToShareHoldersWithShareholders() public {
         ExposedOpenScaffold eScaffold = ExposedOpenScaffold(DeployedAddresses.ExposedOpenScaffold());
         eScaffold.addShareHolder(shareHolderAddress1, holderShare1);
+        eScaffold.addShareHolder(shareHolderAddress2, holderShare2);
 
-        uint expectedVendorAmount = 100 - holderShare1;
+        uint expectedVendorAmount = 100 - holderShare1 - holderShare2;
         Assert.equal(eScaffold._payToShareHolders(100), expectedVendorAmount, "Wrong vendor amount");
     }
 
