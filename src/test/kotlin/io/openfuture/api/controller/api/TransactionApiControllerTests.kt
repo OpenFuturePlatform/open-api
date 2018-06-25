@@ -21,7 +21,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.util.*
 
 @WebMvcTest(TransactionApiController::class)
-class TransactionApiControllerTest : ControllerTests() {
+class TransactionApiControllerTests : ControllerTests() {
 
     @MockBean
     private lateinit var service: TransactionService
