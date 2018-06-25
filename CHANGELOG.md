@@ -5,10 +5,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [2.2.0] - 2018-06-22
 ### Added
-- Front-end: Scaffold templates
-- Back-end: Functionality for management share holders
-- Front-end: Dev Shares
+- Scaffold templates. Now you can fill in scaffold fields and add additional scaffold properties in one click using predefined templates
+- Scaffold templates samples
+- Transaction split. Now you can add several transaction recipients and set recipients shares after scaffold deployment
+- Transaction split: add an additional recipient
+- Transaction split: set additional recipient's share
+- Transaction split: edit additional recipient's share
+- Transaction split: delete an additional recipient
+
+### Changed
+- Unit tests
 
 ## [2.1.0] - 2018-06-18
 ### Added
