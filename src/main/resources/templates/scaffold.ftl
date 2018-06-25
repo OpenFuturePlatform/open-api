@@ -306,7 +306,7 @@ contract OpenScaffold {
         ) internal {
 
         // create transaction
-        uint256 transactionIndex  = createScaffoldTransaction(customerAddress);
+        uint256 transactionIndex  = createScaffoldTransaction(customerAddress, ${CUSTOM_RETURN_VARIABLES});
 
         PaymentCompleted(
             customerAddress,
@@ -317,7 +317,7 @@ contract OpenScaffold {
     }
 
     // create Scaffold transaction and add to array
-    function createScaffoldTransaction(address customerAddress) internal returns(uint) {
+    function createScaffoldTransaction(address customerAddress, ${CUSTOM_SCAFFOLD_PARAMETERS}) internal returns(uint) {
         OpenScaffoldTransaction memory newTransaction = OpenScaffoldTransaction({
             customerAddress: customerAddress,
             ${SCAFFOLD_STRUCT_TRANSACTION_ARGUMENTS}
