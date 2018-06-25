@@ -72,6 +72,6 @@ interface ScaffoldSummaryRepository : BaseRepository<ScaffoldSummary> {
 @Repository
 interface ShareHolderRepository : BaseRepository<ShareHolder> {
 
-    fun findBySummaryAndAddress(summary: ScaffoldSummary, address: String): ShareHolder?
+    fun deleteAllBySummary(summary: ScaffoldSummary)
 
 }

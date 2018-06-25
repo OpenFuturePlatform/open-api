@@ -148,7 +148,7 @@ class ScaffoldStatus extends Component {
   }
 }
 
-const mapStateToProps = (state, {scaffoldAddress, summary: {abi, tokenBalance, vendorAddress}, error}) => {
+const mapStateToProps = (state, {scaffoldAddress, abi, summary: {tokenBalance, vendorAddress}, error}) => {
   const {ethAccount} = state;
   const metaMaskError = getMetaMaskError(state);
   return ({ethAccount, vendorAddress, scaffoldAddress, abi, tokenBalance, metaMaskError, fetchError: error});

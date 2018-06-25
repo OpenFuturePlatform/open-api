@@ -28,10 +28,10 @@ class Scaffolds extends Component {
   }
 
   render() {
-    const {auth} = this.props;
+    const {auth, globalProperties} = this.props;
     const url = this.props.match.url;
 
-    if (!auth) {
+    if (!auth || !globalProperties) {
       return null;
     }
 
@@ -50,8 +50,8 @@ class Scaffolds extends Component {
   }
 }
 
-function mapStateToProps({modalInfo, withdrawModalInfo, auth}) {
-  return {modalInfo, withdrawModalInfo, auth};
+function mapStateToProps({modalInfo, withdrawModalInfo, auth, globalProperties}) {
+  return {modalInfo, withdrawModalInfo, auth, globalProperties};
 }
 
 export default connect(mapStateToProps, {fetchGlobalProperties, fetchUser})(Scaffolds);

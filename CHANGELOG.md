@@ -6,6 +6,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.2.1] - 2018-06-25
+### Added
+- Webhook URL validation
+- Currency type is required for a template
+- Reaching Scaffold properties limit message
+- Client validation for Scaffold properties duplicates
+
+### Fixed
+- Scaffold Compilation: 400 bad request in case of sending "properties.type": "BOOLEAN"
+- Scaffold Shareholders: 500 NPE in case of adding/editing shareholders by a backend
+- Scaffold Creation: 400 bad request in case of providing more than 2 scaffold properties
+
+
 ## [2.2.0] - 2018-06-22
 ### Added
 - Scaffold templates. Now you can fill in scaffold fields and add additional scaffold properties in one click using predefined templates

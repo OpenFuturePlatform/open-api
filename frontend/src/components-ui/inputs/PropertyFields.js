@@ -3,6 +3,7 @@ import {Field} from 'redux-form';
 import {Button, Grid, Input, Message} from 'semantic-ui-react';
 import {DropdownField} from 'react-semantic-redux-form';
 import ScaffoldPropertyField from "./PropertyField";
+import {MAX_CONTRACT_PROPERTIES_COUNT} from '../../const/index';
 
 const renderRemoveButton = (index, fields, onRemove) => {
   if (index === 0 && fields.length === 1) {
@@ -66,9 +67,17 @@ const renderErrorMessage = (list) => {
 
 export default ({fields, scaffoldFieldsErrors, scaffoldProperties = []}) => {
 
+  const isMaxPropertiesCount = fields.length >= MAX_CONTRACT_PROPERTIES_COUNT;
+
   if (!fields.length) {
     fields.push({});
   }
+
+  const handleOnAddProperty = () => {
+    if (!isMaxPropertiesCount) {
+      fields.push({});
+    }
+  };
 
   const renderProperties = fields.map((field, index) => {
     const scaffoldProperty = scaffoldProperties[index] || {};
@@ -113,12 +122,12 @@ export default ({fields, scaffoldFieldsErrors, scaffoldProperties = []}) => {
   return (
     <div>
       <div style={{height: '30px'}}>
-        <Button primary type="button" floated="right" onClick={() => fields.push({})} style={{
+        <Button primary disabled={isMaxPropertiesCount} type="button" floated="right" onClick={handleOnAddProperty} style={{
           marginBottom: '10px',
           marginRight: '15px',
           backgroundColor: '#3193F5',
         }}>
-          Add Scaffold Property
+          {isMaxPropertiesCount ? `Max Property Count = ${MAX_CONTRACT_PROPERTIES_COUNT}` : 'Add Scaffold Property'}
         </Button>
       </div>
       <div style={{marginBottom: '10px'}}>

@@ -19,7 +19,7 @@ class OpenKeyApiControllerTest : ControllerTests() {
 
     @Test
     fun generateTokenTest() {
-        val openKey = createOpenKey(setOf(Role("ROLE_DEPLOY")))
+        val openKey = createOpenKey(setOf(Role("ROLE_MASTER")))
         val request = GenerateOpenKeyRequest(Date())
         val newOpenKey = OpenKey(openKey.user, request.expireDate)
         val requestJson = objectMapper.writeValueAsString(request)
