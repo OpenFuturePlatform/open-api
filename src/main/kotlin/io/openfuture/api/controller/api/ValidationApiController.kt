@@ -12,8 +12,6 @@ import javax.validation.Valid
 class ValidationApiController {
 
     @PostMapping("/url")
-    fun validateUrl(@Valid @RequestBody request: ValidateUrlRequest): ValidateUrlRequest {
-        return request
-    }
+    fun validateUrl(@Valid @RequestBody request: ValidateUrlRequest): ValidateUrlRequest = request
 
 }
