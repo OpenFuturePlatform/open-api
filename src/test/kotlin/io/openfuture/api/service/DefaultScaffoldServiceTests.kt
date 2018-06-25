@@ -175,7 +175,7 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
         val scaffoldPropertyDto = createScaffoldPropertyDto()
         val scaffoldProperty = ScaffoldProperty.of(scaffold, scaffoldPropertyDto)
         val request = SaveScaffoldRequest(addressValue, "abi", openKeyValue, "developerAddress",
-                "description", "1", USD, "1").apply { properties = listOf(scaffoldPropertyDto) }
+                "description", "1", USD, "1", null, listOf(scaffoldPropertyDto))
         val expectedScaffold = createScaffold().apply { property.add(scaffoldProperty) }
 
         given(openKeyService.get(openKeyValue)).willReturn(openKey)
