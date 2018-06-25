@@ -311,7 +311,7 @@ contract OpenScaffold {
         PaymentCompleted(
             customerAddress,
             vendorAmount,
-            scaffoldTransactionIndex,
+            transactionIndex,
             ${CUSTOM_RETURN_VARIABLES}
             );
     }

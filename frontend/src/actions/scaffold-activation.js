@@ -1,10 +1,11 @@
 import axios from 'axios';
 import eth from '../utils/eth';
-import openToken from '../utils/open-token';
 import {SET_CURRENT_ETH_ACCOUNT} from './types';
 import {fetchScaffoldSummary} from './scaffolds';
+import {openTokenSelector} from '../selectors/open-token';
 
-export const activateScaffold = (scaffoldAddress, fromAddress, amount = '10.0') => async dispatch => {
+export const activateScaffold = (scaffoldAddress, fromAddress, amount = '10.0') => async (dispatch, getState) => {
+  const openToken = openTokenSelector(getState());
   const hash = await openToken.transfer(scaffoldAddress, amount * 100000000, {from: fromAddress});
 
   dispatch({type: SET_CURRENT_ETH_ACCOUNT, payload: {activating: true, activatingHash: hash}});
