@@ -14,9 +14,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Client validation for Scaffold properties duplicates
 
 ### Fixed
-- [POST api/scaffolds/doCompile]: 400 bad request in case of sending "properties.type": "BOOLEAN"
-- [api/scaffolds/id/holders]: 500 NPE in case of adding/editing shareholders by a backend
-- [Add Scaffold]: 400 bad request in case of providing more than 2 scaffold properties
+- Scaffold Compilation: 400 bad request in case of sending "properties.type": "BOOLEAN"
+- Scaffold Shareholders: 500 NPE in case of adding/editing shareholders by a backend
+- Scaffold Creation: 400 bad request in case of providing more than 2 scaffold properties
 
 
 ## [2.2.0] - 2018-06-22
