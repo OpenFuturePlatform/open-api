@@ -7,9 +7,9 @@ enum class PropertyType(
         private val value: String
 ) : Dictionary {
 
-    STRING(1, "string"),
+    STRING(1, "bytes32"),
     NUMBER(2, "uint"),
-    BOOLEAN(3, "boolean")
+    BOOLEAN(3, "bool")
     ;
 
     override fun getId(): Int = id

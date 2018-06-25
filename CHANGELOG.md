@@ -6,6 +6,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.2.0] - 2018-06-22
+### Added
+- Scaffold templates. Now you can fill in scaffold fields and add additional scaffold properties in one click using predefined templates
+- Scaffold templates samples
+- Transaction split. Now you can add several transaction recipients and set recipients shares after scaffold deployment
+- Transaction split: add an additional recipient
+- Transaction split: set additional recipient's share
+- Transaction split: edit additional recipient's share
+- Transaction split: delete an additional recipient
+
+### Changed
+- Unit tests
+
 ## [2.1.0] - 2018-06-18
 ### Added
 - Public API Specification
@@ -61,5 +74,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - "Withdraw" button is removed
 
 [Unreleased]: https://github.com/OpenFuturePlatform/open-api/compare/master...sprint
+[2.2.0]: https://github.com/OpenFuturePlatform/open-api/compare/v2.1.0...v2.2.0
 [2.1.0]: https://github.com/OpenFuturePlatform/open-api/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/OpenFuturePlatform/open-api/compare/8ea69084ef657f66976518827873c9c922970ce6...v2.0.0

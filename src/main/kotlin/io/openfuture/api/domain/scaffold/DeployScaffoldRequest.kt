@@ -2,10 +2,7 @@ package io.openfuture.api.domain.scaffold
 
 import io.openfuture.api.entity.scaffold.Currency
 import javax.validation.Valid
-import javax.validation.constraints.Digits
-import javax.validation.constraints.NotBlank
-import javax.validation.constraints.NotEmpty
-import javax.validation.constraints.NotNull
+import javax.validation.constraints.*
 
 data class DeployScaffoldRequest(
         @field:NotBlank var openKey: String? = null,
@@ -15,5 +12,5 @@ data class DeployScaffoldRequest(
         @field:NotNull var currency: Currency? = null,
         @field:NotBlank @field:Digits(integer = Int.MAX_VALUE, fraction = Int.MAX_VALUE) var conversionAmount: String? = null,
         var webHook: String? = null,
-        @field:NotEmpty @field:Valid var properties: List<ScaffoldPropertyDto> = listOf()
+        @field:NotEmpty @field:Size(max = 9) @field:Valid var properties: List<ScaffoldPropertyDto> = listOf()
 )

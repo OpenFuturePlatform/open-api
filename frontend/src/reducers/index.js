@@ -4,12 +4,14 @@ import authReducer from './authReducer';
 import currencyConversionReducer from './currencyConversionReducer';
 import currentScaffoldInstanceReducer from './currentScaffoldInstanceReducer';
 import modalReducer from './modalReducer';
-import onchainScaffoldSummaryReducer from './onchainScaffoldSummaryReducer';
+import ScaffoldsById from './ScaffoldsById';
 import scaffoldFeildsReducer from './scaffoldFeildsReducer';
 import scaffoldsReducer from './scaffoldsReducer';
 import withdrawModalReducer from './withdrawModalReducer';
 import globalProperties from "./globalProperties";
 import ethAccount from "./ethAccount";
+import shareHolders from './shareHolders';
+import scaffoldTemplates from './scaffoldTemplates';
 
 export default combineReducers({
   form: reduxForm,
@@ -17,10 +19,12 @@ export default combineReducers({
   currencyConversionValue: currencyConversionReducer,
   currentScaffoldInstance: currentScaffoldInstanceReducer,
   modalInfo: modalReducer,
-  onchainScaffoldSummary: onchainScaffoldSummaryReducer,
+  ScaffoldsById,
+  scaffoldTemplates,
   scaffoldFeilds: scaffoldFeildsReducer,
   scaffolds: scaffoldsReducer,
   withdrawModalInfo: withdrawModalReducer,
   ethAccount,
-  globalProperties
+  globalProperties,
+  shareHolders
 });

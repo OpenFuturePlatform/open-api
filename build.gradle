@@ -1,17 +1,17 @@
 plugins {
     id 'jacoco'
     id "idea"
-    id "org.jetbrains.kotlin.jvm" version "1.2.41"
-    id "org.jetbrains.kotlin.kapt" version "1.2.41"
-    id "org.jetbrains.kotlin.plugin.spring" version "1.2.41"
-    id "org.jetbrains.kotlin.plugin.jpa" version "1.2.41"
+    id "org.jetbrains.kotlin.jvm" version "1.2.50"
+    id "org.jetbrains.kotlin.kapt" version "1.2.50"
+    id "org.jetbrains.kotlin.plugin.spring" version "1.2.50"
+    id "org.jetbrains.kotlin.plugin.jpa" version "1.2.50"
     id "org.springframework.boot" version "2.0.2.RELEASE"
 }
 
 apply plugin: "io.spring.dependency-management"
 
 group = "io.openfuture.api"
-version = "2.1.0"
+version = "2.2.0"
 sourceCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
