@@ -8,6 +8,8 @@ export const validateScaffoldProperties = values => {
   const scaffoldFieldsArrayErrors = [];
   const digitRegex = /[^0-9]/g;
 
+  const propertyNames = values.map(it => it.name);
+
   values.forEach((field, fieldIndex) => {
     const scaffoldFieldsErrors = [];
 
@@ -15,6 +17,7 @@ export const validateScaffoldProperties = values => {
       if (field.name[0].match(/[a-z]/) === null) scaffoldFieldsErrors.push('A property should begin with a lowercase letter');
       if (field.name.match(/[\s\/\\]/) !== null) scaffoldFieldsErrors.push('A property should not contain a space, / and \\'); // eslint-disable-line
       if (solidityReservedWords.includes(field.name)) scaffoldFieldsErrors.push(`${field.name} is a reserved word, pick another property name.`);
+      if (propertyNames.filter(it => it === field.name).length > 1) scaffoldFieldsErrors.push('Name must be unique');
     }
 
     const ifNumber = field.type === 'NUMBER';
