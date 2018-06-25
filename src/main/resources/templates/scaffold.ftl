@@ -304,6 +304,7 @@ contract OpenScaffold {
             withdrawFunds(shareHolderAddress, shareHolderAmount);
 
             PayedForShareHolder(
+                EventType.PAYED_FOR_SHARE_HOLDER,
                 shareHolderAddress,
                 shareHolderAmount);
             }
@@ -343,7 +344,7 @@ contract OpenScaffold {
     // withdraw funds
     function withdrawFunds(address to, uint amount) private {
         to.transfer(amount);
-        FundsDeposited(EventType.FUNDS_DEPOSITED,amount, to);
+        FundsDeposited(EventType.FUNDS_DEPOSITED, amount, to);
     }
 
     // check of the partner's address
