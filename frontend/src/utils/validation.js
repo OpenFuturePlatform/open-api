@@ -13,7 +13,7 @@ export const validateScaffoldProperties = values => {
 
     if (field.name) {
       if (field.name[0].match(/[a-z]/) === null) scaffoldFieldsErrors.push('A property should begin with a lowercase letter');
-      if (field.name.match(/[\s\/\\]/) !== null) scaffoldFieldsErrors.push('A property should not contain a space, / and \\');
+      if (field.name.match(/[\s\/\\]/) !== null) scaffoldFieldsErrors.push('A property should not contain a space, / and \\'); // eslint-disable-line
       if (solidityReservedWords.includes(field.name)) scaffoldFieldsErrors.push(`${field.name} is a reserved word, pick another property name.`);
     }
 
