@@ -1,4 +1,8 @@
+import {validateWebHook} from '../actions/deploy-contract';
+
 const solidityReservedWords = ['address', 'contract', 'function', 'struct', 'uint', 'returns', 'abstract', 'after', 'case', 'catch', 'final', 'in', 'inline', 'interface', 'let', 'match', 'of', 'pure', 'relocatable', 'static', 'switch', 'try', 'type', 'typeof', 'view', 'index', 'storage', 'state', 'variable', 'mapping', 'block', 'coinbase', 'difficulty', 'number', 'block', 'number', 'timestamp', 'msg', 'data', 'gas', 'sender', 'value', 'now', 'gas', 'price', 'origin', 'keccak256', 'ripemd160', 'sha256', 'ecrecover', 'addmod', 'mulmod', 'cryptography', 'this', 'super', 'selfdestruct', 'balance', 'send'];
+
+const urlErrorMessage = 'Webhook needs to be url with format [protocol]://[url]/[path]';
 
 export const validateScaffoldProperties = values => {
   const scaffoldFieldsArrayErrors = [];
@@ -9,7 +13,7 @@ export const validateScaffoldProperties = values => {
 
     if (field.name) {
       if (field.name[0].match(/[a-z]/) === null) scaffoldFieldsErrors.push('A property should begin with a lowercase letter');
-      if (field.name.match(/[\s]/) !== null) scaffoldFieldsErrors.push('A property should not contain a space');
+      if (field.name.match(/[\s\/\\]/) !== null) scaffoldFieldsErrors.push('A property should not contain a space, / and \\');
       if (solidityReservedWords.includes(field.name)) scaffoldFieldsErrors.push(`${field.name} is a reserved word, pick another property name.`);
     }
 
@@ -47,8 +51,21 @@ export const warn = values => {
 };
 
 const isUrl = (str) => {
-  const regexp =  /^(?:(?:https?|ftp):\/\/)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:\/\S*)?$/;
+  const regexp =  /^((https?|ftp|smtp):\/\/)(www.)?[a-z0-9]+\.[a-z]+(\/[a-zA-Z0-9#]+\/?)*$/;
   return regexp.test(str);
+};
+
+export const asyncValidate = async (values) => {
+
+  if (!values.webHook) {
+    return;
+  }
+
+  try {
+    return await validateWebHook(values.webHook);
+  } catch (e) {
+    throw {webHook: urlErrorMessage} // eslint-disable-line
+  }
 };
 
 export const validate = values => {
@@ -71,7 +88,7 @@ export const validate = values => {
     errors.currency = 'Currency is required.';
   }
   if (values.webHook && !isUrl(values.webHook)) {
-    errors.webHook = 'Webhook needs to be valid url';
+    errors.webHook = urlErrorMessage;
   }
 
   if (values.properties) {
