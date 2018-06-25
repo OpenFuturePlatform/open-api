@@ -10,18 +10,13 @@ import java.math.BigInteger
 class PayedForShareHolderDecoder : Decoder<PayedForShareHolderEvent> {
 
     override fun decode(addressScaffold: String, rawData: String): PayedForShareHolderEvent {
-        val response = Decoder.getResponse(rawData, getSignature())
+        val response = getResponse(rawData, listOf(object : TypeReference<Uint8>() {}, object : TypeReference<Address>() {},
+                object : TypeReference<Uint256>() {}))
 
-        val userAddress: String = response[1].value as String
-        val amount: BigInteger = response[2].value as BigInteger
+        val userAddress = response[1].value as String
+        val amount = response[2].value as BigInteger
 
         return PayedForShareHolderEvent(userAddress, amount)
     }
-
-    private fun getSignature(): List<TypeReference<*>> = listOf(
-            object : TypeReference<Uint8>() {},
-            object : TypeReference<Address>() {},
-            object : TypeReference<Uint256>() {}
-    )
 
 }

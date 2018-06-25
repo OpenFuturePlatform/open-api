@@ -8,16 +8,11 @@ import org.web3j.abi.datatypes.generated.Uint8
 class DeletedShareHolderDecoder : Decoder<DeletedShareHolderEvent> {
 
     override fun decode(addressScaffold: String, rawData: String): DeletedShareHolderEvent {
-        val response = Decoder.getResponse(rawData, getSignature())
+        val response = getResponse(rawData, listOf(object : TypeReference<Uint8>() {}, object : TypeReference<Address>() {}))
 
-        val userAddress: String = response[1].value as String
+        val userAddress = response[1].value as String
 
         return DeletedShareHolderEvent(userAddress)
     }
-
-    private fun getSignature(): List<TypeReference<*>> = listOf(
-            object : TypeReference<Uint8>() {},
-            object : TypeReference<Address>() {}
-    )
 
 }

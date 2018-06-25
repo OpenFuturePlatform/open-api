@@ -1,11 +1,12 @@
 package io.openfuture.api.component.web3.event.domain
 
 import io.openfuture.api.component.web3.event.EventType
+import io.openfuture.api.component.web3.event.EventType.DELETED_SHARE_HOLDER
 
 data class DeletedShareHolderEvent(
         val userAddress: String
 ) : Event {
 
-    override fun getType(): EventType = EventType.DELETED_SHARE_HOLDER
+    override fun getType(): EventType = DELETED_SHARE_HOLDER
 
 }

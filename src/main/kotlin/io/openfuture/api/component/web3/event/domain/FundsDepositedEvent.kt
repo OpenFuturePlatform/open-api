@@ -1,6 +1,7 @@
 package io.openfuture.api.component.web3.event.domain
 
 import io.openfuture.api.component.web3.event.EventType
+import io.openfuture.api.component.web3.event.EventType.FUNDS_DEPOSITED
 import java.math.BigInteger
 
 data class FundsDepositedEvent(
@@ -8,6 +9,6 @@ data class FundsDepositedEvent(
         val toAddress: String
 ) : Event {
 
-    override fun getType(): EventType = EventType.FUNDS_DEPOSITED
+    override fun getType(): EventType = FUNDS_DEPOSITED
 
 }

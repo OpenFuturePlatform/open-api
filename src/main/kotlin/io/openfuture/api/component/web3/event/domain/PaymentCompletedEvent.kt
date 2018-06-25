@@ -1,6 +1,7 @@
 package io.openfuture.api.component.web3.event.domain
 
 import io.openfuture.api.component.web3.event.EventType
+import io.openfuture.api.component.web3.event.EventType.PAYMENT_COMPLETED
 import java.math.BigInteger
 
 data class PaymentCompletedEvent(
@@ -10,6 +11,6 @@ data class PaymentCompletedEvent(
         val properties: Map<String, Any>
 ) : Event {
 
-    override fun getType(): EventType = EventType.PAYMENT_COMPLETED
+    override fun getType(): EventType = PAYMENT_COMPLETED
 
 }

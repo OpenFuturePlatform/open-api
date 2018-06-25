@@ -10,18 +10,13 @@ import java.math.BigInteger
 class FundsDepositedDecoder : Decoder<FundsDepositedEvent> {
 
     override fun decode(addressScaffold: String, rawData: String): FundsDepositedEvent {
-        val response = Decoder.getResponse(rawData, getSignature())
+        val response = getResponse(rawData, listOf(object : TypeReference<Uint8>() {}, object : TypeReference<Uint256>() {},
+                object : TypeReference<Address>() {}))
 
-        val amount: BigInteger = response[1].value as BigInteger
-        val toAddress: String = response[2].value as String
+        val amount = response[1].value as BigInteger
+        val toAddress = response[2].value as String
 
         return FundsDepositedEvent(amount, toAddress)
     }
-
-    private fun getSignature(): List<TypeReference<*>> = listOf(
-            object : TypeReference<Uint8>() {},
-            object : TypeReference<Uint256>() {},
-            object : TypeReference<Address>() {}
-    )
 
 }

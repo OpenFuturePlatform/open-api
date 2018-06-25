@@ -1,6 +1,7 @@
 package io.openfuture.api.component.web3.event.domain
 
 import io.openfuture.api.component.web3.event.EventType
+import io.openfuture.api.component.web3.event.EventType.EDITED_SHARE_HOLDER
 import java.math.BigInteger
 
 data class EditedShareHolderEvent(
@@ -8,6 +9,6 @@ data class EditedShareHolderEvent(
         val partnerShare: BigInteger
 ) : Event {
 
-    override fun getType(): EventType = EventType.EDITED_SHARE_HOLDER
+    override fun getType(): EventType = EDITED_SHARE_HOLDER
 
 }

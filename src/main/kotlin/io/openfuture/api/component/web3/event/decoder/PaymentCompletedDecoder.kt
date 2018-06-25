@@ -17,18 +17,19 @@ class PaymentCompletedDecoder(private val scaffoldPropertyRepository: ScaffoldPr
     override fun decode(addressScaffold: String, rawData: String): PaymentCompletedEvent {
         val scaffoldProperties = scaffoldPropertyRepository.findAllByScaffoldAddressOrderByIdAsc(addressScaffold)
 
-        val response = Decoder.getResponse(rawData, getSignature(scaffoldProperties))
+        val response = getResponse(rawData, getSignature(scaffoldProperties))
 
-        val customerAddress: String = response[1].value as String
-        val transactionAmount: BigInteger = response[2].value as BigInteger
-        val scaffoldTransactionIndex: BigInteger = response[3].value as BigInteger
+        val customerAddress = response[1].value as String
+        val transactionAmount = response[2].value as BigInteger
+        val scaffoldTransactionIndex = response[3].value as BigInteger
 
         val properties = mutableMapOf<String, Any>()
+        val startPropertyIndex = 4
         for ((index, property) in scaffoldProperties.withIndex()) {
             properties[property.name] = when (property.getType()) {
-                STRING -> String(response[4 + index].value as ByteArray)
-                NUMBER -> response[4 + index].value as BigInteger
-                BOOLEAN -> response[4 + index].value as Boolean
+                STRING -> String(response[startPropertyIndex + index].value as ByteArray)
+                NUMBER -> response[startPropertyIndex + index].value as BigInteger
+                BOOLEAN -> response[startPropertyIndex + index].value as Boolean
             }
         }
 

@@ -10,18 +10,13 @@ import java.math.BigInteger
 class EditedShareHolderDecoder : Decoder<EditedShareHolderEvent> {
 
     override fun decode(addressScaffold: String, rawData: String): EditedShareHolderEvent {
-        val response = Decoder.getResponse(rawData, getSignature())
+        val response = getResponse(rawData, listOf(object : TypeReference<Uint8>() {}, object : TypeReference<Address>() {},
+                object : TypeReference<Uint256>() {}))
 
-        val userAddress: String = response[1].value as String
-        val partnerShare: BigInteger = response[2].value as BigInteger
+        val userAddress = response[1].value as String
+        val partnerShare = response[2].value as BigInteger
 
         return EditedShareHolderEvent(userAddress, partnerShare)
     }
-
-    private fun getSignature(): List<TypeReference<*>> = listOf(
-            object : TypeReference<Uint8>() {},
-            object : TypeReference<Address>() {},
-            object : TypeReference<Uint256>() {}
-    )
 
 }
