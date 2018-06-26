@@ -17,7 +17,7 @@ internal class ScaffoldRepositoryTests : RepositoryTests() {
 
 
     @Test
-    fun findByAddressAndOpenKeyUser() {
+    fun findByAddressAndOpenKeyUserTest() {
         val expectedScaffold = persistEntities()
         val address = expectedScaffold.address
         val user = expectedScaffold.openKey.user
@@ -28,7 +28,7 @@ internal class ScaffoldRepositoryTests : RepositoryTests() {
     }
 
     @Test
-    fun findByAddress() {
+    fun findByAddressTest() {
         val expectedScaffold = persistEntities()
         val address = expectedScaffold.address
 
@@ -38,7 +38,7 @@ internal class ScaffoldRepositoryTests : RepositoryTests() {
     }
 
     @Test
-    fun findAllByOpenKeyUser() {
+    fun findAllByOpenKeyUserTest() {
         val expectedScaffold = persistEntities()
         val user = expectedScaffold.openKey.user
 
@@ -46,7 +46,6 @@ internal class ScaffoldRepositoryTests : RepositoryTests() {
 
         assertThat(actualScaffolds.contains(expectedScaffold)).isTrue()
     }
-
 
     private fun persistEntities(): Scaffold {
         val user = User("googleId")

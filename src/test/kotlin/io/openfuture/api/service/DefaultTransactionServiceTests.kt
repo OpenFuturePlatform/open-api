@@ -30,7 +30,7 @@ internal class DefaultTransactionServiceTests : UnitTest() {
     }
 
     @Test
-    fun getAll() {
+    fun getAllTest() {
         val scaffold = createScaffold()
         val expectedTransactionPages = PageImpl(Collections.singletonList(createTransaction()), pageable, 1)
 
@@ -42,7 +42,7 @@ internal class DefaultTransactionServiceTests : UnitTest() {
     }
 
     @Test
-    fun save() {
+    fun saveTest() {
         val transaction = createTransaction()
 
         given(repository.save(any(Transaction::class.java))).will { invocation -> invocation.arguments[0] }

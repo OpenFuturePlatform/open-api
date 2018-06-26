@@ -18,7 +18,7 @@ internal class TransactionRepositoryTests : RepositoryTests() {
 
 
     @Test
-    fun findAllByScaffold() {
+    fun findAllByScaffoldTest() {
         val user = User("googleId")
         entityManager.persist(user)
 

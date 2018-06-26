@@ -25,7 +25,7 @@ internal class DefaultUserServiceTests : UnitTest() {
     }
 
     @Test
-    fun findByGoogleId() {
+    fun findByGoogleIdTest() {
         val googleId = "104113085667282103363"
         val expectedUser = createUser(googleId).apply { id = 1L }
 
@@ -37,7 +37,7 @@ internal class DefaultUserServiceTests : UnitTest() {
     }
 
     @Test
-    fun save() {
+    fun saveTest() {
         val user = createUser("104113085667282103363")
         val openKey = OpenKey(user, null, "op_pk_9de7cbb4-857c-49e9-87d2-fc91428c4c12")
 

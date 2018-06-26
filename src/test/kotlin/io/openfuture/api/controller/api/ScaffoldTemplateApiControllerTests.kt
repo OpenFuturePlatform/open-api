@@ -11,7 +11,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.util.*
 
 @WebMvcTest(ScaffoldTemplateApiController::class)
@@ -32,8 +33,8 @@ class ScaffoldTemplateApiControllerTests : ControllerTests() {
         mvc.perform(get("/api/scaffolds/templates")
                 .header(AUTHORIZATION, openKey.value))
 
-                .andExpect(MockMvcResultMatchers.status().isOk)
-                .andExpect(MockMvcResultMatchers.content()
+                .andExpect(status().isOk)
+                .andExpect(content()
                         .json(objectMapper.writeValueAsString(listOf(ScaffoldTemplateDto(scaffoldTemplate))), true))
     }
 

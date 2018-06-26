@@ -22,7 +22,7 @@ internal class TemplateProcessorTests : UnitTest() {
     }
 
     @Test(expected = TemplateProcessingException::class)
-    fun getContentWithIncorrectBody() {
+    fun getContentWhenIncorrectBodyShouldThrowExceptionTest() {
         templateProcessor.getContent(EMPTY, Collections.emptyMap())
     }
 

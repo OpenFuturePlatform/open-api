@@ -2,19 +2,20 @@ package io.openfuture.api.util
 
 import io.openfuture.api.entity.scaffold.PropertyType
 import io.openfuture.api.entity.scaffold.PropertyType.STRING
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class DictionaryUtilsTests {
 
     @Test
-    fun valueOfShouldReturnEnum() {
+    fun valueOfShouldReturnEnumTest() {
         val status = DictionaryUtils.valueOf(PropertyType::class.java, STRING.getId())
-        Assertions.assertThat(status).isEqualTo(STRING)
+
+        assertThat(status).isEqualTo(STRING)
     }
 
     @Test(expected = IllegalStateException::class)
-    fun valueOfShouldThrowException() {
+    fun valueOfShouldThrowExceptionTest() {
         DictionaryUtils.valueOf(PropertyType::class.java, -1)
     }
 

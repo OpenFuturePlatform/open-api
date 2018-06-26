@@ -45,7 +45,7 @@ class FrontendPropertiesApiControllerTests : ControllerTests() {
     }
 
     @Test
-    fun getWhenOpenTokenIsNotFoundShouldRedirectToIndexPage() {
+    fun getWhenOpenTokenIsNotFoundShouldRedirectToIndexPageTest() {
         val invalidToken = "not_valid_token"
 
         given(keyService.find(invalidToken)).willReturn(null)

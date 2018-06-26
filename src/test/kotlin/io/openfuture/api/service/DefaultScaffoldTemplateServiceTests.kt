@@ -18,9 +18,6 @@ import org.mockito.BDDMockito.given
 import org.mockito.Mock
 import java.util.*
 
-/**
- * @author Alexey Skadorva
- */
 internal class DefaultScaffoldTemplateServiceTests : UnitTest() {
 
     @Mock private lateinit var repository: ScaffoldTemplateRepository
@@ -35,7 +32,7 @@ internal class DefaultScaffoldTemplateServiceTests : UnitTest() {
     }
 
     @Test
-    fun getAll() {
+    fun getAllTest() {
         val expectedScaffoldTemplates = listOf(createScaffoldTemplate())
 
         given(repository.findAllByDeletedIsFalse()).willReturn(expectedScaffoldTemplates)
@@ -46,7 +43,7 @@ internal class DefaultScaffoldTemplateServiceTests : UnitTest() {
     }
 
     @Test
-    fun get() {
+    fun getTest() {
         val scaffoldTemplateId = 1L
         val scaffoldTemplate = createScaffoldTemplate().apply { id = scaffoldTemplateId }
 
@@ -58,7 +55,7 @@ internal class DefaultScaffoldTemplateServiceTests : UnitTest() {
     }
 
     @Test(expected = NotFoundException::class)
-    fun getWithNotFoundException() {
+    fun getWhenScaffoldTemplateNotFoundShouldThrowExceptionTest() {
         val scaffoldTemplateId = 1L
 
         given(repository.findById(scaffoldTemplateId)).willReturn(Optional.ofNullable(null))
@@ -67,7 +64,7 @@ internal class DefaultScaffoldTemplateServiceTests : UnitTest() {
     }
 
     @Test
-    fun save() {
+    fun saveTest() {
         val request = SaveScaffoldTemplateRequest("request_name")
         val scaffoldTemplatePropertyDto = ScaffoldTemplatePropertyDto("name", STRING, "value")
         request.apply { properties = listOf(scaffoldTemplatePropertyDto) }
@@ -86,7 +83,7 @@ internal class DefaultScaffoldTemplateServiceTests : UnitTest() {
     }
 
     @Test
-    fun disable() {
+    fun disableTest() {
         val scaffoldTemplateId = 1L
         val scaffoldTemplate = createScaffoldTemplate().apply { id = scaffoldTemplateId }
 

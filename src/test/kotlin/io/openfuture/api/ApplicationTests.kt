@@ -10,7 +10,7 @@ import org.springframework.test.context.junit4.SpringRunner
 class ApplicationTests {
 
     @Test
-    fun contextLoads() {
+    fun contextLoadsTest() {
     }
 
 }

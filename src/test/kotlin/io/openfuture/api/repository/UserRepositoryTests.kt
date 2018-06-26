@@ -13,7 +13,7 @@ internal class UserRepositoryTests : RepositoryTests() {
 
 
     @Test
-    fun findByGoogleId() {
+    fun findByGoogleIdTest() {
         val googleId = "googleId"
         val expectedUser = User(googleId)
         entityManager.persist(expectedUser)

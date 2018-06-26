@@ -13,7 +13,7 @@ internal class ScaffoldTemplateRepositoryTests : RepositoryTests() {
 
 
     @Test
-    fun findAllByUserAndDeletedIsFalse() {
+    fun findAllByUserAndDeletedIsFalseTest() {
         val scaffoldTemplate = createScaffoldTemplate("template")
         val deletedScaffoldTemplate = createScaffoldTemplate("deleted_template").apply { deleted = true }
         entityManager.persist(scaffoldTemplate)

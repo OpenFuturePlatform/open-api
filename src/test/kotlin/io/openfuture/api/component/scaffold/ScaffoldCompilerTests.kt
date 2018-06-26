@@ -27,7 +27,7 @@ internal class ScaffoldCompilerTests : UnitTest() {
     }
 
     @Test
-    fun compile() {
+    fun compileTest() {
         val parameters = createParameters()
         val scaffoldContent = createScaffoldContent()
 
@@ -182,7 +182,7 @@ internal class ScaffoldCompilerTests : UnitTest() {
     }
 
     @Test(expected = CompileException::class)
-    fun compileWithIncorrectScaffold() {
+    fun compileWhenIncorrectScaffoldShouldThrowExceptionTest() {
         val parameters = createParameters()
         val scaffoldContent = createScaffoldContent()
 

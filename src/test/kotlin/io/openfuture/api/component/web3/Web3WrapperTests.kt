@@ -25,10 +25,6 @@ import org.web3j.protocol.core.methods.response.*
 import java.math.BigInteger
 import java.util.*
 
-
-/**
- * @author Alexey Skadorva
- */
 internal class Web3WrapperTests : UnitTest() {
 
     @Mock private lateinit var web3j: Web3j
@@ -60,7 +56,7 @@ internal class Web3WrapperTests : UnitTest() {
     }
 
     @Test
-    fun deploy() {
+    fun deployTest() {
         val optionalTransactionReceipt = Optional.of(TransactionReceipt().apply { contractAddress = addressValue })
 
         given(properties.getCredentials()).willReturn(credentials)
@@ -83,7 +79,7 @@ internal class Web3WrapperTests : UnitTest() {
     }
 
     @Test(expected = DeployException::class)
-    fun deployWithException() {
+    fun deployWhenTransactionErrorShouldThrowExceptionTest() {
         given(properties.getCredentials()).willReturn(credentials)
         given(credentials.address).willReturn(addressValue)
         given(credentials.ecKeyPair).willReturn(createECKeyPair())
@@ -100,7 +96,7 @@ internal class Web3WrapperTests : UnitTest() {
     }
 
     @Test
-    fun callFunction() {
+    fun callFunctionTest() {
         given(properties.getCredentials()).willReturn(credentials)
         given(credentials.address).willReturn(addressValue)
         given(web3j.ethGetTransactionCount(addressValue, LATEST)).willReturn(transactionCountRequest)
@@ -124,7 +120,7 @@ internal class Web3WrapperTests : UnitTest() {
     }
 
     @Test(expected = FunctionCallException::class)
-    fun callFunctionWithException() {
+    fun callFunctionWhenCallErrorShouldThrowExceptionTest() {
         given(properties.getCredentials()).willReturn(credentials)
         given(credentials.address).willReturn(addressValue)
         given(web3j.ethGetTransactionCount(addressValue, LATEST)).willReturn(transactionCountRequest)
@@ -140,7 +136,7 @@ internal class Web3WrapperTests : UnitTest() {
     }
 
     @Test
-    fun callTransaction() {
+    fun callTransactionTest() {
         given(properties.getCredentials()).willReturn(credentials)
         given(credentials.address).willReturn(addressValue)
         given(web3j.ethGetTransactionCount(addressValue, LATEST)).willReturn(transactionCountRequest)
@@ -156,7 +152,7 @@ internal class Web3WrapperTests : UnitTest() {
     }
 
     @Test(expected = FunctionCallException::class)
-    fun callTransactionWithException() {
+    fun callTransactionWhenTransactionErrorShouldThrowExceptionTest() {
         given(properties.getCredentials()).willReturn(credentials)
         given(credentials.address).willReturn(addressValue)
         given(web3j.ethGetTransactionCount(addressValue, LATEST)).willReturn(transactionCountRequest)
@@ -172,7 +168,7 @@ internal class Web3WrapperTests : UnitTest() {
     }
 
     @Test
-    fun getNetVersion() {
+    fun getNetVersionTest() {
         val version = "version"
         given(web3j.netVersion()).willReturn(netVersionRequest)
         given(netVersionRequest.send()).willReturn(netVersion)

@@ -27,7 +27,7 @@ class DefaultOpenKeyServiceTests : UnitTest() {
     }
 
     @Test
-    fun getAllByUser() {
+    fun getAllByUserTest() {
         val user = createUser()
         val expectedOpenKeys = listOf(OpenKey(user), OpenKey(user))
 
@@ -39,7 +39,7 @@ class DefaultOpenKeyServiceTests : UnitTest() {
     }
 
     @Test
-    fun get() {
+    fun getTest() {
         val openKeyValue = "op_pk_9de7cbb4-857c-49e9-87d2-fc91428c4c12"
         val expectedOpenKey = createOpenKey()
 
@@ -52,7 +52,7 @@ class DefaultOpenKeyServiceTests : UnitTest() {
     }
 
     @Test(expected = NotFoundException::class)
-    fun getWithNotFoundException() {
+    fun getWhenOpenKeyNotFoundShouldThrowExceptionTest() {
         val openKeyValue = "op_pk_9de7cbb4-857c-49e9-87d2-fc91428c4c12"
 
         given(repository.findByValueAndEnabledIsTrueAndExpiredDateIsNullOrExpiredDateAfter(eq(openKeyValue),
@@ -62,7 +62,7 @@ class DefaultOpenKeyServiceTests : UnitTest() {
     }
 
     @Test
-    fun find() {
+    fun findTest() {
         val openKeyValue = "op_pk_9de7cbb4-857c-49e9-87d2-fc91428c4c12"
         val expectedOpenKey = createOpenKey()
 
@@ -75,7 +75,7 @@ class DefaultOpenKeyServiceTests : UnitTest() {
     }
 
     @Test
-    fun generate() {
+    fun generateTest() {
         val user = createUser()
 
         given(repository.save(any(OpenKey::class.java))).will { invocation -> invocation.arguments[0] }
@@ -87,7 +87,7 @@ class DefaultOpenKeyServiceTests : UnitTest() {
     }
 
     @Test
-    fun disable() {
+    fun disableTest() {
         val openKeyValue = "op_pk_9de7cbb4-857c-49e9-87d2-fc91428c4c12"
         val expectedOpenKey = createOpenKey()
 

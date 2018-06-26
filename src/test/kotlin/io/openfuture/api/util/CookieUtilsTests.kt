@@ -18,7 +18,7 @@ class CookieUtilsTests {
 
 
     @Test
-    fun add() {
+    fun addTest() {
         val name = "name"
         val value = "value"
 
@@ -33,7 +33,7 @@ class CookieUtilsTests {
     }
 
     @Test
-    fun delete() {
+    fun deleteTest() {
         val name = "name"
         val value = StringUtils.EMPTY
 

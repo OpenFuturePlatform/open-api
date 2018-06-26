@@ -30,7 +30,7 @@ internal class TransactionHandlerTests : UnitTest() {
     }
 
     @Test
-    fun handle() {
+    fun handleTest() {
         val log = createLog()
         val user = User("104113085667282103363")
         val scaffold = Scaffold("0xba37163625b32e96112562858c12b75963af138", OpenKey(user), "abi", "developerAddress",
@@ -43,7 +43,7 @@ internal class TransactionHandlerTests : UnitTest() {
     }
 
     @Test
-    fun handleWithEmptyScaffold() {
+    fun handleWhenEmptyScaffoldTest() {
         val log = createLog()
 
         given(scaffoldRepository.findByAddress(log.address)).willReturn(null)
