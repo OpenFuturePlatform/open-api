@@ -97,7 +97,7 @@ contract OpenScaffold {
     uint8 private totalAmountShares = 0;
 
     // OPEN token
-    uint constant private ACTIVATING_TOKENS_AMOUNT = 10 * 10**8;
+    uint constant private ACTIVATING_TOKENS_AMOUNT = 10 * 10**uint256(8);
     address constant private OPEN_TOKEN_ADDRESS = 0x0;
     ERC20Token public OPENToken = ERC20Token(OPEN_TOKEN_ADDRESS);
 
