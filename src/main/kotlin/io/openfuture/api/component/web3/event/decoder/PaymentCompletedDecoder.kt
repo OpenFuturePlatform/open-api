@@ -9,7 +9,6 @@ import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.Bool
 import org.web3j.abi.datatypes.generated.Bytes32
 import org.web3j.abi.datatypes.generated.Uint256
-import org.web3j.abi.datatypes.generated.Uint8
 import java.math.BigInteger
 
 class PaymentCompletedDecoder(private val scaffoldPropertyRepository: ScaffoldPropertyRepository) : Decoder<PaymentCompletedEvent> {
@@ -38,7 +37,7 @@ class PaymentCompletedDecoder(private val scaffoldPropertyRepository: ScaffoldPr
 
     private fun getSignature(properties: List<ScaffoldProperty>): List<TypeReference<*>> {
         val signature = mutableListOf(
-                object : TypeReference<Uint8>() {},
+                object : TypeReference<Uint256>() {},
                 object : TypeReference<Address>() {},
                 object : TypeReference<Uint256>() {},
                 object : TypeReference<Uint256>() {}

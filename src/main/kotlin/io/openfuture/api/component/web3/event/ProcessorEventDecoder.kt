@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component
 import org.web3j.abi.FunctionReturnDecoder
 import org.web3j.abi.TypeReference
 import org.web3j.abi.Utils
-import org.web3j.abi.datatypes.generated.Uint8
+import org.web3j.abi.datatypes.generated.Uint256
 import java.math.BigInteger
 import javax.annotation.PostConstruct
 
@@ -31,9 +31,9 @@ class ProcessorEventDecoder(private val scaffoldPropertyRepository: ScaffoldProp
     }
 
     fun getEvent(addressScaffold: String, rawData: String): Event {
-        val response = FunctionReturnDecoder.decode(rawData, Utils.convert(listOf(object : TypeReference<Uint8>() {})))
-        val orderEventType = response[0].value as BigInteger
-        val eventType = EventType.getEventTypeByOrder(orderEventType.toInt())
+        val response = FunctionReturnDecoder.decode(rawData, Utils.convert(listOf(object : TypeReference<Uint256>() {})))
+        val eventTypeId = response[0].value as BigInteger
+        val eventType = EventType.getById(eventTypeId.toInt())
 
         val decoder = decoders.first { eventType.decoderClass == it.javaClass }
 
