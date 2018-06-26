@@ -146,13 +146,9 @@ class DefaultScaffoldService(
         val summary = getScaffoldSummary(scaffold)
         cacheSummary?.let { summary.id = it.id }
         val persistSummary = summaryRepository.save(summary)
-        val shareHolders = getShareHolders(persistSummary)
-        val persistShareHolders = shareHolders.map { shareHolder ->
-            val cacheShareHolder = shareHolderRepository.findBySummaryAndAddress(summary, shareHolder.address)
-            cacheShareHolder?.let { shareHolder.id = it.id }
-            shareHolderRepository.save(shareHolder)
-        }
-        persistSummary.shareHolders.addAll(persistShareHolders)
+        shareHolderRepository.deleteAllBySummary(summary)
+        val shareHolders = getShareHolders(persistSummary).map { shareHolderRepository.save(it) }
+        persistSummary.shareHolders.addAll(shareHolders)
         return persistSummary
     }
 

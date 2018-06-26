@@ -325,7 +325,7 @@ contract OpenScaffold {
             EventType.PAYMENT_COMPLETED,
             customerAddress,
             vendorAmount,
-            scaffoldTransactionIndex,
+            transactionIndex,
             ${CUSTOM_RETURN_VARIABLES}
             );
     }
