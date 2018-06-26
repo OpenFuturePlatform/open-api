@@ -43,7 +43,7 @@ internal class TransactionHandlerTests : UnitTest() {
     }
 
     @Test
-    fun handleWhenEmptyScaffoldTest() {
+    fun handleWhenEmptyScaffoldShouldNotSavetransactionTest() {
         val log = createLog()
 
         given(scaffoldRepository.findByAddress(log.address)).willReturn(null)

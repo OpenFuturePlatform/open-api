@@ -223,7 +223,7 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
     }
 
     @Test
-    fun getScaffoldSummaryWhenExpiredCachePeriodTest() {
+    fun getScaffoldSummaryWhenExpiredCachePeriodShouldReturnCachedScaffoldSummaryTest() {
         val addressValue = "0xba37163625b3f2e96112562858c12b75963af138"
         val user = createUser()
         val scaffold = createScaffold()
