@@ -46,15 +46,14 @@ contract OpenScaffold {
 
     using SafeMath for uint256;
 
-    enum EventType {
-        PAYMENT_COMPLETED,
-        FUNDS_DEPOSITED,
-        ACTIVATED_SCAFFOLD,
-        ADDED_SHARE_HOLDER,
-        EDITED_SHARE_HOLDER,
-        DELETED_SHARE_HOLDER,
-        PAYED_FOR_SHARE_HOLDER
-    }
+    // event protocol
+    uint256 constant PAYMENT_COMPLETED = 1;
+    uint256 constant FUNDS_DEPOSITED = 2;
+    uint256 constant ACTIVATED_SCAFFOLD = 3;
+    uint256 constant ADDED_SHARE_HOLDER = 4;
+    uint256 constant EDITED_SHARE_HOLDER = 5;
+    uint256 constant DELETED_SHARE_HOLDER = 6;
+    uint256 constant PAYED_FOR_SHARE_HOLDER = 7;
 
     // on-chain transaction storage
     struct OpenScaffoldTransaction {
@@ -71,19 +70,19 @@ contract OpenScaffold {
 
     // events
     event PaymentCompleted(
-        EventType eventType,
+        uint256 eventType,
         address customerAddress,
         uint transactionAmount,
         uint scaffoldTransactionIndex,
         ${CUSTOM_SCAFFOLD_PARAMETERS}
         );
-    event FundsDeposited(EventType eventType, uint _amount, address _toAddress);
-    event ActivatedScaffold(EventType eventType, bool activated);
+    event FundsDeposited(uint256 eventType, uint _amount, address _toAddress);
+    event ActivatedScaffold(uint256 eventType, bool activated);
     // shareholders events
-    event AddedShareHolder(EventType eventType, address userAddress, uint partnerShare);
-    event EditedShareHolder(EventType eventType, address userAddress, uint partnerShare);
-    event DeletedShareHolder(EventType eventType, address userAddress);
-    event PayedForShareHolder(EventType eventType, address userAddress, uint amount);
+    event AddedShareHolder(uint256 eventType, address userAddress, uint partnerShare);
+    event EditedShareHolder(uint256 eventType, address userAddress, uint partnerShare);
+    event DeletedShareHolder(uint256 eventType, address userAddress);
+    event PayedForShareHolder(uint256 eventType, address userAddress, uint amount);
 
 
     // custom dataTypes
@@ -155,7 +154,7 @@ contract OpenScaffold {
     // deactivate Scaffold contract by vendor
     function deactivate() onlyVendor public activated {
         OPENToken.transfer(vendorAddress, OPENToken.balanceOf(address(this)));
-        ActivatedScaffold(EventType.ACTIVATED_SCAFFOLD, false);
+        ActivatedScaffold(ACTIVATED_SCAFFOLD, false);
     }
 
     // get shareholder share by address
@@ -209,7 +208,7 @@ contract OpenScaffold {
             totalAmountShares += partnerShare;
 
             AddedShareHolder(
-                EventType.ADDED_SHARE_HOLDER,
+                ADDED_SHARE_HOLDER,
                 shareHolderAddress,
                 partnerShare);
 
@@ -232,7 +231,7 @@ contract OpenScaffold {
             partners[shareHolderAddress].share = partnerShare;
 
             EditedShareHolder(
-                EventType.EDITED_SHARE_HOLDER,
+                EDITED_SHARE_HOLDER,
                 shareHolderAddress,
                 partnerShare);
 
@@ -256,7 +255,7 @@ contract OpenScaffold {
 
             shareHolderAddresses.length--;
 
-            DeletedShareHolder(EventType.DELETED_SHARE_HOLDER, shareHolderAddress);
+            DeletedShareHolder(DELETED_SHARE_HOLDER, shareHolderAddress);
 
             return rowToDelete;
     }
@@ -304,7 +303,7 @@ contract OpenScaffold {
             withdrawFunds(shareHolderAddress, shareHolderAmount);
 
             PayedForShareHolder(
-                EventType.PAYED_FOR_SHARE_HOLDER,
+                PAYED_FOR_SHARE_HOLDER,
                 shareHolderAddress,
                 shareHolderAmount);
             }
@@ -322,7 +321,7 @@ contract OpenScaffold {
         uint256 transactionIndex  = createScaffoldTransaction(customerAddress, ${CUSTOM_RETURN_VARIABLES});
 
         PaymentCompleted(
-            EventType.PAYMENT_COMPLETED,
+            PAYMENT_COMPLETED,
             customerAddress,
             vendorAmount,
             scaffoldTransactionIndex,
@@ -344,7 +343,7 @@ contract OpenScaffold {
     // withdraw funds
     function withdrawFunds(address to, uint amount) private {
         to.transfer(amount);
-        FundsDeposited(EventType.FUNDS_DEPOSITED, amount, to);
+        FundsDeposited(FUNDS_DEPOSITED, amount, to);
     }
 
     // check of the partner's address
