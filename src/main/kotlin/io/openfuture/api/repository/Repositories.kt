@@ -34,7 +34,7 @@ interface ScaffoldRepository : BaseRepository<Scaffold> {
 @Repository
 interface ScaffoldPropertyRepository : BaseRepository<ScaffoldProperty> {
 
-    fun findAllByScaffoldAddressOrderByIdAsc(address: String): List<ScaffoldProperty>
+    fun findAllByScaffoldAddress(address: String): List<ScaffoldProperty>
 
 }
 

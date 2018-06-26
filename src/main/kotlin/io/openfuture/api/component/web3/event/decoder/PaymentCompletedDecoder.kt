@@ -15,7 +15,7 @@ import java.math.BigInteger
 class PaymentCompletedDecoder(private val scaffoldPropertyRepository: ScaffoldPropertyRepository) : Decoder<PaymentCompletedEvent> {
 
     override fun decode(addressScaffold: String, rawData: String): PaymentCompletedEvent {
-        val scaffoldProperties = scaffoldPropertyRepository.findAllByScaffoldAddressOrderByIdAsc(addressScaffold)
+        val scaffoldProperties = scaffoldPropertyRepository.findAllByScaffoldAddress(addressScaffold)
 
         val response = getResponse(rawData, getSignature(scaffoldProperties))
 
