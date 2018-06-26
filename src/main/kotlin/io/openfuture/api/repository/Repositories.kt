@@ -32,7 +32,11 @@ interface ScaffoldRepository : BaseRepository<Scaffold> {
 }
 
 @Repository
-interface ScaffoldPropertyRepository : BaseRepository<ScaffoldProperty>
+interface ScaffoldPropertyRepository : BaseRepository<ScaffoldProperty> {
+
+    fun findAllByScaffoldAddress(address: String): List<ScaffoldProperty>
+
+}
 
 @Repository
 interface OpenKeyRepository : BaseRepository<OpenKey> {
