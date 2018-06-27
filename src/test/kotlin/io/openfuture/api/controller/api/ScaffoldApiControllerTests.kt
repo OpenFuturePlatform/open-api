@@ -27,7 +27,7 @@ import java.math.BigInteger.ZERO
 import java.util.*
 
 @WebMvcTest(ScaffoldApiController::class)
-class ScaffoldApiControllerTest : ControllerTests() {
+class ScaffoldApiControllerTests : ControllerTests() {
 
     @MockBean
     private lateinit var service: ScaffoldService
@@ -116,7 +116,7 @@ class ScaffoldApiControllerTest : ControllerTests() {
     }
 
     @Test
-    fun deployWhenUserWithoutDeployRoleShouldRedirectToIndexPage() {
+    fun deployWhenUserWithoutDeployRoleShouldRedirectToIndexPageTest() {
         val openKey = createOpenKey(setOf(Role("ROLE_INAPPROPRIATE")))
         val request = DeployScaffoldRequest("openKey", "developerAddress", "description",
                 "2", USD, "0.0023", "webHook", listOf(createScaffoldPropertyDto()))
@@ -145,6 +145,25 @@ class ScaffoldApiControllerTest : ControllerTests() {
         given(service.save(request)).willReturn(scaffold)
 
         mvc.perform(post("/api/scaffolds")
+                .header(AUTHORIZATION, openKey.value)
+                .contentType(APPLICATION_JSON_UTF8)
+                .content(requestJson))
+
+                .andExpect(status().isOk)
+                .andExpect(content().json(expectScaffoldJson(scaffold), true))
+    }
+
+    @Test
+    fun updateTest() {
+        val openKey = createOpenKey(setOf(Role("ROLE_MASTER")))
+        val scaffold = createScaffold(openKey)
+        val request = UpdateScaffoldRequest("description")
+        val requestJson = objectMapper.writeValueAsString(request)
+
+        given(keyService.find(openKey.value)).willReturn(openKey)
+        given(service.update(scaffold.address, openKey.user, request)).willReturn(scaffold)
+
+        mvc.perform(put("/api/scaffolds/" + scaffold.address)
                 .header(AUTHORIZATION, openKey.value)
                 .contentType(APPLICATION_JSON_UTF8)
                 .content(requestJson))
@@ -223,6 +242,63 @@ class ScaffoldApiControllerTest : ControllerTests() {
                       "limitCount": ${scaffoldQuotaDto.limitCount}
                     }
                     """.trimIndent(), true))
+    }
+
+    @Test
+    fun addShareHolderTest() {
+        val address = "address"
+        val request = AddShareHolderRequest(address, 3)
+        val openKey = createOpenKey(setOf(Role("ROLE_MASTER")))
+        val requestJson = objectMapper.writeValueAsString(request)
+
+        given(keyService.find(openKey.value)).willReturn(openKey)
+
+        mvc.perform(post("/api/scaffolds/$address/holders")
+                .header(AUTHORIZATION, openKey.value)
+                .contentType(APPLICATION_JSON_UTF8)
+                .content(requestJson))
+
+                .andExpect(status().isOk)
+
+        verify(service).addShareHolder(address, openKey.user, request)
+    }
+
+    @Test
+    fun updateShareHolderTest() {
+        val address = "address"
+        val request = UpdateShareHolderRequest(address, 3)
+        val openKey = createOpenKey(setOf(Role("ROLE_MASTER")))
+        val requestJson = objectMapper.writeValueAsString(request)
+
+        given(keyService.find(openKey.value)).willReturn(openKey)
+
+        mvc.perform(put("/api/scaffolds/$address/holders")
+                .header(AUTHORIZATION, openKey.value)
+                .contentType(APPLICATION_JSON_UTF8)
+                .content(requestJson))
+
+                .andExpect(status().isOk)
+
+        verify(service).updateShareHolder(address, openKey.user, request)
+    }
+
+    @Test
+    fun removeShareHolderTest() {
+        val address = "address"
+        val request = RemoveShareHolderRequest(address)
+        val openKey = createOpenKey(setOf(Role("ROLE_MASTER")))
+        val requestJson = objectMapper.writeValueAsString(request)
+
+        given(keyService.find(openKey.value)).willReturn(openKey)
+
+        mvc.perform(delete("/api/scaffolds/$address/holders")
+                .header(AUTHORIZATION, openKey.value)
+                .contentType(APPLICATION_JSON_UTF8)
+                .content(requestJson))
+
+                .andExpect(status().isOk)
+
+        verify(service).removeShareHolder(address, openKey.user, request)
     }
 
     private fun createScaffold(openKey: OpenKey) = Scaffold("address", openKey, "abi", "developerAddress",

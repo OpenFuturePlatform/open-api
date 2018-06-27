@@ -1,6 +1,7 @@
 package io.openfuture.api.controller.api
 
 import io.openfuture.api.annotation.CurrentUser
+import io.openfuture.api.component.web3.event.ProcessorEventDecoder
 import io.openfuture.api.domain.PageRequest
 import io.openfuture.api.domain.PageResponse
 import io.openfuture.api.domain.scaffold.TransactionDto
@@ -16,14 +17,16 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/scaffolds/{address}/transactions")
 class TransactionApiController(
         private val service: TransactionService,
-        private val scaffoldService: ScaffoldService
+        private val scaffoldService: ScaffoldService,
+        private val eventDecoder: ProcessorEventDecoder
 ) {
 
     @GetMapping
     fun getAll(@CurrentUser user: User, @PathVariable address: String,
                pageRequest: PageRequest): PageResponse<TransactionDto> {
         val scaffold = scaffoldService.get(address, user)
-        val transactions = service.getAll(scaffold, pageRequest).map { TransactionDto(it) }
+        val transactions = service.getAll(scaffold, pageRequest).map { TransactionDto(it,
+                eventDecoder.getEvent(it.scaffold.address, it.data)) }
         return PageResponse(transactions)
     }
 
