@@ -1,6 +1,6 @@
-package io.openfuture.api.component.web3.event.decoder
+package io.openfuture.api.component.web3.event
 
-import io.openfuture.api.component.web3.event.domain.FundsDepositedEvent
+import io.openfuture.api.domain.event.FundsDepositedEvent
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.generated.Uint256

@@ -1,6 +1,6 @@
-package io.openfuture.api.component.web3.event.decoder
+package io.openfuture.api.component.web3.event
 
-import io.openfuture.api.component.web3.event.domain.DeletedShareHolderEvent
+import io.openfuture.api.domain.event.DeletedShareHolderEvent
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.generated.Uint256
