@@ -139,10 +139,11 @@ internal class Web3WrapperTests : UnitTest() {
     fun callTransactionTest() {
         given(properties.getCredentials()).willReturn(credentials)
         given(credentials.address).willReturn(addressValue)
+        given(credentials.ecKeyPair).willReturn(createECKeyPair())
         given(web3j.ethGetTransactionCount(addressValue, LATEST)).willReturn(transactionCountRequest)
         given(transactionCountRequest.send()).willReturn(transactionCount)
         given(transactionCount.transactionCount).willReturn(BigInteger.ZERO)
-        given(web3j.ethSendTransaction(any(Transaction::class.java))).willReturn(transactionRequest)
+        given(web3j.ethSendRawTransaction(anyString())).willReturn(transactionRequest)
         given(transactionRequest.send()).willReturn(transaction)
         given(transaction.transactionHash).willReturn("hash")
 
@@ -155,10 +156,11 @@ internal class Web3WrapperTests : UnitTest() {
     fun callTransactionWhenTransactionErrorShouldThrowExceptionTest() {
         given(properties.getCredentials()).willReturn(credentials)
         given(credentials.address).willReturn(addressValue)
+        given(credentials.ecKeyPair).willReturn(createECKeyPair())
         given(web3j.ethGetTransactionCount(addressValue, LATEST)).willReturn(transactionCountRequest)
         given(transactionCountRequest.send()).willReturn(transactionCount)
         given(transactionCount.transactionCount).willReturn(BigInteger.ZERO)
-        given(web3j.ethSendTransaction(any(Transaction::class.java))).willReturn(transactionRequest)
+        given(web3j.ethSendRawTransaction(anyString())).willReturn(transactionRequest)
         given(transactionRequest.send()).willReturn(transaction)
         given(transaction.hasError()).willReturn(true)
         given(transaction.error).willReturn(error)

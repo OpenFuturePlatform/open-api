@@ -209,8 +209,8 @@ internal class ScaffoldCompilerTests : UnitTest() {
 
     private fun createParameters(): Map<String, String> {
         val params = HashMap<String, String>()
-        params["SCAFFOLD_STRUCT_PROPERTIES"] = "string value;"
-        params["CUSTOM_SCAFFOLD_PARAMETERS"] = "string value"
+        params["SCAFFOLD_STRUCT_PROPERTIES"] = "bytes32 value;"
+        params["CUSTOM_SCAFFOLD_PARAMETERS"] = "bytes32 value"
         params["SCAFFOLD_STRUCT_TRANSACTION_ARGUMENTS"] = "value: value"
         params["CUSTOM_RETURN_VARIABLES"] = "value"
         params["OPEN_TOKEN_ADDRESS"] = "0xba37163625b3f2e96112562858c12b75963af138"
