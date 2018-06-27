@@ -32,7 +32,6 @@ import org.web3j.abi.FunctionEncoder
 import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.Utf8String
 import org.web3j.abi.datatypes.generated.Uint256
-import org.web3j.abi.datatypes.generated.Uint8
 import org.web3j.crypto.Credentials
 import org.web3j.utils.Convert
 import java.math.BigInteger
@@ -239,19 +238,6 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
     }
 
     @Test
-    fun deactivateTest() {
-        val addressValue = "0xba37163625b3f2e96112562858c12b75963af138"
-        val user = createUser()
-        val expectedScaffold = createScaffold()
-
-        given(repository.findByAddressAndOpenKeyUser(addressValue, user)).willReturn(expectedScaffold)
-
-        service.deactivate(addressValue, user)
-
-        verify(web3).callTransaction("deactivate", listOf(), listOf(), addressValue)
-    }
-
-    @Test
     fun getQuotaTest() {
         val user = createUser()
         val currentCount = 1
@@ -263,50 +249,6 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
         val actualQuota = service.getQuota(user)
 
         assertThat(actualQuota).isEqualTo(expectedQuota)
-    }
-
-    @Test
-    fun addShareHolderTest() {
-        val addressValue = "0xba37163625b3f2e96112562858c12b75963af138"
-        val user = createUser()
-        val scaffold = createScaffold()
-        val request = AddShareHolderRequest(addressValue, 5)
-
-        given(repository.findByAddressAndOpenKeyUser(addressValue, user)).willReturn(scaffold)
-
-        service.addShareHolder(addressValue, user, request)
-
-        verify(web3).callTransaction("addShareHolder", listOf(Address(request.address),
-                Uint8(request.percent.toLong())), listOf(), scaffold.address)
-    }
-
-    @Test
-    fun updateShareHolderTest() {
-        val addressValue = "0xba37163625b3f2e96112562858c12b75963af138"
-        val user = createUser()
-        val scaffold = createScaffold()
-        val request = UpdateShareHolderRequest(addressValue, 10)
-
-        given(repository.findByAddressAndOpenKeyUser(addressValue, user)).willReturn(scaffold)
-
-        service.updateShareHolder(addressValue, user, request)
-
-        verify(web3).callTransaction("editShareHolder", listOf(Address(request.address),
-                Uint8(request.percent.toLong())), listOf(), scaffold.address)
-    }
-
-    @Test
-    fun removeShareHolderTest() {
-        val addressValue = "0xba37163625b3f2e96112562858c12b75963af138"
-        val user = createUser()
-        val scaffold = createScaffold()
-        val request = RemoveShareHolderRequest(addressValue)
-
-        given(repository.findByAddressAndOpenKeyUser(addressValue, user)).willReturn(scaffold)
-
-        service.removeShareHolder(addressValue, user, request)
-
-        verify(web3).callTransaction("deleteShareHolder", listOf(Address(request.address)), listOf(), scaffold.address)
     }
 
     private fun createScaffold(): Scaffold {

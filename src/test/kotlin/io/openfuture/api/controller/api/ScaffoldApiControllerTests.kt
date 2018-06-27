@@ -252,6 +252,7 @@ class ScaffoldApiControllerTests : ControllerTests() {
         val requestJson = objectMapper.writeValueAsString(request)
 
         given(keyService.find(openKey.value)).willReturn(openKey)
+        given(service.addShareHolder(address, openKey.user, request)).willReturn(createScaffoldSummary())
 
         mvc.perform(post("/api/scaffolds/$address/holders")
                 .header(AUTHORIZATION, openKey.value)
@@ -271,6 +272,7 @@ class ScaffoldApiControllerTests : ControllerTests() {
         val requestJson = objectMapper.writeValueAsString(request)
 
         given(keyService.find(openKey.value)).willReturn(openKey)
+        given(service.updateShareHolder(address, openKey.user, request)).willReturn(createScaffoldSummary())
 
         mvc.perform(put("/api/scaffolds/$address/holders")
                 .header(AUTHORIZATION, openKey.value)
@@ -290,6 +292,7 @@ class ScaffoldApiControllerTests : ControllerTests() {
         val requestJson = objectMapper.writeValueAsString(request)
 
         given(keyService.find(openKey.value)).willReturn(openKey)
+        given(service.removeShareHolder(address, openKey.user, request)).willReturn(createScaffoldSummary())
 
         mvc.perform(delete("/api/scaffolds/$address/holders")
                 .header(AUTHORIZATION, openKey.value)
