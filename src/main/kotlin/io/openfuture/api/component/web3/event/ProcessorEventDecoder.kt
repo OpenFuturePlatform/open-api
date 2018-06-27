@@ -1,6 +1,5 @@
 package io.openfuture.api.component.web3.event
 
-import io.openfuture.api.component.web3.event.decoder.*
 import io.openfuture.api.domain.event.Event
 import io.openfuture.api.repository.ScaffoldPropertyRepository
 import org.springframework.stereotype.Component
