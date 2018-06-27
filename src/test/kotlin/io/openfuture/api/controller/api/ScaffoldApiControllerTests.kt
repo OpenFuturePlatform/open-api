@@ -5,6 +5,7 @@ import io.openfuture.api.domain.PageRequest
 import io.openfuture.api.domain.scaffold.*
 import io.openfuture.api.entity.auth.OpenKey
 import io.openfuture.api.entity.auth.Role
+import io.openfuture.api.entity.auth.User
 import io.openfuture.api.entity.scaffold.Currency.USD
 import io.openfuture.api.entity.scaffold.PropertyType
 import io.openfuture.api.entity.scaffold.Scaffold
@@ -22,6 +23,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.math.BigInteger.ONE
+import java.math.BigInteger.ZERO
 import java.util.*
 
 @WebMvcTest(ScaffoldApiController::class)
@@ -212,6 +214,7 @@ class ScaffoldApiControllerTests : ControllerTests() {
         val openKey = createOpenKey(setOf(Role("ROLE_MASTER")))
 
         given(keyService.find(openKey.value)).willReturn(openKey)
+        given(service.deactivate(scaffoldAddress, openKey.user)).willReturn(createScaffoldSummary())
 
         mvc.perform(post("/api/scaffolds/$scaffoldAddress/doDeactivate")
                 .header(AUTHORIZATION, openKey.value))
@@ -249,6 +252,7 @@ class ScaffoldApiControllerTests : ControllerTests() {
         val requestJson = objectMapper.writeValueAsString(request)
 
         given(keyService.find(openKey.value)).willReturn(openKey)
+        given(service.addShareHolder(address, openKey.user, request)).willReturn(createScaffoldSummary())
 
         mvc.perform(post("/api/scaffolds/$address/holders")
                 .header(AUTHORIZATION, openKey.value)
@@ -268,6 +272,7 @@ class ScaffoldApiControllerTests : ControllerTests() {
         val requestJson = objectMapper.writeValueAsString(request)
 
         given(keyService.find(openKey.value)).willReturn(openKey)
+        given(service.updateShareHolder(address, openKey.user, request)).willReturn(createScaffoldSummary())
 
         mvc.perform(put("/api/scaffolds/$address/holders")
                 .header(AUTHORIZATION, openKey.value)
@@ -287,6 +292,7 @@ class ScaffoldApiControllerTests : ControllerTests() {
         val requestJson = objectMapper.writeValueAsString(request)
 
         given(keyService.find(openKey.value)).willReturn(openKey)
+        given(service.removeShareHolder(address, openKey.user, request)).willReturn(createScaffoldSummary())
 
         mvc.perform(delete("/api/scaffolds/$address/holders")
                 .header(AUTHORIZATION, openKey.value)
@@ -342,5 +348,8 @@ class ScaffoldApiControllerTests : ControllerTests() {
                       "shareHolders": ${Arrays.toString(scaffoldSummary.shareHolders.toTypedArray())}
                     }
                     """.trimIndent()
+
+    private fun createScaffoldSummary() = ScaffoldSummary(Scaffold("address", OpenKey(User("")), "", "", "", "", 1, ""),
+            ZERO, ZERO, true)
 
 }
