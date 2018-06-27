@@ -152,14 +152,14 @@ class DefaultScaffoldService(
         return persistSummary
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     override fun deactivate(address: String, user: User): ScaffoldSummary {
         val scaffold = get(address, user)
         web3.callTransaction(DEACTIVATE_SCAFFOLD_METHOD_NAME, listOf(), listOf(), scaffold.address)
         return getScaffoldSummary(address, user, false)
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     override fun addShareHolder(address: String, user: User, request: AddShareHolderRequest): ScaffoldSummary {
         val scaffold = get(address, user)
         web3.callTransaction(ADD_SHARE_HOLDER_METHOD_NAME, listOf(Address(request.address),
@@ -167,7 +167,7 @@ class DefaultScaffoldService(
         return getScaffoldSummary(address, user, false)
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     override fun updateShareHolder(address: String, user: User, request: UpdateShareHolderRequest): ScaffoldSummary {
         val scaffold = get(address, user)
         web3.callTransaction(UPDATE_SHARE_HOLDER_METHOD_NAME, listOf(Address(request.address),
@@ -175,7 +175,7 @@ class DefaultScaffoldService(
         return getScaffoldSummary(address, user, false)
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     override fun removeShareHolder(address: String, user: User, request: RemoveShareHolderRequest): ScaffoldSummary {
         val scaffold = get(address, user)
         web3.callTransaction(REMOVE_SHARE_HOLDER_METHOD_NAME, listOf(Address(request.address)), listOf(),
