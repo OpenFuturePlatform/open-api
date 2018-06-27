@@ -8,7 +8,7 @@ let description = "test description";
 let fiatCurrency = "100";
 let fiatAmount = "USD";
 // amount in wei (1 ether = 1*10^18 wei)
-let weiAmount = 1000000000000000000;
+let weiAmount = 10*10**18;
 
 module.exports = function(deployer) {
   deployer.deploy(OpenScaffold, vendorAddress, platformAddress, description, fiatCurrency, fiatAmount, weiAmount);
