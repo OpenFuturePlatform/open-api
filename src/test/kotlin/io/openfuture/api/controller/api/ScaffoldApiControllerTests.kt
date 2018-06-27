@@ -153,7 +153,7 @@ class ScaffoldApiControllerTests : ControllerTests() {
 
     @Test
     fun updateTest() {
-        val openKey = createOpenKey(setOf(Role("ROLE_DEPLOY")))
+        val openKey = createOpenKey(setOf(Role("ROLE_MASTER")))
         val scaffold = createScaffold(openKey)
         val request = UpdateScaffoldRequest("description")
         val requestJson = objectMapper.writeValueAsString(request)
@@ -245,7 +245,7 @@ class ScaffoldApiControllerTests : ControllerTests() {
     fun addShareHolderTest() {
         val address = "address"
         val request = AddShareHolderRequest(address, 3)
-        val openKey = createOpenKey(setOf(Role("ROLE_DEPLOY")))
+        val openKey = createOpenKey(setOf(Role("ROLE_MASTER")))
         val requestJson = objectMapper.writeValueAsString(request)
 
         given(keyService.find(openKey.value)).willReturn(openKey)
@@ -264,7 +264,7 @@ class ScaffoldApiControllerTests : ControllerTests() {
     fun updateShareHolderTest() {
         val address = "address"
         val request = UpdateShareHolderRequest(address, 3)
-        val openKey = createOpenKey(setOf(Role("ROLE_DEPLOY")))
+        val openKey = createOpenKey(setOf(Role("ROLE_MASTER")))
         val requestJson = objectMapper.writeValueAsString(request)
 
         given(keyService.find(openKey.value)).willReturn(openKey)
@@ -283,7 +283,7 @@ class ScaffoldApiControllerTests : ControllerTests() {
     fun removeShareHolderTest() {
         val address = "address"
         val request = RemoveShareHolderRequest(address)
-        val openKey = createOpenKey(setOf(Role("ROLE_DEPLOY")))
+        val openKey = createOpenKey(setOf(Role("ROLE_MASTER")))
         val requestJson = objectMapper.writeValueAsString(request)
 
         given(keyService.find(openKey.value)).willReturn(openKey)

@@ -24,7 +24,7 @@ class ScaffoldTemplateApiControllerTests : ControllerTests() {
 
     @Test
     fun getAllTest() {
-        val openKey = createOpenKey(setOf(Role("ROLE_DEPLOY")))
+        val openKey = createOpenKey(setOf(Role("ROLE_MASTER")))
         val scaffoldTemplate = ScaffoldTemplate("template", "address", "description", "1", 1, "1", "webHook", Collections.emptyList())
 
         given(keyService.find(openKey.value)).willReturn(openKey)

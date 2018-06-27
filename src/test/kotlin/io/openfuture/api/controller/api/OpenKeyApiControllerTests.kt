@@ -57,7 +57,7 @@ class OpenKeyApiControllerTests : ControllerTests() {
 
     @Test
     fun getAllTest() {
-        val openKey = createOpenKey(setOf(Role("ROLE_DEPLOY")))
+        val openKey = createOpenKey(setOf(Role("ROLE_MASTER")))
 
         given(keyService.find(openKey.value)).willReturn(openKey)
         given(keyService.getAll(openKey.user)).willReturn(listOf(openKey))
@@ -71,8 +71,8 @@ class OpenKeyApiControllerTests : ControllerTests() {
 
     @Test
     fun disableTest() {
-        val openKey = createOpenKey(setOf(Role("ROLE_DEPLOY")))
-        val expectedOpenKey = createOpenKey(setOf(Role("ROLE_DEPLOY"))).apply { enabled = false }
+        val openKey = createOpenKey(setOf(Role("ROLE_MASTER")))
+        val expectedOpenKey = createOpenKey(setOf(Role("ROLE_MASTER"))).apply { enabled = false }
 
         given(keyService.find(openKey.value)).willReturn(openKey)
         given(keyService.disable(openKey.value)).willReturn(expectedOpenKey)
