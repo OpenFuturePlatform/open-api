@@ -1,5 +1,6 @@
 package io.openfuture.api.component.web3
 
+import io.openfuture.api.component.web3.event.ProcessorEventDecoder
 import io.openfuture.api.config.UnitTest
 import io.openfuture.api.config.any
 import io.openfuture.api.entity.auth.OpenKey
@@ -20,13 +21,14 @@ internal class TransactionHandlerTests : UnitTest() {
 
     @Mock private lateinit var transactionService: TransactionService
     @Mock private lateinit var scaffoldRepository: ScaffoldRepository
+    @Mock private lateinit var eventDecoder: ProcessorEventDecoder
 
     private lateinit var transactionHandler: TransactionHandler
 
 
     @Before
     fun setUp() {
-        transactionHandler = TransactionHandler(transactionService, scaffoldRepository)
+        transactionHandler = TransactionHandler(transactionService, scaffoldRepository, eventDecoder)
     }
 
     @Test
@@ -43,7 +45,7 @@ internal class TransactionHandlerTests : UnitTest() {
     }
 
     @Test
-    fun handleWhenEmptyScaffoldShouldNotSavetransactionTest() {
+    fun handleWhenEmptyScaffoldShouldNotSaveTransactionTest() {
         val log = createLog()
 
         given(scaffoldRepository.findByAddress(log.address)).willReturn(null)
