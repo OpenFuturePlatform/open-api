@@ -137,6 +137,8 @@ internal class Web3WrapperTests : UnitTest() {
 
     @Test
     fun callTransactionTest() {
+        val optionalTransactionReceipt = Optional.of(TransactionReceipt().apply { contractAddress = addressValue })
+
         given(properties.getCredentials()).willReturn(credentials)
         given(credentials.address).willReturn(addressValue)
         given(credentials.ecKeyPair).willReturn(createECKeyPair())
@@ -144,8 +146,11 @@ internal class Web3WrapperTests : UnitTest() {
         given(transactionCountRequest.send()).willReturn(transactionCount)
         given(transactionCount.transactionCount).willReturn(BigInteger.ZERO)
         given(web3j.ethSendRawTransaction(anyString())).willReturn(transactionRequest)
+        given(web3j.ethGetTransactionReceipt(anyString())).willReturn(transactionReceiptRequest)
+        given(transactionReceiptRequest.send()).willReturn(transactionReceipt)
         given(transactionRequest.send()).willReturn(transaction)
         given(transaction.transactionHash).willReturn("hash")
+        given(transactionReceipt.transactionReceipt).willReturn(optionalTransactionReceipt)
 
         val actualTransactionalHash = web3Wrapper.callTransaction("deactivate", listOf(), listOf(), addressValue)
 

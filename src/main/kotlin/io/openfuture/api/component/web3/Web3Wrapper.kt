@@ -55,17 +55,17 @@ class Web3Wrapper(
         val nonce = web3j.ethGetTransactionCount(credentials.address, LATEST).send().transactionCount
         val rawTransaction = createContractTransaction(nonce, GAS_PRICE, GAS_LIMIT, ZERO, data)
         val encodedTransaction = signMessage(rawTransaction, credentials)
-        val deployResult = web3j.ethSendRawTransaction(toHexString(encodedTransaction)).send()
+        val result = web3j.ethSendRawTransaction(toHexString(encodedTransaction)).send()
 
-        if (deployResult.hasError()) {
-            throw DeployException(deployResult.error.message)
+        if (result.hasError()) {
+            throw DeployException(result.error.message)
         }
 
-        while (!web3j.ethGetTransactionReceipt(deployResult.transactionHash).send().transactionReceipt.isPresent) {
+        while (!web3j.ethGetTransactionReceipt(result.transactionHash).send().transactionReceipt.isPresent) {
             Thread.sleep(1000)
         }
 
-        val transactionReceipt = web3j.ethGetTransactionReceipt(deployResult.transactionHash).send().transactionReceipt
+        val transactionReceipt = web3j.ethGetTransactionReceipt(result.transactionHash).send().transactionReceipt
         return transactionReceipt.get().contractAddress
     }
 
@@ -97,6 +97,10 @@ class Web3Wrapper(
 
         if (result.hasError()) {
             throw FunctionCallException(result.error.message)
+        }
+
+        while (!web3j.ethGetTransactionReceipt(result.transactionHash).send().transactionReceipt.isPresent) {
+            Thread.sleep(1000)
         }
 
         return result.transactionHash
