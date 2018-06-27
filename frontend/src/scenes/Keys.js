@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { fetchKeys, removeKey } from '../actions/keys';
+import { fetchKeys, generateKey, removeKey } from '../actions/keys';
 import { Table } from '../components-ui/Table';
 import { KeyGenerate } from '../components/KeyGenerate';
-import { Icon } from 'semantic-ui-react';
 import { Status } from '../components-ui/Status';
 import { KeyRemove } from '../components/KeyRemove';
+import { formatDate } from '../utils/format-date';
 
 const getColumns = onRemove => [
   {
@@ -25,15 +25,13 @@ const getColumns = onRemove => [
     Header: 'Expired Date',
     maxWidth: 200,
     accessor: 'expiredDate',
-    Cell: ({ value }) =>
-      value ? value : <Icon name="window minimize outline" size="tiny" />,
+    Cell: ({ value }) => formatDate(value),
     sortable: false
   },
   {
     maxWidth: 70,
     accessor: 'enabled',
-    Cell: ({ value, original }) =>
-      value && <KeyRemove onSubmit={() => onRemove(original.value)} />,
+    Cell: ({ value, original }) => value && <KeyRemove onSubmit={() => onRemove(original.value)} />,
     sortable: false
   }
 ];
@@ -49,7 +47,7 @@ class Keys extends Component {
 
     return (
       <div>
-        <KeyGenerate />
+        <KeyGenerate onSubmit={key => actions.generateKey(key)} />
         <Table data={keys} columns={columns} />
       </div>
     );
@@ -59,7 +57,7 @@ class Keys extends Component {
 const mapStateToProps = ({ keys }) => ({ keys });
 
 const mapDispatchToProps = dispatch => ({
-  actions: bindActionCreators({ fetchKeys, removeKey }, dispatch)
+  actions: bindActionCreators({ fetchKeys, generateKey, removeKey }, dispatch)
 });
 
 export default connect(

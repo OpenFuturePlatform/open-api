@@ -51,11 +51,7 @@ class EntityRemoveComponent extends React.Component {
     return (
       <span>
         <Icon link name="remove" size="large" onClick={this.onShowHandle} />
-        <Modal
-          size="tiny"
-          open={isVisible}
-          onClose={isSaving ? () => {} : onHide}
-        >
+        <Modal size="tiny" open={isVisible} onClose={isSaving ? () => {} : onHide}>
           <Modal.Header>{header || 'Remove'}</Modal.Header>
           <Modal.Content>
             {children}
@@ -71,7 +67,7 @@ class EntityRemoveComponent extends React.Component {
               disabled={isSaving}
               icon="checkmark"
               labelPosition="right"
-              content="Remove"
+              content="Yes"
               onClick={this.onSubmit}
             />
           </Modal.Actions>

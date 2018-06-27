@@ -7,6 +7,11 @@ export const fetchKeys = () => async dispatch => {
   return keys;
 };
 
+export const generateKey = (key = {}) => async dispatch => {
+  await axios.post('/api/keys', key);
+  dispatch(fetchKeys());
+};
+
 export const removeKey = value => async dispatch => {
   await axios.delete(`/api/keys/${value}`);
   dispatch(fetchKeys());
