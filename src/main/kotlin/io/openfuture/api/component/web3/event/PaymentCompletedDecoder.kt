@@ -1,6 +1,6 @@
-package io.openfuture.api.component.web3.event.decoder
+package io.openfuture.api.component.web3.event
 
-import io.openfuture.api.component.web3.event.domain.PaymentCompletedEvent
+import io.openfuture.api.domain.event.PaymentCompletedEvent
 import io.openfuture.api.entity.scaffold.PropertyType.*
 import io.openfuture.api.entity.scaffold.ScaffoldProperty
 import io.openfuture.api.repository.ScaffoldPropertyRepository
