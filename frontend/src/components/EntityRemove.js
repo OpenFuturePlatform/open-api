@@ -1,52 +1,18 @@
 import React from 'react';
 import { withVisible } from '../components-ui/withVisible';
-import { Button, Divider, Icon, Modal } from 'semantic-ui-react';
+import { Button, Icon, Modal } from 'semantic-ui-react';
+import { TransactionError } from '../components-ui/TransactionError';
+import { withSaving } from '../components-ui/withSaving';
 
 class EntityRemoveComponent extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = this.getDefaultState();
-  }
-
-  getDefaultState = () => ({
-    isSaving: false,
-    transactionError: ''
-  });
-
-  onSubmit = async e => {
-    this.setState({ isSaving: true });
-    try {
-      await this.props.onSubmit();
-      this.props.onHide();
-    } catch (e) {
-      this.setState({ transactionError: e.message });
-    }
-    this.setState({ isSaving: false });
-  };
-
   onShowHandle = () => {
-    const { onShow } = this.props;
-    this.setState(this.getDefaultState());
+    const { onShow, setTransactionError } = this.props;
+    setTransactionError('');
     onShow();
   };
 
-  renderTransactionError = () => {
-    if (!this.state.transactionError) {
-      return null;
-    }
-
-    return (
-      <div>
-        <Divider />
-        <div style={{ color: 'red' }}>{this.state.transactionError}</div>
-      </div>
-    );
-  };
-
   render() {
-    const { isVisible, onHide, children, header } = this.props;
-    const { isSaving } = this.state;
+    const { isVisible, onHide, children, header, isSaving, transactionError, submitWithSaving } = this.props;
 
     return (
       <span>
@@ -55,7 +21,7 @@ class EntityRemoveComponent extends React.Component {
           <Modal.Header>{header || 'Remove'}</Modal.Header>
           <Modal.Content>
             {children}
-            {this.renderTransactionError()}
+            <TransactionError message={transactionError} />
           </Modal.Content>
           <Modal.Actions>
             <Button negative disabled={isSaving} onClick={onHide}>
@@ -68,7 +34,7 @@ class EntityRemoveComponent extends React.Component {
               icon="checkmark"
               labelPosition="right"
               content="Yes"
-              onClick={this.onSubmit}
+              onClick={() => submitWithSaving()}
             />
           </Modal.Actions>
         </Modal>
@@ -77,4 +43,4 @@ class EntityRemoveComponent extends React.Component {
   }
 }
 
-export const EntityRemove = withVisible(EntityRemoveComponent);
+export const EntityRemove = withVisible(withSaving(EntityRemoveComponent));

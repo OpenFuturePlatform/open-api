@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
+import * as moment from 'moment';
 import 'react-dates/initialize';
 import { SingleDatePicker } from 'react-dates';
 import 'react-dates/lib/css/_datepicker.css';
 import styled from 'styled-components';
 
 const DatepickerWrapper = styled.div`
-  padding-top: 40px;
   text-align: center;
 `;
 
@@ -16,37 +16,25 @@ const DatepickerLabel = styled.span`
 
 export class Datepicker extends Component {
   state = {
-    date: null,
     focused: false
   };
 
-  componentDidMount() {
-    const calendarMonth = document.querySelector('.CalendarMonth_table');
-    console.log('>> ', calendarMonth);
-  }
-
-  onFocusChange = ({ focused }) => {
-    const calendarMonth = document.querySelector('.CalendarMonth_table');
-    console.log('>> ', calendarMonth);
-    this.setState({ focused });
-  };
-
-  onDateChange = date => {
-    this.setState({ date });
-  };
-
   render() {
+    const { date, onChange } = this.props;
+    const today = moment(new Date());
+
     return (
       <DatepickerWrapper>
         <DatepickerLabel>Expiring Date:</DatepickerLabel>{' '}
         <SingleDatePicker
-          date={this.state.date}
-          onDateChange={this.onDateChange}
+          date={date}
+          onDateChange={onChange}
           focused={this.state.focused}
-          onFocusChange={this.onFocusChange}
+          onFocusChange={({ focused }) => this.setState({ focused })}
           hideKeyboardShortcutsPanel
           displayFormat={'DD.MM.YYYY'}
           numberOfMonths={1}
+          isOutsideRange={day => day <= today}
           small
           readOnly
         />

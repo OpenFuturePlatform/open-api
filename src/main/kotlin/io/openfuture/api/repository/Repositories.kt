@@ -37,7 +37,7 @@ interface ScaffoldPropertyRepository : BaseRepository<ScaffoldProperty>
 @Repository
 interface OpenKeyRepository : BaseRepository<OpenKey> {
 
-    fun findByValueAndEnabledIsTrueAndExpiredDateIsNullOrExpiredDateAfter(value: String, date: Date): OpenKey?
+    fun findByValueAndEnabledIsTrue(value: String): OpenKey?
 
     fun findAllByUser(user: User): List<OpenKey>
 

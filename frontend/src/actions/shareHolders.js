@@ -4,6 +4,7 @@ import { getWeb3Contract } from '../utils/web3';
 import { SET_SCAFFOLD_SET, SET_SCAFFOLD_SHARE_HOLDERS } from './types';
 import { getWalletMethod } from '../selectors/getWalletMethod';
 import { fetchScaffoldSummary } from './scaffolds';
+import { parseApiError } from '../utils/parseApiError';
 
 const handleApiError = e => {
   const status = e.response.status;
@@ -58,10 +59,7 @@ export const refreshShareHolders = scaffold => async dispatch => {
   }
 };
 
-export const addShareHolderByMetaMask = (
-  scaffold,
-  shareHolder
-) => async dispatch => {
+export const addShareHolderByMetaMask = (scaffold, shareHolder) => async dispatch => {
   const contract = getWeb3Contract(scaffold);
 
   if (!contract) {
@@ -73,24 +71,19 @@ export const addShareHolderByMetaMask = (
     .send({ from: scaffold.vendorAddress });
 };
 
-export const addShareHolderByApi = (
-  scaffold,
-  { address, share }
-) => async () => {
+export const addShareHolderByApi = (scaffold, { address, share }) => async () => {
   try {
     return await axios.post(`/api/scaffolds/${scaffold.address}/holders`, {
       address,
       percent: share
     });
   } catch (e) {
-    handleApiError(e);
+    const message = parseApiError(e);
+    throw new Error(message);
   }
 };
 
-export const addShareHolder = (scaffold, shareHolder) => async (
-  dispatch,
-  getState
-) => {
+export const addShareHolder = (scaffold, shareHolder) => async (dispatch, getState) => {
   const state = getState();
   const { byApiMethod } = getWalletMethod(state);
 
@@ -103,10 +96,7 @@ export const addShareHolder = (scaffold, shareHolder) => async (
   dispatch(refreshShareHolders(scaffold));
 };
 
-export const editShareHolderByMetaMask = (
-  scaffold,
-  shareHolder
-) => async dispatch => {
+export const editShareHolderByMetaMask = (scaffold, shareHolder) => async dispatch => {
   const contract = getWeb3Contract(scaffold);
 
   if (!contract) {
@@ -118,24 +108,19 @@ export const editShareHolderByMetaMask = (
     .send({ from: scaffold.vendorAddress });
 };
 
-export const editShareHolderByApi = (
-  scaffold,
-  { address, share }
-) => async () => {
+export const editShareHolderByApi = (scaffold, { address, share }) => async () => {
   try {
     return await axios.put(`/api/scaffolds/${scaffold.address}/holders`, {
       address,
       percent: share
     });
   } catch (e) {
-    handleApiError(e);
+    const message = parseApiError(e);
+    throw new Error(message);
   }
 };
 
-export const editShareHolder = (scaffold, shareHolder) => async (
-  dispatch,
-  getState
-) => {
+export const editShareHolder = (scaffold, shareHolder) => async (dispatch, getState) => {
   const state = getState();
   const { byApiMethod } = getWalletMethod(state);
 
@@ -148,21 +133,14 @@ export const editShareHolder = (scaffold, shareHolder) => async (
   dispatch(refreshShareHolders(scaffold));
 };
 
-export const removeShareHolderByMetaMask = (
-  scaffold,
-  holderAddress
-) => async () => {
+export const removeShareHolderByMetaMask = (scaffold, holderAddress) => async () => {
   const contract = getWeb3Contract(scaffold);
 
   if (!contract) {
-    throw new Error(
-      'Install MetaMask to delete Share Holder via Private Wallet'
-    );
+    throw new Error('Install MetaMask to delete Share Holder via Private Wallet');
   }
 
-  return contract.methods
-    .deleteShareHolder(holderAddress)
-    .send({ from: scaffold.vendorAddress });
+  return contract.methods.deleteShareHolder(holderAddress).send({ from: scaffold.vendorAddress });
 };
 
 export const removeShareHolderByApi = (scaffold, holderAddress) => async () => {
@@ -175,14 +153,12 @@ export const removeShareHolderByApi = (scaffold, holderAddress) => async () => {
       data: { address: holderAddress }
     });
   } catch (e) {
-    handleApiError(e);
+    const message = parseApiError(e);
+    throw new Error(message);
   }
 };
 
-export const removeShareHolder = (scaffold, holderAddress) => async (
-  dispatch,
-  getState
-) => {
+export const removeShareHolder = (scaffold, holderAddress) => async (dispatch, getState) => {
   const state = getState();
   const { byApiMethod } = getWalletMethod(state);
 
