@@ -5,6 +5,20 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Unit tests for services, components, utils
+
+## [2.2.1] - 2018-06-25
+### Added
+- Webhook URL validation
+- Currency type is required for a template
+- Reaching Scaffold properties limit message
+- Client validation for Scaffold properties duplicates
+
+### Fixed
+- Scaffold Compilation: 400 bad request in case of sending "properties.type": "BOOLEAN"
+- Scaffold Shareholders: 500 NPE in case of adding/editing shareholders by a backend
+- Scaffold Creation: 400 bad request in case of providing more than 2 scaffold properties
 
 ## [2.2.0] - 2018-06-22
 ### Added
@@ -74,6 +88,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - "Withdraw" button is removed
 
 [Unreleased]: https://github.com/OpenFuturePlatform/open-api/compare/master...sprint
+[2.2.1]: https://github.com/OpenFuturePlatform/open-api/compare/v2.2.0...v2.2.1
 [2.2.0]: https://github.com/OpenFuturePlatform/open-api/compare/v2.1.0...v2.2.0
 [2.1.0]: https://github.com/OpenFuturePlatform/open-api/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/OpenFuturePlatform/open-api/compare/8ea69084ef657f66976518827873c9c922970ce6...v2.0.0

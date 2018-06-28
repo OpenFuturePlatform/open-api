@@ -9,7 +9,7 @@ const initialState = {
   // description: "hello " + Math.round(Math.random()*1000),
   // developerAddress: "",
   // fiatAmount: "555",
-  // openKey: "op_pk_9d3e3c1e-2770-4eca-8453-0cef89b51591",
+  // webHook: 'google.com',
   // properties: [{
   //   defaultValue: "1",
   //   name: "prop1",

@@ -15,7 +15,7 @@ class OAuth2AuthorizationRequestRepository (
 ) : AuthorizationRequestRepository<OAuth2AuthorizationRequest> {
 
     override fun loadAuthorizationRequest(request: HttpServletRequest): OAuth2AuthorizationRequest {
-        val authCookie = request.cookies.find({ properties.cookieName == it.name })
+        val authCookie = request.cookies.find { properties.cookieName == it.name }
 
         return SerializationUtils.deserialize(getUrlDecoder().decode(authCookie?.value))
     }

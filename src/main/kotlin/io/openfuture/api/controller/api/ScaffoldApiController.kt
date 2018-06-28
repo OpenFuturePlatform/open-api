@@ -32,7 +32,7 @@ class ScaffoldApiController(
     fun compile(@Valid @RequestBody request: CompileScaffoldRequest): CompiledScaffoldDto =
             service.compile(request)
 
-    @PreAuthorize("hasRole('DEPLOY')")
+    @PreAuthorize("hasRole('MASTER')")
     @PostMapping("/doDeploy")
     fun deploy(@Valid @RequestBody request: DeployScaffoldRequest, @CurrentUser user: User): ScaffoldDto {
         val scaffold = service.deploy(request)
@@ -59,41 +59,45 @@ class ScaffoldApiController(
         return ScaffoldDto(scaffold)
     }
 
-    @PreAuthorize("hasRole('DEPLOY')")
+    @PreAuthorize("hasRole('MASTER')")
     @GetMapping("/{address}/summary")
     fun getScaffoldSummary(@CurrentUser user: User, @PathVariable address: String): ScaffoldSummaryDto {
         val summary = service.getScaffoldSummary(address, user)
         return ScaffoldSummaryDto(summary)
     }
 
-    @PreAuthorize("hasRole('DEPLOY')")
+    @PreAuthorize("hasRole('MASTER')")
     @PostMapping("/{address}/doDeactivate")
-    fun deactivate(@CurrentUser user: User, @PathVariable address: String) {
-        service.deactivate(address, user)
+    fun deactivate(@CurrentUser user: User, @PathVariable address: String): ScaffoldSummaryDto {
+        val summary = service.deactivate(address, user)
+        return ScaffoldSummaryDto(summary)
     }
 
     @GetMapping("/quota")
     fun getQuota(@CurrentUser user: User): ScaffoldQuotaDto = service.getQuota(user)
 
-    @PreAuthorize("hasRole('DEPLOY')")
+    @PreAuthorize("hasRole('MASTER')")
     @PostMapping("/{address}/holders")
     fun addShareHolder(@Valid @RequestBody request: AddShareHolderRequest, @CurrentUser user: User,
-                       @PathVariable address: String) {
-        service.addShareHolder(address, user, request)
+                       @PathVariable address: String): ScaffoldSummaryDto {
+        val summary = service.addShareHolder(address, user, request)
+        return ScaffoldSummaryDto(summary)
     }
 
-    @PreAuthorize("hasRole('DEPLOY')")
+    @PreAuthorize("hasRole('MASTER')")
     @PutMapping("/{address}/holders")
     fun updateShareHolder(@Valid @RequestBody request: UpdateShareHolderRequest, @CurrentUser user: User,
-                          @PathVariable address: String) {
-        service.updateShareHolder(address, user, request)
+                          @PathVariable address: String): ScaffoldSummaryDto {
+        val summary = service.updateShareHolder(address, user, request)
+        return ScaffoldSummaryDto(summary)
     }
 
-    @PreAuthorize("hasRole('DEPLOY')")
+    @PreAuthorize("hasRole('MASTER')")
     @DeleteMapping("/{address}/holders")
     fun removeShareHolder(@Valid @RequestBody request: RemoveShareHolderRequest, @CurrentUser user: User,
-                          @PathVariable address: String) {
-        service.removeShareHolder(address, user, request)
+                          @PathVariable address: String): ScaffoldSummaryDto {
+        val summary = service.removeShareHolder(address, user, request)
+        return ScaffoldSummaryDto(summary)
     }
 
 }

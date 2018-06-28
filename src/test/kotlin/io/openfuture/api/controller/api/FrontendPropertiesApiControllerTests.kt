@@ -2,6 +2,7 @@ package io.openfuture.api.controller.api
 
 import io.openfuture.api.component.web3.Web3Wrapper
 import io.openfuture.api.config.ControllerTests
+import io.openfuture.api.config.propety.EthereumProperties
 import io.openfuture.api.entity.auth.Role
 import org.junit.Test
 import org.mockito.BDDMockito.given
@@ -13,24 +14,29 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import org.web3j.spring.autoconfigure.Web3jProperties
 
 @WebMvcTest(FrontendPropertiesApiController::class)
-class FrontendPropertiesApiControllerTest : ControllerTests() {
+class FrontendPropertiesApiControllerTests : ControllerTests() {
 
     @MockBean
     private lateinit var web3: Web3Wrapper
 
     @MockBean
-    private lateinit var properties: Web3jProperties
+    private lateinit var web3Properties: Web3jProperties
+
+    @MockBean
+    private lateinit var properties: EthereumProperties
 
 
     @Test
     fun getTest() {
-        val openKey = createOpenKey(setOf(Role("ROLE_DEPLOY")))
+        val openKey = createOpenKey(setOf(Role("ROLE_MASTER")))
         val version = "version"
         val clientAddress = "clientAddress"
+        val openTokenAddress = "address"
 
         given(keyService.find(openKey.value)).willReturn(openKey)
         given(web3.getNetVersion()).willReturn(version)
-        given(properties.clientAddress).willReturn(clientAddress)
+        given(web3Properties.clientAddress).willReturn(clientAddress)
+        given(properties.openTokenAddress).willReturn(openTokenAddress)
 
         mvc.perform(get("/api/properties")
                 .header(AUTHORIZATION, openKey.value))
@@ -39,13 +45,14 @@ class FrontendPropertiesApiControllerTest : ControllerTests() {
                 .andExpect(content().json("""
                     {
                         "networkAddress": $clientAddress,
-                        "networkVersion": $version
+                        "networkVersion": $version,
+                        "openTokenAddress": $openTokenAddress
                     }
                     """.trimIndent(), true))
     }
 
     @Test
-    fun getWhenOpenTokenIsNotFoundShouldRedirectToIndexPage() {
+    fun getWhenOpenTokenIsNotFoundShouldRedirectToIndexPageTest() {
         val invalidToken = "not_valid_token"
 
         given(keyService.find(invalidToken)).willReturn(null)

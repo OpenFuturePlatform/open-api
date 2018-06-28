@@ -44,7 +44,7 @@ class ScaffoldSummary extends Component {
               <Card fluid>
                 <Card.Content header="On-chain Scaffold Summary" meta="This data is coming from the Ethereum Network"/>
                 <Card.Content>
-                  <ScaffoldStatusContainer scaffoldAddress={address} summary={summary || {}} error={error}/>
+                  <ScaffoldStatusContainer scaffoldAddress={address} abi={scaffold.abi} summary={summary || {}} error={error}/>
                 </Card.Content>
                 <Card.Content>
                   <div>Scaffold Description: {scaffold.description}</div>

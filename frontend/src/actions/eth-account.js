@@ -2,9 +2,9 @@ import {SET_CURRENT_ETH_ACCOUNT} from './types';
 import web3 from '../utils/web3';
 import eth from "../utils/eth";
 import ethUnit from 'ethjs-unit';
-import openToken from "../utils/open-token";
+import {openTokenSelector} from '../selectors/open-token';
 
-const setEthAccount = account => async dispatch => {
+const setEthAccount = account => async (dispatch, getState) => {
   if (!account) {
     dispatch({
       type: SET_CURRENT_ETH_ACCOUNT,
@@ -16,6 +16,7 @@ const setEthAccount = account => async dispatch => {
   const ethBalanceResult = await eth.getBalance(account);
   const ethBalance = ethUnit.fromWei(ethBalanceResult, 'ether');
   const id = await web3.eth.net.getId();
+  const openToken = openTokenSelector(getState());
   const tokenBalanceResults = await openToken.balanceOf(account);
   const supply = Number(tokenBalanceResults[0]) / 100000000;
   const tokenBalance = supply.toString();
