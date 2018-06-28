@@ -22,7 +22,7 @@ unit-tests:
   stage: test
   image: openjdk:8-jdk
   variables:
-    POSTGRES_HOST: "postgre/
+    POSTGRES_HOST: "postgres"
     POSTGRES_DB: "open-api"
     POSTGRES_USER: "open-api"
     POSTGRES_PASSWORD: "open-api"
