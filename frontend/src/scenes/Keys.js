@@ -7,8 +7,9 @@ import { KeyGenerate } from '../components/KeyGenerate';
 import { Status } from '../components-ui/Status';
 import { KeyRemove } from '../components/KeyRemove';
 import { formatDate } from '../utils/format-date';
+import { sortBy } from 'lodash';
 
-const getColumns = onRemove => [
+const getColumns = (currentKey, onRemove) => [
   {
     Header: 'Key',
     accessor: 'value',
@@ -31,7 +32,8 @@ const getColumns = onRemove => [
   {
     maxWidth: 70,
     accessor: 'enabled',
-    Cell: ({ value, original }) => value && <KeyRemove onSubmit={() => onRemove(original.value)} />,
+    Cell: ({ value, original }) =>
+      value && currentKey !== original.value && <KeyRemove onSubmit={() => onRemove(original.value)} />,
     sortable: false
   }
 ];
@@ -42,19 +44,19 @@ class Keys extends Component {
   }
 
   render() {
-    const { keys, actions } = this.props;
-    const columns = getColumns(keyValue => actions.removeKey(keyValue));
+    const { keys, currentKey, actions } = this.props;
+    const columns = getColumns(currentKey, keyValue => actions.removeKey(keyValue));
 
     return (
       <div>
         <KeyGenerate onSubmit={key => actions.generateKey(key)} />
-        <Table data={keys} columns={columns} />
+        <Table data={sortBy(keys, 'value')} columns={columns} />
       </div>
     );
   }
 }
 
-const mapStateToProps = ({ keys }) => ({ keys });
+const mapStateToProps = ({ keys, auth }) => ({ keys, currentKey: auth.token });
 
 const mapDispatchToProps = dispatch => ({
   actions: bindActionCreators({ fetchKeys, generateKey, removeKey }, dispatch)

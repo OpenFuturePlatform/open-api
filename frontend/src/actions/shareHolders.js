@@ -6,13 +6,6 @@ import { getWalletMethod } from '../selectors/getWalletMethod';
 import { fetchScaffoldSummary } from './scaffolds';
 import { parseApiError } from '../utils/parseApiError';
 
-const handleApiError = e => {
-  const status = e.response.status;
-  const message = e.response.data.message || e.response.statusText;
-  const error = `${status}: ${message}`;
-  throw new Error(error);
-};
-
 export const fetchShareHolders = scaffold => async dispatch => {
   const address = scaffold.address;
   const contract = getContract(scaffold);
