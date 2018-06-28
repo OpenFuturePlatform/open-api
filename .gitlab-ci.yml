@@ -62,7 +62,7 @@ contract-tests:
   image: openplatform/truffle
   script:
     - export RPC_HOST="ganache"
-    - cd metacoin && truffle test
+    - cd src/test/truffle && truffle test
 
 
 ###########################
