@@ -1,7 +1,9 @@
 package io.openfuture.api.controller.api
 
+import io.openfuture.api.component.web3.event.ProcessorEventDecoder
 import io.openfuture.api.config.ControllerTests
 import io.openfuture.api.domain.PageRequest
+import io.openfuture.api.domain.event.ActivatedScaffoldEvent
 import io.openfuture.api.entity.auth.OpenKey
 import io.openfuture.api.entity.auth.Role
 import io.openfuture.api.entity.scaffold.Currency.USD
@@ -21,13 +23,16 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.util.*
 
 @WebMvcTest(TransactionApiController::class)
-class TransactionApiControllerTest : ControllerTests() {
+class TransactionApiControllerTests : ControllerTests() {
 
     @MockBean
     private lateinit var service: TransactionService
 
     @MockBean
     private lateinit var scaffoldService: ScaffoldService
+
+    @MockBean
+    private lateinit var eventDecoder: ProcessorEventDecoder
 
 
     @Test
@@ -40,6 +45,7 @@ class TransactionApiControllerTest : ControllerTests() {
         given(keyService.find(openKey.value)).willReturn(openKey)
         given(scaffoldService.get(scaffold.address, openKey.user)).willReturn(scaffold)
         given(service.getAll(scaffold, pageRequest)).willReturn(PageImpl(listOf(transaction)))
+        given(eventDecoder.getEvent(scaffold.address, transaction.data)).willReturn(ActivatedScaffoldEvent(true))
 
         mvc.perform(get("/api/scaffolds/${scaffold.address}/transactions")
                 .header(AUTHORIZATION, openKey.value))
@@ -88,7 +94,7 @@ class TransactionApiControllerTest : ControllerTests() {
                           "webHook": ${transaction.scaffold.webHook},
                           "properties": ${Arrays.toString(transaction.scaffold.property.toTypedArray())}
                         },
-                        "data": ${transaction.data},
+                        "event":{"activated":true,"type":"ACTIVATED_SCAFFOLD"},
                         "type": ${transaction.type}
                     }
                     """.trimIndent()

@@ -28,15 +28,15 @@ interface ScaffoldService {
 
     fun getQuota(user: User): ScaffoldQuotaDto
 
-    fun getScaffoldSummary(address: String, user: User): ScaffoldSummary
+    fun getScaffoldSummary(address: String, user: User, cache: Boolean = true): ScaffoldSummary
 
-    fun deactivate(address: String, user: User)
+    fun deactivate(address: String, user: User): ScaffoldSummary
 
-    fun addShareHolder(address: String, user: User, request: AddShareHolderRequest)
+    fun addShareHolder(address: String, user: User, request: AddShareHolderRequest): ScaffoldSummary
 
-    fun updateShareHolder(address: String, user: User, request: UpdateShareHolderRequest)
+    fun updateShareHolder(address: String, user: User, request: UpdateShareHolderRequest): ScaffoldSummary
 
-    fun removeShareHolder(address: String, user: User, request: RemoveShareHolderRequest)
+    fun removeShareHolder(address: String, user: User, request: RemoveShareHolderRequest): ScaffoldSummary
 
 }
 
