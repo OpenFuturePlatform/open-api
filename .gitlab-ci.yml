@@ -55,13 +55,14 @@ unit-tests:
   except:
     - schedules
 
-contract_test:
-  stage: test
+contract-tests:
+  services:
+    - name: openplatform/ganache
+      alias: ganache
+  image: openplatform/truffle
   script:
-    - docker run -d --name testrpc trufflesuite/ganache-cli:latest
-    - docker run --rm --name tests-chain -v $(pwd)/src/test/truffle:/usr/src/app --link testrpc -e RPC_HOST="testrpc" openplatform/truffle test
-  except:
-    - schedules
+    - export RPC_HOST="ganache"
+    - cd metacoin && truffle test
 
 
 ###########################
