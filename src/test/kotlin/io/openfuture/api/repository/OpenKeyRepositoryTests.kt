@@ -6,7 +6,6 @@ import io.openfuture.api.entity.auth.User
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
-import java.util.*
 
 internal class OpenKeyRepositoryTests : RepositoryTests() {
 
@@ -21,7 +20,7 @@ internal class OpenKeyRepositoryTests : RepositoryTests() {
         val expectedOpenKey = OpenKey(user, null, openKeyValue)
         entityManager.persist(expectedOpenKey)
 
-        val actualOpenKey = repository.findByValueAndEnabledIsTrueAndExpiredDateIsNullOrExpiredDateAfter(openKeyValue, Date())
+        val actualOpenKey = repository.findByValueAndEnabledIsTrue(openKeyValue)
 
         assertThat(actualOpenKey).isEqualTo(expectedOpenKey)
     }
