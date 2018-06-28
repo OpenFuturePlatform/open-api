@@ -38,13 +38,27 @@ library SafeMath {
  * @dev Simpler version of ERC20 interface
  */
 contract ERC20Token {
-  function balanceOf(address who) public constant returns (uint256);
-  function transfer(address to, uint256 value) public returns (bool);
+    function balanceOf(address who) public constant returns (uint256);
+    function transfer(address to, uint256 value) public returns (bool);
 }
 
 contract OpenScaffold {
 
     using SafeMath for uint256;
+
+
+    // on-chain transaction storage
+    struct OpenScaffoldTransaction {
+        address customerAddress;
+        ${SCAFFOLD_STRUCT_PROPERTIES}
+    }
+
+    // shareholder struct
+    struct Partner {
+        uint256 share;
+        uint index;
+    }
+
 
     // event protocol
     uint256 constant PAYMENT_COMPLETED = 1;
@@ -55,34 +69,18 @@ contract OpenScaffold {
     uint256 constant DELETED_SHARE_HOLDER = 6;
     uint256 constant PAYED_FOR_SHARE_HOLDER = 7;
 
-    // on-chain transaction storage
-    struct OpenScaffoldTransaction {
-        address customerAddress;
-        ${SCAFFOLD_STRUCT_PROPERTIES}
-    }
-
-    // shareholder struct
-    struct Partner {
-        uint8 share;
-        uint index;
-    }
-
-
     // events
     event PaymentCompleted(
-        uint256 eventType,
-        address customerAddress,
-        uint transactionAmount,
-        uint scaffoldTransactionIndex,
+        uint256 _eventType,
+        address _customerAddress,
+        uint256 _transactionAmount,
+        uint256 _scaffoldTransactionIndex,
         ${CUSTOM_SCAFFOLD_PARAMETERS}
-        );
-    event FundsDeposited(uint256 eventType, uint _amount, address _toAddress);
-    event ActivatedScaffold(uint256 eventType, bool activated);
-    // shareholders events
-    event AddedShareHolder(uint256 eventType, address userAddress, uint partnerShare);
-    event EditedShareHolder(uint256 eventType, address userAddress, uint partnerShare);
-    event DeletedShareHolder(uint256 eventType, address userAddress);
-    event PayedForShareHolder(uint256 eventType, address userAddress, uint amount);
+    );
+    event FundsDeposited(uint256 _eventType, uint256 _amount, address _toAddress);
+    event ActivatedScaffold(uint256 _eventType, bool _activated);
+    event ShareHolderEvent(uint256 _eventType, address _shareHolderAddress, uint256 _share);
+    event PayedForShareHolder(uint256 _eventType, address _userAddress, uint256 _amount);
 
 
     // custom dataTypes
@@ -94,49 +92,49 @@ contract OpenScaffold {
     mapping(address => Partner) public partners;
 
     // constructor variables
-    address public  vendorAddress;
-    string public   scaffoldDescription;
-    string public   fiatAmount;
-    string public   fiatCurrency;
-    uint public     scaffoldAmount;
+    address public developerAddress;
+    string public scaffoldDescription;
+    bytes32 public fiatAmount;
+    bytes32 public fiatCurrency;
+    uint256 public scaffoldAmount;
     address private platformAddress;
 
     // generated internally by contract
-    uint public scaffoldTransactionIndex;
-    address private scaffoldAddress = this;
+    uint256 public scaffoldTransactionIndex;
     // summarize all the shares that would not exceed the limit
-    uint8 private totalAmountShares = 0;
+    uint256 private totalAmountShares = 0;
 
     // OPEN token
-    uint constant private ACTIVATING_TOKENS_AMOUNT = 10 * 10**8;
+    uint256 constant private ACTIVATING_TOKENS_AMOUNT = 10 * 10**8;
     address constant private OPEN_TOKEN_ADDRESS = ${OPEN_TOKEN_ADDRESS};
     ERC20Token public OPENToken = ERC20Token(OPEN_TOKEN_ADDRESS);
 
 
-    // Throws if called by any account other than the vendor or OPEN platform addresses.
-    modifier onlyVendor() {
-        require(vendorAddress == msg.sender || platformAddress == msg.sender);
+    // Throws if called by any account other than the developer or OPEN platform addresses.
+    modifier onlyDeveloper() {
+        require(developerAddress == msg.sender || platformAddress == msg.sender);
         _;
     }
 
     // Throws if contract is not activated.
     modifier activated() {
-        require(OPENToken.balanceOf(address(this)) >= ACTIVATING_TOKENS_AMOUNT);
+        require(ACTIVATING_TOKENS_AMOUNT <= OPENToken.balanceOf(address(this)));
         _;
     }
 
+
     // constructor
     function OpenScaffold(
-        address _vendorAddress,
+        address _developerAddress,
         address _platformAddress,
         string _description,
-        string _fiatAmount,
-        string _fiatCurrency,
-        uint _scaffoldAmount
+        bytes32 _fiatAmount,
+        bytes32 _fiatCurrency,
+        uint256 _scaffoldAmount
     )
         public
     {
-        vendorAddress = _vendorAddress;
+        developerAddress = _developerAddress;
         platformAddress = _platformAddress;
         scaffoldDescription = _description;
         fiatAmount = _fiatAmount;
@@ -144,160 +142,155 @@ contract OpenScaffold {
         scaffoldAmount = _scaffoldAmount;
     }
 
-    // set Scaffold description by vendor
-    function setDescription(string _description)
-        public
-        onlyVendor {
+    // set Scaffold description
+    function setDescription(string _description) public onlyDeveloper {
         scaffoldDescription = _description;
     }
 
-    // deactivate Scaffold contract by vendor
-    function deactivate() onlyVendor public activated {
-        OPENToken.transfer(vendorAddress, OPENToken.balanceOf(address(this)));
+    // deactivate Scaffold contract
+    function deactivate()
+        public
+        onlyDeveloper
+        activated
+    {
+        OPENToken.transfer(developerAddress, OPENToken.balanceOf(address(this)));
         ActivatedScaffold(ACTIVATED_SCAFFOLD, false);
     }
 
-    // get shareholder share by address
-    function getHoldersShare(address shareHolderAddress)
+    // add new shareholder(partner)
+    function addShareHolder(address _shareHolderAddress, uint256 _partnerShare)
         public
-        constant
-        returns(uint8 partnerShare) {
-            require(isShareHolder(shareHolderAddress));
+        onlyDeveloper
+    {
+        require(!isShareHolder(_shareHolderAddress));
+        require(totalAmountShares + _partnerShare <= 100);
 
-            return(partners[shareHolderAddress].share);
-  }
+        partners[_shareHolderAddress].share = _partnerShare;
+        //set index for shareholder
+        partners[_shareHolderAddress].index = shareHolderAddresses.push(_shareHolderAddress) - 1;
+
+        // add share for total amount
+        totalAmountShares += _partnerShare;
+
+        createShareHolderEvent(ADDED_SHARE_HOLDER, _shareHolderAddress, _partnerShare);
+    }
+
+    // edit partner share
+    function editShareHolder(address _shareHolderAddress, uint256 _partnerShare)
+        public
+        onlyDeveloper
+    {
+        require(isShareHolder(_shareHolderAddress));
+
+        // update share percent
+        uint256 updatedShareAmount = totalAmountShares - partners[_shareHolderAddress].share;
+        updatedShareAmount += _partnerShare;
+
+        require(updatedShareAmount <= 100);
+        totalAmountShares = updatedShareAmount;
+
+        partners[_shareHolderAddress].share = _partnerShare;
+
+        createShareHolderEvent(EDITED_SHARE_HOLDER, _shareHolderAddress, _partnerShare);
+    }
+
+    // delete partner share
+    function deleteShareHolder(address _shareHolderAddress)
+        public
+        onlyDeveloper
+    {
+        require(isShareHolder(_shareHolderAddress));
+
+        // delete share percent
+        totalAmountShares -= partners[_shareHolderAddress].share;
+
+        uint256 rowToDelete = partners[_shareHolderAddress].index;
+        address keyToMove = shareHolderAddresses[shareHolderAddresses.length - 1];
+
+        shareHolderAddresses[rowToDelete] = keyToMove;
+        partners[keyToMove].index = rowToDelete;
+
+        shareHolderAddresses.length--;
+
+        createShareHolderEvent(DELETED_SHARE_HOLDER, _shareHolderAddress, partners[_shareHolderAddress].share);
+    }
+
+    // get shareholder share by address
+    function getHoldersShare(address _shareHolderAddress)
+        public
+        view
+        returns(uint256 partnerShare)
+    {
+        require(isShareHolder(_shareHolderAddress));
+        return(partners[_shareHolderAddress].share);
+    }
 
     // get shareholder address at index
-    function getShareHolderAtIndex(uint index)
+    function getShareHolderAtIndex(uint256 _index)
         public
-        constant
-        returns(address shareHolderAddress) {
-            return shareHolderAddresses[index];
+        view
+        returns(address shareHolderAddress)
+    {
+        return shareHolderAddresses[_index];
     }
 
     // get shareholder address and share amount at index
-    function getShareHolderAddressAndShareAtIndex(uint index)
+    function getShareHolderAddressAndShareAtIndex(uint256 _index)
         public
-        constant
-        returns(address, uint8) {
-            address shareHolderAddress = getShareHolderAtIndex(index);
-            uint8 share = getHoldersShare(shareHolderAddress);
-            return (shareHolderAddress, share);
+        view
+        returns(address, uint256)
+    {
+        address shareHolderAddress = getShareHolderAtIndex(_index);
+        return (shareHolderAddress, getHoldersShare(shareHolderAddress));
     }
 
     // get shareholders count
     function getShareHolderCount()
         public
-        constant
-        returns(uint count) {
-            return shareHolderAddresses.length;
-    }
-
-    // add new shareholder
-    function addShareHolder(address shareHolderAddress, uint8 partnerShare)
-        public onlyVendor
-        returns(uint index) {
-            require(!isShareHolder(shareHolderAddress));
-            require(totalAmountShares + partnerShare <= 100);
-
-            partners[shareHolderAddress].share = partnerShare;
-            //.push() returns the new array length
-            partners[shareHolderAddress].index = shareHolderAddresses.push(shareHolderAddress) - 1;
-
-            // add share for summing
-            totalAmountShares += partnerShare;
-
-            AddedShareHolder(
-                ADDED_SHARE_HOLDER,
-                shareHolderAddress,
-                partnerShare);
-
-            return getShareHolderCount();
-    }
-
-    // edit partner share
-    function editShareHolder(address shareHolderAddress, uint8 partnerShare)
-        public onlyVendor
-        returns(bool success) {
-            require(isShareHolder(shareHolderAddress));
-
-            // update share percent
-            uint8 updatedShareAmount = totalAmountShares - partners[shareHolderAddress].share;
-            updatedShareAmount += partnerShare;
-
-            require(updatedShareAmount <= 100);
-            totalAmountShares = updatedShareAmount;
-
-            partners[shareHolderAddress].share = partnerShare;
-
-            EditedShareHolder(
-                EDITED_SHARE_HOLDER,
-                shareHolderAddress,
-                partnerShare);
-
-            return true;
-    }
-
-    // delete partner share
-    function deleteShareHolder(address shareHolderAddress)
-        public onlyVendor
-        returns(uint index) {
-            require(isShareHolder(shareHolderAddress));
-
-            // delete share percent
-            totalAmountShares -= partners[shareHolderAddress].share;
-
-            uint rowToDelete = partners[shareHolderAddress].index;
-            address keyToMove = shareHolderAddresses[shareHolderAddresses.length - 1];
-
-            shareHolderAddresses[rowToDelete] = keyToMove;
-            partners[keyToMove].index = rowToDelete;
-
-            shareHolderAddresses.length--;
-
-            DeletedShareHolder(DELETED_SHARE_HOLDER, shareHolderAddress);
-
-            return rowToDelete;
+        view
+        returns(uint256 count)
+    {
+        return shareHolderAddresses.length;
     }
 
     // payable function for receiving customer funds
-    function payVendor(${CUSTOM_SCAFFOLD_PARAMETERS}) public payable activated {
+    function payDeveloper(${CUSTOM_SCAFFOLD_PARAMETERS}) public payable activated {
         require(msg.value == scaffoldAmount);
         payWithShares(msg.sender, msg.value, ${CUSTOM_RETURN_VARIABLES});
     }
 
     // transfer amount according shares
-    function payWithShares(address customerAddress, uint transactionAmount, ${CUSTOM_SCAFFOLD_PARAMETERS}) internal {
+    function payWithShares(address _customerAddress, uint _transactionAmount, ${CUSTOM_SCAFFOLD_PARAMETERS}) internal {
         // platform fee
-        uint256 platformFee = transactionAmount.div(100).mul(3);
-        // vendor amount
-        uint256 vendorAmount = payToShareHolders(transactionAmount.sub(platformFee));
+        uint256 platformFee = _transactionAmount.div(100).mul(3);
+        // pay for shareholders and get developer amount
+        uint256 developerAmount = payToShareHolders(_transactionAmount.sub(platformFee));
 
         // transfer amount for platform
         withdrawFunds(platformAddress, platformFee);
-        // transfer amount for vendor
-        if(vendorAmount > 0) {
-            withdrawFunds(vendorAddress, vendorAmount);
+        // transfer amount for developer
+        if(developerAmount > 0) {
+            withdrawFunds(developerAddress, developerAmount);
         }
 
-        generateTransaction(customerAddress, vendorAmount, ${CUSTOM_RETURN_VARIABLES});
+        generateTransaction(_customerAddress, developerAmount, ${CUSTOM_RETURN_VARIABLES});
     }
 
     // pay to shareholders according to their shares
-    function payToShareHolders(uint256 unpaidAmount) internal returns(uint256) {
+    function payToShareHolders(uint256 _unpaidAmount) internal returns(uint256) {
         uint256 shareHolderIndexLength = getShareHolderCount();
 
         if(0 == shareHolderIndexLength) {
-            return unpaidAmount;
+            return _unpaidAmount;
         }
 
-        uint256 vendorAmount = unpaidAmount;
-        for(uint8 row = 0; row < shareHolderIndexLength; row++) {
+        uint256 developerAmount = _unpaidAmount;
+        for(uint256 row = 0; row < shareHolderIndexLength; row++) {
             address shareHolderAddress = getShareHolderAtIndex(row);
-            uint256 shareHolderAmount = unpaidAmount.div(100).mul(partners[shareHolderAddress].share);
+            uint256 shareHolderAmount = _unpaidAmount.div(100).mul(partners[shareHolderAddress].share);
 
-            // reduce vendor amount
-            vendorAmount = vendorAmount.sub(shareHolderAmount);
+            // reduce developer amount
+            developerAmount = developerAmount.sub(shareHolderAmount);
 
             // transfer amount for shareholder
             withdrawFunds(shareHolderAddress, shareHolderAmount);
@@ -305,67 +298,88 @@ contract OpenScaffold {
             PayedForShareHolder(
                 PAYED_FOR_SHARE_HOLDER,
                 shareHolderAddress,
-                shareHolderAmount);
-            }
+                shareHolderAmount
+            );
+        }
 
-        return vendorAmount;
+        return developerAmount;
     }
 
     function generateTransaction(
-        address customerAddress,
-        uint vendorAmount,
+        address _customerAddress,
+        uint256 _developerAmount,
         ${CUSTOM_SCAFFOLD_PARAMETERS}
-        ) internal {
-
+    ) internal
+    {
         // create transaction
-        uint256 transactionIndex  = createScaffoldTransaction(customerAddress, ${CUSTOM_RETURN_VARIABLES});
+        uint256 transactionIndex  = createScaffoldTransaction(_customerAddress, ${CUSTOM_RETURN_VARIABLES});
 
         PaymentCompleted(
             PAYMENT_COMPLETED,
-            customerAddress,
-            vendorAmount,
+            _customerAddress,
+            _developerAmount,
             transactionIndex,
             ${CUSTOM_RETURN_VARIABLES}
-            );
+        );
     }
 
     // create Scaffold transaction and add to array
-    function createScaffoldTransaction(address customerAddress, ${CUSTOM_SCAFFOLD_PARAMETERS}) internal returns(uint) {
+    function createScaffoldTransaction(address _customerAddress, ${CUSTOM_SCAFFOLD_PARAMETERS})
+        internal
+        returns(uint256)
+    {
         OpenScaffoldTransaction memory newTransaction = OpenScaffoldTransaction({
-            customerAddress: customerAddress,
+            customerAddress: _customerAddress,
             ${SCAFFOLD_STRUCT_TRANSACTION_ARGUMENTS}
-            });
+        });
 
         openScaffoldTransactions.push(newTransaction);
         return ++scaffoldTransactionIndex;
     }
 
+    function createShareHolderEvent(uint256 _actionType, address _shareHolderAddress, uint256 _share) internal {
+        ShareHolderEvent(_actionType, _shareHolderAddress, _share);
+    }
+
     // withdraw funds
-    function withdrawFunds(address to, uint amount) private {
-        to.transfer(amount);
-        FundsDeposited(FUNDS_DEPOSITED, amount, to);
+    function withdrawFunds(address _to, uint256 _amount) private {
+        _to.transfer(_amount);
+        FundsDeposited(FUNDS_DEPOSITED, _amount, _to);
     }
 
     // check of the partner's address
-    function isShareHolder(address shareHolderAddress)
+    function isShareHolder(address _shareHolderAddress)
         private
-        constant
-        returns(bool alreadyExists) {
-            if(shareHolderAddresses.length == 0) return false;
+        view
+        returns(bool alreadyExists)
+    {
+        if(0 == getShareHolderCount()) return false;
 
-            return (shareHolderAddresses[partners[shareHolderAddress].index] == shareHolderAddress);
+        return (shareHolderAddresses[partners[_shareHolderAddress].index] == _shareHolderAddress);
     }
 
     // view current state of scaffold
-    function getScaffoldSummary() public view returns (string, string, string, uint, uint, address, uint) {
+    function getScaffoldSummary()
+        public
+        view
+        returns (
+            string,
+            bytes32,
+            bytes32,
+            uint256,
+            uint256,
+            address,
+            uint256
+        )
+    {
         return (
-          scaffoldDescription,
-          fiatAmount,
-          fiatCurrency,
-          scaffoldAmount,
-          scaffoldTransactionIndex,
-          vendorAddress,
-          OPENToken.balanceOf(address(this))
+        scaffoldDescription,
+        fiatAmount,
+        fiatCurrency,
+        scaffoldAmount,
+        scaffoldTransactionIndex,
+        developerAddress,
+        OPENToken.balanceOf(address(this))
         );
     }
 
