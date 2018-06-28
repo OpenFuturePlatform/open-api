@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull
 data class ScaffoldPropertyDto(
         @field:NotBlank var name: String? = null,
         @field:NotNull var type: PropertyType? = null,
-        @field:NotBlank var defaultValue: String? = null
+        var defaultValue: String? = null
 ) {
 
     constructor(property: ScaffoldProperty) : this(
