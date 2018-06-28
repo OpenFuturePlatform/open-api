@@ -56,12 +56,13 @@ unit-tests:
     - schedules
 
 contract-tests:
-  stage: test
+  services:
+    - name: openplatform/ganache
+      alias: ganache
   image: openplatform/truffle
   script:
-    - npm install -g ganache-cli
-    - ganache-cli -h 0.0.0.0&
-    - cd src/test/truffle && truffle test
+    - export RPC_HOST="ganache"
+    - cd metacoin && truffle test
 
 
 ###########################
