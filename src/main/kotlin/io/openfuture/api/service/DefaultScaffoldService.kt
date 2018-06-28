@@ -136,10 +136,10 @@ class DefaultScaffoldService(
     }
 
     @Transactional
-    override fun getScaffoldSummary(address: String, user: User): ScaffoldSummary {
+    override fun getScaffoldSummary(address: String, user: User, cache: Boolean): ScaffoldSummary {
         val scaffold = get(address, user)
         val cacheSummary = summaryRepository.findByScaffold(scaffold)
-        if (null != cacheSummary && addMinutes(cacheSummary.date, properties.cachePeriodInMinutest).after(Date())) {
+        if (null != cacheSummary && addMinutes(cacheSummary.date, properties.cachePeriodInMinutest).after(Date()) && cache) {
             return cacheSummary
         }
 
@@ -152,31 +152,35 @@ class DefaultScaffoldService(
         return persistSummary
     }
 
-    @Transactional(readOnly = true)
-    override fun deactivate(address: String, user: User) {
+    @Transactional
+    override fun deactivate(address: String, user: User): ScaffoldSummary {
         val scaffold = get(address, user)
         web3.callTransaction(DEACTIVATE_SCAFFOLD_METHOD_NAME, listOf(), listOf(), scaffold.address)
+        return getScaffoldSummary(address, user, false)
     }
 
-    @Transactional(readOnly = true)
-    override fun addShareHolder(address: String, user: User, request: AddShareHolderRequest) {
+    @Transactional
+    override fun addShareHolder(address: String, user: User, request: AddShareHolderRequest): ScaffoldSummary {
         val scaffold = get(address, user)
         web3.callTransaction(ADD_SHARE_HOLDER_METHOD_NAME, listOf(Address(request.address),
                 Uint8(request.percent.toLong())), listOf(), scaffold.address)
+        return getScaffoldSummary(address, user, false)
     }
 
-    @Transactional(readOnly = true)
-    override fun updateShareHolder(address: String, user: User, request: UpdateShareHolderRequest) {
+    @Transactional
+    override fun updateShareHolder(address: String, user: User, request: UpdateShareHolderRequest): ScaffoldSummary {
         val scaffold = get(address, user)
         web3.callTransaction(UPDATE_SHARE_HOLDER_METHOD_NAME, listOf(Address(request.address),
                 Uint8(request.percent.toLong())), listOf(), scaffold.address)
+        return getScaffoldSummary(address, user, false)
     }
 
-    @Transactional(readOnly = true)
-    override fun removeShareHolder(address: String, user: User, request: RemoveShareHolderRequest) {
+    @Transactional
+    override fun removeShareHolder(address: String, user: User, request: RemoveShareHolderRequest): ScaffoldSummary {
         val scaffold = get(address, user)
         web3.callTransaction(REMOVE_SHARE_HOLDER_METHOD_NAME, listOf(Address(request.address)), listOf(),
                 scaffold.address)
+        return getScaffoldSummary(address, user, false)
     }
 
     private fun getScaffoldSummary(scaffold: Scaffold): ScaffoldSummary {

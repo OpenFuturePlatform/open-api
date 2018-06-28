@@ -76,6 +76,7 @@ build-jar:
   only:
     - master
     - sprint
+    - tags
   except:
     - schedules
 
@@ -93,6 +94,7 @@ package-docker:
   only:
     - sprint
     - master
+    - tags
   except:
     - schedules
 
