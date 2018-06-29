@@ -4,13 +4,15 @@ import { getContract } from '../utils/eth';
 import { SET_SCAFFOLD_SET, FETCH_SCAFFOLDS } from './types';
 import { setShareHolders } from './shareHolders';
 import { getFromBN } from '../utils/getFromBN';
+import { parseApiError } from '../utils/parseApiError';
+import { getScaffoldsPath, getScaffoldsSummaryPath } from '../utils/apiPathes';
 
 export const fetchScaffolds = (page = 1, limit = 10) => async dispatch => {
   const offset = (Math.max(page, 1) - 1) * limit;
   const params = { offset, limit };
 
   try {
-    const res = await axios.get('/api/scaffolds', { params });
+    const res = await axios.get(getScaffoldsPath(), { params });
     dispatch({ type: FETCH_SCAFFOLDS, payload: res.data });
   } catch (err) {
     console.log('Error getting scaffolds', err);
@@ -20,7 +22,7 @@ export const fetchScaffolds = (page = 1, limit = 10) => async dispatch => {
 const fetchScaffoldItem = address => async dispatch => {
   dispatch({ type: SET_SCAFFOLD_SET, payload: { address, loading: true } });
   try {
-    const { data: scaffold } = await axios.get(`/api/scaffolds/${address}`);
+    const { data: scaffold } = await axios.get(getScaffoldsPath(address));
     const error = '';
     const payload = { address, scaffold, error, loading: false };
     dispatch({ type: SET_SCAFFOLD_SET, payload });
@@ -63,7 +65,7 @@ export const fetchScaffoldSummaryFromApi = scaffold => async dispatch => {
   dispatch({ type: SET_SCAFFOLD_SET, payload: { address, loading: true } });
 
   try {
-    const { data: summary } = await axios.get(`/api/scaffolds/${address}/summary`);
+    const { data: summary } = await axios.get(getScaffoldsSummaryPath(address));
     const shareHolders = summary.shareHolders.map(it => ({
       ...it,
       share: it.percent
@@ -89,6 +91,16 @@ export const fetchScaffoldSummary = scaffoldAddress => async (dispatch, getState
   } else {
     console.log('>> block chain fetch');
     await dispatch(fetchScaffoldSummaryFromChain(scaffold));
+  }
+};
+
+export const editScaffold = (address, fields) => async dispatch => {
+  try {
+    await axios.put(getScaffoldsPath(address), fields);
+    dispatch(fetchScaffoldSummary(address));
+  } catch (e) {
+    const message = parseApiError(e);
+    throw new Error(message);
   }
 };
 

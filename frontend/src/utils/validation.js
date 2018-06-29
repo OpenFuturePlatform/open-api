@@ -1,6 +1,5 @@
-import {validateWebHook} from '../actions/deploy-contract';
-
-const solidityReservedWords = ['address', 'contract', 'function', 'struct', 'uint', 'returns', 'abstract', 'after', 'case', 'catch', 'final', 'in', 'inline', 'interface', 'let', 'match', 'of', 'pure', 'relocatable', 'static', 'switch', 'try', 'type', 'typeof', 'view', 'index', 'storage', 'state', 'variable', 'mapping', 'block', 'coinbase', 'difficulty', 'number', 'block', 'number', 'timestamp', 'msg', 'data', 'gas', 'sender', 'value', 'now', 'gas', 'price', 'origin', 'keccak256', 'ripemd160', 'sha256', 'ecrecover', 'addmod', 'mulmod', 'cryptography', 'this', 'super', 'selfdestruct', 'balance', 'send'];
+import { validateWebHook } from '../actions/deploy-contract';
+import { solidityReservedWords } from '../const/solidity-reserved-words';
 
 const urlErrorMessage = 'Webhook needs to be url with format [protocol]://[url]/[path]';
 
@@ -14,9 +13,12 @@ export const validateScaffoldProperties = values => {
     const scaffoldFieldsErrors = [];
 
     if (field.name) {
-      if (field.name[0].match(/[a-z]/) === null) scaffoldFieldsErrors.push('A property should begin with a lowercase letter');
-      if (field.name.match(/[\s\/\\]/) !== null) scaffoldFieldsErrors.push('A property should not contain a space, / and \\'); // eslint-disable-line
-      if (solidityReservedWords.includes(field.name)) scaffoldFieldsErrors.push(`${field.name} is a reserved word, pick another property name.`);
+      if (field.name[0].match(/[a-z]/) === null)
+        scaffoldFieldsErrors.push('A property should begin with a lowercase letter');
+      if (field.name.match(/[\s\/\\]/) !== null) // eslint-disable-line
+        scaffoldFieldsErrors.push('A property should not contain a space, / and \\'); 
+      if (solidityReservedWords.includes(field.name))
+        scaffoldFieldsErrors.push(`${field.name} is a reserved word, pick another property name.`);
       if (propertyNames.filter(it => it === field.name).length > 1) scaffoldFieldsErrors.push('Name must be unique');
     }
 
@@ -53,13 +55,12 @@ export const warn = values => {
   return warnings;
 };
 
-const isUrl = (str) => {
-  const regexp =  /^((https?|ftp|smtp):\/\/)(www.)?[a-z0-9]+\.[a-z]+(\/[a-zA-Z0-9#]+\/?)*$/;
+const isUrl = str => {
+  const regexp = /^((https?|ftp|smtp):\/\/)(www.)?[a-z0-9]+\.[a-z]+(\/[a-zA-Z0-9#]+\/?)*$/;
   return regexp.test(str);
 };
 
-export const asyncValidate = async (values) => {
-
+export const asyncValidate = async values => {
   if (!values.webHook) {
     return;
   }
@@ -67,7 +68,7 @@ export const asyncValidate = async (values) => {
   try {
     return await validateWebHook(values.webHook);
   } catch (e) {
-    throw {webHook: urlErrorMessage} // eslint-disable-line
+    throw { webHook: urlErrorMessage }; // eslint-disable-line
   }
 };
 
@@ -99,7 +100,6 @@ export const validate = values => {
     values.properties.forEach((field, fieldIndex) => {
       if (!field.property) scaffoldFieldErrors.property = 'required';
       if (!field.datatype) scaffoldFieldErrors.datatype = 'required';
-      if (!field.defaultValue) scaffoldFieldErrors.defaultValue = 'required';
       errors.properties[fieldIndex] = scaffoldFieldErrors;
     });
   }
