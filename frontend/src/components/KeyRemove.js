@@ -3,6 +3,6 @@ import { EntityRemove } from './EntityRemove';
 
 export const KeyRemove = ({ onSubmit }) => (
   <EntityRemove onSubmit={onSubmit} header="Key Deactivation">
-    <div>You are deactivate Key. Are you sure?</div>
+    <div>You are about to deactivate the key. Are you sure?</div>
   </EntityRemove>
 );
