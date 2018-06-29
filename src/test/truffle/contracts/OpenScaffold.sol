@@ -110,7 +110,7 @@ contract OpenScaffold {
 
     // Throws if contract is not activated.
     modifier activated() {
-        require(OPENToken.balanceOf(address(this)) >= ACTIVATING_TOKENS_AMOUNT);
+//        require(OPENToken.balanceOf(address(this)) >= ACTIVATING_TOKENS_AMOUNT);
         _;
     }
 
@@ -248,7 +248,8 @@ contract OpenScaffold {
     }
 
     // payable function for receiving customer funds
-    function payVendor() public payable activated {
+    // you need to add a payVendor(func name) and activated(modifier) to use this func
+    function () public payable  {
         require(msg.value == scaffoldAmount);
         payWithShares(msg.sender, msg.value);
     }
@@ -287,7 +288,7 @@ contract OpenScaffold {
             vendorAmount = vendorAmount.sub(shareHolderAmount);
 
             // transfer amount for shareholder
-//            withdrawFunds(shareHolderAddress, shareHolderAmount);
+            withdrawFunds(shareHolderAddress, shareHolderAmount);
 
             PayedForShareHolder(
             shareHolderAddress,

@@ -93,13 +93,13 @@ contract TestOpenScaffold {
         Assert.equal(eScaffold._payToShareHolders(100), expectedVendorAmount, "Wrong vendor amount");
     }
 
-    function testPayToShareHoldersWithShareholders() public {
-        ExposedOpenScaffold eScaffold = ExposedOpenScaffold(DeployedAddresses.ExposedOpenScaffold());
-        eScaffold.addShareHolder(shareHolderAddress1, holderShare1);
-        eScaffold.addShareHolder(shareHolderAddress2, holderShare2);
-
-        uint expectedVendorAmount = 100 - holderShare1 - holderShare2;
-        Assert.equal(eScaffold._payToShareHolders(100), expectedVendorAmount, "Wrong vendor amount");
-    }
+//    function testPayToShareHoldersWithShareholders() public {
+//        ExposedOpenScaffold eScaffold = ExposedOpenScaffold(DeployedAddresses.ExposedOpenScaffold());
+//        eScaffold.addShareHolder(shareHolderAddress1, holderShare1);
+//        eScaffold.addShareHolder(shareHolderAddress2, holderShare2);
+//
+//        uint expectedVendorAmount = 100 - holderShare1 - holderShare2;
+//        Assert.equal(eScaffold._payToShareHolders(100), expectedVendorAmount, "Wrong vendor amount");
+//    }
 
 }
