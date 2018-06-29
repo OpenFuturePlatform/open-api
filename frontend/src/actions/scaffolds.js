@@ -1,78 +1,90 @@
 import eth from '../utils/eth';
 import axios from 'axios';
-import {getContract} from '../utils/eth';
-import {
-  SET_SCAFFOLD_SET,
-  FETCH_SCAFFOLDS,
-} from './types';
-import {setShareHolders} from './shareHolders';
+import { getContract } from '../utils/eth';
+import { SET_SCAFFOLD_SET, FETCH_SCAFFOLDS } from './types';
+import { setShareHolders } from './shareHolders';
+import { getFromBN } from '../utils/getFromBN';
+import { parseApiError } from '../utils/parseApiError';
+import { getScaffoldsPath, getScaffoldsSummaryPath } from '../utils/apiPathes';
+import { getWalletMethod } from '../selectors/getWalletMethod';
+import { getWeb3Contract } from '../utils/web3';
 
 export const fetchScaffolds = (page = 1, limit = 10) => async dispatch => {
   const offset = (Math.max(page, 1) - 1) * limit;
-  const params = {offset, limit};
+  const params = { offset, limit };
 
   try {
-    const res = await axios.get('/api/scaffolds', {params});
-    dispatch({type: FETCH_SCAFFOLDS, payload: res.data});
+    const res = await axios.get(getScaffoldsPath(), { params });
+    dispatch({ type: FETCH_SCAFFOLDS, payload: res.data });
   } catch (err) {
     console.log('Error getting scaffolds', err);
   }
 };
 
-const fetchScaffoldItem = (address) => async dispatch => {
-  dispatch({type: SET_SCAFFOLD_SET, payload: {address, loading: true}});
+const fetchScaffoldItem = address => async dispatch => {
+  dispatch({ type: SET_SCAFFOLD_SET, payload: { address, loading: true } });
   try {
-    const {data: scaffold} = await axios.get(`/api/scaffolds/${address}`);
+    const { data: scaffold } = await axios.get(getScaffoldsPath(address));
     const error = '';
-    dispatch({type: SET_SCAFFOLD_SET, payload: {address, scaffold, error, loading: false}});
+    const payload = { address, scaffold, error, loading: false };
+    dispatch({ type: SET_SCAFFOLD_SET, payload });
     return scaffold;
   } catch (e) {
     const error = `${e.response.status}: ${e.response.message || e.response.statusText}`;
-    dispatch({type: SET_SCAFFOLD_SET, payload: {address, error, loading: false}});
+    const payload = { address, error, loading: false };
+    dispatch({ type: SET_SCAFFOLD_SET, payload });
     throw e;
   }
 };
 
-export const fetchScaffoldSummaryFromChain = (scaffold) => async dispatch => {
-  const {address} = scaffold;
-  dispatch({type: SET_SCAFFOLD_SET, payload: {address, loading: true}});
+export const fetchScaffoldSummaryFromChain = scaffold => async dispatch => {
+  const { address } = scaffold;
+  dispatch({ type: SET_SCAFFOLD_SET, payload: { address, loading: true } });
   const contract = getContract(scaffold);
 
   if (!contract) {
     const error = 'To view Scaffold Summary you need to install MetaMask and refresh page';
-    dispatch({type: SET_SCAFFOLD_SET, payload: {address, loading: false, error}});
+    const payload = { address, loading: false, error };
+    dispatch({ type: SET_SCAFFOLD_SET, payload });
     return;
   }
 
   try {
     const summaryResponse = await contract.getScaffoldSummary();
     const summary = mapScaffoldSummary(summaryResponse);
-    dispatch({type: SET_SCAFFOLD_SET, payload: {address, summary, loading: false}});
+    const payload = { address, summary, loading: false };
+    dispatch({ type: SET_SCAFFOLD_SET, payload });
   } catch (e) {
     const error = e;
-    dispatch({type: SET_SCAFFOLD_SET, payload: {address, error, loading: false}});
+    const payload = { address, error, loading: false };
+    dispatch({ type: SET_SCAFFOLD_SET, payload });
     throw e;
   }
 };
 
-export const fetchScaffoldSummaryFromApi = (scaffold) => async dispatch => {
-  const {address} = scaffold;
-  dispatch({type: SET_SCAFFOLD_SET, payload: {address, loading: true}});
+export const fetchScaffoldSummaryFromApi = scaffold => async dispatch => {
+  const { address } = scaffold;
+  dispatch({ type: SET_SCAFFOLD_SET, payload: { address, loading: true } });
 
   try {
-    const {data: summary} = await axios.get(`/api/scaffolds/${address}/summary`);
-    const shareHolders = summary.shareHolders.map(it => ({...it, share: it.percent}));
-    dispatch({type: SET_SCAFFOLD_SET, payload: {address, summary, loading: false}});
+    const { data: summary } = await axios.get(getScaffoldsSummaryPath(address));
+    const shareHolders = summary.shareHolders.map(it => ({
+      ...it,
+      share: it.percent
+    }));
+    dispatch({ type: SET_SCAFFOLD_SET, payload: { address, summary, loading: false } });
     dispatch(setShareHolders(address, shareHolders));
-  } catch(e) {
+  } catch (e) {
     const error = `${e.response.status}: ${e.response.message || e.response.statusText}`;
-    dispatch({type: SET_SCAFFOLD_SET, payload: {address, error, loading: false}});
+    dispatch({ type: SET_SCAFFOLD_SET, payload: { address, error, loading: false } });
     throw e;
   }
 };
 
-export const fetchScaffoldSummary = (scaffoldAddress) => async (dispatch, getState) => {
-  const {auth: {isApiAllowed}} = getState();
+export const fetchScaffoldSummary = scaffoldAddress => async (dispatch, getState) => {
+  const {
+    auth: { isApiAllowed }
+  } = getState();
   const scaffold = await dispatch(fetchScaffoldItem(scaffoldAddress));
 
   if (isApiAllowed && !eth) {
@@ -84,7 +96,39 @@ export const fetchScaffoldSummary = (scaffoldAddress) => async (dispatch, getSta
   }
 };
 
-const mapScaffoldSummary = (source) => {
+export const editScaffoldByApi = ({ address }, fields) => async () => {
+  try {
+    await axios.put(getScaffoldsPath(address), fields);
+  } catch (e) {
+    const message = parseApiError(e);
+    throw new Error(message);
+  }
+};
+
+export const editScaffoldByMetaMask = (scaffold, fields) => async () => {
+  const contract = getWeb3Contract(scaffold);
+
+  if (!contract) {
+    throw new Error('Install MetaMask to edit Scaffold via Private Wallet');
+  }
+
+  return await contract.methods.setDescription(fields.description).send({ from: scaffold.vendorAddress });
+};
+
+export const editScaffold = (scaffold, fields) => async (dispatch, getState) => {
+  const state = getState();
+  const { byApiMethod } = getWalletMethod(state);
+
+  if (byApiMethod) {
+    await dispatch(editScaffoldByApi(scaffold, fields));
+  } else {
+    await dispatch(editScaffoldByMetaMask(scaffold, fields));
+  }
+
+  dispatch(fetchScaffoldSummary(scaffold.address));
+};
+
+const mapScaffoldSummary = source => {
   const {
     0: description,
     1: fiatAmount,
@@ -98,9 +142,9 @@ const mapScaffoldSummary = (source) => {
     description,
     fiatAmount,
     currency,
-    conversionAmount: conversionAmount.toString(10),
-    transactionIndex: transactionIndex.toString(10),
+    conversionAmount: getFromBN(conversionAmount),
+    transactionIndex: getFromBN(transactionIndex),
     vendorAddress,
-    tokenBalance: tokenBalance.toString(10)
+    tokenBalance: getFromBN(tokenBalance)
   };
 };

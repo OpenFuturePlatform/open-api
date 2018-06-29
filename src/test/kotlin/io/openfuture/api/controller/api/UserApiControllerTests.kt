@@ -10,7 +10,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 
 @WebMvcTest(UserApiController::class)
-class UserApiControllerTest : ControllerTests() {
+class UserApiControllerTests : ControllerTests() {
 
     @Test
     fun getCurrentTest() {
@@ -22,8 +22,8 @@ class UserApiControllerTest : ControllerTests() {
                 .header(AUTHORIZATION, openKey.value))
 
                 .andExpect(status().isOk)
-                .andExpect(content().json("""
-                    {
+                .andExpect(content().json("""{
+                    "user": {
                       "id": ${openKey.user.id},
                       "credits": ${openKey.user.credits},
                       "openKeys": [
@@ -38,12 +38,14 @@ class UserApiControllerTest : ControllerTests() {
                           "key": ${openKey.user.roles.first().key}
                         }
                       ]
+                    },
+                    "token":${openKey.value}
                     }
                     """.trimIndent(), true))
     }
 
     @Test
-    fun getCurrentWhenOpenTokenIsNotFoundShouldRedirectToIndexPage() {
+    fun getCurrentWhenOpenTokenIsNotFoundShouldRedirectToIndexPageTest() {
         val invalidToken = "not_valid_token"
 
         given(keyService.find(invalidToken)).willReturn(null)

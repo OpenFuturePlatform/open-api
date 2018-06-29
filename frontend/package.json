@@ -14,8 +14,10 @@
         "axios": "^0.16.2",
         "ethjs": "^0.4.0",
         "ethjs-unit": "^0.1.6",
+        "moment": "^2.22.2",
         "react": "^16.4.1",
         "react-copy-to-clipboard": "^5.0.1",
+        "react-dates": "^17.0.0",
         "react-dom": "^16.4.1",
         "react-redux": "^5.0.5",
         "react-router-dom": "^4.1.1",
@@ -26,6 +28,7 @@
         "redux-form": "^7.0.1",
         "redux-thunk": "^2.2.0",
         "semantic-ui-react": "^0.78.2",
+        "styled-components": "^3.3.3",
         "web3": "^1.0.0-beta.34",
         "websocket": "^1.0.26"
     },

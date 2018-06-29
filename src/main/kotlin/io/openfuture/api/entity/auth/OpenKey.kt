@@ -27,7 +27,7 @@ class OpenKey(
     companion object {
         fun of(request: GenerateOpenKeyRequest, user: User): OpenKey = OpenKey(
                 user,
-                request.expireDate
+                request.expiredDate
         )
     }
 

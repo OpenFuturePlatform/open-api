@@ -32,12 +32,16 @@ interface ScaffoldRepository : BaseRepository<Scaffold> {
 }
 
 @Repository
-interface ScaffoldPropertyRepository : BaseRepository<ScaffoldProperty>
+interface ScaffoldPropertyRepository : BaseRepository<ScaffoldProperty> {
+
+    fun findAllByScaffoldAddress(address: String): List<ScaffoldProperty>
+
+}
 
 @Repository
 interface OpenKeyRepository : BaseRepository<OpenKey> {
 
-    fun findByValueAndEnabledIsTrueAndExpiredDateIsNullOrExpiredDateAfter(value: String, date: Date): OpenKey?
+    fun findByValueAndEnabledIsTrue(value: String): OpenKey?
 
     fun findAllByUser(user: User): List<OpenKey>
 

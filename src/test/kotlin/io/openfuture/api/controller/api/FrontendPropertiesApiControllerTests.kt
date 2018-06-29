@@ -14,7 +14,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import org.web3j.spring.autoconfigure.Web3jProperties
 
 @WebMvcTest(FrontendPropertiesApiController::class)
-class FrontendPropertiesApiControllerTest : ControllerTests() {
+class FrontendPropertiesApiControllerTests : ControllerTests() {
 
     @MockBean
     private lateinit var web3: Web3Wrapper
@@ -52,7 +52,7 @@ class FrontendPropertiesApiControllerTest : ControllerTests() {
     }
 
     @Test
-    fun getWhenOpenTokenIsNotFoundShouldRedirectToIndexPage() {
+    fun getWhenOpenTokenIsNotFoundShouldRedirectToIndexPageTest() {
         val invalidToken = "not_valid_token"
 
         given(keyService.find(invalidToken)).willReturn(null)
