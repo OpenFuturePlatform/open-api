@@ -23,7 +23,7 @@ class AuthenticationSuccessHandler(
         val principal = authentication.principal as OidcUser
         val persistUser = userService.findByGoogleId(principal.subject) ?: userService.save(User(principal.subject))
 
-        val key = persistUser.openKeys.firstOrNull { it.enabled && (it.expiredDate == null || Date().after(it.expiredDate)) }
+        val key = persistUser.openKeys.firstOrNull { it.enabled && (it.expiredDate == null || Date().before(it.expiredDate)) }
                 ?: keyService.generate(persistUser)
         CookieUtils.add(response, properties.cookieName!!, key.value)
 
