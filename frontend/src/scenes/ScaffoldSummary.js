@@ -3,9 +3,10 @@ import { Card, Grid } from 'semantic-ui-react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { ScaffoldStatusContainer } from '../components/ScaffoldStatus';
-import { fetchScaffoldSummary } from '../actions/scaffolds';
+import { fetchScaffoldSummary, editScaffold } from '../actions/scaffolds';
 import { ShareHolders } from '../components/ShareHolders';
 import { WalletSelect } from '../components/WalletSelect';
+import { ScaffoldEdit } from '../components/ScaffoldEdit';
 
 class ScaffoldSummary extends Component {
   componentDidMount() {
@@ -23,9 +24,9 @@ class ScaffoldSummary extends Component {
     }
   }
 
-  getScaffoldAddress() {
-    return this.props.match.params.scaffoldAddress;
-  }
+  getScaffoldAddress = () => this.props.match.params.scaffoldAddress;
+
+  onEditScaffold = fields => this.props.actions.editScaffold(this.props.scaffold, fields);
 
   render() {
     const { address, scaffold, summary, error } = this.props;
@@ -34,6 +35,8 @@ class ScaffoldSummary extends Component {
       return null;
     }
 
+    const description = summary ? summary.description : scaffold.description;
+
     return (
       <div style={{ marginTop: '20px' }}>
         <WalletSelect />
@@ -41,10 +44,7 @@ class ScaffoldSummary extends Component {
           <Grid.Row>
             <Grid.Column width={16}>
               <Card fluid>
-                <Card.Content
-                  header="On-chain Scaffold Summary"
-                  meta="This data is coming from the Ethereum Network"
-                />
+                <Card.Content header="On-chain Scaffold Summary" meta="This data is coming from the Ethereum Network" />
                 <Card.Content>
                   <ScaffoldStatusContainer
                     scaffoldAddress={address}
@@ -54,24 +54,22 @@ class ScaffoldSummary extends Component {
                   />
                 </Card.Content>
                 <Card.Content>
-                  <div>Scaffold Description: {scaffold.description}</div>
+                  <div>
+                    Scaffold Description: {description}{' '}
+                    <ScaffoldEdit description={description} onSubmit={this.onEditScaffold} />
+                  </div>
                   <div>Scaffold Owner Address: {scaffold.vendorAddress}</div>
                 </Card.Content>
                 <Card.Content>
                   <div>
                     <div style={{ width: '64%', display: 'inline-block' }}>
-                      Scaffold Amount:{' '}
-                      {Number.parseFloat(scaffold.conversionAmount).toFixed(5)}{' '}
-                      ether
+                      Scaffold Amount: {Number.parseFloat(scaffold.conversionAmount).toFixed(5)} ether
                     </div>
                     <div style={{ width: '34%', display: 'inline-block' }}>
                       {scaffold.fiatAmount} {scaffold.currency}
                     </div>
                   </div>
-                  <div>
-                    Scaffold Transactions:{' '}
-                    {summary ? summary.transactionIndex : ''}
-                  </div>
+                  <div>Scaffold Transactions: {summary ? summary.transactionIndex : ''}</div>
                 </Card.Content>
               </Card>
             </Grid.Column>
@@ -99,7 +97,7 @@ const mapStateToProps = (
 };
 
 const mapDispatchToProps = dispatch => ({
-  actions: bindActionCreators({ fetchScaffoldSummary }, dispatch)
+  actions: bindActionCreators({ fetchScaffoldSummary, editScaffold }, dispatch)
 });
 
 export const ScaffoldSummaryContainer = connect(

@@ -3,7 +3,6 @@ package io.openfuture.api.component.web3
 import io.openfuture.api.config.propety.EthereumProperties
 import io.openfuture.api.exception.DeployException
 import io.openfuture.api.exception.FunctionCallException
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.web3j.abi.FunctionEncoder
 import org.web3j.abi.FunctionReturnDecoder
@@ -29,24 +28,18 @@ class Web3Wrapper(
         private val transactionHandler: TransactionHandler
 ) {
 
-    companion object {
-        private val log = LoggerFactory.getLogger(Web3Wrapper::class.java)
-    }
-
-
     @PostConstruct
     fun init() {
-        try {
-            web3j.transactionObservable().subscribe {
-                val transactionReceipt = web3j.ethGetTransactionReceipt(it.hash).send().transactionReceipt
-                if (transactionReceipt.isPresent) {
-                    transactionReceipt.get().logs.forEach {
-                        transactionHandler.handle(it)
-                    }
+        if (!properties.eventSubscription) {
+            return
+        }
+        web3j.transactionObservable().subscribe {
+            val transactionReceipt = web3j.ethGetTransactionReceipt(it.hash).send().transactionReceipt
+            if (transactionReceipt.isPresent) {
+                transactionReceipt.get().logs.forEach {
+                    transactionHandler.handle(it)
                 }
             }
-        } catch (e: Exception) {
-            log.warn(e.message)
         }
     }
 

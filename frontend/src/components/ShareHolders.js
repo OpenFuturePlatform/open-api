@@ -5,17 +5,12 @@ import 'react-table/react-table.css';
 import '../css/table.css';
 import { EtherscanLink } from '../components-ui/EtherscanLink';
 import { Segment } from 'semantic-ui-react';
-import {
-  addShareHolder,
-  editShareHolder,
-  fetchShareHolders,
-  removeShareHolder
-} from '../actions/shareHolders';
+import { addShareHolder, editShareHolder, fetchShareHolders, removeShareHolder } from '../actions/shareHolders';
 import { ShareHolderSave } from './ShareHolderSave';
 import { Table } from '../components-ui/Table';
 import { ShareHolderRemove } from './ShareHolderRemove';
 
-const getColumns = (onEdit, onRemove) => [
+const getColumns = (allHolders, onEdit, onRemove) => [
   {
     Header: 'Share Holder Address',
     accessor: 'address',
@@ -38,6 +33,7 @@ const getColumns = (onEdit, onRemove) => [
         <ShareHolderSave
           editType
           shareHolder={original}
+          allHolders={allHolders}
           onSubmit={devShare => onEdit(devShare)}
         />{' '}
         <ShareHolderRemove onSubmit={() => onRemove(value)} />
@@ -70,14 +66,11 @@ export class ShareHoldersComponent extends Component {
 
   render() {
     const { shareHolders } = this.props;
-    const columns = getColumns(
-      this.onEditShareHolder,
-      this.onRemoveShareHolder
-    );
+    const columns = getColumns(shareHolders, this.onEditShareHolder, this.onRemoveShareHolder);
 
     return (
       <div className="table-with-add">
-        <ShareHolderSave onSubmit={this.onAddShareHolder} />
+        <ShareHolderSave onSubmit={this.onAddShareHolder} allHolders={shareHolders} />
         <Segment attached styles={{ padding: 0 }}>
           <Table data={shareHolders} columns={columns} />
         </Segment>

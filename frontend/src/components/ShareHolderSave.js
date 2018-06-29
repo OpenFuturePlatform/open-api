@@ -25,6 +25,22 @@ class ShareHolderSaveComponent extends React.Component {
     };
   };
 
+  getAvailableShare = () => {
+    const { allHolders = [], shareHolder } = this.props;
+    const shareOfSelected = shareHolder ? Number(shareHolder.share) : 0;
+    const sumShares = allHolders.reduce((sum, it) => sum + Number(it.share), 0);
+    return 100 - sumShares + shareOfSelected;
+  };
+
+  validateShare = () => {
+    const availableShare = this.getAvailableShare();
+    const { share } = this.state;
+    if (share > availableShare) {
+      return [`Available share: ${availableShare}%`];
+    }
+    return [];
+  };
+
   onAddressChange = e => this.setState({ address: e.target.value });
   onShareChange = e => this.setState({ share: Math.abs(e.target.value) });
   onAddressBlur = () => this.setState({ isAddressErrorVisible: true });
@@ -47,8 +63,9 @@ class ShareHolderSaveComponent extends React.Component {
     const { isVisible, onHide, editType, transactionError, isSaving } = this.props;
     const { share, address, isAddressErrorVisible } = this.state;
     const title = editType ? 'Edit Share Holder' : 'New Share Holder';
-    const submitDisabled = isSaving || !address || !share;
     const addressErrorList = validateAddress(address);
+    const shareErrorList = this.validateShare();
+    const submitDisabled = isSaving || !address || !share || !!shareErrorList.length || !!addressErrorList.length;
 
     return (
       <span>
@@ -75,6 +92,7 @@ class ShareHolderSaveComponent extends React.Component {
               disabled={isSaving}
               onChange={this.onShareChange}
             />
+            <ErrorMessage errorList={shareErrorList} isVisible={shareErrorList.length} />
             <Divider />
             <span>PS: Please be patient this may take a while...</span>
             <TransactionError message={transactionError} />
