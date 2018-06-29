@@ -26,7 +26,7 @@ class ScaffoldSummary extends Component {
 
   getScaffoldAddress = () => this.props.match.params.scaffoldAddress;
 
-  onEditScaffold = fields => this.props.actions.editScaffold(this.props.scaffold.address, fields);
+  onEditScaffold = fields => this.props.actions.editScaffold(this.props.scaffold, fields);
 
   render() {
     const { address, scaffold, summary, error } = this.props;
@@ -34,6 +34,8 @@ class ScaffoldSummary extends Component {
     if (!scaffold) {
       return null;
     }
+
+    const description = summary ? summary.description : scaffold.description;
 
     return (
       <div style={{ marginTop: '20px' }}>
@@ -53,8 +55,8 @@ class ScaffoldSummary extends Component {
                 </Card.Content>
                 <Card.Content>
                   <div>
-                    Scaffold Description: {scaffold.description}{' '}
-                    <ScaffoldEdit scaffold={scaffold} onSubmit={this.onEditScaffold} />
+                    Scaffold Description: {description}{' '}
+                    <ScaffoldEdit description={description} onSubmit={this.onEditScaffold} />
                   </div>
                   <div>Scaffold Owner Address: {scaffold.vendorAddress}</div>
                 </Card.Content>
