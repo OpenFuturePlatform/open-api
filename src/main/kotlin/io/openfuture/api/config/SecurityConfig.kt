@@ -48,7 +48,7 @@ class SecurityConfig(
                     .and()
 
                     .loginPage("/")
-                    .successHandler(AuthenticationSuccessHandler(properties, userService))
+                    .successHandler(AuthenticationSuccessHandler(properties, userService, keyService))
 
                 .and()
 
