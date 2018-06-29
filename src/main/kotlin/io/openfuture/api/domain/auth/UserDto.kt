@@ -1,6 +1,7 @@
 package io.openfuture.api.domain.auth
 
 import io.openfuture.api.entity.auth.User
+import java.util.*
 
 data class UserDto(
         val id: Long,
@@ -12,7 +13,7 @@ data class UserDto(
     constructor(user: User) : this(
             user.id,
             user.credits,
-            user.openKeys.filter { it.enabled }.map { OpenKeyDto(it) },
+            user.openKeys.filter { it.enabled && (it.expiredDate?.before(Date()) ?: true) }.map { OpenKeyDto(it) },
             user.roles.map { RoleDto(it) }
     )
 
