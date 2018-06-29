@@ -4,12 +4,12 @@ import "./OpenScaffold.sol";
 contract ExposedOpenScaffold is OpenScaffold {
 
     function ExposedOpenScaffold(
-    address _vendorAddress,
-    address _platformAddress,
-    string _description,
-    string _fiatAmount,
-    string _fiatCurrency,
-    uint _scaffoldAmount
+        address _vendorAddress,
+        address _platformAddress,
+        string _description,
+        bytes32 _fiatAmount,
+        bytes32 _fiatCurrency,
+        uint256 _scaffoldAmount
     ) OpenScaffold(
         _vendorAddress,
         _platformAddress,

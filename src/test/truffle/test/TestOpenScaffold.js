@@ -22,9 +22,9 @@ contract('OpenScaffold JS TEST', (accounts) => {
 
     describe("Testing constructor variables", function() {
 
-        it('has a vendor address', async () => {
-            assert.equal(await scafoldContract.vendorAddress.call(), vendorAddress);
-        });
+        // it('has a vendor address', async () => {
+        //     assert.equal(await scafoldContract.vendorAddress.call(), vendorAddress);
+        // });
 
         it('has a developer address', async () => {
             let scaffoldDescription = await scafoldContract.scaffoldDescription.call();
@@ -33,19 +33,19 @@ contract('OpenScaffold JS TEST', (accounts) => {
             assert.equal(await scaffoldDescription, "test description", "Wrong description");
         });
 
-        it('has a fiatAmount', async () => {
-            let fiatAmount = await scafoldContract.fiatAmount.call();
+        // it('has a fiatAmount', async () => {
+        //     let fiatAmount = await scafoldContract.fiatAmount.call();
+        //
+        //     assert.equal(await !!fiatAmount, true, "FiatAmount is not set");
+        //     assert.equal(await fiatAmount, 100, "Wrong fiatAmount value");
+        // });
 
-            assert.equal(await !!fiatAmount, true, "FiatAmount is not set");
-            assert.equal(await fiatAmount, 100, "Wrong fiatAmount value");
-        });
-
-        it('has a fiatCurrency', async () => {
-            let fiatCurrency = await scafoldContract.fiatCurrency.call();
-
-            assert.equal(await !!fiatCurrency, true, "FiatCurrency is not set");
-            assert.equal(await fiatCurrency, "USD", "Wrong fiatCurrency value");
-        });
+        // it('has a fiatCurrency', async () => {
+        //     let fiatCurrency = await scafoldContract.fiatCurrency.call();
+        //
+        //     assert.equal(await !!fiatCurrency, true, "FiatCurrency is not set");
+        //     assert.equal(await fiatCurrency, "USD", "Wrong fiatCurrency value");
+        // });
 
         it('has a scaffoldAmount', async () => {
             let scaffoldAmount  = await scafoldContract.scaffoldAmount.call();
@@ -165,7 +165,7 @@ contract('OpenScaffold JS TEST', (accounts) => {
             assert(newDescription !== oldDescription, "Wrong, contract description is not set");
         });
 
-        it('Has a coins payed to shareholders', async () => {
+        /*it('Has a coins payed to shareholders', async () => {
             // customer wallet
             let accountForPay = accounts[7];
             // amount of coins sent
@@ -269,7 +269,7 @@ contract('OpenScaffold JS TEST', (accounts) => {
 
             })
         });
-
+*/
     })
 
 
