@@ -10,16 +10,15 @@ class ScaffoldEditComponent extends Component {
   };
 
   onShow = () => {
-    const { onShow, scaffold } = this.props;
-    const { description } = scaffold;
+    const { onShow, description } = this.props;
     this.setState({ description });
     onShow();
   };
 
   isSubmitEnabled = () => {
-    const { isSaving, scaffold } = this.props;
+    const { isSaving } = this.props;
     const { description } = this.state;
-    return isSaving || !description || description === scaffold.description;
+    return isSaving || !description || description === this.props.description;
   };
 
   onDescriptionChange = e => this.setState({ description: e.target.value });

@@ -6,6 +6,8 @@ import { setShareHolders } from './shareHolders';
 import { getFromBN } from '../utils/getFromBN';
 import { parseApiError } from '../utils/parseApiError';
 import { getScaffoldsPath, getScaffoldsSummaryPath } from '../utils/apiPathes';
+import { getWalletMethod } from '../selectors/getWalletMethod';
+import { getWeb3Contract } from '../utils/web3';
 
 export const fetchScaffolds = (page = 1, limit = 10) => async dispatch => {
   const offset = (Math.max(page, 1) - 1) * limit;
@@ -94,14 +96,36 @@ export const fetchScaffoldSummary = scaffoldAddress => async (dispatch, getState
   }
 };
 
-export const editScaffold = (address, fields) => async dispatch => {
+export const editScaffoldByApi = ({ address }, fields) => async () => {
   try {
     await axios.put(getScaffoldsPath(address), fields);
-    dispatch(fetchScaffoldSummary(address));
   } catch (e) {
     const message = parseApiError(e);
     throw new Error(message);
   }
+};
+
+export const editScaffoldByMetaMask = (scaffold, fields) => async () => {
+  const contract = getWeb3Contract(scaffold);
+
+  if (!contract) {
+    throw new Error('Install MetaMask to edit Scaffold via Private Wallet');
+  }
+
+  return await contract.methods.setDescription(fields.description).send({ from: scaffold.vendorAddress });
+};
+
+export const editScaffold = (scaffold, fields) => async (dispatch, getState) => {
+  const state = getState();
+  const { byApiMethod } = getWalletMethod(state);
+
+  if (byApiMethod) {
+    await dispatch(editScaffoldByApi(scaffold, fields));
+  } else {
+    await dispatch(editScaffoldByMetaMask(scaffold, fields));
+  }
+
+  dispatch(fetchScaffoldSummary(scaffold.address));
 };
 
 const mapScaffoldSummary = source => {
