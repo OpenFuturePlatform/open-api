@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 ### Added
 - Unit tests for services, components, utils
+- Key management
+- Default value can be empty
+- Update scaffold description
+- Define event protocol (by web hook)
 
 ## [2.2.1] - 2018-06-25
 ### Added
