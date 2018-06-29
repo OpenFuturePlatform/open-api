@@ -22,8 +22,8 @@ class UserApiControllerTests : ControllerTests() {
                 .header(AUTHORIZATION, openKey.value))
 
                 .andExpect(status().isOk)
-                .andExpect(content().json("""
-                    {
+                .andExpect(content().json("""{
+                    "user": {
                       "id": ${openKey.user.id},
                       "credits": ${openKey.user.credits},
                       "openKeys": [
@@ -38,6 +38,8 @@ class UserApiControllerTests : ControllerTests() {
                           "key": ${openKey.user.roles.first().key}
                         }
                       ]
+                    },
+                    "token":${openKey.value}
                     }
                     """.trimIndent(), true))
     }
