@@ -21,7 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Scaffold: unit tests
 - Application unit tests
 
-##Changed
+## Changed
 - Default values are no longer required for additional scaffold properties
 - Application will automatically reconnect to a chain of a connection is lost
 
