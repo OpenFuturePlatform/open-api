@@ -32,7 +32,11 @@ interface ScaffoldRepository : BaseRepository<Scaffold> {
 }
 
 @Repository
-interface ScaffoldPropertyRepository : BaseRepository<ScaffoldProperty>
+interface ScaffoldPropertyRepository : BaseRepository<ScaffoldProperty> {
+
+    fun findAllByScaffoldAddress(address: String): List<ScaffoldProperty>
+
+}
 
 @Repository
 interface OpenKeyRepository : BaseRepository<OpenKey> {
@@ -72,6 +76,6 @@ interface ScaffoldSummaryRepository : BaseRepository<ScaffoldSummary> {
 @Repository
 interface ShareHolderRepository : BaseRepository<ShareHolder> {
 
-    fun findBySummaryAndAddress(summary: ScaffoldSummary, address: String): ShareHolder?
+    fun deleteAllBySummary(summary: ScaffoldSummary)
 
 }

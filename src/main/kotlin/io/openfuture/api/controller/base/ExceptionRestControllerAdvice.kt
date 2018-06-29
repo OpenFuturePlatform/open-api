@@ -4,6 +4,7 @@ import io.openfuture.api.domain.exception.ErrorDto
 import io.openfuture.api.domain.exception.ExceptionResponse
 import io.openfuture.api.exception.CompileException
 import io.openfuture.api.exception.DeployException
+import io.openfuture.api.exception.FunctionCallException
 import io.openfuture.api.exception.TemplateProcessingException
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.http.HttpStatus.BAD_REQUEST
@@ -41,6 +42,11 @@ class ExceptionRestControllerAdvice {
     @ExceptionHandler(DeployException::class)
     fun deployExceptionHandler(exception: DeployException): ExceptionResponse =
             ExceptionResponse(BAD_REQUEST.value(), exception.message ?: "Deploy Exception")
+
+    @ResponseStatus(code = BAD_REQUEST)
+    @ExceptionHandler(FunctionCallException::class)
+    fun functionCallExceptionHandler(exception: FunctionCallException): ExceptionResponse =
+            ExceptionResponse(BAD_REQUEST.value(), exception.message ?: "Function Call Exception")
 
     @ResponseStatus(code = BAD_REQUEST)
     @ExceptionHandler(TemplateProcessingException::class)

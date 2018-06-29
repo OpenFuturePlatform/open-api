@@ -1,5 +1,6 @@
 package io.openfuture.api.component.web3
 
+import io.openfuture.api.component.web3.event.ProcessorEventDecoder
 import io.openfuture.api.domain.scaffold.TransactionDto
 import io.openfuture.api.entity.scaffold.Transaction
 import io.openfuture.api.repository.ScaffoldRepository
@@ -13,7 +14,8 @@ import org.web3j.protocol.core.methods.response.Log
 @Component
 class TransactionHandler(
         private val service: TransactionService,
-        private val repository: ScaffoldRepository
+        private val repository: ScaffoldRepository,
+        private val eventDecoder: ProcessorEventDecoder
 ) {
 
     companion object {
@@ -23,16 +25,17 @@ class TransactionHandler(
 
     @Transactional
     fun handle(transactionLog: Log) {
-        val contact = repository.findByAddress(transactionLog.address)
+        val contract = repository.findByAddress(transactionLog.address)
 
-        if (null == contact) {
+        if (null == contract) {
             log.warn("Scaffold with address ${transactionLog.address} not found")
             return
         }
 
         try {
-            val transaction = service.save(Transaction.of(contact, transactionLog))
-            contact.webHook?.let { RestTemplate().postForLocation(it, TransactionDto(transaction)) }
+            val transaction = service.save(Transaction.of(contract, transactionLog))
+            val event = eventDecoder.getEvent(contract.address, transaction.data)
+            contract.webHook?.let { RestTemplate().postForLocation(it, TransactionDto(transaction, event)) }
         } catch (e: Exception) {
             log.warn(e.message)
         }

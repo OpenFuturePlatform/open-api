@@ -2,9 +2,9 @@ import axios from 'axios';
 import web3 from '../utils/web3';
 import {CONVERT_CURRENCIES, SHOW_MODAL} from './types';
 
-const setWebHook = async (address, webHook) => {
-  return await axios.patch(`/api/scaffolds/${address}`, {webHook});
-};
+const setWebHook = async (address, webHook) => await axios.patch(`/api/scaffolds/${address}`, {webHook});
+
+export const validateWebHook = async (url) => await axios.post('/api/validation/url', {url});
 
 export const deployContractByApi = (formValues, history) => async dispatch => {
   dispatch({type: SHOW_MODAL, payload: {showModal: true}});

@@ -10,6 +10,7 @@ contract TestOpenScaffold {
 
     address shareHolderAddress1 = 0x2932b7a2355d6fecc4b5c0b6bd44cc31df247a2e;
     address shareHolderAddress2 = 0x2191ef87e392377ec08e7c08eb105ef5448eced5;
+    address customerAddress = 0x5aeda56215b167893e80b4fe645ba6d5bab767de;
 
     uint8 holderShare1 = 30;
     uint8 holderShare2 = 40;
@@ -79,8 +80,8 @@ contract TestOpenScaffold {
     function testCreateScaffoldTransaction() public {
         ExposedOpenScaffold eScaffold = ExposedOpenScaffold(DeployedAddresses.ExposedOpenScaffold());
 
-        uint index1 = eScaffold._createScaffoldTransaction(0x5aeda56215b167893e80b4fe645ba6d5bab767de);
-        uint index2 = eScaffold._createScaffoldTransaction(0x5aeda56215b167893e80b4fe645ba6d5bab767de);
+        eScaffold._createScaffoldTransaction(customerAddress);
+        uint index2 = eScaffold._createScaffoldTransaction(customerAddress);
 
         uint expectedIndex = 2;
         Assert.equal(index2, expectedIndex, "Wrong index!");

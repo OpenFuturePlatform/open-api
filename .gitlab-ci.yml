@@ -11,13 +11,13 @@ stages:
   - certificates
 
 variables:
-    DOCKER_DRIVER: overlay2
-    IMAGE_NAME: openplatform/api
+  DOCKER_DRIVER: overlay2
+  IMAGE_NAME: openplatform/api
 
 
-###########################
-# Building
-###########################
+###########################/
+# Tests
+###########################/
 unit-tests:
   stage: test
   image: openjdk:8-jdk
@@ -55,7 +55,19 @@ unit-tests:
   except:
     - schedules
 
+contract-tests:
+  services:
+    - name: openplatform/ganache
+      alias: ganache
+  image: openplatform/truffle
+  script:
+    - export RPC_HOST="ganache"
+    - cd src/test/truffle && truffle test
 
+
+###########################
+# Building
+###########################
 build-jar:
   stage: build
   image: openjdk:8-jdk
@@ -76,6 +88,7 @@ build-jar:
   only:
     - master
     - sprint
+    - tags
   except:
     - schedules
 
@@ -93,6 +106,7 @@ package-docker:
   only:
     - sprint
     - master
+    - tags
   except:
     - schedules
 

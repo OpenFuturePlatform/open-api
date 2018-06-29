@@ -10,11 +10,11 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 
 @WebMvcTest(UserApiController::class)
-class UserApiControllerTest : ControllerTests() {
+class UserApiControllerTests : ControllerTests() {
 
     @Test
     fun getCurrentTest() {
-        val openKey = createOpenKey(setOf(Role("ROLE_DEPLOY")))
+        val openKey = createOpenKey(setOf(Role("ROLE_MASTER")))
 
         given(keyService.find(openKey.value)).willReturn(openKey)
 
@@ -43,7 +43,7 @@ class UserApiControllerTest : ControllerTests() {
     }
 
     @Test
-    fun getCurrentWhenOpenTokenIsNotFoundShouldRedirectToIndexPage() {
+    fun getCurrentWhenOpenTokenIsNotFoundShouldRedirectToIndexPageTest() {
         val invalidToken = "not_valid_token"
 
         given(keyService.find(invalidToken)).willReturn(null)
