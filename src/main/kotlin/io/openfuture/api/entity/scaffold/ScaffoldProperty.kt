@@ -19,8 +19,8 @@ class ScaffoldProperty(
         @Column(name = "type_id", nullable = false)
         private val typeId: Int,
 
-        @Column(name = "default_value", nullable = false)
-        val defaultValue: String
+        @Column(name = "default_value")
+        val defaultValue: String?
 
 ) : BaseModel() {
 
@@ -31,7 +31,7 @@ class ScaffoldProperty(
                 scaffold,
                 property.name!!,
                 property.type!!.getId(),
-                property.defaultValue!!
+                property.defaultValue
         )
     }
 

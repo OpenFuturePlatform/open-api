@@ -58,5 +58,11 @@ class ExceptionRestControllerAdvice {
     fun illegalStateExceptionHandler(exception: IllegalStateException): ExceptionResponse =
             ExceptionResponse(BAD_REQUEST.value(), exception.message ?: "Illegal State Exception")
 
+    @ResponseStatus(code = BAD_REQUEST)
+    @ExceptionHandler(IllegalArgumentException::class)
+    fun illegalArgumentExceptionHandler(exception: IllegalArgumentException): ExceptionResponse =
+            ExceptionResponse(BAD_REQUEST.value(), exception.message ?: "Illegal Argument Exception")
+
+
 
 }

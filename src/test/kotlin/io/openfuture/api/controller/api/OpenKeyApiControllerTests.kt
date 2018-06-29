@@ -21,7 +21,7 @@ class OpenKeyApiControllerTests : ControllerTests() {
     fun generateTokenTest() {
         val openKey = createOpenKey(setOf(Role("ROLE_MASTER")))
         val request = GenerateOpenKeyRequest(Date())
-        val newOpenKey = OpenKey(openKey.user, request.expireDate)
+        val newOpenKey = OpenKey(openKey.user, request.expiredDate)
         val requestJson = objectMapper.writeValueAsString(request)
 
         given(keyService.find(openKey.value)).willReturn(openKey)
@@ -71,13 +71,14 @@ class OpenKeyApiControllerTests : ControllerTests() {
 
     @Test
     fun disableTest() {
+        val disableToken = "ot"
         val openKey = createOpenKey(setOf(Role("ROLE_MASTER")))
         val expectedOpenKey = createOpenKey(setOf(Role("ROLE_MASTER"))).apply { enabled = false }
 
         given(keyService.find(openKey.value)).willReturn(openKey)
-        given(keyService.disable(openKey.value)).willReturn(expectedOpenKey)
+        given(keyService.disable(disableToken)).willReturn(expectedOpenKey)
 
-        mvc.perform(delete("/api/keys/" + openKey.value)
+        mvc.perform(delete("/api/keys/$disableToken")
                 .header(AUTHORIZATION, openKey.value))
 
                 .andExpect(status().isOk)

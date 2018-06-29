@@ -1,0 +1,1 @@
+ALTER TABLE scaffold_properties ALTER COLUMN default_value DROP NOT NULL;
