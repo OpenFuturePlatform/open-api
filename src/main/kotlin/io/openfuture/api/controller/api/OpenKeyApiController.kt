@@ -1,5 +1,6 @@
 package io.openfuture.api.controller.api
 
+import io.openfuture.api.annotation.CurrentToken
 import io.openfuture.api.annotation.CurrentUser
 import io.openfuture.api.domain.auth.OpenKeyDto
 import io.openfuture.api.domain.scaffold.GenerateOpenKeyRequest
@@ -23,7 +24,10 @@ class OpenKeyApiController(
     }
 
     @DeleteMapping("/{key}")
-    fun disable(@PathVariable key: String): OpenKeyDto {
+    fun disable(@PathVariable key: String, @CurrentToken token: String): OpenKeyDto {
+        if (token == key) {
+            throw IllegalArgumentException("Can't disable used token")
+        }
         val openKey = service.disable(key)
         return OpenKeyDto(openKey)
     }

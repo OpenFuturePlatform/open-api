@@ -43,8 +43,7 @@ class DefaultOpenKeyServiceTests : UnitTest() {
         val openKeyValue = "op_pk_9de7cbb4-857c-49e9-87d2-fc91428c4c12"
         val expectedOpenKey = createOpenKey()
 
-        given(repository.findByValueAndEnabledIsTrueAndExpiredDateIsNullOrExpiredDateAfter(eq(openKeyValue),
-                any(Date::class.java))).willReturn(expectedOpenKey)
+        given(repository.findByValueAndEnabledIsTrue(eq(openKeyValue))).willReturn(expectedOpenKey)
 
         val actualOpenKey = service.get(openKeyValue)
 
@@ -55,8 +54,7 @@ class DefaultOpenKeyServiceTests : UnitTest() {
     fun getWhenOpenKeyNotFoundShouldThrowExceptionTest() {
         val openKeyValue = "op_pk_9de7cbb4-857c-49e9-87d2-fc91428c4c12"
 
-        given(repository.findByValueAndEnabledIsTrueAndExpiredDateIsNullOrExpiredDateAfter(eq(openKeyValue),
-                any(Date::class.java))).willReturn(null)
+        given(repository.findByValueAndEnabledIsTrue(eq(openKeyValue))).willReturn(null)
 
         service.get(openKeyValue)
     }
@@ -66,8 +64,7 @@ class DefaultOpenKeyServiceTests : UnitTest() {
         val openKeyValue = "op_pk_9de7cbb4-857c-49e9-87d2-fc91428c4c12"
         val expectedOpenKey = createOpenKey()
 
-        given(repository.findByValueAndEnabledIsTrueAndExpiredDateIsNullOrExpiredDateAfter(eq(openKeyValue),
-                any(Date::class.java))).willReturn(expectedOpenKey)
+        given(repository.findByValueAndEnabledIsTrue(eq(openKeyValue))).willReturn(expectedOpenKey)
 
         val actualOpenKey = service.find(openKeyValue)
 
@@ -91,8 +88,7 @@ class DefaultOpenKeyServiceTests : UnitTest() {
         val openKeyValue = "op_pk_9de7cbb4-857c-49e9-87d2-fc91428c4c12"
         val expectedOpenKey = createOpenKey()
 
-        given(repository.findByValueAndEnabledIsTrueAndExpiredDateIsNullOrExpiredDateAfter(eq(openKeyValue),
-                any(Date::class.java))).willReturn(expectedOpenKey)
+        given(repository.findByValueAndEnabledIsTrue(eq(openKeyValue))).willReturn(expectedOpenKey)
 
         given(repository.save(any(OpenKey::class.java))).will { invocation -> invocation.arguments[0] }
 

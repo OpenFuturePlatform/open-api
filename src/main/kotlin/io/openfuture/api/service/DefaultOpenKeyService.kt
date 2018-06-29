@@ -22,8 +22,14 @@ class DefaultOpenKeyService(
             ?: throw NotFoundException("Not found key $key")
 
     @Transactional(readOnly = true)
-    override fun find(key: String): OpenKey? =
-            repository.findByValueAndEnabledIsTrueAndExpiredDateIsNullOrExpiredDateAfter(key, Date())
+    override fun find(key: String): OpenKey? {
+        val openKey = repository.findByValueAndEnabledIsTrue(key)
+        if (null != openKey?.expiredDate && Date().after(openKey.expiredDate)) {
+            return null
+        }
+
+        return openKey
+    }
 
     @Transactional
     override fun generate(request: GenerateOpenKeyRequest, user: User): OpenKey =
