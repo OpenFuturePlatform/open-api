@@ -23,8 +23,8 @@ import org.web3j.abi.FunctionEncoder
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.Utf8String
+import org.web3j.abi.datatypes.generated.Bytes32
 import org.web3j.abi.datatypes.generated.Uint256
-import org.web3j.abi.datatypes.generated.Uint8
 import org.web3j.utils.Convert.Unit.ETHER
 import org.web3j.utils.Convert.toWei
 import java.math.BigInteger
@@ -163,7 +163,7 @@ class DefaultScaffoldService(
     override fun addShareHolder(address: String, user: User, request: AddShareHolderRequest): ScaffoldSummary {
         val scaffold = get(address, user)
         web3.callTransaction(ADD_SHARE_HOLDER_METHOD_NAME, listOf(Address(request.address),
-                Uint8(request.percent.toLong())), listOf(), scaffold.address)
+                Uint256(request.percent.toLong())), listOf(), scaffold.address)
         return getScaffoldSummary(address, user, false)
     }
 
@@ -171,7 +171,7 @@ class DefaultScaffoldService(
     override fun updateShareHolder(address: String, user: User, request: UpdateShareHolderRequest): ScaffoldSummary {
         val scaffold = get(address, user)
         web3.callTransaction(UPDATE_SHARE_HOLDER_METHOD_NAME, listOf(Address(request.address),
-                Uint8(request.percent.toLong())), listOf(), scaffold.address)
+                Uint256(request.percent.toLong())), listOf(), scaffold.address)
         return getScaffoldSummary(address, user, false)
     }
 
@@ -189,8 +189,8 @@ class DefaultScaffoldService(
                 listOf(),
                 listOf(
                         object : TypeReference<Utf8String>() {},
-                        object : TypeReference<Utf8String>() {},
-                        object : TypeReference<Utf8String>() {},
+                        object : TypeReference<Bytes32>() {},
+                        object : TypeReference<Bytes32>() {},
                         object : TypeReference<Uint256>() {},
                         object : TypeReference<Uint256>() {},
                         object : TypeReference<Address>() {},
