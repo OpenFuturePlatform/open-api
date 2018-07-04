@@ -36,7 +36,7 @@ class OpenKeyApiControllerTests : ControllerTests() {
                 .andExpect(content().json("""
                     {
                       "value": ${newOpenKey.value},
-                      "enabled": ${newOpenKey.enabled},
+                      "enabled": false,
                       "expiredDate": ${objectMapper.writeValueAsString(newOpenKey.expiredDate)}
                     }
                     """.trimIndent(), true))

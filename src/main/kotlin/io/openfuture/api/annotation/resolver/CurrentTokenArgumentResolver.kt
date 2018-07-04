@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest
 
 class CurrentTokenArgumentResolver(
         private val properties: AuthorizationProperties
-): HandlerMethodArgumentResolver {
+) : HandlerMethodArgumentResolver {
 
     override fun supportsParameter(parameter: MethodParameter): Boolean =
             parameter.hasParameterAnnotation(CurrentToken::class.java)
@@ -22,7 +22,8 @@ class CurrentTokenArgumentResolver(
                                  webRequest: NativeWebRequest,
                                  binderFactory: WebDataBinderFactory?): Any? {
         val request = webRequest.nativeRequest as HttpServletRequest
-        return request.getHeader(AUTHORIZATION) ?: request.cookies?.firstOrNull { properties.cookieName == it.name }?.value
+        return request.getHeader(AUTHORIZATION)
+                ?: request.cookies?.firstOrNull { properties.cookieName == it.name }?.value
     }
 
 }
