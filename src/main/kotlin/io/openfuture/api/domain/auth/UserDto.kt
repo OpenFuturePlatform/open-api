@@ -13,7 +13,7 @@ data class UserDto(
     constructor(user: User) : this(
             user.id,
             user.credits,
-            user.openKeys.filter { it.enabled && (it.expiredDate == null || Date().before(it.expiredDate)) }
+            user.openKeys.filter { it.enabled && (it.expiredDate == null || it.expiredDate.after(Date())) }
                     .map { OpenKeyDto(it) },
             user.roles.map { RoleDto(it) }
     )

@@ -15,12 +15,20 @@ export const validateScaffoldProperties = values => {
     if (field.name) {
       if (field.name[0].match(/[a-z]/) === null)
         scaffoldFieldsErrors.push('A property should begin with a lowercase letter');
-      if (field.name.match(/[\s\/\\]/) !== null) // eslint-disable-line
-        scaffoldFieldsErrors.push('A property should not contain a space, / and \\'); 
+      /* eslint-disable */
+      if (field.name.match(/[\s\/\\]/) !== null)
+        /* eslint-enable */
+        scaffoldFieldsErrors.push('A property should not contain a space, / and \\');
       if (solidityReservedWords.includes(field.name))
         scaffoldFieldsErrors.push(`${field.name} is a reserved word, pick another property name.`);
       if (propertyNames.filter(it => it === field.name).length > 1) scaffoldFieldsErrors.push('Name must be unique');
+    } else {
+      // scaffoldFieldsErrors.push('Name is required');
     }
+
+    // if (!field.type) {
+    // scaffoldFieldsErrors.push('Type is required');
+    // }
 
     const ifNumber = field.type === 'NUMBER';
     const regexTest = field.defaultValue === undefined ? false : digitRegex.test(field.defaultValue);
@@ -36,7 +44,7 @@ export const validateScaffoldProperties = values => {
 
 export const validateAddress = address => {
   let errors = [];
-  if (!address.startsWith('0x')) errors.push('A developer address should beging with 0x');
+  if (!address.startsWith('0x')) errors.push('A developer address should begin with 0x');
   if (address.length !== 42) errors.push('A developer address should be 42 characters long');
   return errors;
 };
@@ -82,8 +90,8 @@ export const validate = values => {
   if (!values.developerAddress) {
     errors.developerAddress = 'A developer address is required.';
   }
-  if (!values.scaffoldDescription) {
-    errors.scaffoldDescription = 'A scaffold title is required.';
+  if (!values.description) {
+    errors.description = 'A scaffold title is required.';
   }
   if (!values.fiatAmount) {
     errors.fiatAmount = 'Fiat Amount is required.';
@@ -98,8 +106,8 @@ export const validate = values => {
   if (values.properties) {
     const scaffoldFieldErrors = {};
     values.properties.forEach((field, fieldIndex) => {
-      if (!field.property) scaffoldFieldErrors.property = 'required';
-      if (!field.datatype) scaffoldFieldErrors.datatype = 'required';
+      if (!field.name) scaffoldFieldErrors.name = 'required';
+      if (!field.type) scaffoldFieldErrors.type = 'required';
       errors.properties[fieldIndex] = scaffoldFieldErrors;
     });
   }

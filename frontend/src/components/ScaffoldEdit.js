@@ -35,7 +35,7 @@ class ScaffoldEditComponent extends Component {
         <Modal size="tiny" open={isVisible} onClose={isSaving ? () => {} : onHide}>
           <Modal.Header>Edit Scaffold</Modal.Header>
           <Modal.Content>
-            <div>Address:</div>
+            <div>Description:</div>
             <Input fluid value={description} disabled={isSaving} onChange={this.onDescriptionChange} />
             <TransactionError message={transactionError} />
           </Modal.Content>
