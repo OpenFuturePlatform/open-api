@@ -1,6 +1,7 @@
 package io.openfuture.api.component.web3
 
 import io.openfuture.api.config.propety.EthereumProperties
+import io.openfuture.api.exception.ExecuteTransactionException
 import io.openfuture.api.exception.FunctionCallException
 import org.springframework.stereotype.Component
 import org.web3j.abi.FunctionEncoder
@@ -89,7 +90,7 @@ class Web3Wrapper(
         val result = web3j.ethSendRawTransaction(toHexString(encodedTransaction)).send()
 
         if (result.hasError()) {
-            throw FunctionCallException(result.error.message)
+            throw ExecuteTransactionException(result.error.message)
         }
 
         while (!web3j.ethGetTransactionReceipt(result.transactionHash).send().transactionReceipt.isPresent) {

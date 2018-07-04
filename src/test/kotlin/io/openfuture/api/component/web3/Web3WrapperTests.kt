@@ -4,7 +4,7 @@ import io.openfuture.api.config.UnitTest
 import io.openfuture.api.config.any
 import io.openfuture.api.config.anyString
 import io.openfuture.api.config.propety.EthereumProperties
-import io.openfuture.api.exception.DeployException
+import io.openfuture.api.exception.ExecuteTransactionException
 import io.openfuture.api.exception.FunctionCallException
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
@@ -68,17 +68,18 @@ internal class Web3WrapperTests : UnitTest() {
         given(credentials.ecKeyPair).willReturn(createECKeyPair())
         given(transactionCount.transactionCount).willReturn(BigInteger.ZERO)
         given(transactionRequest.send()).willReturn(transaction)
+        given(transaction.transactionHash).willReturn("hash")
         given(web3j.ethGetTransactionReceipt(transaction.transactionHash)).willReturn(transactionReceiptRequest)
         given(transactionReceiptRequest.send()).willReturn(transactionReceipt)
         given(transactionReceipt.transactionReceipt).willReturn(optionalTransactionReceipt)
 
-        val actualAddress = web3Wrapper.deploy("data")
+        val actualAddress = web3Wrapper.deploy("data", listOf())
 
         assertThat(actualAddress).isNotEmpty()
         assertThat(actualAddress).isEqualTo(addressValue)
     }
 
-    @Test(expected = DeployException::class)
+    @Test(expected = ExecuteTransactionException::class)
     fun deployWhenTransactionErrorShouldThrowExceptionTest() {
         given(properties.getCredentials()).willReturn(credentials)
         given(credentials.address).willReturn(addressValue)
@@ -88,11 +89,12 @@ internal class Web3WrapperTests : UnitTest() {
         given(transactionCount.transactionCount).willReturn(BigInteger.ZERO)
         given(web3j.ethSendRawTransaction(anyString())).willReturn(transactionRequest)
         given(transactionRequest.send()).willReturn(transaction)
+        given(transaction.transactionHash).willReturn("hash")
         given(transaction.hasError()).willReturn(true)
         given(transaction.error).willReturn(error)
         given(error.message).willReturn("error")
 
-        web3Wrapper.deploy("data")
+        web3Wrapper.deploy("data" ,listOf())
     }
 
     @Test
@@ -157,7 +159,7 @@ internal class Web3WrapperTests : UnitTest() {
         assertThat(actualTransactionalHash).isNotEmpty()
     }
 
-    @Test(expected = FunctionCallException::class)
+    @Test(expected = ExecuteTransactionException::class)
     fun callTransactionWhenTransactionErrorShouldThrowExceptionTest() {
         given(properties.getCredentials()).willReturn(credentials)
         given(credentials.address).willReturn(addressValue)

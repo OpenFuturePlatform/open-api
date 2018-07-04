@@ -3,7 +3,7 @@ package io.openfuture.api.controller.base
 import io.openfuture.api.domain.exception.ErrorDto
 import io.openfuture.api.domain.exception.ExceptionResponse
 import io.openfuture.api.exception.CompileException
-import io.openfuture.api.exception.DeployException
+import io.openfuture.api.exception.ExecuteTransactionException
 import io.openfuture.api.exception.FunctionCallException
 import io.openfuture.api.exception.TemplateProcessingException
 import org.springframework.dao.DataIntegrityViolationException
@@ -39,9 +39,9 @@ class ExceptionRestControllerAdvice {
             ExceptionResponse(BAD_REQUEST.value(), exception.message ?: "Compile Exception")
 
     @ResponseStatus(code = BAD_REQUEST)
-    @ExceptionHandler(DeployException::class)
-    fun deployExceptionHandler(exception: DeployException): ExceptionResponse =
-            ExceptionResponse(BAD_REQUEST.value(), exception.message ?: "Deploy Exception")
+    @ExceptionHandler(ExecuteTransactionException::class)
+    fun executeTransactionExceptionHandler(exception: ExecuteTransactionException): ExceptionResponse =
+            ExceptionResponse(BAD_REQUEST.value(), exception.message ?: "Execute Transaction Exception")
 
     @ResponseStatus(code = BAD_REQUEST)
     @ExceptionHandler(FunctionCallException::class)

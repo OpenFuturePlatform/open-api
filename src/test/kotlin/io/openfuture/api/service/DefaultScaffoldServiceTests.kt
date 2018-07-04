@@ -28,7 +28,6 @@ import org.mockito.Mockito.never
 import org.mockito.Mockito.verify
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
-import org.web3j.abi.FunctionEncoder
 import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.Utf8String
 import org.web3j.abi.datatypes.generated.Uint256
@@ -138,21 +137,20 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
         val request = DeployScaffoldRequest(openKeyValue, addressValue, "description", "1", USD, "1",
                 null, listOf(createScaffoldPropertyDto()))
         val contractMetadata = CompilationResult.ContractMetadata().apply { abi = "abi"; bin = "bin" }
-        val encodedConstructor = FunctionEncoder.encodeConstructor(listOf(
-                Address(request.developerAddress),
-                Address(addressValue),
-                Utf8String(request.description),
-                Utf8String(request.fiatAmount),
-                Utf8String(request.currency!!.getValue()),
-                Uint256(Convert.toWei(request.conversionAmount, Convert.Unit.ETHER).toBigInteger()))
-        )
 
         given(openKeyService.get(openKeyValue)).willReturn(expectedScaffold.openKey)
         given(properties.allowedDisabledContracts).willReturn(10)
         given(compiler.compile(request.properties)).willReturn(contractMetadata)
         given(properties.getCredentials()).willReturn(credentials)
         given(credentials.address).willReturn(addressValue)
-        given(web3.deploy(contractMetadata.bin + encodedConstructor)).willReturn(addressValue)
+        given(web3.deploy(contractMetadata.bin, listOf(
+                Address(request.developerAddress),
+                Address(addressValue),
+                Utf8String(request.description),
+                Utf8String(request.fiatAmount),
+                Utf8String(request.currency!!.getValue()),
+                Uint256(Convert.toWei(request.conversionAmount, Convert.Unit.ETHER).toBigInteger())
+        ))).willReturn(addressValue)
 
         given(repository.save(any(Scaffold::class.java))).will {invocation -> invocation.arguments[0] }
         given(propertyRepository.save(any(ScaffoldProperty::class.java))).will {invocation -> invocation.arguments[0] }
