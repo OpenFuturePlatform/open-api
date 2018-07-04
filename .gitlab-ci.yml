@@ -63,7 +63,7 @@ contract-tests:
   image: openplatform/truffle
   script:
     - export RPC_HOST="ganache"
-    - cd src/test/truffle && truffle test
+    - cd src/test/truffle && npm i web3-utils  && truffle test
 
 
 ###########################
