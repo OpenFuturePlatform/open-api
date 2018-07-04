@@ -47,7 +47,6 @@ class DefaultScaffoldService(
         private const val ADD_SHARE_HOLDER_METHOD_NAME = "addShareHolder"
         private const val UPDATE_SHARE_HOLDER_METHOD_NAME = "editShareHolder"
         private const val REMOVE_SHARE_HOLDER_METHOD_NAME = "deleteShareHolder"
-        private const val SET_DESCRIPTION_METHOD_NAME = "setDescription"
         private const val GET_SHARE_HOLDER_NUMBER_METHOD_NAME = "getShareHolderCount"
         private const val GET_SHARE_HOLDER_AT_INDEX_METHOD_NAME = "getShareHolderAddressAndShareAtIndex"
     }
@@ -80,7 +79,6 @@ class DefaultScaffoldService(
                 listOf(
                         Address(request.developerAddress),
                         Address(credentials.address),
-                        Utf8String(request.description),
                         Utf8String(request.fiatAmount),
                         Utf8String(request.currency!!.getValue()),
                         Uint256(toWei(request.conversionAmount, ETHER).toBigInteger())
@@ -114,8 +112,6 @@ class DefaultScaffoldService(
     override fun update(address: String, user: User, request: UpdateScaffoldRequest): Scaffold {
         val scaffold = get(address, user)
 
-        web3.callTransaction(SET_DESCRIPTION_METHOD_NAME, listOf(Utf8String(request.description!!)), listOf(),
-                scaffold.address)
         scaffold.description = request.description!!
 
         return repository.save(scaffold)
@@ -191,7 +187,6 @@ class DefaultScaffoldService(
                 listOf(
                         object : TypeReference<Utf8String>() {},
                         object : TypeReference<Bytes32>() {},
-                        object : TypeReference<Bytes32>() {},
                         object : TypeReference<Uint256>() {},
                         object : TypeReference<Uint256>() {},
                         object : TypeReference<Address>() {},
@@ -202,9 +197,9 @@ class DefaultScaffoldService(
 
         return ScaffoldSummary(
                 scaffold,
-                result[4].value as BigInteger,
-                result[6].value as BigInteger,
-                result[6].value as BigInteger >= BigInteger.valueOf(properties.enabledContactTokenCount.toLong())
+                result[3].value as BigInteger,
+                result[5].value as BigInteger,
+                result[5].value as BigInteger >= BigInteger.valueOf(properties.enabledContactTokenCount.toLong())
         )
     }
 

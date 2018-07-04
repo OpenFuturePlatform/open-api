@@ -93,7 +93,6 @@ contract OpenScaffold {
 
     // constructor variables
     address public developerAddress;
-    string public scaffoldDescription;
     bytes32 public fiatAmount;
     bytes32 public fiatCurrency;
     uint256 public scaffoldAmount;
@@ -127,7 +126,6 @@ contract OpenScaffold {
     function OpenScaffold(
         address _developerAddress,
         address _platformAddress,
-        string _description,
         bytes32 _fiatAmount,
         bytes32 _fiatCurrency,
         uint256 _scaffoldAmount
@@ -136,15 +134,9 @@ contract OpenScaffold {
     {
         developerAddress = _developerAddress;
         platformAddress = _platformAddress;
-        scaffoldDescription = _description;
         fiatAmount = _fiatAmount;
         fiatCurrency = _fiatCurrency;
         scaffoldAmount = _scaffoldAmount;
-    }
-
-    // set Scaffold description
-    function setDescription(string _description) public onlyDeveloper {
-        scaffoldDescription = _description;
     }
 
     // deactivate Scaffold contract
@@ -365,7 +357,6 @@ contract OpenScaffold {
         returns (
             string,
             bytes32,
-            bytes32,
             uint256,
             uint256,
             address,
@@ -373,7 +364,6 @@ contract OpenScaffold {
         )
     {
         return (
-        scaffoldDescription,
         fiatAmount,
         fiatCurrency,
         scaffoldAmount,
