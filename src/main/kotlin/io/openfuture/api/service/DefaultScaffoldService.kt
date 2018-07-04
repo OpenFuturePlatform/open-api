@@ -19,7 +19,6 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import org.web3j.abi.FunctionEncoder
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.Utf8String
@@ -76,16 +75,18 @@ class DefaultScaffoldService(
     override fun deploy(request: DeployScaffoldRequest): Scaffold {
         val compiledScaffold = compile(CompileScaffoldRequest(request.openKey, request.properties))
         val credentials = properties.getCredentials()
-        val encodedConstructor = FunctionEncoder.encodeConstructor(listOf(
-                Address(request.developerAddress),
-                Address(credentials.address),
-                Utf8String(request.description),
-                Utf8String(request.fiatAmount),
-                Utf8String(request.currency!!.getValue()),
-                Uint256(toWei(request.conversionAmount, ETHER).toBigInteger()))
+        val contactAddress = web3.deploy(
+                compiledScaffold.bin,
+                listOf(
+                        Address(request.developerAddress),
+                        Address(credentials.address),
+                        Utf8String(request.description),
+                        Utf8String(request.fiatAmount),
+                        Utf8String(request.currency!!.getValue()),
+                        Uint256(toWei(request.conversionAmount, ETHER).toBigInteger())
+                )
         )
 
-        val contactAddress = web3.deploy(compiledScaffold.bin + encodedConstructor)
         return save(SaveScaffoldRequest(
                 contactAddress,
                 compiledScaffold.abi,
