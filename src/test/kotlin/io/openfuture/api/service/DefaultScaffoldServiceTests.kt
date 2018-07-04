@@ -146,7 +146,6 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
         given(web3.deploy(contractMetadata.bin, listOf(
                 Address(request.developerAddress),
                 Address(addressValue),
-                Utf8String(request.description),
                 Utf8String(request.fiatAmount),
                 Utf8String(request.currency!!.getValue()),
                 Uint256(Convert.toWei(request.conversionAmount, Convert.Unit.ETHER).toBigInteger())
