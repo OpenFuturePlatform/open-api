@@ -64,5 +64,4 @@ class ExceptionRestControllerAdvice {
             ExceptionResponse(BAD_REQUEST.value(), exception.message ?: "Illegal Argument Exception")
 
 
-
 }
