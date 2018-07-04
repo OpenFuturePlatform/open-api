@@ -30,7 +30,7 @@ class WaitingModal extends Component {
     if (modalInfo.contract) {
       return (
         <div>
-          <div>Congratulations your scaffold is deployed.</div>;
+          <div>Congratulations your scaffold is deployed.</div>
           {this.renderCloseButton()}
         </div>
       );
