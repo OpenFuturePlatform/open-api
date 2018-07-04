@@ -355,7 +355,7 @@ contract OpenScaffold {
         public
         view
         returns (
-            string,
+            bytes32,
             bytes32,
             uint256,
             uint256,

@@ -185,7 +185,7 @@ class DefaultScaffoldService(
                 GET_SCAFFOLD_SUMMARY_METHOD_NAME,
                 listOf(),
                 listOf(
-                        object : TypeReference<Utf8String>() {},
+                        object : TypeReference<Bytes32>() {},
                         object : TypeReference<Bytes32>() {},
                         object : TypeReference<Uint256>() {},
                         object : TypeReference<Uint256>() {},
