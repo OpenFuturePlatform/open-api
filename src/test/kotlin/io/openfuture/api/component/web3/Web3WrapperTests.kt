@@ -89,7 +89,6 @@ internal class Web3WrapperTests : UnitTest() {
         given(transactionCount.transactionCount).willReturn(BigInteger.ZERO)
         given(web3j.ethSendRawTransaction(anyString())).willReturn(transactionRequest)
         given(transactionRequest.send()).willReturn(transaction)
-        given(transaction.transactionHash).willReturn("hash")
         given(transaction.hasError()).willReturn(true)
         given(transaction.error).willReturn(error)
         given(error.message).willReturn("error")
