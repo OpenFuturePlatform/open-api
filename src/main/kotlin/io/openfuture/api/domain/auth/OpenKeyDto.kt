@@ -9,6 +9,10 @@ class OpenKeyDto(
         val expiredDate: Date?
 ) {
 
-    constructor(openKey: OpenKey) : this(openKey.value, openKey.enabled, openKey.expiredDate)
+    constructor(openKey: OpenKey) : this(
+            openKey.value,
+            openKey.enabled && (openKey.expiredDate == null || openKey.expiredDate.after(Date())),
+            openKey.expiredDate
+    )
 
 }
