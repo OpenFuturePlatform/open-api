@@ -163,12 +163,12 @@ contract OpenScaffold {
         require(!isShareHolder(_shareHolderAddress));
         require(totalAmountShares + _partnerShare <= 100);
 
+        // add share for total amount
+        totalAmountShares += _partnerShare;
+
         partners[_shareHolderAddress].share = _partnerShare;
         //set index for shareholder
         partners[_shareHolderAddress].index = shareHolderAddresses.push(_shareHolderAddress) - 1;
-
-        // add share for total amount
-        totalAmountShares += _partnerShare;
 
         createShareHolderEvent(ADDED_SHARE_HOLDER, _shareHolderAddress, _partnerShare);
     }
