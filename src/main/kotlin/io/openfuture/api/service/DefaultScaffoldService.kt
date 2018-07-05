@@ -21,12 +21,11 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import org.web3j.abi.FunctionEncoder
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.Utf8String
+import org.web3j.abi.datatypes.generated.Bytes32
 import org.web3j.abi.datatypes.generated.Uint256
-import org.web3j.abi.datatypes.generated.Uint8
 import org.web3j.utils.Convert.Unit.ETHER
 import org.web3j.utils.Convert.toWei
 import java.math.BigInteger
@@ -78,16 +77,18 @@ class DefaultScaffoldService(
     override fun deploy(request: DeployScaffoldRequest): Scaffold {
         val compiledScaffold = compile(CompileScaffoldRequest(request.openKey, request.properties))
         val credentials = properties.getCredentials()
-        val encodedConstructor = FunctionEncoder.encodeConstructor(listOf(
-                Address(request.developerAddress),
-                Address(credentials.address),
-                Utf8String(request.description),
-                Utf8String(request.fiatAmount),
-                Utf8String(request.currency!!.getValue()),
-                Uint256(toWei(request.conversionAmount, ETHER).toBigInteger()))
+        val contactAddress = web3.deploy(
+                compiledScaffold.bin,
+                listOf(
+                        Address(request.developerAddress),
+                        Address(credentials.address),
+                        Utf8String(request.description),
+                        Utf8String(request.fiatAmount),
+                        Utf8String(request.currency!!.getValue()),
+                        Uint256(toWei(request.conversionAmount, ETHER).toBigInteger())
+                )
         )
 
-        val contactAddress = web3.deploy(compiledScaffold.bin + encodedConstructor)
         return save(SaveScaffoldRequest(
                 contactAddress,
                 compiledScaffold.abi,
@@ -108,6 +109,7 @@ class DefaultScaffoldService(
         val scaffold = repository.save(Scaffold.of(request, openKey))
         val properties = request.properties.map { propertyRepository.save(ScaffoldProperty.of(scaffold, it)) }
         scaffold.property.addAll(properties)
+        getScaffoldSummary(scaffold)
         return scaffold
     }
 
@@ -165,7 +167,7 @@ class DefaultScaffoldService(
     override fun addShareHolder(address: String, user: User, request: AddShareHolderRequest): ScaffoldSummary {
         val scaffold = get(address, user)
         web3.callTransaction(ADD_SHARE_HOLDER_METHOD_NAME, listOf(Address(request.address),
-                Uint8(request.percent!!.toLong())), listOf(), scaffold.address)
+                Uint256(request.percent!!.toLong())), listOf(), scaffold.address)
         return getScaffoldSummary(address, user, true)
     }
 
@@ -174,7 +176,7 @@ class DefaultScaffoldService(
                                    holderAddress: String, request: UpdateShareHolderRequest): ScaffoldSummary {
         val scaffold = get(address, user)
         web3.callTransaction(UPDATE_SHARE_HOLDER_METHOD_NAME, listOf(Address(holderAddress),
-                Uint8(request.percent!!.toLong())), listOf(), scaffold.address)
+                Uint256(request.percent!!.toLong())), listOf(), scaffold.address)
         return getScaffoldSummary(address, user, true)
     }
 
@@ -192,8 +194,8 @@ class DefaultScaffoldService(
                 listOf(),
                 listOf(
                         object : TypeReference<Utf8String>() {},
-                        object : TypeReference<Utf8String>() {},
-                        object : TypeReference<Utf8String>() {},
+                        object : TypeReference<Bytes32>() {},
+                        object : TypeReference<Bytes32>() {},
                         object : TypeReference<Uint256>() {},
                         object : TypeReference<Uint256>() {},
                         object : TypeReference<Address>() {},

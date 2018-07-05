@@ -1,54 +1,55 @@
 const OpenScaffold = artifacts.require("./OpenScaffold");
+var Web3Utils = require('web3-utils');
 
 contract('OpenScaffold JS TEST', (accounts) => {
 
-    let scafoldContract;
-    const vendorAddress = accounts[0];
+    let scaffoldContract;
+    const developerAddress = accounts[0];
     const shareholderAddressOne = accounts[2];
     const shareholderAddressTwo = accounts[3];
 
 
     beforeEach('setup contract for each test', async () => {
-        scafoldContract = await OpenScaffold.deployed();
+        scaffoldContract = await OpenScaffold.deployed();
     });
 
 
     describe("Deploy contract", function() {
         it("should have OpenScaffold deployed", () => {
-            assert(scafoldContract !== undefined, "OpenScaffold is deployed");
+            assert(scaffoldContract !== undefined, "OpenScaffold is deployed");
         });
     });
 
 
     describe("Testing constructor variables", function() {
 
-        it('has a vendor address', async () => {
-            assert.equal(await scafoldContract.vendorAddress.call(), vendorAddress);
+        it('has a developerAddress address', async () => {
+            assert.equal(await scaffoldContract.developerAddress.call(), developerAddress);
         });
 
         it('has a developer address', async () => {
-            let scaffoldDescription = await scafoldContract.scaffoldDescription.call();
+            let scaffoldDescription = await scaffoldContract.scaffoldDescription.call();
 
             assert.equal(await !!scaffoldDescription, true, "Description is not set");
             assert.equal(await scaffoldDescription, "test description", "Wrong description");
         });
 
         it('has a fiatAmount', async () => {
-            let fiatAmount = await scafoldContract.fiatAmount.call();
+            let fiatAmount = await scaffoldContract.fiatAmount.call();
 
-            assert.equal(await !!fiatAmount, true, "FiatAmount is not set");
-            assert.equal(await fiatAmount, 100, "Wrong fiatAmount value");
+            assert.equal( !!fiatAmount, true, "FiatAmount is not set");
+            assert.equal( Web3Utils.hexToNumber(fiatAmount.replace(/\B0+/g, '')),100, "Wrong fiatAmount value");
         });
 
         it('has a fiatCurrency', async () => {
-            let fiatCurrency = await scafoldContract.fiatCurrency.call();
+            let fiatCurrency = await scaffoldContract.fiatCurrency.call();
 
             assert.equal(await !!fiatCurrency, true, "FiatCurrency is not set");
-            assert.equal(await fiatCurrency, "USD", "Wrong fiatCurrency value");
+            assert.equal(await Web3Utils.hexToString(fiatCurrency), "USD", "Wrong fiatCurrency value");
         });
 
         it('has a scaffoldAmount', async () => {
-            let scaffoldAmount  = await scafoldContract.scaffoldAmount.call();
+            let scaffoldAmount  = await scaffoldContract.scaffoldAmount.call();
             let amountValue     = 10*10**18;
 
             assert.equal(await !!scaffoldAmount, true, "ScaffoldAmount is not set");
@@ -63,17 +64,17 @@ contract('OpenScaffold JS TEST', (accounts) => {
         it('Create. Has an added shareholders', async () => {
             let shareOne = 20;
             let shareTwo = 30;
-            await scafoldContract.addShareHolder(shareholderAddressOne, shareOne);
-            await scafoldContract.addShareHolder(shareholderAddressTwo, shareTwo);
-            let shareholdersCount = (await scafoldContract.getShareHolderCount()).toNumber();
+            await scaffoldContract.addShareHolder(shareholderAddressOne, shareOne);
+            await scaffoldContract.addShareHolder(shareholderAddressTwo, shareTwo);
+            let shareholdersCount = (await scaffoldContract.getShareHolderCount()).toNumber();
 
             assert.equal(shareholdersCount, 2, "Wrong, shareholders not been added");
         });
 
         it('Read. Has an added shares and holders addresses', async () => {
             let shareOne = 20;
-            let holdersTwoAddress   = await scafoldContract.getShareHolderAtIndex(1);
-            let holdersOneShare     = await scafoldContract.getHoldersShare(shareholderAddressOne);
+            let holdersTwoAddress   = await scaffoldContract.getShareHolderAtIndex(1);
+            let holdersOneShare     = await scaffoldContract.getHoldersShare(shareholderAddressOne);
 
             assert.equal(holdersOneShare, shareOne, "Wrong, holders share is not equal set value");
             assert.equal(holdersTwoAddress, shareholderAddressTwo, "Wrong, address share is not equal set value");
@@ -82,15 +83,15 @@ contract('OpenScaffold JS TEST', (accounts) => {
         it('Update. Has an updated shares', async () => {
             let newUpdate;
             let shareOne = 30;
-            let beforeUpdateHoldersOneShare = await scafoldContract.getHoldersShare(shareholderAddressOne);
+            let beforeUpdateHoldersOneShare = await scaffoldContract.getHoldersShare(shareholderAddressOne);
 
-            await scafoldContract.editShareHolder(shareholderAddressOne, shareOne);
+            await scaffoldContract.editShareHolder(shareholderAddressOne, shareOne);
 
-            let holdersOneShare = await scafoldContract.getHoldersShare(shareholderAddressOne);
+            let holdersOneShare = await scaffoldContract.getHoldersShare(shareholderAddressOne);
 
 
             try {
-                newUpdate = await scafoldContract.editShareHolder(accounts[4], shareOne);
+                newUpdate = await scaffoldContract.editShareHolder(accounts[4], shareOne);
             } catch (e) {
                 assert(newUpdate === undefined, 'non-holder can get update');
             }
@@ -100,11 +101,11 @@ contract('OpenScaffold JS TEST', (accounts) => {
         });
 
         it('Delete. Has a deleted one shareholder', async () => {
-            let beforeDeleteCount = (await scafoldContract.getShareHolderCount()).toNumber();
+            let beforeDeleteCount = (await scaffoldContract.getShareHolderCount()).toNumber();
 
-            await scafoldContract.deleteShareHolder(shareholderAddressTwo);
+            await scaffoldContract.deleteShareHolder(shareholderAddressTwo);
 
-            let afterDeleteCount = (await scafoldContract.getShareHolderCount()).toNumber();
+            let afterDeleteCount = (await scaffoldContract.getShareHolderCount()).toNumber();
 
             assert.notEqual(beforeDeleteCount, afterDeleteCount, "Wrong, shareholders not been deleted");
         });
@@ -117,17 +118,17 @@ contract('OpenScaffold JS TEST', (accounts) => {
         it('Has a holders share', async () => {
             let share = 50;
 
-            await scafoldContract.addShareHolder(accounts[4], share);
+            await scaffoldContract.addShareHolder(accounts[4], share);
 
-            let shareAmount = await scafoldContract.getHoldersShare(accounts[4]);
+            let shareAmount = await scaffoldContract.getHoldersShare(accounts[4]);
 
             assert.equal(shareAmount, share, "Wrong, share amount is not equal");
         });
 
         it('Has a share holder address and share from index', async () => {
-            let shareHolderAtIndex = await scafoldContract.getShareHolderAtIndex(0);
-            let holdersShare = await scafoldContract.getHoldersShare(shareHolderAtIndex);
-            let addressAndShare = await scafoldContract.getShareHolderAddressAndShareAtIndex(0);
+            let shareHolderAtIndex = await scaffoldContract.getShareHolderAtIndex(0);
+            let holdersShare = await scaffoldContract.getHoldersShare(shareHolderAtIndex);
+            let addressAndShare = await scaffoldContract.getShareHolderAddressAndShareAtIndex(0);
             let address = addressAndShare[0];
             let share   = addressAndShare[1].toNumber();
 
@@ -136,14 +137,14 @@ contract('OpenScaffold JS TEST', (accounts) => {
         });
 
         it('Has a shareholder address at index', async () => {
-            let shareHolderAtIndex = await scafoldContract.getShareHolderAtIndex(0);
+            let shareHolderAtIndex = await scaffoldContract.getShareHolderAtIndex(0);
 
             assert(!!shareHolderAtIndex, "Wrong, shareholder address is not exist");
             assert.equal(shareHolderAtIndex, shareholderAddressOne, "Wrong, shareholder addresses is not equal");
         });
 
         it('Has a shareholder count', async () => {
-            let shareHolderCount = (await scafoldContract.getShareHolderCount()).toNumber();
+            let shareHolderCount = (await scaffoldContract.getShareHolderCount()).toNumber();
 
             assert.notEqual(shareHolderCount, 0, "Wrong, shareholders count is zero");
         });
@@ -155,11 +156,11 @@ contract('OpenScaffold JS TEST', (accounts) => {
     describe("Testing Main Scaffold functions", async function() {
 
         it('Has a new scaffold description', async () => {
-            let oldDescription = await scafoldContract.scaffoldDescription.call();
+            let oldDescription = await scaffoldContract.scaffoldDescription.call();
 
-             await scafoldContract.setDescription("new description");
+             await scaffoldContract.setDescription("new description");
 
-            let newDescription = await scafoldContract.scaffoldDescription.call();
+            let newDescription = await scaffoldContract.scaffoldDescription.call();
 
             assert(!!newDescription, "Wrong, description is empty");
             assert(newDescription !== oldDescription, "Wrong, contract description is not set");
@@ -199,8 +200,8 @@ contract('OpenScaffold JS TEST', (accounts) => {
             shrHldrAddrTwoBalanceBeforeSend     = await (getBalance(accounts[4]));
 
             // get share for shareholder
-            let hldrOneShare = (await scafoldContract.getHoldersShare(accounts[2])).toNumber();
-            let hldrTwoShare = (await scafoldContract.getHoldersShare(accounts[4])).toNumber();
+            let hldrOneShare = (await scaffoldContract.getHoldersShare(accounts[2])).toNumber();
+            let hldrTwoShare = (await scaffoldContract.getHoldersShare(accounts[4])).toNumber();
 
 
              new Promise((resolve, reject) => {
@@ -213,13 +214,14 @@ contract('OpenScaffold JS TEST', (accounts) => {
                     }
                 };
 
-                return web3.eth.sendTransaction({
+                 return web3.eth.sendTransaction({
                     from: accountForPay,
-                    to: scafoldContract.address,
+                    to: scaffoldContract.address,
                     value: web3.toWei(coinsForSend.toString(), "ether"),
-                    gas: 200000,
+                    gas: 300000,
+                    data: "64c3aebf"
 
-                }, handleReceipt)
+                },handleReceipt)
 
             }).then(() => {
                 // get accounts balance after send coins
@@ -269,6 +271,7 @@ contract('OpenScaffold JS TEST', (accounts) => {
 
             })
         });
+
 
     })
 

@@ -1,7 +1,7 @@
 package io.openfuture.api.component.web3
 
 import io.openfuture.api.config.propety.EthereumProperties
-import io.openfuture.api.exception.DeployException
+import io.openfuture.api.exception.ExecuteTransactionException
 import io.openfuture.api.exception.FunctionCallException
 import org.springframework.stereotype.Component
 import org.web3j.abi.FunctionEncoder
@@ -9,6 +9,8 @@ import org.web3j.abi.FunctionReturnDecoder
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Function
 import org.web3j.abi.datatypes.Type
+import org.web3j.crypto.Credentials
+import org.web3j.crypto.RawTransaction
 import org.web3j.crypto.RawTransaction.createContractTransaction
 import org.web3j.crypto.RawTransaction.createTransaction
 import org.web3j.crypto.TransactionEncoder.signMessage
@@ -18,6 +20,7 @@ import org.web3j.protocol.core.methods.request.Transaction.createFunctionCallTra
 import org.web3j.tx.Contract.GAS_LIMIT
 import org.web3j.tx.ManagedTransaction.GAS_PRICE
 import org.web3j.utils.Numeric.toHexString
+import java.math.BigInteger
 import java.math.BigInteger.ZERO
 import javax.annotation.PostConstruct
 
@@ -43,22 +46,13 @@ class Web3Wrapper(
         }
     }
 
-    fun deploy(data: String): String {
+    fun deploy(bin: String, constructorParams: List<Type<*>>): String {
+        val encodedConstructor = FunctionEncoder.encodeConstructor(constructorParams)
         val credentials = properties.getCredentials()
-        val nonce = web3j.ethGetTransactionCount(credentials.address, LATEST).send().transactionCount
-        val rawTransaction = createContractTransaction(nonce, GAS_PRICE, GAS_LIMIT, ZERO, data)
-        val encodedTransaction = signMessage(rawTransaction, credentials)
-        val result = web3j.ethSendRawTransaction(toHexString(encodedTransaction)).send()
-
-        if (result.hasError()) {
-            throw DeployException(result.error.message)
-        }
-
-        while (!web3j.ethGetTransactionReceipt(result.transactionHash).send().transactionReceipt.isPresent) {
-            Thread.sleep(1000)
-        }
-
-        val transactionReceipt = web3j.ethGetTransactionReceipt(result.transactionHash).send().transactionReceipt
+        val transaction = createContractTransaction(getNonce(credentials.address), GAS_PRICE, GAS_LIMIT, ZERO,
+                bin + encodedConstructor)
+        val result = executeTransaction(transaction, credentials)
+        val transactionReceipt = web3j.ethGetTransactionReceipt(result).send().transactionReceipt
         return transactionReceipt.get().contractAddress
     }
 
@@ -67,9 +61,8 @@ class Web3Wrapper(
         val function = Function(methodName, inputParams, outputParams)
         val encodedFunction = FunctionEncoder.encode(function)
         val credentials = properties.getCredentials()
-        val nonce = web3j.ethGetTransactionCount(credentials.address, LATEST).send().transactionCount
-        val result = web3j.ethCall(createFunctionCallTransaction(credentials.address, nonce, GAS_PRICE, GAS_LIMIT,
-                address, encodedFunction), LATEST).send()
+        val result = web3j.ethCall(createFunctionCallTransaction(credentials.address, getNonce(credentials.address),
+                GAS_PRICE, GAS_LIMIT, address, encodedFunction), LATEST).send()
 
         if (result.hasError()) {
             throw FunctionCallException(result.error.message)
@@ -83,13 +76,21 @@ class Web3Wrapper(
         val function = Function(methodName, inputParams, outputParams)
         val encodedFunction = FunctionEncoder.encode(function)
         val credentials = properties.getCredentials()
-        val nonce = web3j.ethGetTransactionCount(credentials.address, LATEST).send().transactionCount
-        val transaction = createTransaction(nonce, GAS_PRICE, GAS_LIMIT, address, encodedFunction)
+        val transaction = createTransaction(getNonce(credentials.address), GAS_PRICE, GAS_LIMIT, address,
+                encodedFunction)
+        return executeTransaction(transaction, credentials)
+    }
+
+    fun getNonce(address: String): BigInteger = web3j.ethGetTransactionCount(address, LATEST).send().transactionCount
+
+    fun getNetVersion(): String = web3j.netVersion().send().netVersion
+
+    private fun executeTransaction(transaction: RawTransaction, credentials: Credentials): String {
         val encodedTransaction = signMessage(transaction, credentials)
         val result = web3j.ethSendRawTransaction(toHexString(encodedTransaction)).send()
 
         if (result.hasError()) {
-            throw FunctionCallException(result.error.message)
+            throw ExecuteTransactionException(result.error.message)
         }
 
         while (!web3j.ethGetTransactionReceipt(result.transactionHash).send().transactionReceipt.isPresent) {
@@ -98,7 +99,5 @@ class Web3Wrapper(
 
         return result.transactionHash
     }
-
-    fun getNetVersion(): String = web3j.netVersion().send().netVersion
 
 }

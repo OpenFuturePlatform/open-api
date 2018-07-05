@@ -35,7 +35,7 @@ class AuthorizationFilter(
     }
 
     override fun destroy() {
-        // Don nothing
+        // Do nothing
     }
 
 }
