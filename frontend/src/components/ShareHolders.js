@@ -9,6 +9,7 @@ import { addShareHolder, editShareHolder, fetchShareHolders, removeShareHolder }
 import { ShareHolderSave } from './ShareHolderSave';
 import { Table } from '../components-ui/Table';
 import { ShareHolderRemove } from './ShareHolderRemove';
+import { getShareHoldersSelector } from '../selectors/getShareHoldersSelector';
 
 const getColumns = (allHolders, onEdit, onRemove) => [
   {
@@ -79,10 +80,9 @@ export class ShareHoldersComponent extends Component {
   }
 }
 
-const mapStateToProps = ({ scaffoldsById, byApiMethod }, { scaffold }) => {
-  const scaffoldSet = scaffoldsById[scaffold.address] || {};
-  const shareHolders = scaffoldSet.shareHolders || [];
-  return { scaffold, shareHolders, byApiMethod };
+const mapStateToProps = (state, { scaffold }) => {
+  const shareHolders = getShareHoldersSelector(state, scaffold.address);
+  return { scaffold, shareHolders };
 };
 
 const mapDispatchToProps = dispatch => ({

@@ -13,15 +13,12 @@ class Transaction(
         val scaffold: Scaffold,
 
         @Column(name = "data", nullable = false)
-        val data: String,
-
-        @Column(name = "type", nullable = false)
-        val type: String
+        val data: String
 
 ) : BaseModel() {
 
     companion object {
-        fun of(scaffold: Scaffold, log: Log): Transaction = Transaction(scaffold, log.data, log.type)
+        fun of(scaffold: Scaffold, log: Log): Transaction = Transaction(scaffold, log.data)
     }
 
 }
