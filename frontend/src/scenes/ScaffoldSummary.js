@@ -35,8 +35,6 @@ class ScaffoldSummary extends Component {
       return null;
     }
 
-    const description = summary ? summary.description : scaffold.description;
-
     return (
       <div style={{ marginTop: '20px' }}>
         <WalletSelect />
@@ -55,8 +53,8 @@ class ScaffoldSummary extends Component {
                 </Card.Content>
                 <Card.Content>
                   <div>
-                    Scaffold Description: {description}{' '}
-                    <ScaffoldEdit description={description} onSubmit={this.onEditScaffold} />
+                    Scaffold Description: {scaffold.description}{' '}
+                    <ScaffoldEdit scaffold={scaffold} onSubmit={this.onEditScaffold} />
                   </div>
                   <div>Scaffold Owner Address: {scaffold.vendorAddress}</div>
                 </Card.Content>
