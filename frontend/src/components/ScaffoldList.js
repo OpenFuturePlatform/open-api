@@ -34,7 +34,7 @@ class ScaffoldList extends Component {
           <Card.Content>
             <Grid>
               <Grid.Row>
-                <Grid.Column width={16}>Vendor Address: {scaffold.vendorAddress}</Grid.Column>
+                <Grid.Column width={16}>Developer Address: {scaffold.vendorAddress}</Grid.Column>
               </Grid.Row>
               <Grid.Row>
                 <Grid.Column width={4}>Fiat Amount: {scaffoldData.fiatAmount}</Grid.Column>
