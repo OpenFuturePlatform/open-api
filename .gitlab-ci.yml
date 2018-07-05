@@ -11,13 +11,13 @@ stages:
   - certificates
 
 variables:
-    DOCKER_DRIVER: overlay2
-    IMAGE_NAME: openplatform/api
+  DOCKER_DRIVER: overlay2
+  IMAGE_NAME: openplatform/api
 
 
-###########################
-# Building
-###########################
+###########################/
+# Tests
+###########################/
 unit-tests:
   stage: test
   image: openjdk:8-jdk
@@ -31,6 +31,7 @@ unit-tests:
     NETWORK_URL: $NETWORK_URL_DEV
     ETHEREUM_PRIVATE_KEY: $ETHEREUM_PRIVATE_KEY_DEV
     OPEN_TOKEN_ADDRESS: $OPEN_TOKEN_ADDRESS_DEV
+    EVENT_SUBSCRIPTION: "false"
   services:
     - name: postgres
       alias: $POSTGRES_HOST
@@ -55,7 +56,19 @@ unit-tests:
   except:
     - schedules
 
+contract-tests:
+  services:
+    - name: openplatform/ganache
+      alias: ganache
+  image: openplatform/truffle
+  script:
+    - export RPC_HOST="ganache"
+    - cd src/test/truffle && truffle test
 
+
+###########################
+# Building
+###########################
 build-jar:
   stage: build
   image: openjdk:8-jdk
@@ -135,6 +148,7 @@ package-docker:
                  -e "NETWORK_URL=${NETWORK_URL}" \
                  -e "ETHEREUM_PRIVATE_KEY=${ETHEREUM_PRIVATE_KEY}" \
                  -e "OPEN_TOKEN_ADDRESS=${OPEN_TOKEN_ADDRESS}" \
+                 -e "EVENT_SUBSCRIPTION=${EVENT_SUBSCRIPTION}" \
                  ${IMAGE_NAME}:${IMAGE_TAG}
     "
 
@@ -155,6 +169,7 @@ deploy-development:
     NETWORK_URL: $NETWORK_URL_DEV
     ETHEREUM_PRIVATE_KEY: $ETHEREUM_PRIVATE_KEY_DEV
     OPEN_TOKEN_ADDRESS: $OPEN_TOKEN_ADDRESS_DEV
+    EVENT_SUBSCRIPTION: "true"
     IMAGE_TAG: sprint
   before_script: *prepare_key
   script: *deploy_to_host
@@ -183,6 +198,7 @@ deploy-production:
     NETWORK_URL: $NETWORK_URL_PROD
     ETHEREUM_PRIVATE_KEY: $ETHEREUM_PRIVATE_KEY_PROD
     OPEN_TOKEN_ADDRESS: $OPEN_TOKEN_ADDRESS_PROD
+    EVENT_SUBSCRIPTION: "true"
     IMAGE_TAG: latest
   before_script: *prepare_key
   script: *deploy_to_host
