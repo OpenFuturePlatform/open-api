@@ -46,7 +46,7 @@ class Header extends Component {
 
   render() {
     return (
-      <Menu fluid={true} style={{ marginTop: '10px' }}>
+      <Menu fluid={true} style={{ marginTop: '0' }}>
         <Menu.Item position="left">
           <Link to="/scaffolds">
             <img src="/img/svg/logo-circle.svg" alt="logo" />
