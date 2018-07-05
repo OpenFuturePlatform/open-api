@@ -40,7 +40,7 @@ class TransactionApiControllerTests : ControllerTests() {
         val openKey = createOpenKey(setOf(Role("ROLE_MASTER")))
         val scaffold = createScaffold(openKey)
         val pageRequest = PageRequest()
-        val transaction = Transaction(scaffold, "data", "type")
+        val transaction = Transaction(scaffold, "data")
 
         given(keyService.find(openKey.value)).willReturn(openKey)
         given(scaffoldService.get(scaffold.address, openKey.user)).willReturn(scaffold)
@@ -94,8 +94,7 @@ class TransactionApiControllerTests : ControllerTests() {
                           "webHook": ${transaction.scaffold.webHook},
                           "properties": ${Arrays.toString(transaction.scaffold.property.toTypedArray())}
                         },
-                        "event":{"activated":true,"type":"ACTIVATED_SCAFFOLD"},
-                        "type": ${transaction.type}
+                        "event":{"activated":true,"type":"ACTIVATED_SCAFFOLD"}
                     }
                     """.trimIndent()
 

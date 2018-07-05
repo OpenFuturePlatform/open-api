@@ -7,6 +7,7 @@ import { fetchScaffoldSummary, editScaffold } from '../actions/scaffolds';
 import { ShareHolders } from '../components/ShareHolders';
 import { WalletSelect } from '../components/WalletSelect';
 import { ScaffoldEdit } from '../components/ScaffoldEdit';
+import { ScaffoldTransaction } from '../components/ScaffoldTransactions';
 
 class ScaffoldSummary extends Component {
   componentDidMount() {
@@ -35,8 +36,6 @@ class ScaffoldSummary extends Component {
       return null;
     }
 
-    const description = summary ? summary.description : scaffold.description;
-
     return (
       <div style={{ marginTop: '20px' }}>
         <WalletSelect />
@@ -55,8 +54,8 @@ class ScaffoldSummary extends Component {
                 </Card.Content>
                 <Card.Content>
                   <div>
-                    Scaffold Description: {description}{' '}
-                    <ScaffoldEdit description={description} onSubmit={this.onEditScaffold} />
+                    Scaffold Description: {scaffold.description}{' '}
+                    <ScaffoldEdit scaffold={scaffold} onSubmit={this.onEditScaffold} />
                   </div>
                   <div>Scaffold Owner Address: {scaffold.vendorAddress}</div>
                 </Card.Content>
@@ -79,6 +78,7 @@ class ScaffoldSummary extends Component {
           </Grid.Row>
         </Grid>
         <ShareHolders scaffold={scaffold} />
+        <ScaffoldTransaction scaffold={scaffold} />
       </div>
     );
   }

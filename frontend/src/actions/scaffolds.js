@@ -6,11 +6,8 @@ import { setShareHolders } from './shareHolders';
 import { getFromBN } from '../utils/getFromBN';
 import { parseApiError } from '../utils/parseApiError';
 import { getScaffoldsPath, getScaffoldsSummaryPath } from '../utils/apiPathes';
-import { getWalletMethod } from '../selectors/getWalletMethod';
-import { getWeb3Contract } from '../utils/web3';
 
-export const fetchScaffolds = (page = 1, limit = 10) => async dispatch => {
-  const offset = (Math.max(page, 1) - 1) * limit;
+export const fetchScaffolds = (offset = 0, limit = 10) => async dispatch => {
   const params = { offset, limit };
 
   try {
@@ -105,46 +102,27 @@ export const editScaffoldByApi = ({ address }, fields) => async () => {
   }
 };
 
-export const editScaffoldByMetaMask = (scaffold, fields) => async () => {
-  const contract = getWeb3Contract(scaffold);
-
-  if (!contract) {
-    throw new Error('Install MetaMask to edit Scaffold via Private Wallet');
-  }
-
-  return await contract.methods.setDescription(fields.description).send({ from: scaffold.vendorAddress });
-};
-
-export const editScaffold = (scaffold, fields) => async (dispatch, getState) => {
-  const state = getState();
-  const { byApiMethod } = getWalletMethod(state);
-
-  if (byApiMethod) {
-    await dispatch(editScaffoldByApi(scaffold, fields));
-  } else {
-    await dispatch(editScaffoldByMetaMask(scaffold, fields));
-  }
+export const editScaffold = (scaffold, fields) => async dispatch => {
+  await dispatch(editScaffoldByApi(scaffold, fields));
 
   dispatch(fetchScaffoldSummary(scaffold.address));
 };
 
 const mapScaffoldSummary = source => {
   const {
-    0: description,
-    1: fiatAmount,
-    2: currency,
-    3: conversionAmount,
-    4: transactionIndex,
-    5: vendorAddress,
-    6: tokenBalance
+    0: fiatAmount,
+    1: currency,
+    2: conversionAmount,
+    3: transactionIndex,
+    4: vendorAddress,
+    5: tokenBalance
   } = source;
   return {
-    description,
     fiatAmount,
     currency,
     conversionAmount: getFromBN(conversionAmount),
     transactionIndex: getFromBN(transactionIndex),
     vendorAddress,
-    tokenBalance: getFromBN(tokenBalance)
+    tokenBalance: getFromBN(tokenBalance) / 100000000
   };
 };
