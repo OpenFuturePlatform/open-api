@@ -42,6 +42,10 @@ class ScaffoldTransactionsComponent extends Component {
   };
 
   render() {
+    const { totalCount } = this.props.transactions;
+    if (!totalCount) {
+      return null;
+    }
     return (
       <React.Fragment>
         <Segment attached="top" as="h5">

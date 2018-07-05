@@ -6,6 +6,7 @@ import { getWalletMethod } from '../selectors/getWalletMethod';
 import { fetchScaffoldSummary } from './scaffolds';
 import { parseApiError } from '../utils/parseApiError';
 import { fetchScaffoldTransactions } from './scaffold-transactions';
+import { getShareHoldersPath } from '../utils/apiPathes';
 
 export const fetchShareHolders = scaffold => async dispatch => {
   const address = scaffold.address;
@@ -68,7 +69,7 @@ export const addShareHolderByMetaMask = (scaffold, shareHolder) => async dispatc
 
 export const addShareHolderByApi = (scaffold, { address, share }) => async () => {
   try {
-    return await axios.post(`/api/scaffolds/${scaffold.address}/holders`, {
+    return await axios.post(getShareHoldersPath(scaffold.address), {
       address,
       percent: share
     });
@@ -105,8 +106,7 @@ export const editShareHolderByMetaMask = (scaffold, shareHolder) => async dispat
 
 export const editShareHolderByApi = (scaffold, { address, share }) => async () => {
   try {
-    return await axios.put(`/api/scaffolds/${scaffold.address}/holders`, {
-      address,
+    return await axios.put(getShareHoldersPath(scaffold.address, address), {
       percent: share
     });
   } catch (e) {
@@ -140,13 +140,7 @@ export const removeShareHolderByMetaMask = (scaffold, holderAddress) => async ()
 
 export const removeShareHolderByApi = (scaffold, holderAddress) => async () => {
   try {
-    // it cuts body of request
-    // return await axios.delete(`/api/scaffolds/${scaffold.address}/holders`, {address: holderAddress});
-    return await axios({
-      method: 'delete',
-      url: `/api/scaffolds/${scaffold.address}/holders`,
-      data: { address: holderAddress }
-    });
+    return await axios.delete(getShareHoldersPath(scaffold.address, holderAddress));
   } catch (e) {
     const message = parseApiError(e);
     throw new Error(message);
