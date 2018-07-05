@@ -1,6 +1,7 @@
-package io.openfuture.api.domain.scaffold
+package io.openfuture.api.domain.transaction
 
 import io.openfuture.api.domain.event.Event
+import io.openfuture.api.domain.scaffold.ScaffoldDto
 import io.openfuture.api.entity.scaffold.Transaction
 
 data class TransactionDto(

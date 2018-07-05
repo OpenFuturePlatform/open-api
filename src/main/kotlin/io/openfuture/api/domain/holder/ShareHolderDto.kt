@@ -1,4 +1,4 @@
-package io.openfuture.api.domain.scaffold
+package io.openfuture.api.domain.holder
 
 import io.openfuture.api.entity.scaffold.ShareHolder
 
