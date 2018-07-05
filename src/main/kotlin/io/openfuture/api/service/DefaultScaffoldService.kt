@@ -107,6 +107,7 @@ class DefaultScaffoldService(
         val scaffold = repository.save(Scaffold.of(request, openKey))
         val properties = request.properties.map { propertyRepository.save(ScaffoldProperty.of(scaffold, it)) }
         scaffold.property.addAll(properties)
+        getScaffoldSummary(scaffold)
         return scaffold
     }
 
