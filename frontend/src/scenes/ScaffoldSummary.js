@@ -7,6 +7,7 @@ import { fetchScaffoldSummary, editScaffold } from '../actions/scaffolds';
 import { ShareHolders } from '../components/ShareHolders';
 import { WalletSelect } from '../components/WalletSelect';
 import { ScaffoldEdit } from '../components/ScaffoldEdit';
+import { ScaffoldTransaction } from '../components/ScaffoldTransactions';
 import { WordWrap } from '../components-ui/WordWrap';
 
 class ScaffoldSummary extends Component {
@@ -78,6 +79,7 @@ class ScaffoldSummary extends Component {
           </Grid.Row>
         </Grid>
         <ShareHolders scaffold={scaffold} />
+        <ScaffoldTransaction scaffold={scaffold} />
       </div>
     );
   }

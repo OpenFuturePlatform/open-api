@@ -1,21 +1,21 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Card, Divider, Grid, Pagination } from 'semantic-ui-react';
+import { Card, Divider, Grid } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 import { EtherscanLink } from '../components-ui/EtherscanLink';
 import { fetchScaffolds } from '../actions/scaffolds';
+import { ProjectPagination } from '../components-ui/ProjectPagination';
+import { SCAFFOLDS_LIMIT } from '../const';
 import { WordWrap } from '../components-ui/WordWrap';
-
-const LIMIT = 10;
 
 class ScaffoldList extends Component {
   componentDidMount() {
-    this.fetchScaffolds(1);
+    this.fetchScaffolds();
   }
 
-  fetchScaffolds(page = 1, limit = LIMIT) {
-    this.props.fetchScaffolds(page, limit);
-  }
+  fetchScaffolds = (offset = 0, limit = SCAFFOLDS_LIMIT) => {
+    this.props.fetchScaffolds(offset, limit);
+  };
 
   renderScaffolds() {
     const scaffolds = this.props.scaffolds;
@@ -62,31 +62,13 @@ class ScaffoldList extends Component {
     });
   }
 
-  renderPagination() {
-    const scaffolds = this.props.scaffolds;
-    const totalPages = Math.ceil(scaffolds.totalCount / LIMIT);
-
-    if (totalPages <= 1) {
-      return null;
-    }
-
-    return (
-      <div style={{ display: 'flex', justifyContent: 'center' }}>
-        <Pagination
-          defaultActivePage={1}
-          totalPages={totalPages}
-          onPageChange={(e, { activePage }) => this.fetchScaffolds(activePage)}
-        />
-      </div>
-    );
-  }
-
   render() {
+    const scaffolds = this.props.scaffolds;
     return (
       <Grid.Row>
         <Grid.Column width={16}>
           {this.renderScaffolds()}
-          {this.renderPagination()}
+          <ProjectPagination limit={SCAFFOLDS_LIMIT} totalCount={scaffolds.totalCount} onChange={this.fetchScaffolds} />
         </Grid.Column>
       </Grid.Row>
     );
