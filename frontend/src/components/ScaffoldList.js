@@ -1,9 +1,10 @@
-import React, {Component} from 'react';
-import {connect} from 'react-redux';
-import {Card, Divider, Grid, Pagination} from 'semantic-ui-react';
-import {Link} from 'react-router-dom';
-import {EtherscanLink} from '../components-ui/EtherscanLink';
-import {fetchScaffolds} from '../actions/scaffolds';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { Card, Divider, Grid, Pagination } from 'semantic-ui-react';
+import { Link } from 'react-router-dom';
+import { EtherscanLink } from '../components-ui/EtherscanLink';
+import { fetchScaffolds } from '../actions/scaffolds';
+import { WordWrap } from '../components-ui/WordWrap';
 
 const LIMIT = 10;
 
@@ -26,46 +27,31 @@ class ScaffoldList extends Component {
           <Card.Content>
             <Link to={`scaffolds/${scaffold.address}`}>
               <Card.Header>
-                {scaffoldData.description}
+                <WordWrap>{scaffoldData.description}</WordWrap>
               </Card.Header>
             </Link>
             <div className="meta">
-              Scaffold Address:{' '}
-              <EtherscanLink>{scaffold.address}</EtherscanLink>
+              Scaffold Address: <EtherscanLink>{scaffold.address}</EtherscanLink>
             </div>
           </Card.Content>
           <Card.Content>
             <Grid>
               <Grid.Row>
-                <Grid.Column width={16}>
-                  Developer Address:{' '}
-                  {scaffold.developerAddress}
-                </Grid.Column>
+                <Grid.Column width={16}>Developer Address: {scaffold.developerAddress}</Grid.Column>
               </Grid.Row>
               <Grid.Row>
-                <Grid.Column width={4}>
-                  Fiat Amount: {scaffoldData.fiatAmount}
-                </Grid.Column>
-                <Grid.Column width={4}>
-                  Currecy: {scaffoldData.currency}
-                </Grid.Column>
-                <Grid.Column width={8}>
-                  Scaffold Amount:{' '}
-                  {scaffoldData.conversionAmount} Ether
-                </Grid.Column>
+                <Grid.Column width={4}>Fiat Amount: {scaffoldData.fiatAmount}</Grid.Column>
+                <Grid.Column width={4}>Currecy: {scaffoldData.currency}</Grid.Column>
+                <Grid.Column width={8}>Scaffold Amount: {scaffoldData.conversionAmount} Ether</Grid.Column>
               </Grid.Row>
             </Grid>
-            <Divider/>
+            <Divider />
             <Grid>
               {scaffold.properties.map((field, index) => {
                 return (
                   <Grid.Row key={'property-' + index}>
-                    <Grid.Column width={8}>
-                      Property Name: {field.name}
-                    </Grid.Column>
-                    <Grid.Column width={8}>
-                      Datatype: {field.type}
-                    </Grid.Column>
+                    <Grid.Column width={8}>Property Name: {field.name}</Grid.Column>
+                    <Grid.Column width={8}>Datatype: {field.type}</Grid.Column>
                   </Grid.Row>
                 );
               })}
@@ -85,10 +71,12 @@ class ScaffoldList extends Component {
     }
 
     return (
-      <div style={{display: 'flex', justifyContent: 'center'}}>
-        <Pagination defaultActivePage={1}
-                    totalPages={totalPages}
-                    onPageChange={(e, {activePage}) => this.fetchScaffolds(activePage)}/>
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <Pagination
+          defaultActivePage={1}
+          totalPages={totalPages}
+          onPageChange={(e, { activePage }) => this.fetchScaffolds(activePage)}
+        />
       </div>
     );
   }
@@ -105,6 +93,9 @@ class ScaffoldList extends Component {
   }
 }
 
-const mapStateToProps = ({scaffolds}) => ({scaffolds: scaffolds});
+const mapStateToProps = ({ scaffolds }) => ({ scaffolds: scaffolds });
 
-export default connect(mapStateToProps, {fetchScaffolds})(ScaffoldList);
+export default connect(
+  mapStateToProps,
+  { fetchScaffolds }
+)(ScaffoldList);
