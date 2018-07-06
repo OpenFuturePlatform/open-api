@@ -8,6 +8,7 @@ import { ShareHolders } from '../components/ShareHolders';
 import { WalletSelect } from '../components/WalletSelect';
 import { ScaffoldEdit } from '../components/ScaffoldEdit';
 import { ScaffoldTransaction } from '../components/ScaffoldTransactions';
+import { WordWrap } from '../components-ui/WordWrap';
 
 class ScaffoldSummary extends Component {
   componentDidMount() {
@@ -54,7 +55,7 @@ class ScaffoldSummary extends Component {
                 </Card.Content>
                 <Card.Content>
                   <div>
-                    Scaffold Description: {scaffold.description}{' '}
+                    Scaffold Description: <WordWrap>{scaffold.description}</WordWrap>{' '}
                     <ScaffoldEdit scaffold={scaffold} onSubmit={this.onEditScaffold} />
                   </div>
                   <div>Scaffold Owner Address: {scaffold.vendorAddress}</div>
