@@ -7,31 +7,31 @@ import { ErrorMessage } from '../components-ui/ErrorMessage';
 
 class ScaffoldEditComponent extends Component {
   state = {
-    description: ''
+    title: ''
   };
 
   onShow = () => {
     const { onShow, scaffold } = this.props;
-    const { description } = scaffold;
-    this.setState({ description });
+    const { title } = scaffold;
+    this.setState({ title });
     onShow();
   };
 
   isSubmitDisabled = () => {
     const { isSaving } = this.props;
     const { scaffold } = this.props;
-    const { description } = scaffold;
-    return isSaving || !this.state.description || description === this.state.description;
+    const { title } = scaffold;
+    return isSaving || !this.state.title || title === this.state.title;
   };
 
-  onDescriptionChange = e => this.setState({ description: e.target.value });
+  onTitleChange = e => this.setState({ title: e.target.value });
 
-  onSubmit = () => this.props.submitWithSaving({ description: this.state.description });
+  onSubmit = () => this.props.submitWithSaving({ title: this.state.title });
 
   render() {
     const { isVisible, isSaving, onHide, transactionError, fieldErrors } = this.props;
-    const titleErrorList = fieldErrors.description || [];
-    const { description } = this.state;
+    const titleErrorList = fieldErrors.title || [];
+    const { title } = this.state;
 
     return (
       <span>
@@ -40,7 +40,7 @@ class ScaffoldEditComponent extends Component {
           <Modal.Header>Edit Scaffold</Modal.Header>
           <Modal.Content>
             <div>Title:</div>
-            <Input fluid value={description} disabled={isSaving} onChange={this.onDescriptionChange} />
+            <Input fluid value={title} disabled={isSaving} onChange={this.onTitleChange} />
             <ErrorMessage errorList={titleErrorList} isVisible={titleErrorList.length} />
             <TransactionError message={transactionError} />
           </Modal.Content>

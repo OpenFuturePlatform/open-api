@@ -27,7 +27,7 @@ class ScaffoldList extends Component {
           <Card.Content>
             <Link to={`scaffolds/${scaffold.address}`}>
               <Card.Header>
-                <WordWrap>{scaffoldData.description}</WordWrap>
+                <WordWrap>{scaffoldData.title}</WordWrap>
               </Card.Header>
             </Link>
             <div className="meta">

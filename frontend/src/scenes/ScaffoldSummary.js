@@ -55,10 +55,10 @@ class ScaffoldSummary extends Component {
                 </Card.Content>
                 <Card.Content>
                   <div>
-                    Scaffold Description: <WordWrap>{scaffold.description}</WordWrap>{' '}
+                    Scaffold Title: <WordWrap>{scaffold.title}</WordWrap>{' '}
                     <ScaffoldEdit scaffold={scaffold} onSubmit={this.onEditScaffold} />
                   </div>
-                  <div>Scaffold Owner Address: {scaffold.vendorAddress}</div>
+                  <div>Scaffold Owner Address: {scaffold.developerAddress}</div>
                 </Card.Content>
                 <Card.Content>
                   <div>

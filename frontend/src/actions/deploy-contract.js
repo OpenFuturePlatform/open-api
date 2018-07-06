@@ -3,6 +3,7 @@ import web3 from '../utils/web3';
 import Eth from 'ethjs';
 import ethUtil from 'ethjs-util';
 import { CONVERT_CURRENCIES, SHOW_MODAL } from './types';
+import { serializeScaffold } from '../utils/scaffold-adapter';
 
 const setWebHook = async (address, webHook) => await axios.patch(`/api/scaffolds/${address}`, { webHook });
 
@@ -12,7 +13,7 @@ export const deployContractByApi = (formValues, history) => async dispatch => {
   dispatch({ type: SHOW_MODAL, payload: { showModal: true } });
 
   try {
-    const { data: scaffold } = await axios.post('/api/scaffolds/doDeploy', formValues);
+    const { data: scaffold } = await axios.post('/api/scaffolds/doDeploy', serializeScaffold(formValues));
     if (formValues.webHook) {
       await setWebHook(scaffold.address, formValues.webHook);
     }
@@ -65,7 +66,7 @@ export const deployContract = formValues => async dispatch => {
     const newContractInstance = await processDeploy(contract, bin, formValues);
 
     const address = newContractInstance.options.address;
-    const response = await axios.post('/api/scaffolds', { ...formValues, abi, address });
+    const response = await axios.post('/api/scaffolds', { ...serializeScaffold(formValues), abi, address });
 
     if (formValues.webHook) {
       await setWebHook(address, formValues.webHook);

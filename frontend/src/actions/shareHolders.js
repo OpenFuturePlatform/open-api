@@ -63,7 +63,7 @@ export const addShareHolderByMetaMask = (scaffold, shareHolder) => async dispatc
 
   return await contract.methods
     .addShareHolder(shareHolder.address, shareHolder.share)
-    .send({ from: scaffold.vendorAddress });
+    .send({ from: scaffold.developerAddress });
 };
 
 export const addShareHolderByApi = (scaffold, { address, share }) => async () => {
@@ -99,7 +99,7 @@ export const editShareHolderByMetaMask = (scaffold, shareHolder) => async dispat
 
   return await contract.methods
     .editShareHolder(shareHolder.address, shareHolder.share)
-    .send({ from: scaffold.vendorAddress });
+    .send({ from: scaffold.developerAddress });
 };
 
 export const editShareHolderByApi = (scaffold, { address, share }) => async () => {
@@ -133,7 +133,7 @@ export const removeShareHolderByMetaMask = (scaffold, holderAddress) => async ()
     throw new Error('Install MetaMask to delete Share Holder via Private Wallet');
   }
 
-  return contract.methods.deleteShareHolder(holderAddress).send({ from: scaffold.vendorAddress });
+  return contract.methods.deleteShareHolder(holderAddress).send({ from: scaffold.developerAddress });
 };
 
 export const removeShareHolderByApi = (scaffold, holderAddress) => async () => {
