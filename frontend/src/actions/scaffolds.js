@@ -98,8 +98,7 @@ export const editScaffoldByApi = ({ address }, fields) => async () => {
   try {
     await axios.put(getScaffoldsPath(address), fields);
   } catch (e) {
-    const message = parseApiError(e);
-    throw new Error(message);
+    throw parseApiError(e);
   }
 };
 

@@ -4,7 +4,8 @@ export const withSaving = Component =>
   class EditModal extends React.Component {
     state = {
       isSaving: false,
-      transactionError: ''
+      transactionError: '',
+      fieldErrors: {}
     };
 
     setSaving = isSaving => this.setState({ isSaving });
@@ -20,6 +21,8 @@ export const withSaving = Component =>
         onHide();
       } catch (e) {
         const transactionError = e.message;
+        const fieldErrors = e.errors;
+        this.setState({ fieldErrors });
         this.setState({ transactionError });
       }
       this.setSaving(false);
@@ -32,6 +35,7 @@ export const withSaving = Component =>
           isSaving={this.state.isSaving}
           setSaving={this.setSaving}
           transactionError={this.state.transactionError}
+          fieldErrors={this.state.fieldErrors}
           setTransactionError={this.setTransactionError}
           submitWithSaving={this.submitWithSaving}
         />
