@@ -33,8 +33,8 @@ class ScaffoldStatus extends Component {
   }
 
   handleOnDeactivate() {
-    const { scaffoldAddress, abi, vendorAddress } = this.props;
-    this.props.actions.deactivateScaffold(scaffoldAddress, abi, vendorAddress);
+    const { scaffoldAddress, abi, developerAddress } = this.props;
+    this.props.actions.deactivateScaffold(scaffoldAddress, abi, developerAddress);
   }
 
   handleOnDeactivateByApi() {
@@ -140,10 +140,10 @@ class ScaffoldStatus extends Component {
   }
 }
 
-const mapStateToProps = (state, { scaffoldAddress, abi, summary: { tokenBalance, vendorAddress }, error }) => {
+const mapStateToProps = (state, { scaffoldAddress, abi, summary: { tokenBalance, developerAddress }, error }) => {
   const { ethAccount } = state;
   const metaMaskError = getMetaMaskError(state);
-  return { ethAccount, vendorAddress, scaffoldAddress, abi, tokenBalance, metaMaskError, fetchError: error };
+  return { ethAccount, developerAddress, scaffoldAddress, abi, tokenBalance, metaMaskError, fetchError: error };
 };
 
 const mapDispatchToProps = dispatch => ({

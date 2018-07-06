@@ -1,4 +1,4 @@
-import {GET_SCAFFOLD_FIELDS, LOAD_SCAFFOLD_FIELDS} from '../actions/types';
+import { GET_SCAFFOLD_FIELDS, LOAD_SCAFFOLD_FIELDS } from '../actions/types';
 
 const initialState = {
   currency: 'USD',
@@ -6,7 +6,7 @@ const initialState = {
 
   // conversionAmount: 2.0346416588,
   // currency: "USD",
-  // description: "hello " + Math.round(Math.random()*1000),
+  // title: "hello " + Math.round(Math.random()*1000),
   // developerAddress: "",
   // fiatAmount: "555",
   // webHook: 'google.com',
@@ -17,11 +17,11 @@ const initialState = {
   // }],
 };
 
-export default function (state = initialState, action) {
-  const {payload, type} = action;
+export default function(state = initialState, action) {
+  const { payload, type } = action;
   switch (type) {
     case LOAD_SCAFFOLD_FIELDS:
-      return {...state, ...action.payload};
+      return { ...state, ...action.payload };
     case GET_SCAFFOLD_FIELDS:
       return payload;
     default:
