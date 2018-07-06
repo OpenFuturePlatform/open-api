@@ -8,8 +8,7 @@ export const fetchKeys = () => async dispatch => {
     dispatch({ type: FETCH_KEYS, payload: keys });
     return keys;
   } catch (e) {
-    const message = parseApiError(e);
-    throw new Error(message);
+    throw parseApiError(e);
   }
 };
 
@@ -18,8 +17,7 @@ export const generateKey = (key = {}) => async dispatch => {
     await axios.post('/api/keys', key);
     dispatch(fetchKeys());
   } catch (e) {
-    const message = parseApiError(e);
-    throw new Error(message);
+    throw parseApiError(e);
   }
 };
 
@@ -28,7 +26,6 @@ export const removeKey = value => async dispatch => {
     await axios.delete(`/api/keys/${value}`);
     dispatch(fetchKeys());
   } catch (e) {
-    const message = parseApiError(e);
-    throw new Error(message);
+    throw parseApiError(e);
   }
 };

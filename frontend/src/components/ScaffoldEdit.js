@@ -3,6 +3,7 @@ import { Icon, Modal, Button, Input } from 'semantic-ui-react';
 import { withVisible } from '../components-ui/withVisible';
 import { withSaving } from '../components-ui/withSaving';
 import { TransactionError } from '../components-ui/TransactionError';
+import { ErrorMessage } from '../components-ui/ErrorMessage';
 
 class ScaffoldEditComponent extends Component {
   state = {
@@ -18,12 +19,12 @@ class ScaffoldEditComponent extends Component {
     onShow();
   };
 
-  isSubmitEnabled = () => {
+  isSubmitDisabled = () => {
     const { isSaving } = this.props;
     const {
       scaffold: { description }
     } = this.props;
-    return isSaving || !description || description === this.props.description;
+    return isSaving || !this.state.description || description === this.state.description;
   };
 
   onDescriptionChange = e => this.setState({ description: e.target.value });
@@ -31,7 +32,8 @@ class ScaffoldEditComponent extends Component {
   onSubmit = () => this.props.submitWithSaving({ description: this.state.description });
 
   render() {
-    const { isVisible, isSaving, onHide, transactionError } = this.props;
+    const { isVisible, isSaving, onHide, transactionError, fieldErrors } = this.props;
+    const titleErrorList = fieldErrors.description || [];
     const { description } = this.state;
 
     return (
@@ -40,8 +42,9 @@ class ScaffoldEditComponent extends Component {
         <Modal size="tiny" open={isVisible} onClose={isSaving ? () => {} : onHide}>
           <Modal.Header>Edit Scaffold</Modal.Header>
           <Modal.Content>
-            <div>Description:</div>
+            <div>Title:</div>
             <Input fluid value={description} disabled={isSaving} onChange={this.onDescriptionChange} />
+            <ErrorMessage errorList={titleErrorList} isVisible={titleErrorList.length} />
             <TransactionError message={transactionError} />
           </Modal.Content>
           <Modal.Actions>
@@ -51,7 +54,7 @@ class ScaffoldEditComponent extends Component {
             <Button
               positive
               loading={isSaving}
-              disabled={this.isSubmitEnabled()}
+              disabled={this.isSubmitDisabled()}
               icon="checkmark"
               labelPosition="right"
               content="Yes"
