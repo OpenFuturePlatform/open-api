@@ -86,7 +86,7 @@ class TransactionApiControllerTests : ControllerTests() {
                             ]
                           },
                           "abi": ${transaction.scaffold.abi},
-                          "vendorAddress": ${transaction.scaffold.vendorAddress},
+                          "developerAddress": ${transaction.scaffold.developerAddress},
                           "description": ${transaction.scaffold.description},
                           "fiatAmount": "${transaction.scaffold.fiatAmount}",
                           "currency": ${transaction.scaffold.getCurrency().name},

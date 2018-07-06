@@ -269,7 +269,7 @@ class ScaffoldApiControllerTests : ControllerTests() {
                         ]
                       },
                       "abi": ${scaffold.abi},
-                      "vendorAddress": ${scaffold.vendorAddress},
+                      "developerAddress": ${scaffold.developerAddress},
                       "description": ${scaffold.description},
                       "fiatAmount": "${scaffold.fiatAmount}",
                       "currency": ${scaffold.getCurrency().name},
