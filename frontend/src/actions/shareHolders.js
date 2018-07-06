@@ -73,8 +73,7 @@ export const addShareHolderByApi = (scaffold, { address, share }) => async () =>
       percent: share
     });
   } catch (e) {
-    const message = parseApiError(e);
-    throw new Error(message);
+    throw parseApiError(e);
   }
 };
 
@@ -110,8 +109,7 @@ export const editShareHolderByApi = (scaffold, { address, share }) => async () =
       percent: share
     });
   } catch (e) {
-    const message = parseApiError(e);
-    throw new Error(message);
+    throw parseApiError(e);
   }
 };
 
@@ -148,8 +146,7 @@ export const removeShareHolderByApi = (scaffold, holderAddress) => async () => {
       data: { address: holderAddress }
     });
   } catch (e) {
-    const message = parseApiError(e);
-    throw new Error(message);
+    throw parseApiError(e);
   }
 };
 
