@@ -1,14 +1,14 @@
-import {SET_CURRENT_ETH_ACCOUNT} from './types';
+import { SET_CURRENT_ETH_ACCOUNT } from './types';
 import web3 from '../utils/web3';
-import eth from "../utils/eth";
+import eth from '../utils/eth';
 import ethUnit from 'ethjs-unit';
-import {openTokenSelector} from '../selectors/open-token';
+import { openTokenSelector } from '../selectors/open-token';
 
 const setEthAccount = account => async (dispatch, getState) => {
   if (!account) {
     dispatch({
       type: SET_CURRENT_ETH_ACCOUNT,
-      payload: {account: '', balance: null}
+      payload: { account: '', balance: null }
     });
     return;
   }
@@ -24,7 +24,7 @@ const setEthAccount = account => async (dispatch, getState) => {
   const activeNetworkId = id > 100 ? 'local' : id;
   dispatch({
     type: SET_CURRENT_ETH_ACCOUNT,
-    payload: {account, ethBalance, tokenBalance, activeNetworkId}
+    payload: { account, ethBalance, tokenBalance, activeNetworkId }
   });
 };
 

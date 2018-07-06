@@ -5,10 +5,9 @@ import io.openfuture.api.entity.scaffold.Transaction
 
 data class TransactionDto(
         val scaffold: ScaffoldDto,
-        val event: Event,
-        val type: String
+        val event: Event
 ) {
 
-    constructor(transaction: Transaction, event: Event): this(ScaffoldDto(transaction.scaffold), event, transaction.type)
+    constructor(transaction: Transaction, event: Event): this(ScaffoldDto(transaction.scaffold), event)
 
 }

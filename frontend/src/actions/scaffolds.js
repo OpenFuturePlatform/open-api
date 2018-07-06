@@ -7,8 +7,7 @@ import { getFromBN } from '../utils/getFromBN';
 import { parseApiError } from '../utils/parseApiError';
 import { getScaffoldsPath, getScaffoldsSummaryPath } from '../utils/apiPathes';
 
-export const fetchScaffolds = (page = 1, limit = 10) => async dispatch => {
-  const offset = (Math.max(page, 1) - 1) * limit;
+export const fetchScaffolds = (offset = 0, limit = 10) => async dispatch => {
   const params = { offset, limit };
 
   try {
@@ -110,21 +109,19 @@ export const editScaffold = (scaffold, fields) => async dispatch => {
 
 const mapScaffoldSummary = source => {
   const {
-    0: description,
-    1: fiatAmount,
-    2: currency,
-    3: conversionAmount,
-    4: transactionIndex,
-    5: vendorAddress,
-    6: tokenBalance
+    0: fiatAmount,
+    1: currency,
+    2: conversionAmount,
+    3: transactionIndex,
+    4: vendorAddress,
+    5: tokenBalance
   } = source;
   return {
-    description,
     fiatAmount,
     currency,
     conversionAmount: getFromBN(conversionAmount),
     transactionIndex: getFromBN(transactionIndex),
     vendorAddress,
-    tokenBalance: getFromBN(tokenBalance)
+    tokenBalance: getFromBN(tokenBalance) / 100000000
   };
 };

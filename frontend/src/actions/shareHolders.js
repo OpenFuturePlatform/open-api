@@ -5,6 +5,7 @@ import { SET_SCAFFOLD_SET, SET_SCAFFOLD_SHARE_HOLDERS } from './types';
 import { getWalletMethod } from '../selectors/getWalletMethod';
 import { fetchScaffoldSummary } from './scaffolds';
 import { parseApiError } from '../utils/parseApiError';
+import { fetchScaffoldTransactions } from './scaffold-transactions';
 
 export const fetchShareHolders = scaffold => async dispatch => {
   const address = scaffold.address;
@@ -50,6 +51,7 @@ export const refreshShareHolders = scaffold => async dispatch => {
   } else {
     dispatch(fetchScaffoldSummary(scaffold.address));
   }
+  dispatch(fetchScaffoldTransactions(scaffold.address));
 };
 
 export const addShareHolderByMetaMask = (scaffold, shareHolder) => async dispatch => {

@@ -32,7 +32,7 @@ class App extends Component {
     }
 
     return (
-      <Container>
+      <Container style={{ paddingTop: '10px', paddingBottom: '50px' }}>
         <Header />
         <Switch>
           <Route path="/scaffolds" component={Scaffolds} />
