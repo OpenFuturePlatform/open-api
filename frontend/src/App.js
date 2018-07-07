@@ -11,33 +11,30 @@ import './css/main.css';
 
 class App extends Component {
   componentDidMount() {
-    this.fetchUser();
+    this.props.fetchUser();
     this.props.fetchGlobalProperties();
   }
 
-  async fetchUser() {
-    try {
-      await this.props.fetchUser();
-    } catch (e) {
-      // if 404 then
-      // this.props.history.push('/');
-    }
-  }
-
-  render() {
+  renderAuthorizedContent = () => {
     const { auth, globalProperties } = this.props;
 
-    if (!auth || !globalProperties) {
+    if (!auth || !auth.user || !globalProperties.id) {
       return null;
     }
 
     return (
+      <Switch>
+        <Route path="/scaffolds" component={Scaffolds} />
+        <Route path="/keys" component={Keys} />
+      </Switch>
+    );
+  };
+
+  render() {
+    return (
       <Container style={{ paddingTop: '10px', paddingBottom: '50px' }}>
         <Header />
-        <Switch>
-          <Route path="/scaffolds" component={Scaffolds} />
-          <Route path="/keys" component={Keys} />
-        </Switch>
+        {this.renderAuthorizedContent()}
       </Container>
     );
   }
