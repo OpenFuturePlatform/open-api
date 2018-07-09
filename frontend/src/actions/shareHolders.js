@@ -1,4 +1,3 @@
-import axios from 'axios';
 import eth, { getContract } from '../utils/eth';
 import { getWeb3Contract } from '../utils/web3';
 import { SET_SCAFFOLD_SET, SET_SCAFFOLD_SHARE_HOLDERS } from './types';
@@ -6,6 +5,8 @@ import { getWalletMethod } from '../selectors/getWalletMethod';
 import { fetchScaffoldSummary } from './scaffolds';
 import { parseApiError } from '../utils/parseApiError';
 import { fetchScaffoldTransactions } from './scaffold-transactions';
+import { getShareHoldersPath, getScaffoldsPath } from '../utils/apiPathes';
+import { apiPost, apiPut, apiDelete } from './apiRequest';
 
 export const fetchShareHolders = scaffold => async dispatch => {
   const address = scaffold.address;
@@ -66,12 +67,14 @@ export const addShareHolderByMetaMask = (scaffold, shareHolder) => async dispatc
     .send({ from: scaffold.developerAddress });
 };
 
-export const addShareHolderByApi = (scaffold, { address, share }) => async () => {
+export const addShareHolderByApi = (scaffold, { address, share }) => async dispatch => {
   try {
-    return await axios.post(`/api/scaffolds/${scaffold.address}/holders`, {
-      address,
-      percent: share
-    });
+    return await dispatch(
+      apiPost(getShareHoldersPath(scaffold.address), {
+        address,
+        percent: share
+      })
+    );
   } catch (e) {
     throw parseApiError(e);
   }
@@ -102,12 +105,14 @@ export const editShareHolderByMetaMask = (scaffold, shareHolder) => async dispat
     .send({ from: scaffold.developerAddress });
 };
 
-export const editShareHolderByApi = (scaffold, { address, share }) => async () => {
+export const editShareHolderByApi = (scaffold, { address, share }) => async dispatch => {
   try {
-    return await axios.put(`/api/scaffolds/${scaffold.address}/holders`, {
-      address,
-      percent: share
-    });
+    return await dispatch(
+      apiPut(getScaffoldsPath(scaffold.address), {
+        address,
+        percent: share
+      })
+    );
   } catch (e) {
     throw parseApiError(e);
   }
@@ -136,15 +141,11 @@ export const removeShareHolderByMetaMask = (scaffold, holderAddress) => async ()
   return contract.methods.deleteShareHolder(holderAddress).send({ from: scaffold.developerAddress });
 };
 
-export const removeShareHolderByApi = (scaffold, holderAddress) => async () => {
+export const removeShareHolderByApi = (scaffold, holderAddress) => async dispatch => {
   try {
     // it cuts body of request
     // return await axios.delete(`/api/scaffolds/${scaffold.address}/holders`, {address: holderAddress});
-    return await axios({
-      method: 'delete',
-      url: `/api/scaffolds/${scaffold.address}/holders`,
-      data: { address: holderAddress }
-    });
+    return await dispatch(apiDelete(getShareHoldersPath(scaffold.address), { address: holderAddress }));
   } catch (e) {
     throw parseApiError(e);
   }

@@ -1,29 +1,22 @@
-import axios from 'axios';
 import { FETCH_KEYS } from './types';
 import { parseApiError } from '../utils/parseApiError';
+import { apiGet, apiPost, apiDelete } from './apiRequest';
+import { getKeysPath } from '../utils/apiPathes';
 
 export const fetchKeys = () => async dispatch => {
-  try {
-    const { data: keys } = await axios.get('/api/keys');
-    dispatch({ type: FETCH_KEYS, payload: keys });
-    return keys;
-  } catch (e) {
-    throw parseApiError(e);
-  }
+  const keys = await dispatch(apiGet(getKeysPath()));
+  dispatch({ type: FETCH_KEYS, payload: keys });
+  return keys;
 };
 
 export const generateKey = (key = {}) => async dispatch => {
-  try {
-    await axios.post('/api/keys', key);
-    dispatch(fetchKeys());
-  } catch (e) {
-    throw parseApiError(e);
-  }
+  await dispatch(apiPost(getKeysPath(), key));
+  dispatch(fetchKeys());
 };
 
 export const removeKey = value => async dispatch => {
   try {
-    await axios.delete(`/api/keys/${value}`);
+    await dispatch(apiDelete(getKeysPath(value)));
     dispatch(fetchKeys());
   } catch (e) {
     throw parseApiError(e);
