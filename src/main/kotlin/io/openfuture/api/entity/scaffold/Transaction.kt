@@ -2,6 +2,7 @@ package io.openfuture.api.entity.scaffold
 
 import io.openfuture.api.entity.base.BaseModel
 import org.web3j.protocol.core.methods.response.Log
+import java.util.*
 import javax.persistence.*
 
 @Entity
@@ -13,7 +14,10 @@ class Transaction(
         val scaffold: Scaffold,
 
         @Column(name = "data", nullable = false)
-        val data: String
+        val data: String,
+
+        @Column(name = "date", nullable = false)
+        val date: Date = Date()
 
 ) : BaseModel() {
 
