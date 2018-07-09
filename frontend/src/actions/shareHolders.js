@@ -108,7 +108,7 @@ export const editShareHolderByMetaMask = (scaffold, shareHolder) => async dispat
 export const editShareHolderByApi = (scaffold, { address, share }) => async dispatch => {
   try {
     return await dispatch(
-      apiPut(getScaffoldsPath(scaffold.address), {
+      apiPut(getShareHoldersPath(scaffold.address, address), {
         address,
         percent: share
       })
