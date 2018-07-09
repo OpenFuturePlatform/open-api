@@ -1,0 +1,1 @@
+ALTER TABLE transactions ADD COLUMN date TIMESTAMP NOT NULL DEFAULT current_date

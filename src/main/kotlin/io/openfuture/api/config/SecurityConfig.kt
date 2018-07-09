@@ -40,8 +40,7 @@ class SecurityConfig(
                 .and()
 
                 .addFilterAfter(AuthorizationFilter(properties, keyService), OAuth2LoginAuthenticationFilter::class.java)
-                .antMatcher("/api/**").addFilterAfter(ApiAuthorizationFilter(mapper), AuthorizationFilter::class.java)
-
+                .addFilterAfter(ApiAuthorizationFilter(mapper), AuthorizationFilter::class.java)
                 .sessionManagement().sessionCreationPolicy(STATELESS)
 
                 .and()
