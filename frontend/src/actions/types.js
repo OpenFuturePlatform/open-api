@@ -1,5 +1,6 @@
 export const FETCH_KEYS = 'FETCH_KEYS';
 
+export const SET_AUTH = 'SET_AUTH';
 export const FETCH_USER = 'FETCH_USER';
 export const SET_WALLET_METHOD = 'SET_WALLET_METHOD';
 export const SET_CURRENT_ETH_ACCOUNT = 'SET_CURRENT_ETH_ACCOUNT';

@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "proxy": {
-    "/oauth2/authorization/google": {
+    "/oauth2": {
       "target": "http://localhost:8080"
     },
     "/api/*": {

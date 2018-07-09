@@ -1,15 +1,13 @@
-import axios from 'axios';
-import { FETCH_USER, SET_WALLET_METHOD, SHOW_MODAL, SHOW_WITHDRAWAL_MODAL } from './types';
-import { getCurrentUser } from '../utils/apiPathes';
+import { FETCH_USER, SET_WALLET_METHOD, SHOW_MODAL, SHOW_WITHDRAWAL_MODAL, SET_AUTH } from './types';
+import { getCurrentUserPath } from '../utils/apiPathes';
+import { apiGet } from './apiRequest';
+
+export const setAuthorized = isAuthorized => ({ type: SET_AUTH, payload: isAuthorized });
 
 export const fetchUser = () => async dispatch => {
-  try {
-    const data = await axios.get(getCurrentUser());
-    dispatch({ type: FETCH_USER, payload: data });
-  } catch (err) {
-    console.warn('Error fetching user', err);
-    throw err;
-  }
+  const data = await dispatch(apiGet(getCurrentUserPath()));
+  dispatch({ type: FETCH_USER, payload: data });
+  dispatch(setAuthorized(true));
 };
 
 export const setWalletMethod = byApiMethod => ({ type: SET_WALLET_METHOD, payload: byApiMethod });

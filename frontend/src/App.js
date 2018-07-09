@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch, Redirect } from 'react-router-dom';
 import { fetchGlobalProperties } from './actions/global-properties';
 import { fetchUser } from './actions/index';
 import { connect } from 'react-redux';
@@ -10,15 +10,15 @@ import { Container } from 'semantic-ui-react';
 import './css/main.css';
 
 class App extends Component {
-  componentDidMount() {
-    this.props.fetchUser();
-    this.props.fetchGlobalProperties();
+  async componentDidMount() {
+    await this.props.fetchUser();
+    await this.props.fetchGlobalProperties();
   }
 
   renderAuthorizedContent = () => {
     const { auth, globalProperties } = this.props;
 
-    if (!auth || !auth.user || !globalProperties.id) {
+    if (!auth.isAuthorized || !globalProperties) {
       return null;
     }
 
@@ -26,6 +26,7 @@ class App extends Component {
       <Switch>
         <Route path="/scaffolds" component={Scaffolds} />
         <Route path="/keys" component={Keys} />
+        <Redirect from="*" to="/scaffolds" />
       </Switch>
     );
   };

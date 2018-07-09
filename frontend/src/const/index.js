@@ -1,3 +1,4 @@
+export const LOGIN_URL = '/oauth2/authorization/google';
 export const MIN_CONTRACT_DEPOSIT = 10; // tokens
 export const MIN_BALANCE = 0.0087;
 export const MAX_CONTRACT_PROPERTIES_COUNT = 9;

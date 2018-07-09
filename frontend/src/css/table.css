@@ -1,7 +1,12 @@
 .ReactTable .rt-tbody .rt-td {
-    text-align: center;
+  text-align: center;
+}
+
+.ReactTable .rt-noData {
+  padding: 2px 20px;
+  top: 72%;
 }
 
 .table-with-add .ui.segment {
-    padding: 0;
+  padding: 0;
 }
