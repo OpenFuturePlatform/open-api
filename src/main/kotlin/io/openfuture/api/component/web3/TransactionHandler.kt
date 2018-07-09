@@ -25,12 +25,7 @@ class TransactionHandler(
 
     @Transactional
     fun handle(transactionLog: Log) {
-        val contract = repository.findByAddress(transactionLog.address)
-
-        if (null == contract) {
-            log.warn("Scaffold with address ${transactionLog.address} not found")
-            return
-        }
+        val contract = repository.findByAddress(transactionLog.address) ?: return
 
         try {
             val transaction = service.save(Transaction.of(contract, transactionLog))

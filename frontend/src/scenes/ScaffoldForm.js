@@ -163,7 +163,7 @@ class ScaffoldForm extends Component {
                   placeholder="Title shown to customer at checkout"
                   component={ScaffoldField}
                   type="text"
-                  name="description"
+                  name="title"
                 />
               </Grid.Column>
               <Grid.Column width={16}>

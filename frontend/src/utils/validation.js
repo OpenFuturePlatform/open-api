@@ -90,8 +90,8 @@ export const validate = values => {
   if (!values.developerAddress) {
     errors.developerAddress = 'A developer address is required.';
   }
-  if (!values.description) {
-    errors.description = 'A scaffold title is required.';
+  if (!values.title) {
+    errors.title = 'A scaffold title is required.';
   }
   if (!values.fiatAmount) {
     errors.fiatAmount = 'Fiat Amount is required.';
