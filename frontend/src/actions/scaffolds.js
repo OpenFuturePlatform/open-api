@@ -1,18 +1,20 @@
 import eth from '../utils/eth';
-import axios from 'axios';
 import { getContract } from '../utils/eth';
 import { SET_SCAFFOLD_SET, FETCH_SCAFFOLDS } from './types';
 import { setShareHolders } from './shareHolders';
 import { getFromBN } from '../utils/getFromBN';
 import { parseApiError } from '../utils/parseApiError';
 import { getScaffoldsPath, getScaffoldsSummaryPath } from '../utils/apiPathes';
+import { adaptScaffold, serializeScaffold } from '../utils/scaffold-adapter';
+import { apiGet, apiPut } from './apiRequest';
 
 export const fetchScaffolds = (offset = 0, limit = 10) => async dispatch => {
   const params = { offset, limit };
 
   try {
-    const res = await axios.get(getScaffoldsPath(), { params });
-    dispatch({ type: FETCH_SCAFFOLDS, payload: res.data });
+    const data = await dispatch(apiGet(getScaffoldsPath(), params));
+    const adaptedData = { ...data, list: data.list.map(adaptScaffold) };
+    dispatch({ type: FETCH_SCAFFOLDS, payload: adaptedData });
   } catch (err) {
     console.log('Error getting scaffolds', err);
   }
@@ -21,13 +23,15 @@ export const fetchScaffolds = (offset = 0, limit = 10) => async dispatch => {
 const fetchScaffoldItem = address => async dispatch => {
   dispatch({ type: SET_SCAFFOLD_SET, payload: { address, loading: true } });
   try {
-    const { data: scaffold } = await axios.get(getScaffoldsPath(address));
+    const scaffoldRaw = await dispatch(apiGet(getScaffoldsPath(address)));
+    const scaffold = adaptScaffold(scaffoldRaw);
     const error = '';
     const payload = { address, scaffold, error, loading: false };
     dispatch({ type: SET_SCAFFOLD_SET, payload });
     return scaffold;
   } catch (e) {
-    const error = `${e.response.status}: ${e.response.message || e.response.statusText}`;
+    const response = e.response || {};
+    const error = `${response.status}: ${response.message || response.statusText}`;
     const payload = { address, error, loading: false };
     dispatch({ type: SET_SCAFFOLD_SET, payload });
     throw e;
@@ -64,7 +68,7 @@ export const fetchScaffoldSummaryFromApi = scaffold => async dispatch => {
   dispatch({ type: SET_SCAFFOLD_SET, payload: { address, loading: true } });
 
   try {
-    const { data: summary } = await axios.get(getScaffoldsSummaryPath(address));
+    const summary = await dispatch(apiGet(getScaffoldsSummaryPath(address)));
     const shareHolders = summary.shareHolders.map(it => ({
       ...it,
       share: it.percent
@@ -93,12 +97,12 @@ export const fetchScaffoldSummary = scaffoldAddress => async (dispatch, getState
   }
 };
 
-export const editScaffoldByApi = ({ address }, fields) => async () => {
+export const editScaffoldByApi = ({ address }, fields) => async dispatch => {
   try {
-    await axios.put(getScaffoldsPath(address), fields);
+    const serializedScaffold = serializeScaffold(fields);
+    await dispatch(apiPut(getScaffoldsPath(address), serializedScaffold));
   } catch (e) {
-    const message = parseApiError(e);
-    throw new Error(message);
+    throw parseApiError(e);
   }
 };
 
@@ -114,7 +118,7 @@ const mapScaffoldSummary = source => {
     1: currency,
     2: conversionAmount,
     3: transactionIndex,
-    4: vendorAddress,
+    4: developerAddress,
     5: tokenBalance
   } = source;
   return {
@@ -122,7 +126,7 @@ const mapScaffoldSummary = source => {
     currency,
     conversionAmount: getFromBN(conversionAmount),
     transactionIndex: getFromBN(transactionIndex),
-    vendorAddress,
+    developerAddress,
     tokenBalance: getFromBN(tokenBalance) / 100000000
   };
 };

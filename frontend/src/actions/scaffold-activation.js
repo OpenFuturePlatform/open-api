@@ -1,9 +1,9 @@
-import axios from 'axios';
 import eth from '../utils/eth';
 import { SET_CURRENT_ETH_ACCOUNT } from './types';
 import { fetchScaffoldSummary } from './scaffolds';
 import { openTokenSelector } from '../selectors/open-token';
-import { getScaffoldsPath } from '../utils/apiPathes';
+import { apiPost } from './apiRequest';
+import { getScaffoldDeactivateScaffoldPath } from '../utils/apiPathes';
 
 export const activateScaffold = (scaffoldAddress, fromAddress, amount = '10.0') => async (dispatch, getState) => {
   const openToken = openTokenSelector(getState());
@@ -23,7 +23,7 @@ export const deactivateScaffold = (scaffoldAddress, abi, developerAddress) => as
 
 export const deactivateScaffoldByApi = scaffoldAddress => async dispatch => {
   try {
-    await axios.delete(getScaffoldsPath(scaffoldAddress));
+    await dispatch(apiPost(getScaffoldDeactivateScaffoldPath()));
     dispatch(fetchScaffoldSummary(scaffoldAddress));
   } catch (err) {
     console.log('Error deactivating scaffolds', err);

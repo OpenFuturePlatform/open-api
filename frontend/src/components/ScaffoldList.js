@@ -6,6 +6,7 @@ import { EtherscanLink } from '../components-ui/EtherscanLink';
 import { fetchScaffolds } from '../actions/scaffolds';
 import { ProjectPagination } from '../components-ui/ProjectPagination';
 import { SCAFFOLDS_LIMIT } from '../const';
+import { WordWrap } from '../components-ui/WordWrap';
 
 class ScaffoldList extends Component {
   componentDidMount() {
@@ -25,7 +26,9 @@ class ScaffoldList extends Component {
         <Card fluid key={index}>
           <Card.Content>
             <Link to={`scaffolds/${scaffold.address}`}>
-              <Card.Header>{scaffoldData.description}</Card.Header>
+              <Card.Header>
+                <WordWrap>{scaffoldData.title}</WordWrap>
+              </Card.Header>
             </Link>
             <div className="meta">
               Scaffold Address: <EtherscanLink>{scaffold.address}</EtherscanLink>

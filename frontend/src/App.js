@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch, Redirect } from 'react-router-dom';
 import { fetchGlobalProperties } from './actions/global-properties';
 import { fetchUser } from './actions/index';
 import { connect } from 'react-redux';
@@ -10,34 +10,32 @@ import { Container } from 'semantic-ui-react';
 import './css/main.css';
 
 class App extends Component {
-  componentDidMount() {
-    this.fetchUser();
-    this.props.fetchGlobalProperties();
+  async componentDidMount() {
+    await this.props.fetchUser();
+    await this.props.fetchGlobalProperties();
   }
 
-  async fetchUser() {
-    try {
-      await this.props.fetchUser();
-    } catch (e) {
-      // if 404 then
-      // this.props.history.push('/');
-    }
-  }
-
-  render() {
+  renderAuthorizedContent = () => {
     const { auth, globalProperties } = this.props;
 
-    if (!auth || !globalProperties) {
+    if (!auth.isAuthorized || !globalProperties) {
       return null;
     }
 
     return (
+      <Switch>
+        <Route path="/scaffolds" component={Scaffolds} />
+        <Route path="/keys" component={Keys} />
+        <Redirect from="*" to="/scaffolds" />
+      </Switch>
+    );
+  };
+
+  render() {
+    return (
       <Container style={{ paddingTop: '10px', paddingBottom: '50px' }}>
         <Header />
-        <Switch>
-          <Route path="/scaffolds" component={Scaffolds} />
-          <Route path="/keys" component={Keys} />
-        </Switch>
+        {this.renderAuthorizedContent()}
       </Container>
     );
   }

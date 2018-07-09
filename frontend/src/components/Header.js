@@ -2,12 +2,13 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Button, Icon, Menu } from 'semantic-ui-react';
+import { LOGIN_URL } from '../const/index';
 
 class Header extends Component {
   renderNotAuthorizedContent() {
     return (
       <Menu.Item position="right">
-        <a className="item" href="/auth/google">
+        <a className="item" href={LOGIN_URL}>
           <Button color="google plus">
             <Icon name="google plus" />
             Login with Google
@@ -37,7 +38,7 @@ class Header extends Component {
   }
 
   renderContent() {
-    if (!this.props.currentUser) {
+    if (!this.props.isAuthorized) {
       return this.renderNotAuthorizedContent();
     }
 
@@ -67,6 +68,6 @@ class Header extends Component {
   }
 }
 
-const mapStateToProps = ({ auth: { user } }) => ({ currentUser: user });
+const mapStateToProps = ({ auth: { user, isAuthorized } }) => ({ currentUser: user, isAuthorized });
 
 export default connect(mapStateToProps)(Header);
