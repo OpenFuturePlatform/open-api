@@ -5,7 +5,7 @@ import { getWalletMethod } from '../selectors/getWalletMethod';
 import { fetchScaffoldSummary } from './scaffolds';
 import { parseApiError } from '../utils/parseApiError';
 import { fetchScaffoldTransactions } from './scaffold-transactions';
-import { getShareHoldersPath, getScaffoldsPath } from '../utils/apiPathes';
+import { getShareHoldersPath } from '../utils/apiPathes';
 import { apiPost, apiPut, apiDelete } from './apiRequest';
 
 export const fetchShareHolders = scaffold => async dispatch => {
