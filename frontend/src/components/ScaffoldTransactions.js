@@ -18,9 +18,9 @@ class ScaffoldTransactionsComponent extends Component {
   };
 
   renderEventList = () =>
-    this.props.transactions.list.map(({ event }, index) => (
+    this.props.transactions.list.map(({ event, date }, index) => (
       <Segment key={index} attached>
-        <TransactionEvent event={event} />
+        <TransactionEvent event={event} date={date} />
       </Segment>
     ));
 
@@ -42,6 +42,10 @@ class ScaffoldTransactionsComponent extends Component {
   };
 
   render() {
+    const { totalCount } = this.props.transactions;
+    if (!totalCount) {
+      return null;
+    }
     return (
       <React.Fragment>
         <Segment attached="top" as="h5">

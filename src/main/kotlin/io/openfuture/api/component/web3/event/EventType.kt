@@ -12,7 +12,7 @@ enum class EventType(private val id: Int, val decoderClass: Class<out Decoder<ou
     ADDED_SHARE_HOLDER(4, AddedShareHolderDecoder::class.java),
     EDITED_SHARE_HOLDER(5, EditedShareHolderDecoder::class.java),
     DELETED_SHARE_HOLDER(6, DeletedShareHolderDecoder::class.java),
-    PAYED_FOR_SHARE_HOLDER(7, PayedForShareHolderDecoder::class.java)
+    PAID_FOR_SHARE_HOLDER(7, PaidForShareHolderDecoder::class.java)
     ;
 
     companion object {

@@ -10,7 +10,7 @@ import kotlin.reflect.KClass
 @Constraint(validatedBy = [])
 @Target(FIELD, TYPE_PARAMETER)
 @Retention(RUNTIME)
-@Pattern(regexp = "^(https?://)([\\w.]+)\\.([a-z]{2,6}\\.?)(/[\\w.]+)+/?\$")
+@Pattern(regexp = "(https?)://(-\\.)?([^\\s/?.#-]+\\.?)+(/[^\\s]+)\$")
 annotation class Url(
     val message: String = "Field is not match to url pattern",
     val groups: Array<KClass<out Any>> = [],

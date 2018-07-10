@@ -7,7 +7,8 @@ import org.mockito.BDDMockito.given
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @WebMvcTest(UserApiController::class)
 class UserApiControllerTests : ControllerTests() {
@@ -53,8 +54,7 @@ class UserApiControllerTests : ControllerTests() {
         mvc.perform(get("/api/users/current")
                 .header(AUTHORIZATION, invalidToken))
 
-                .andExpect(status().is3xxRedirection)
-                .andExpect(redirectedUrl("http://localhost/"))
+                .andExpect(status().isUnauthorized)
     }
 
 }
