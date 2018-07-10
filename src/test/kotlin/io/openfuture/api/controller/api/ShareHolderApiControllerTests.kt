@@ -8,6 +8,7 @@ import io.openfuture.api.entity.auth.Role
 import io.openfuture.api.entity.auth.User
 import io.openfuture.api.entity.scaffold.Scaffold
 import io.openfuture.api.entity.scaffold.ScaffoldSummary
+import io.openfuture.api.entity.scaffold.ScaffoldVersion.V1
 import io.openfuture.api.service.ScaffoldService
 import org.junit.Test
 import org.mockito.BDDMockito.given
@@ -83,7 +84,7 @@ class ShareHolderApiControllerTests : ControllerTests() {
         verify(service).removeShareHolder(address, openKey.user, address)
     }
 
-    private fun createScaffoldSummary() = ScaffoldSummary(Scaffold("address", OpenKey(User("")), "", "", "", "", 1, ""),
-            ZERO, ZERO, true)
+    private fun createScaffoldSummary() = ScaffoldSummary(Scaffold("address", OpenKey(User("")), "", "", "", "", 1, "",
+            V1.getId()), ZERO, ZERO, true)
 
 }

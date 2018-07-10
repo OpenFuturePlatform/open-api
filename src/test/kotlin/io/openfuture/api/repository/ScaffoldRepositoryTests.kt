@@ -5,6 +5,7 @@ import io.openfuture.api.domain.PageRequest
 import io.openfuture.api.entity.auth.OpenKey
 import io.openfuture.api.entity.auth.User
 import io.openfuture.api.entity.scaffold.Scaffold
+import io.openfuture.api.entity.scaffold.ScaffoldVersion.V1
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -55,7 +56,7 @@ internal class ScaffoldRepositoryTests : RepositoryTests() {
         entityManager.persist(openKey)
 
         val scaffold = Scaffold("address", openKey, "abi", "developerAddress", "description", "fiatAmount", 1,
-                "conversionAmount", "webHook", Collections.emptyList())
+                "conversionAmount", V1.getId(), "webHook", Collections.emptyList())
         entityManager.persist(scaffold)
 
         return scaffold

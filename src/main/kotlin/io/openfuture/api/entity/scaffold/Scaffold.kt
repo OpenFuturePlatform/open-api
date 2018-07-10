@@ -36,6 +36,9 @@ class Scaffold(
         @Column(name = "conversion_amount", nullable = false)
         val conversionAmount: String,
 
+        @Column(name = "version_id", nullable = false)
+        private val versionId: Int,
+
         @Column(name = "web_hook")
         var webHook: String? = null,
 
@@ -45,6 +48,8 @@ class Scaffold(
 ) : BaseModel() {
 
     fun getCurrency() = DictionaryUtils.valueOf(Currency::class.java, currencyId)
+
+    fun getVersion() = DictionaryUtils.valueOf(ScaffoldVersion::class.java, versionId)
 
     companion object {
         fun of(request: SaveScaffoldRequest, openKey: OpenKey): Scaffold = Scaffold(
@@ -56,6 +61,7 @@ class Scaffold(
                 request.fiatAmount!!,
                 request.currency!!.getId(),
                 request.conversionAmount!!,
+                request.version.getId(),
                 if (EMPTY == request.webHook?.trim()) null else request.webHook
         )
     }

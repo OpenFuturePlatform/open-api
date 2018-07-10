@@ -5,6 +5,7 @@ import io.openfuture.api.config.any
 import io.openfuture.api.entity.auth.OpenKey
 import io.openfuture.api.entity.auth.User
 import io.openfuture.api.entity.scaffold.Scaffold
+import io.openfuture.api.entity.scaffold.ScaffoldVersion.V1
 import io.openfuture.api.entity.scaffold.Transaction
 import io.openfuture.api.repository.TransactionRepository
 import org.assertj.core.api.Assertions.assertThat
@@ -59,7 +60,7 @@ internal class DefaultTransactionServiceTests : UnitTest() {
         val openKey = OpenKey(User("104113085667282103363"))
 
         return Scaffold("address", openKey, "abi", "developerAddress", "description", "fiatAmount", 1,
-                "conversionAmount", "webHook", Collections.emptyList()).apply { id = 1L }
+                "conversionAmount", V1.getId(), "webHook", Collections.emptyList()).apply { id = 1L }
     }
 
 }

@@ -1,16 +1,16 @@
 package io.openfuture.api.service
 
-import io.openfuture.api.component.scaffold.ScaffoldCompiler
-import io.openfuture.api.component.web3.Web3Wrapper
+import io.openfuture.api.component.scaffold.processor.ScaffoldProcessor
 import io.openfuture.api.config.UnitTest
 import io.openfuture.api.config.any
-import io.openfuture.api.config.propety.EthereumProperties
+import io.openfuture.api.config.propety.ScaffoldProperties
 import io.openfuture.api.domain.scaffold.*
 import io.openfuture.api.entity.auth.OpenKey
 import io.openfuture.api.entity.auth.User
 import io.openfuture.api.entity.scaffold.PropertyType.STRING
 import io.openfuture.api.entity.scaffold.Scaffold
 import io.openfuture.api.entity.scaffold.ScaffoldSummary
+import io.openfuture.api.entity.scaffold.ScaffoldVersion.V1
 import io.openfuture.api.exception.NotFoundException
 import io.openfuture.api.repository.ScaffoldPropertyRepository
 import io.openfuture.api.repository.ScaffoldRepository
@@ -26,31 +26,28 @@ import org.mockito.Mockito.never
 import org.mockito.Mockito.verify
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
-import org.web3j.crypto.Credentials
 import java.math.BigInteger
 import java.util.*
 
 internal class DefaultScaffoldServiceTests : UnitTest() {
 
-    @Mock private lateinit var compiler: ScaffoldCompiler
+    @Mock private lateinit var processor: ScaffoldProcessor
+    @Mock private lateinit var properties: ScaffoldProperties
     @Mock private lateinit var repository: ScaffoldRepository
-    @Mock private lateinit var properties: EthereumProperties
     @Mock private lateinit var openKeyService: OpenKeyService
     @Mock private lateinit var propertyRepository: ScaffoldPropertyRepository
     @Mock private lateinit var scaffoldSummaryRepository: ScaffoldSummaryRepository
     @Mock private lateinit var shareHolderRepository: ShareHolderRepository
 
-    @Mock private lateinit var web3: Web3Wrapper
     @Mock private lateinit var pageable: Pageable
-    @Mock private lateinit var credentials: Credentials
 
     private lateinit var service: ScaffoldService
 
 
     @Before
     fun setUp() {
-        service = DefaultScaffoldService(web3, repository, propertyRepository, scaffoldSummaryRepository,
-                shareHolderRepository ,compiler, properties, openKeyService)
+        service = DefaultScaffoldService(processor, properties, repository, propertyRepository, scaffoldSummaryRepository,
+                shareHolderRepository, openKeyService)
     }
 
     @Test
@@ -94,12 +91,12 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
         val user = createUser()
         val openKey = OpenKey(user, Date(), openKeyValue)
         val request = CompileScaffoldRequest(openKeyValue)
-        val contractMetadata = CompilationResult.ContractMetadata().apply { abi = "abi"; bin = "bin" }
-        val expectedContractMetadata = CompiledScaffoldDto(contractMetadata)
+        val expectedContractMetadata = CompiledScaffoldDto(CompilationResult.ContractMetadata()
+                .apply { abi = "abi"; bin = "bin" })
 
         given(openKeyService.get(openKeyValue)).willReturn(openKey)
         given(scaffoldSummaryRepository.countByEnabledIsFalseAndScaffoldOpenKeyUser(user)).willReturn(1)
-        given(compiler.compile(request.properties)).willReturn(contractMetadata)
+        given(processor.compile(request)).willReturn(expectedContractMetadata)
         given(properties.allowedDisabledContracts).willReturn(10)
 
         val actualContractMetadata = service.compile(request)
@@ -120,7 +117,7 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
 
         service.compile(request)
 
-        verify(compiler, never()).compile(request.properties)
+        verify(processor, never()).compile(request)
     }
 
     @Test
@@ -180,7 +177,7 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
         val expectedQuota = ScaffoldQuotaDto(currentCount, 10)
 
         given(scaffoldSummaryRepository.countByEnabledIsFalseAndScaffoldOpenKeyUser(user)).willReturn(currentCount)
-        given(properties.enabledContactTokenCount).willReturn(10)
+        given(properties.allowedDisabledContracts).willReturn(10)
 
         val actualQuota = service.getQuota(user)
 
@@ -193,7 +190,7 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
         val openKey = OpenKey(user.apply { id = 1L }, null, "op_pk_9de7cbb4-857c-49e9-87d2-fc91428c4c12").apply { id = 1L }
 
         return Scaffold(addressValue, openKey, "abi", addressValue, "description", "1", 1,
-                "1", "webHook", mutableListOf())
+                "1", V1.getId(), "webHook", mutableListOf())
     }
 
     private fun createScaffoldPropertyDto(): ScaffoldPropertyDto = ScaffoldPropertyDto("name", STRING, "value")
