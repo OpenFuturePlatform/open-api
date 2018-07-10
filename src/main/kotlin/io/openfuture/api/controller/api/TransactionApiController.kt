@@ -5,7 +5,7 @@ import io.openfuture.api.component.listener.AddTransactionEventListener
 import io.openfuture.api.component.web3.event.ProcessorEventDecoder
 import io.openfuture.api.domain.PageRequest
 import io.openfuture.api.domain.PageResponse
-import io.openfuture.api.domain.scaffold.TransactionDto
+import io.openfuture.api.domain.transaction.TransactionDto
 import io.openfuture.api.entity.auth.User
 import io.openfuture.api.service.ScaffoldService
 import io.openfuture.api.service.TransactionService
@@ -28,8 +28,8 @@ class TransactionApiController(
     fun getAll(@CurrentUser user: User, @PathVariable address: String,
                pageRequest: PageRequest): PageResponse<TransactionDto> {
         val scaffold = scaffoldService.get(address, user)
-        val transactions = service.getAll(scaffold, pageRequest).map { TransactionDto(it,
-                eventDecoder.getEvent(it.scaffold.address, it.data)) }
+        val transactions = service.getAll(scaffold, pageRequest)
+                .map { TransactionDto(it, eventDecoder.getEvent(it.scaffold.address, it.data)) }
         return PageResponse(transactions)
     }
 

@@ -1,0 +1,1 @@
+ALTER TABLE scaffolds RENAME COLUMN vendor_address TO developer_address

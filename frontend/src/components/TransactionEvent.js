@@ -1,6 +1,7 @@
 import React from 'react';
 import { EtherscanLink } from '../components-ui/EtherscanLink';
 import styled from 'styled-components';
+import { formatDate } from '../utils/format-date';
 
 export const TransactionParam = styled.div`
   display: inline-block;
@@ -19,6 +20,7 @@ const renderAddress = (key, address) => {
 };
 
 export const TransactionEvent = ({
+  date,
   event: {
     type,
     userAddress,
@@ -32,7 +34,7 @@ export const TransactionEvent = ({
   }
 }) => (
   <div>
-    <i>{type.replace(/_/g, ' ')}</i>
+    {date ? formatDate(date) : null} <i>{type.replace(/_/g, ' ')}</i>
     <div>
       {renderAddress('User Address', userAddress)}
       {renderAddress('to Address', toAddress)}

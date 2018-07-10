@@ -24,7 +24,7 @@ class ProcessorEventDecoder(private val scaffoldPropertyRepository: ScaffoldProp
                 DeletedShareHolderDecoder(),
                 EditedShareHolderDecoder(),
                 FundsDepositedDecoder(),
-                PayedForShareHolderDecoder(),
+                PaidForShareHolderDecoder(),
                 PaymentCompletedDecoder(scaffoldPropertyRepository)
         )
     }

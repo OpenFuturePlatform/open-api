@@ -9,4 +9,5 @@ export const getScaffoldDeactivateScaffoldPath = address => `/api/scaffolds/${ad
 export const getScaffoldDoCompile = () => '/api/scaffolds/doCompile';
 export const getScaffoldDoDeploy = () => '/api/scaffolds/doDeploy';
 export const getValidateUrlPath = () => '/api/validation/url';
-export const getShareHoldersPath = address => `/api/scaffolds/${address}/holders`;
+export const getShareHoldersPath = (scaffoldAddress = '', holderAddress = '') =>
+  `${getScaffoldsPath(scaffoldAddress)}/holders/${holderAddress}`;

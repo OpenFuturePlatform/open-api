@@ -63,5 +63,4 @@ class ExceptionRestControllerAdvice {
     fun illegalArgumentExceptionHandler(exception: IllegalArgumentException): ExceptionResponse =
             ExceptionResponse(BAD_REQUEST.value(), exception.message ?: "Illegal Argument Exception")
 
-
 }
