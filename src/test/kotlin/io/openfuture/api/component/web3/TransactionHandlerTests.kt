@@ -15,6 +15,7 @@ import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.verify
 import org.mockito.Mock
 import org.mockito.Mockito.never
+import org.springframework.context.ApplicationEventPublisher
 import org.web3j.protocol.core.methods.response.Log
 
 internal class TransactionHandlerTests : UnitTest() {
@@ -22,13 +23,14 @@ internal class TransactionHandlerTests : UnitTest() {
     @Mock private lateinit var transactionService: TransactionService
     @Mock private lateinit var scaffoldRepository: ScaffoldRepository
     @Mock private lateinit var eventDecoder: ProcessorEventDecoder
+    @Mock private lateinit var publisher: ApplicationEventPublisher
 
     private lateinit var transactionHandler: TransactionHandler
 
 
     @Before
     fun setUp() {
-        transactionHandler = TransactionHandler(transactionService, scaffoldRepository, eventDecoder)
+        transactionHandler = TransactionHandler(transactionService, scaffoldRepository, eventDecoder, publisher)
     }
 
     @Test
