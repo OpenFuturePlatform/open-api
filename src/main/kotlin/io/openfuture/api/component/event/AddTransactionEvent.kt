@@ -1,4 +1,4 @@
-package io.openfuture.api.component.listener.event
+package io.openfuture.api.component.event
 
 import io.openfuture.api.domain.transaction.TransactionDto
 import org.springframework.context.ApplicationEvent

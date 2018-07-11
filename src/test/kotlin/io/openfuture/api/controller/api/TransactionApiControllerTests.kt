@@ -1,6 +1,5 @@
 package io.openfuture.api.controller.api
 
-import io.openfuture.api.component.listener.AddTransactionEventListener
 import io.openfuture.api.component.web3.event.ProcessorEventDecoder
 import io.openfuture.api.config.ControllerTests
 import io.openfuture.api.domain.PageRequest
@@ -34,9 +33,6 @@ class TransactionApiControllerTests : ControllerTests() {
 
     @MockBean
     private lateinit var eventDecoder: ProcessorEventDecoder
-
-    @MockBean
-    private lateinit var listener: AddTransactionEventListener
 
 
     @Test
