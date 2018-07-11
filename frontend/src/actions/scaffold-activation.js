@@ -1,6 +1,6 @@
 import eth from '../utils/eth';
 import { SET_CURRENT_ETH_ACCOUNT } from './types';
-import { fetchScaffoldSummary } from './scaffolds';
+import { fetchScaffoldDetails } from './scaffolds';
 import { openTokenSelector } from '../selectors/open-token';
 import { apiPost } from './apiRequest';
 import { getScaffoldDeactivateScaffoldPath } from '../utils/apiPathes';
@@ -24,7 +24,7 @@ export const deactivateScaffold = (scaffoldAddress, abi, developerAddress) => as
 export const deactivateScaffoldByApi = scaffoldAddress => async dispatch => {
   try {
     await dispatch(apiPost(getScaffoldDeactivateScaffoldPath()));
-    dispatch(fetchScaffoldSummary(scaffoldAddress));
+    dispatch(fetchScaffoldDetails(scaffoldAddress));
   } catch (err) {
     console.log('Error deactivating scaffolds', err);
   }
@@ -48,7 +48,7 @@ export const subscribeScaffoldActivation = (hash, scaffoldAddress) => async disp
       clearInterval(interval);
       interval = null;
       dispatch({ type: SET_CURRENT_ETH_ACCOUNT, payload: { activating: false, activatingHash: null } });
-      dispatch(fetchScaffoldSummary(scaffoldAddress));
+      dispatch(fetchScaffoldDetails(scaffoldAddress));
     } catch (reason) {
       clearInterval(interval);
     }
