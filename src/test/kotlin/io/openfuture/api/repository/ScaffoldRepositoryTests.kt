@@ -32,7 +32,7 @@ internal class ScaffoldRepositoryTests : RepositoryTests() {
         val expectedScaffold = persistEntities()
         val address = expectedScaffold.address
 
-        val actualScaffold = repository.findByAddress(address)
+        val actualScaffold = repository.findByAddressIgnoreCase(address)
 
         assertThat(actualScaffold).isEqualTo(expectedScaffold)
     }

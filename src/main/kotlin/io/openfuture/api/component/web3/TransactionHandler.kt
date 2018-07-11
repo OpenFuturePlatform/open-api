@@ -28,7 +28,7 @@ class TransactionHandler(
 
     @Transactional
     fun handle(transactionLog: Log) {
-        val contract = repository.findByAddress(transactionLog.address) ?: return
+        val contract = repository.findByAddressIgnoreCase(transactionLog.address) ?: return
 
         try {
             val transaction = service.save(Transaction.of(contract, transactionLog))

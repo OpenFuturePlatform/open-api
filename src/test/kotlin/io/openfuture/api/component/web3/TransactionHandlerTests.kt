@@ -40,7 +40,7 @@ internal class TransactionHandlerTests : UnitTest() {
         val scaffold = Scaffold("0xba37163625b32e96112562858c12b75963af138", OpenKey(user), "abi", "developerAddress",
                 "description", "fiatAmount", 1, "conversionAmount", "https://test.com", mutableListOf())
 
-        given(scaffoldRepository.findByAddress(log.address)).willReturn(scaffold)
+        given(scaffoldRepository.findByAddressIgnoreCase(log.address)).willReturn(scaffold)
         given(transactionService.save(any(Transaction::class.java))).will { invocation -> invocation.arguments[0] }
 
         transactionHandler.handle(log)
@@ -50,7 +50,7 @@ internal class TransactionHandlerTests : UnitTest() {
     fun handleWhenEmptyScaffoldShouldNotSaveTransactionTest() {
         val log = createLog()
 
-        given(scaffoldRepository.findByAddress(log.address)).willReturn(null)
+        given(scaffoldRepository.findByAddressIgnoreCase(log.address)).willReturn(null)
 
         transactionHandler.handle(log)
 
