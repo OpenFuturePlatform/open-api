@@ -135,7 +135,7 @@ export const removeShareHolderByApi = (scaffold, holderAddress) => async dispatc
   try {
     // it cuts body of request
     // return await axios.delete(`/api/scaffolds/${scaffold.address}/holders`, {address: holderAddress});
-    return await dispatch(apiDelete(getShareHoldersPath(scaffold.address), { address: holderAddress }));
+    return await dispatch(apiDelete(getShareHoldersPath(scaffold.address, holderAddress)));
   } catch (e) {
     throw parseApiError(e);
   }

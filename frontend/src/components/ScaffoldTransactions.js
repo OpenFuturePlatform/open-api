@@ -1,20 +1,14 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Segment } from 'semantic-ui-react';
+import { Segment, Button } from 'semantic-ui-react';
 import { getTransactionSelector } from '../selectors/getTransactionSelector';
-import { fetchScaffoldTransactionsFromApi } from '../actions/scaffold-transactions';
-import { ProjectPagination } from '../components-ui/ProjectPagination';
-import { TRANSACTIONS_LIMIT } from '../const/index';
+import { addMoreScaffoldTransactionsFromApi } from '../actions/scaffold-transactions';
 import { TransactionEvent } from './TransactionEvent';
 
 class ScaffoldTransactionsComponent extends Component {
-  componentDidMount() {
-    // this.fetchTransactions();
-  }
-
-  fetchTransactions = (offset, limit) => {
-    this.props.actions.fetchTransactions(offset, limit);
+  loadMore = () => {
+    this.props.actions.fetchTransactions(this.props.transactions.list.length);
   };
 
   renderEventList = () =>
@@ -25,19 +19,14 @@ class ScaffoldTransactionsComponent extends Component {
     ));
 
   renderPagination = () => {
-    const { totalCount } = this.props.transactions;
-    if (totalCount <= TRANSACTIONS_LIMIT) {
+    const { totalCount, limit } = this.props.transactions;
+    if (totalCount <= limit) {
       return null;
     }
     return (
-      <Segment attached="bottom">
-        <ProjectPagination
-          totalCount={totalCount}
-          limit={TRANSACTIONS_LIMIT}
-          onChange={this.fetchTransactions}
-          size="mini"
-        />
-      </Segment>
+      <Button fluid attached="bottom" onClick={this.loadMore}>
+        Load More
+      </Button>
     );
   };
 
@@ -62,7 +51,7 @@ const mapStateToProps = (state, { scaffold }) => ({ transactions: getTransaction
 
 const mapDispatchToProps = (dispatch, { scaffold }) => ({
   actions: bindActionCreators(
-    { fetchTransactions: (...paginationSet) => fetchScaffoldTransactionsFromApi(scaffold.address, ...paginationSet) },
+    { fetchTransactions: offset => addMoreScaffoldTransactionsFromApi(scaffold, offset) },
     dispatch
   )
 });

@@ -10,12 +10,14 @@ import { ScaffoldEdit } from '../components/ScaffoldEdit';
 import { ScaffoldTransaction } from '../components/ScaffoldTransactions';
 import { WordWrap } from '../components-ui/WordWrap';
 import { subscribeEthAccount, unsubscribeEthAccount } from '../actions/eth-account';
+import { subscribeTransactionsByApi, unsubscribeTransactionsByApi } from '../actions/scaffold-transactions';
 
 class ScaffoldSummary extends Component {
   async componentDidMount() {
     const scaffoldAddress = this.getScaffoldAddress();
     await this.props.actions.subscribeEthAccount();
-    this.props.actions.fetchScaffoldDetails(scaffoldAddress);
+    await this.props.actions.fetchScaffoldDetails(scaffoldAddress);
+    this.props.actions.subscribeTransactionsByApi(scaffoldAddress);
   }
 
   componentDidUpdate(prevProps) {
@@ -30,6 +32,7 @@ class ScaffoldSummary extends Component {
 
   componentWillUnmount() {
     this.props.actions.unsubscribeEthAccount();
+    this.props.actions.unsubscribeTransactionsByApi();
   }
 
   getScaffoldAddress = () => this.props.match.params.scaffoldAddress;
@@ -109,7 +112,9 @@ const mapDispatchToProps = dispatch => ({
       fetchScaffoldDetails,
       editScaffold,
       subscribeEthAccount,
-      unsubscribeEthAccount
+      unsubscribeEthAccount,
+      subscribeTransactionsByApi,
+      unsubscribeTransactionsByApi
     },
     dispatch
   )

@@ -6,7 +6,7 @@ import { adaptScaffold, serializeScaffold } from '../utils/scaffold-adapter';
 import { apiGet, apiPut } from './apiRequest';
 import { getApiUsing } from '../selectors/getApiUsing';
 import { fetchScaffoldSummaryFromApi, fetchScaffoldSummaryFromChain } from './scaffold-summary';
-import { fetchScaffoldTransactionsFromApi, fetchScaffoldTransactionsFromChain } from './scaffold-transactions';
+import { fetchScaffoldTransactionsFromApi } from './scaffold-transactions';
 
 export const fetchScaffolds = (offset = 0, limit = 10) => async dispatch => {
   const params = { offset, limit };
@@ -44,19 +44,12 @@ export const fetchScaffoldDetails = scaffoldAddress => async (dispatch, getState
   const scaffold = await dispatch(fetchScaffoldItem(scaffoldAddress));
 
   if (apiUsing) {
-    console.time('>> back fetch');
-    await dispatch(fetchScaffoldSummaryFromApi(scaffold));
-    // await dispatch(fetchScaffoldTransactionsFromApi(scaffold));
-    console.timeEnd('>> back fetch');
+    dispatch(fetchScaffoldSummaryFromApi(scaffold));
   } else {
-    console.time('>> block chain fetch');
-    await dispatch(fetchScaffoldSummaryFromChain(scaffold));
-    await dispatch(fetchShareHoldersFromChain(scaffold));
-    // await dispatch(fetchScaffoldTransactionsFromChain(scaffold));
-    console.timeEnd('>> block chain fetch');
+    dispatch(fetchScaffoldSummaryFromChain(scaffold));
+    dispatch(fetchShareHoldersFromChain(scaffold));
   }
-  await dispatch(fetchScaffoldTransactionsFromChain(scaffold));
-  await dispatch(fetchScaffoldTransactionsFromApi(scaffold));
+  dispatch(fetchScaffoldTransactionsFromApi(scaffold));
 };
 
 export const editScaffoldByApi = ({ address }, fields) => async dispatch => {
