@@ -2,7 +2,7 @@ package io.openfuture.api.component.listener
 
 import io.openfuture.api.component.listener.event.AddTransactionEvent
 import io.openfuture.api.domain.PageResponse
-import io.openfuture.api.domain.scaffold.TransactionDto
+import io.openfuture.api.domain.transaction.TransactionDto
 import org.springframework.context.ApplicationListener
 import org.springframework.stereotype.Component
 import org.springframework.web.context.request.async.DeferredResult
