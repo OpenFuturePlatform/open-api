@@ -7,10 +7,9 @@ import {
   deactivateScaffoldByApi,
   subscribeScaffoldActivation
 } from '../actions/scaffold-activation';
-import { subscribeEthAccount, unsubscribeEthAccount } from '../actions/eth-account';
 import { Button } from 'semantic-ui-react';
 import { MIN_CONTRACT_DEPOSIT } from '../const/index';
-import { getMetaMaskError } from '../selectors/getMetaMaskError';
+import { getMetaMaskErrorMessage } from '../selectors/getMetaMaskError';
 
 class ScaffoldStatus extends Component {
   constructor(props) {
@@ -22,14 +21,9 @@ class ScaffoldStatus extends Component {
   componentDidMount() {
     const { scaffoldAddress } = this.props;
     const { activating, activatingHash } = this.props.ethAccount;
-    this.props.actions.subscribeEthAccount();
     if (activating) {
       this.props.actions.subscribeScaffoldActivation(activatingHash, scaffoldAddress);
     }
-  }
-
-  componentWillUnmount() {
-    this.props.actions.unsubscribeEthAccount();
   }
 
   handleOnDeactivate() {
@@ -142,7 +136,7 @@ class ScaffoldStatus extends Component {
 
 const mapStateToProps = (state, { scaffoldAddress, abi, summary: { tokenBalance, developerAddress }, error }) => {
   const { ethAccount } = state;
-  const metaMaskError = getMetaMaskError(state);
+  const metaMaskError = getMetaMaskErrorMessage(state);
   return { ethAccount, developerAddress, scaffoldAddress, abi, tokenBalance, metaMaskError, fetchError: error };
 };
 
@@ -152,8 +146,6 @@ const mapDispatchToProps = dispatch => ({
       deactivateScaffold,
       deactivateScaffoldByApi,
       activateScaffold,
-      subscribeEthAccount,
-      unsubscribeEthAccount,
       subscribeScaffoldActivation
     },
     dispatch

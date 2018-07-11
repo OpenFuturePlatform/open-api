@@ -3,14 +3,14 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Segment } from 'semantic-ui-react';
 import { getTransactionSelector } from '../selectors/getTransactionSelector';
-import { fetchScaffoldTransactions } from '../actions/scaffold-transactions';
+import { fetchScaffoldTransactionsFromApi } from '../actions/scaffold-transactions';
 import { ProjectPagination } from '../components-ui/ProjectPagination';
 import { TRANSACTIONS_LIMIT } from '../const/index';
 import { TransactionEvent } from './TransactionEvent';
 
 class ScaffoldTransactionsComponent extends Component {
   componentDidMount() {
-    this.fetchTransactions();
+    // this.fetchTransactions();
   }
 
   fetchTransactions = (offset, limit) => {
@@ -62,7 +62,7 @@ const mapStateToProps = (state, { scaffold }) => ({ transactions: getTransaction
 
 const mapDispatchToProps = (dispatch, { scaffold }) => ({
   actions: bindActionCreators(
-    { fetchTransactions: (...paginationSet) => fetchScaffoldTransactions(scaffold.address, ...paginationSet) },
+    { fetchTransactions: (...paginationSet) => fetchScaffoldTransactionsFromApi(scaffold.address, ...paginationSet) },
     dispatch
   )
 });

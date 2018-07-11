@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactTable from 'react-table';
 
-export const Table = ({ data, columns }) => (
+export const Table = ({ data, columns, noDataText }) => (
   <ReactTable
     data={data}
     columns={columns}
@@ -10,5 +10,6 @@ export const Table = ({ data, columns }) => (
     resizable={false}
     minRows={1}
     pageSize={data.length}
+    noDataText={noDataText}
   />
 );

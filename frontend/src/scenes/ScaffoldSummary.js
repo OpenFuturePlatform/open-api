@@ -3,17 +3,19 @@ import { Card, Grid } from 'semantic-ui-react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { ScaffoldStatusContainer } from '../components/ScaffoldStatus';
-import { fetchScaffoldSummary, editScaffold } from '../actions/scaffolds';
+import { fetchScaffoldDetails, editScaffold } from '../actions/scaffolds';
 import { ShareHolders } from '../components/ShareHolders';
 import { WalletSelect } from '../components/WalletSelect';
 import { ScaffoldEdit } from '../components/ScaffoldEdit';
 import { ScaffoldTransaction } from '../components/ScaffoldTransactions';
 import { WordWrap } from '../components-ui/WordWrap';
+import { subscribeEthAccount, unsubscribeEthAccount } from '../actions/eth-account';
 
 class ScaffoldSummary extends Component {
-  componentDidMount() {
+  async componentDidMount() {
     const scaffoldAddress = this.getScaffoldAddress();
-    this.props.actions.fetchScaffoldSummary(scaffoldAddress);
+    await this.props.actions.subscribeEthAccount();
+    this.props.actions.fetchScaffoldDetails(scaffoldAddress);
   }
 
   componentDidUpdate(prevProps) {
@@ -22,8 +24,12 @@ class ScaffoldSummary extends Component {
 
     if (byApiMethodChanged) {
       const scaffoldAddress = this.getScaffoldAddress();
-      this.props.actions.fetchScaffoldSummary(scaffoldAddress);
+      this.props.actions.fetchScaffoldDetails(scaffoldAddress);
     }
+  }
+
+  componentWillUnmount() {
+    this.props.actions.unsubscribeEthAccount();
   }
 
   getScaffoldAddress = () => this.props.match.params.scaffoldAddress;
@@ -98,7 +104,15 @@ const mapStateToProps = (
 };
 
 const mapDispatchToProps = dispatch => ({
-  actions: bindActionCreators({ fetchScaffoldSummary, editScaffold }, dispatch)
+  actions: bindActionCreators(
+    {
+      fetchScaffoldDetails,
+      editScaffold,
+      subscribeEthAccount,
+      unsubscribeEthAccount
+    },
+    dispatch
+  )
 });
 
 export const ScaffoldSummaryContainer = connect(

@@ -17,8 +17,7 @@ class App extends Component {
 
   renderAuthorizedContent = () => {
     const { auth, globalProperties } = this.props;
-
-    if (!auth.isAuthorized || !globalProperties) {
+    if (!auth.isAuthorized || !globalProperties.network.id) {
       return null;
     }
 

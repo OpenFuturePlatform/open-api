@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { setAuthorized } from './index';
+import { setAuthorized } from '.';
 import { parseApiError } from '../utils/parseApiError';
 
 export const request = (method, url, data, params) => async dispatch => {

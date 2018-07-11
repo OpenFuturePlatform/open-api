@@ -5,11 +5,13 @@ import 'react-table/react-table.css';
 import '../css/table.css';
 import { EtherscanLink } from '../components-ui/EtherscanLink';
 import { Segment } from 'semantic-ui-react';
-import { addShareHolder, editShareHolder, fetchShareHolders, removeShareHolder } from '../actions/shareHolders';
+import { addShareHolder, editShareHolder, removeShareHolder } from '../actions/share-holders';
 import { ShareHolderSave } from './ShareHolderSave';
 import { Table } from '../components-ui/Table';
 import { ShareHolderRemove } from './ShareHolderRemove';
 import { getShareHoldersSelector } from '../selectors/getShareHoldersSelector';
+import { getApiUsing } from '../selectors/getApiUsing';
+import { getCriticalMetaMaskError } from '../selectors/getMetaMaskError';
 
 const getColumns = (allHolders, onEdit, onRemove) => [
   {
@@ -45,11 +47,6 @@ const getColumns = (allHolders, onEdit, onRemove) => [
 ];
 
 export class ShareHoldersComponent extends Component {
-  componentDidMount() {
-    const { scaffold } = this.props;
-    this.props.actions.fetchShareHolders(scaffold);
-  }
-
   onAddShareHolder = shareHolder => {
     const { scaffold } = this.props;
     return this.props.actions.addShareHolder(scaffold, shareHolder);
@@ -66,14 +63,15 @@ export class ShareHoldersComponent extends Component {
   };
 
   render() {
-    const { shareHolders } = this.props;
+    const { shareHolders, apiUsing, metaMaskError } = this.props;
     const columns = getColumns(shareHolders, this.onEditShareHolder, this.onRemoveShareHolder);
+    const noDataText = !apiUsing && metaMaskError ? metaMaskError : undefined;
 
     return (
       <div className="table-with-add">
         <ShareHolderSave onSubmit={this.onAddShareHolder} allHolders={shareHolders} />
         <Segment attached styles={{ padding: 0 }}>
-          <Table data={shareHolders} columns={columns} />
+          <Table data={shareHolders} columns={columns} noDataText={noDataText} />
         </Segment>
       </div>
     );
@@ -82,13 +80,14 @@ export class ShareHoldersComponent extends Component {
 
 const mapStateToProps = (state, { scaffold }) => {
   const shareHolders = getShareHoldersSelector(state, scaffold.address);
-  return { scaffold, shareHolders };
+  const apiUsing = getApiUsing(state);
+  const metaMaskError = getCriticalMetaMaskError(state);
+  return { scaffold, shareHolders, apiUsing, metaMaskError };
 };
 
 const mapDispatchToProps = dispatch => ({
   actions: bindActionCreators(
     {
-      fetchShareHolders,
       addShareHolder,
       editShareHolder,
       removeShareHolder
