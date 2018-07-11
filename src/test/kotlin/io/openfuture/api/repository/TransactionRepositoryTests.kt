@@ -32,7 +32,7 @@ internal class TransactionRepositoryTests : RepositoryTests() {
         val transaction = Transaction(scaffold, "data binary")
         entityManager.persist(transaction)
 
-        val actualOpenKeys = repository.findAllByScaffold(scaffold, PageRequest())
+        val actualOpenKeys = repository.findAllByScaffoldOrderByDateDesc(scaffold, PageRequest())
 
         assertThat(actualOpenKeys.contains(transaction)).isTrue()
     }
