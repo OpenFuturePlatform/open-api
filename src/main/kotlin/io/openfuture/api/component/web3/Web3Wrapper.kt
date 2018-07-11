@@ -20,6 +20,7 @@ import org.web3j.protocol.core.DefaultBlockParameterName.LATEST
 import org.web3j.protocol.core.methods.request.EthFilter
 import org.web3j.protocol.core.methods.request.Transaction.createFunctionCallTransaction
 import org.web3j.protocol.core.methods.response.EthLog
+import org.web3j.protocol.core.methods.response.TransactionReceipt
 import org.web3j.tx.Contract.GAS_LIMIT
 import org.web3j.tx.ManagedTransaction.GAS_PRICE
 import org.web3j.utils.Numeric.toHexString
@@ -55,8 +56,7 @@ class Web3Wrapper(
         val transaction = createContractTransaction(getNonce(credentials.address), GAS_PRICE, GAS_LIMIT, ZERO,
                 bin + encodedConstructor)
         val result = executeTransaction(transaction, credentials)
-        val transactionReceipt = web3j.ethGetTransactionReceipt(result).send().transactionReceipt
-        return transactionReceipt.get().contractAddress
+        return result.contractAddress
     }
 
     fun callFunction(methodName: String, inputParams: List<Type<*>>, outputParams: List<TypeReference<*>>,
@@ -81,14 +81,14 @@ class Web3Wrapper(
         val credentials = properties.getCredentials()
         val transaction = createTransaction(getNonce(credentials.address), GAS_PRICE, GAS_LIMIT, address,
                 encodedFunction)
-        return executeTransaction(transaction, credentials)
+        return executeTransaction(transaction, credentials).transactionHash
     }
 
     fun getNonce(address: String): BigInteger = web3j.ethGetTransactionCount(address, LATEST).send().transactionCount
 
     fun getNetVersion(): String = web3j.netVersion().send().netVersion
 
-    private fun executeTransaction(transaction: RawTransaction, credentials: Credentials): String {
+    private fun executeTransaction(transaction: RawTransaction, credentials: Credentials): TransactionReceipt {
         val encodedTransaction = signMessage(transaction, credentials)
         val result = web3j.ethSendRawTransaction(toHexString(encodedTransaction)).send()
 
@@ -100,7 +100,7 @@ class Web3Wrapper(
             Thread.sleep(1000)
         }
 
-        return result.transactionHash
+        return web3j.ethGetTransactionReceipt(result.transactionHash).send().transactionReceipt.get()
     }
 
 }

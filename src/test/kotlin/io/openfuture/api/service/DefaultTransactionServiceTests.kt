@@ -34,7 +34,7 @@ internal class DefaultTransactionServiceTests : UnitTest() {
         val scaffold = createScaffold()
         val expectedTransactionPages = PageImpl(Collections.singletonList(createTransaction()), pageable, 1)
 
-        given(repository.findAllByScaffold(scaffold, pageable)).willReturn(expectedTransactionPages)
+        given(repository.findAllByScaffoldOrderByDateDesc(scaffold, pageable)).willReturn(expectedTransactionPages)
 
         val actualTransactionPages = service.getAll(scaffold, pageable)
 

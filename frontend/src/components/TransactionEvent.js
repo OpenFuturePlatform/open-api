@@ -34,7 +34,7 @@ export const TransactionEvent = ({
   }
 }) => (
   <div>
-    {date ? formatDate(date) : null} <i>{type.replace(/_/g, ' ')}</i>
+    <b>{date ? formatDate(date) : null}</b> <i>{type.replace(/_/g, ' ')}</i>
     <div>
       {renderAddress('User Address', userAddress)}
       {renderAddress('to Address', toAddress)}

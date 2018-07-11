@@ -138,7 +138,7 @@ internal class Web3WrapperTests : UnitTest() {
 
     @Test
     fun callTransactionTest() {
-        val optionalTransactionReceipt = Optional.of(TransactionReceipt().apply { contractAddress = addressValue })
+        val optionalTransactionReceipt = Optional.of(TransactionReceipt().apply { transactionHash = "hash" })
 
         given(properties.getCredentials()).willReturn(credentials)
         given(credentials.address).willReturn(addressValue)
