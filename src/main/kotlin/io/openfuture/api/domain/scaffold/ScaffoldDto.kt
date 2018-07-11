@@ -12,7 +12,7 @@ data class ScaffoldDto(
         val fiatAmount: String,
         val currency: Currency,
         val conversionAmount: String,
-        val vendorAddress: String,
+        val developerAddress: String,
         val webHook: String?,
         val properties: List<ScaffoldPropertyDto>
 ) {
@@ -25,7 +25,7 @@ data class ScaffoldDto(
             scaffold.fiatAmount,
             scaffold.getCurrency(),
             scaffold.conversionAmount,
-            scaffold.vendorAddress,
+            scaffold.developerAddress,
             scaffold.webHook,
             scaffold.property.map { ScaffoldPropertyDto(it) }
     )

@@ -5,7 +5,7 @@ import { getWalletMethod } from '../selectors/getWalletMethod';
 import { fetchScaffoldSummary } from './scaffolds';
 import { parseApiError } from '../utils/parseApiError';
 import { fetchScaffoldTransactions } from './scaffold-transactions';
-import { getShareHoldersPath, getScaffoldsPath } from '../utils/apiPathes';
+import { getShareHoldersPath } from '../utils/apiPathes';
 import { apiPost, apiPut, apiDelete } from './apiRequest';
 
 export const fetchShareHolders = scaffold => async dispatch => {
@@ -108,7 +108,7 @@ export const editShareHolderByMetaMask = (scaffold, shareHolder) => async dispat
 export const editShareHolderByApi = (scaffold, { address, share }) => async dispatch => {
   try {
     return await dispatch(
-      apiPut(getScaffoldsPath(scaffold.address), {
+      apiPut(getShareHoldersPath(scaffold.address, address), {
         address,
         percent: share
       })
@@ -143,8 +143,6 @@ export const removeShareHolderByMetaMask = (scaffold, holderAddress) => async ()
 
 export const removeShareHolderByApi = (scaffold, holderAddress) => async dispatch => {
   try {
-    // it cuts body of request
-    // return await axios.delete(`/api/scaffolds/${scaffold.address}/holders`, {address: holderAddress});
     return await dispatch(apiDelete(getShareHoldersPath(scaffold.address), { address: holderAddress }));
   } catch (e) {
     throw parseApiError(e);

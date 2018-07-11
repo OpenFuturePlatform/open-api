@@ -11,7 +11,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.http.MediaType.APPLICATION_JSON_UTF8
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.util.*
 
 @WebMvcTest(OpenKeyApiController::class)
@@ -51,8 +52,7 @@ class OpenKeyApiControllerTests : ControllerTests() {
         mvc.perform(get("/api/keys")
                 .header(AUTHORIZATION, invalidToken))
 
-                .andExpect(status().is3xxRedirection)
-                .andExpect(redirectedUrl("http://localhost/"))
+                .andExpect(status().isUnauthorized)
     }
 
     @Test

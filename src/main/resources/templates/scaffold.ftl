@@ -67,7 +67,7 @@ contract OpenScaffold {
     uint256 constant ADDED_SHARE_HOLDER = 4;
     uint256 constant EDITED_SHARE_HOLDER = 5;
     uint256 constant DELETED_SHARE_HOLDER = 6;
-    uint256 constant PAYED_FOR_SHARE_HOLDER = 7;
+    uint256 constant PAID_FOR_SHARE_HOLDER = 7;
 
     // events
     event PaymentCompleted(
@@ -80,7 +80,7 @@ contract OpenScaffold {
     event FundsDeposited(uint256 _eventType, uint256 _amount, address _toAddress);
     event ActivatedScaffold(uint256 _eventType, bool _activated);
     event ShareHolderEvent(uint256 _eventType, address _shareHolderAddress, uint256 _share);
-    event PayedForShareHolder(uint256 _eventType, address _userAddress, uint256 _amount);
+    event PaidForShareHolder(uint256 _eventType, address _userAddress, uint256 _amount);
 
 
     // custom dataTypes
@@ -287,8 +287,8 @@ contract OpenScaffold {
             // transfer amount for shareholder
             withdrawFunds(shareHolderAddress, shareHolderAmount);
 
-            PayedForShareHolder(
-                PAYED_FOR_SHARE_HOLDER,
+            PaidForShareHolder(
+                PAID_FOR_SHARE_HOLDER,
                 shareHolderAddress,
                 shareHolderAmount
             );

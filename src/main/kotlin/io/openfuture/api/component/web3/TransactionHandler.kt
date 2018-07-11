@@ -2,7 +2,7 @@ package io.openfuture.api.component.web3
 
 import io.openfuture.api.component.listener.event.AddTransactionEvent
 import io.openfuture.api.component.web3.event.ProcessorEventDecoder
-import io.openfuture.api.domain.scaffold.TransactionDto
+import io.openfuture.api.domain.transaction.TransactionDto
 import io.openfuture.api.entity.scaffold.Transaction
 import io.openfuture.api.repository.ScaffoldRepository
 import io.openfuture.api.service.TransactionService

@@ -216,7 +216,7 @@ class ScaffoldApiControllerTests : ControllerTests() {
         given(keyService.find(openKey.value)).willReturn(openKey)
         given(service.deactivate(scaffoldAddress, openKey.user)).willReturn(createScaffoldSummary())
 
-        mvc.perform(post("/api/scaffolds/$scaffoldAddress/doDeactivate")
+        mvc.perform(delete("/api/scaffolds/$scaffoldAddress")
                 .header(AUTHORIZATION, openKey.value))
 
                 .andExpect(status().isOk)
@@ -244,66 +244,6 @@ class ScaffoldApiControllerTests : ControllerTests() {
                     """.trimIndent(), true))
     }
 
-    @Test
-    fun addShareHolderTest() {
-        val address = "address"
-        val request = AddShareHolderRequest(address, 3)
-        val openKey = createOpenKey(setOf(Role("ROLE_MASTER")))
-        val requestJson = objectMapper.writeValueAsString(request)
-
-        given(keyService.find(openKey.value)).willReturn(openKey)
-        given(service.addShareHolder(address, openKey.user, request)).willReturn(createScaffoldSummary())
-
-        mvc.perform(post("/api/scaffolds/$address/holders")
-                .header(AUTHORIZATION, openKey.value)
-                .contentType(APPLICATION_JSON_UTF8)
-                .content(requestJson))
-
-                .andExpect(status().isOk)
-
-        verify(service).addShareHolder(address, openKey.user, request)
-    }
-
-    @Test
-    fun updateShareHolderTest() {
-        val address = "address"
-        val request = UpdateShareHolderRequest(address, 3)
-        val openKey = createOpenKey(setOf(Role("ROLE_MASTER")))
-        val requestJson = objectMapper.writeValueAsString(request)
-
-        given(keyService.find(openKey.value)).willReturn(openKey)
-        given(service.updateShareHolder(address, openKey.user, request)).willReturn(createScaffoldSummary())
-
-        mvc.perform(put("/api/scaffolds/$address/holders")
-                .header(AUTHORIZATION, openKey.value)
-                .contentType(APPLICATION_JSON_UTF8)
-                .content(requestJson))
-
-                .andExpect(status().isOk)
-
-        verify(service).updateShareHolder(address, openKey.user, request)
-    }
-
-    @Test
-    fun removeShareHolderTest() {
-        val address = "address"
-        val request = RemoveShareHolderRequest(address)
-        val openKey = createOpenKey(setOf(Role("ROLE_MASTER")))
-        val requestJson = objectMapper.writeValueAsString(request)
-
-        given(keyService.find(openKey.value)).willReturn(openKey)
-        given(service.removeShareHolder(address, openKey.user, request)).willReturn(createScaffoldSummary())
-
-        mvc.perform(delete("/api/scaffolds/$address/holders")
-                .header(AUTHORIZATION, openKey.value)
-                .contentType(APPLICATION_JSON_UTF8)
-                .content(requestJson))
-
-                .andExpect(status().isOk)
-
-        verify(service).removeShareHolder(address, openKey.user, request)
-    }
-
     private fun createScaffold(openKey: OpenKey) = Scaffold("address", openKey, "abi", "developerAddress",
             "description", "2", USD.getId(), "0.00023")
 
@@ -329,7 +269,7 @@ class ScaffoldApiControllerTests : ControllerTests() {
                         ]
                       },
                       "abi": ${scaffold.abi},
-                      "vendorAddress": ${scaffold.vendorAddress},
+                      "developerAddress": ${scaffold.developerAddress},
                       "description": ${scaffold.description},
                       "fiatAmount": "${scaffold.fiatAmount}",
                       "currency": ${scaffold.getCurrency().name},

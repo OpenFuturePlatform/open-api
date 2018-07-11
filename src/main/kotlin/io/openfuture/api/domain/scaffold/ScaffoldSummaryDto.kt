@@ -1,5 +1,6 @@
 package io.openfuture.api.domain.scaffold
 
+import io.openfuture.api.domain.holder.ShareHolderDto
 import io.openfuture.api.entity.scaffold.ScaffoldSummary
 import java.math.BigInteger
 
