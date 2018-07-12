@@ -42,7 +42,7 @@ class ShareHolderSaveComponent extends React.Component {
   };
 
   onAddressChange = e => this.setState({ address: e.target.value });
-  onShareChange = e => this.setState({ share: Math.abs(e.target.value) });
+  onShareChange = e => this.setState({ share: Math.abs(e.target.value) || '' });
   onAddressBlur = () => this.setState({ isAddressErrorVisible: true });
 
   onShowHandler = () => {
