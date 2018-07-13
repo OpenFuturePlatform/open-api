@@ -7,7 +7,6 @@ import io.openfuture.api.exception.ExecuteTransactionException
 import io.openfuture.api.exception.FunctionCallException
 import io.openfuture.api.exception.TemplateProcessingException
 import org.springframework.http.HttpStatus.BAD_REQUEST
-import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
 import org.springframework.validation.FieldError
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -56,11 +55,5 @@ class ExceptionRestControllerAdvice {
     @ExceptionHandler(IllegalArgumentException::class)
     fun illegalArgumentExceptionHandler(exception: IllegalArgumentException): ExceptionResponse =
             ExceptionResponse(BAD_REQUEST.value(), exception.message!!)
-
-    @ResponseStatus(code = INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(Exception::class)
-    fun baseExceptionHandler(exception: Exception): ExceptionResponse =
-            ExceptionResponse(INTERNAL_SERVER_ERROR.value(), """Something went wrong. Please read the documentation
-                | https://docs.openfuture.io/ or contact us openplatform@zensoft.io""".trimMargin())
 
 }
