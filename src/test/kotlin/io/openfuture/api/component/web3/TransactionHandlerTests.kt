@@ -57,5 +57,6 @@ internal class TransactionHandlerTests : UnitTest() {
         verify(transactionService, never()).save(any(Transaction::class.java))
     }
 
-    private fun createLog(): Log = Log().apply { address = "0xba37163625b3f2e96112562858c12b75963af138"; data = "data" ; type = "type"}
+    private fun createLog(): Log = Log().apply { transactionHash = "hash";
+        address = "0xba37163625b3f2e96112562858c12b75963af138"; data = "data" ; type = "type"}
 }
