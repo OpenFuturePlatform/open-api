@@ -1,0 +1,3 @@
+TRUNCATE transactions;
+
+ALTER TABLE transactions ADD COLUMN hash VARCHAR NOT NULL UNIQUE;

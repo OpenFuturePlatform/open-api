@@ -35,17 +35,16 @@ export const fetchScaffoldTransactionsFromChain = scaffold => async () => {
 let isSubscribed = false;
 
 const updateTransactions = address => async dispatch => {
-  setTimeout(async () => {
-    console.log('>> start update');
-    const transactions = await dispatch(apiGet(updateScaffoldTransactions(address)));
-    console.log('>> updates: ', transactions);
-    if (transactions.totalCount) {
-      dispatch({ type: UPDATE_SCAFFOLD_TRANSACTIONS, payload: { address, transactions } });
-    }
-    if (isSubscribed) {
-      dispatch(updateTransactions(address));
-    }
-  }, 1000);
+  console.timeEnd('>> start update');
+  const transactions = await dispatch(apiGet(updateScaffoldTransactions(address)));
+  console.log('>> updates: ', transactions);
+  if (isSubscribed) {
+    console.time('>> start update');
+    dispatch(updateTransactions(address));
+  }
+  if (transactions.totalCount) {
+    dispatch({ type: UPDATE_SCAFFOLD_TRANSACTIONS, payload: { address, transactions } });
+  }
 };
 
 export const subscribeTransactionsByApi = address => async dispatch => {
@@ -53,6 +52,7 @@ export const subscribeTransactionsByApi = address => async dispatch => {
     return;
   }
   isSubscribed = true;
+  console.time('>> start update');
   dispatch(updateTransactions(address));
 };
 
