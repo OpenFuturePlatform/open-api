@@ -53,7 +53,7 @@ internal class DefaultTransactionServiceTests : UnitTest() {
         assertThat(actualTransaction.scaffold).isEqualTo(transaction.scaffold)
     }
 
-    private fun createTransaction(): Transaction = Transaction(createScaffold(), "data binary")
+    private fun createTransaction(): Transaction = Transaction("hash", createScaffold(), "data binary")
 
     private fun createScaffold(): Scaffold {
         val openKey = OpenKey(User("104113085667282103363"))
