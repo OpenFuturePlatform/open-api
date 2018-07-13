@@ -5,14 +5,20 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [2.4.0] - 2018-07-13
 ### Added
-- Show events on scaffold page
-- Updates events in realtime
-- Show message on current token expired
-- Smart contract optimization
+- Scaffold events on a scaffold page
+- Events real-time update
+- Current token expiration message
+- Edit a scaffold title
+- Automatic reconnection to a chain if a connection is lost
+
+### Changed
+- Smart contract code optimization
 
 ### Removed
-- Remove field description from scaffold
+- Description field from a scaffold
 
 ## [2.3.0] - 2018-06-29
 ### Added
@@ -29,7 +35,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Scaffold: unit tests
 - Application unit tests
 
-## Changed
+### Changed
 - Default values are no longer required for additional scaffold properties
 - Application will automatically reconnect to a chain of a connection is lost
 
@@ -113,6 +119,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - "Withdraw" button is removed
 
 [Unreleased]: https://github.com/OpenFuturePlatform/open-api/compare/master...sprint
+[2.4.0]: https://github.com/OpenFuturePlatform/open-api/compare/v2.3.0...v2.4.0
 [2.3.0]: https://github.com/OpenFuturePlatform/open-api/compare/v2.2.1...v2.3.0
 [2.2.1]: https://github.com/OpenFuturePlatform/open-api/compare/v2.2.0...v2.2.1
 [2.2.0]: https://github.com/OpenFuturePlatform/open-api/compare/v2.1.0...v2.2.0
