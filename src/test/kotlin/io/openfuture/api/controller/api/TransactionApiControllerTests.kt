@@ -40,7 +40,7 @@ class TransactionApiControllerTests : ControllerTests() {
         val openKey = createOpenKey(setOf(Role("ROLE_MASTER")))
         val scaffold = createScaffold(openKey)
         val pageRequest = PageRequest()
-        val transaction = Transaction(scaffold, "data", "type")
+        val transaction = Transaction("hash", scaffold, "data", Date(1531128228590))
 
         given(keyService.find(openKey.value)).willReturn(openKey)
         given(scaffoldService.get(scaffold.address, openKey.user)).willReturn(scaffold)
@@ -86,7 +86,7 @@ class TransactionApiControllerTests : ControllerTests() {
                             ]
                           },
                           "abi": ${transaction.scaffold.abi},
-                          "vendorAddress": ${transaction.scaffold.vendorAddress},
+                          "developerAddress": ${transaction.scaffold.developerAddress},
                           "description": ${transaction.scaffold.description},
                           "fiatAmount": "${transaction.scaffold.fiatAmount}",
                           "currency": ${transaction.scaffold.getCurrency().name},
@@ -95,7 +95,7 @@ class TransactionApiControllerTests : ControllerTests() {
                           "properties": ${Arrays.toString(transaction.scaffold.property.toTypedArray())}
                         },
                         "event":{"activated":true,"type":"ACTIVATED_SCAFFOLD"},
-                        "type": ${transaction.type}
+                        "date": "2018-07-09T09:23:48.590+0000"
                     }
                     """.trimIndent()
 

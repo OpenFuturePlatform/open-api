@@ -10,7 +10,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.web3j.spring.autoconfigure.Web3jProperties
 
 @WebMvcTest(FrontendPropertiesApiController::class)
@@ -60,8 +61,7 @@ class FrontendPropertiesApiControllerTests : ControllerTests() {
         mvc.perform(get("/api/properties")
                 .header(AUTHORIZATION, invalidToken))
 
-                .andExpect(status().is3xxRedirection)
-                .andExpect(redirectedUrl("http://localhost/"))
+                .andExpect(status().isUnauthorized)
     }
 
 }

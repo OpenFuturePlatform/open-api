@@ -1,5 +1,7 @@
 package io.openfuture.api.service
 
+import io.openfuture.api.domain.holder.AddShareHolderRequest
+import io.openfuture.api.domain.holder.UpdateShareHolderRequest
 import io.openfuture.api.domain.scaffold.*
 import io.openfuture.api.entity.auth.OpenKey
 import io.openfuture.api.entity.auth.User
@@ -28,15 +30,16 @@ interface ScaffoldService {
 
     fun getQuota(user: User): ScaffoldQuotaDto
 
-    fun getScaffoldSummary(address: String, user: User, cache: Boolean = true): ScaffoldSummary
+    fun getScaffoldSummary(address: String, user: User, force: Boolean = false): ScaffoldSummary
 
     fun deactivate(address: String, user: User): ScaffoldSummary
 
     fun addShareHolder(address: String, user: User, request: AddShareHolderRequest): ScaffoldSummary
 
-    fun updateShareHolder(address: String, user: User, request: UpdateShareHolderRequest): ScaffoldSummary
+    fun updateShareHolder(address: String, user: User,
+                          holderAddress: String, request: UpdateShareHolderRequest): ScaffoldSummary
 
-    fun removeShareHolder(address: String, user: User, request: RemoveShareHolderRequest): ScaffoldSummary
+    fun removeShareHolder(address: String, user: User, holderAddress: String): ScaffoldSummary
 
 }
 
@@ -79,6 +82,8 @@ interface UserService {
 interface TransactionService {
 
     fun getAll(scaffold: Scaffold, pageRequest: Pageable): Page<Transaction>
+
+    fun find(hash: String): Transaction?
 
     fun save(transaction: Transaction): Transaction
 

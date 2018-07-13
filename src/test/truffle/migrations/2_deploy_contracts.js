@@ -1,7 +1,7 @@
 var OpenScaffold = artifacts.require("./OpenScaffold.sol");
 var ExposedOpenScaffold = artifacts.require("./ExposedOpenScaffold.sol");
 
-let vendorAddress = web3.eth.accounts[0];
+let developerAddress = web3.eth.accounts[0];
 let platformAddress = web3.eth.accounts[1];
 
 let description = "test description";
@@ -11,7 +11,7 @@ let fiatAmount = "USD";
 let weiAmount = 10*10**18;
 
 module.exports = function(deployer) {
-  deployer.deploy(OpenScaffold, vendorAddress, platformAddress, description, fiatCurrency, fiatAmount, weiAmount);
+  deployer.deploy(OpenScaffold, developerAddress, platformAddress, description, fiatCurrency, fiatAmount, weiAmount);
   deployer.link(OpenScaffold, ExposedOpenScaffold);
-  deployer.deploy(ExposedOpenScaffold, vendorAddress, platformAddress, description, fiatCurrency, fiatAmount, weiAmount);
+  deployer.deploy(ExposedOpenScaffold, developerAddress, platformAddress, description, fiatCurrency, fiatAmount, weiAmount);
 };

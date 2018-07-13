@@ -1,22 +1,25 @@
-import axios from 'axios';
 import web3 from '../utils/web3';
-import {CONVERT_CURRENCIES, SHOW_MODAL} from './types';
+import Eth from 'ethjs';
+import ethUtil from 'ethjs-util';
+import { CONVERT_CURRENCIES, SHOW_MODAL } from './types';
+import { serializeScaffold } from '../utils/scaffold-adapter';
+import { getScaffoldsPath, getScaffoldDoCompile, getScaffoldDoDeploy } from '../utils/apiPathes';
+import { apiPost, apiPatch, apiGet } from './apiRequest';
 
-const setWebHook = async (address, webHook) => await axios.patch(`/api/scaffolds/${address}`, {webHook});
-
-export const validateWebHook = async (url) => await axios.post('/api/validation/url', {url});
+const setWebHook = (address, webHook) => async dispatch =>
+  await dispatch(apiPatch(getScaffoldsPath(address), { webHook }));
 
 export const deployContractByApi = (formValues, history) => async dispatch => {
-  dispatch({type: SHOW_MODAL, payload: {showModal: true}});
+  dispatch({ type: SHOW_MODAL, payload: { showModal: true } });
 
   try {
-    const {data: scaffold} = await axios.post('/api/scaffolds/doDeploy', formValues);
+    const scaffold = await dispatch(apiPost(getScaffoldDoDeploy(), serializeScaffold(formValues)));
     if (formValues.webHook) {
-      await setWebHook(scaffold.address, formValues.webHook);
+      await dispatch(setWebHook(scaffold.address, formValues.webHook));
     }
     dispatch({
       type: SHOW_MODAL,
-      payload: {contract: scaffold, showLoader: false},
+      payload: { contract: scaffold, showLoader: false }
     });
     return scaffold.address;
   } catch (err) {
@@ -28,39 +31,41 @@ export const deployContractByApi = (formValues, history) => async dispatch => {
 
     dispatch({
       type: SHOW_MODAL,
-      payload: {showLoader: false, error: message},
+      payload: { showLoader: false, error: message }
     });
     throw new Error('Error in deploy contract: ' + message);
   }
 };
 
-export const compileContract = async (openKey, properties) => {
-  const response = await axios.post('/api/scaffolds/doCompile', {openKey, properties});
-  return response.data;
+export const compileContract = (openKey, properties) => async dispatch => {
+  return await dispatch(apiPost(getScaffoldDoCompile(), { openKey, properties }));
 };
 
 export const processDeploy = async (contract, bin, formValues) => {
-  return await contract.deploy({
-    data: bin,
-    arguments: [
-      formValues.developerAddress,
-      formValues.developerAddress,
-      formValues.description,
-      formValues.fiatAmount,
-      formValues.currency,
-      web3.utils.toWei(formValues.conversionAmount.toString())]
-  }).send({from: formValues.developerAddress}).on('error', (error) => console.log('>> ', error));
+  return await contract
+    .deploy({
+      data: bin,
+      arguments: [
+        formValues.developerAddress,
+        formValues.developerAddress,
+        ethUtil.fromAscii(formValues.fiatAmount),
+        ethUtil.fromAscii(formValues.currency),
+        Eth.toWei(formValues.conversionAmount.toString(), 'ether')
+      ]
+    })
+    .send({ from: formValues.developerAddress })
+    .on('error', error => console.log('>> ', error));
 };
 
-export const deployContract = (formValues) => async dispatch => {
-  dispatch({type: SHOW_MODAL, payload: {showModal: true, showLoader: true}});
+export const deployContract = formValues => async dispatch => {
+  dispatch({ type: SHOW_MODAL, payload: { showModal: true, showLoader: true } });
   try {
-    const {abi, bin} = await compileContract(formValues.openKey, formValues.properties);
+    const { abi, bin } = await dispatch(compileContract(formValues.openKey, formValues.properties));
     const contract = new web3.eth.Contract(JSON.parse(abi));
     const newContractInstance = await processDeploy(contract, bin, formValues);
 
     const address = newContractInstance.options.address;
-    const response = await axios.post('/api/scaffolds', {...formValues, abi, address});
+    const data = await dispatch(apiPost(getScaffoldsPath(), { ...serializeScaffold(formValues), abi, address }));
 
     if (formValues.webHook) {
       await setWebHook(address, formValues.webHook);
@@ -68,12 +73,11 @@ export const deployContract = (formValues) => async dispatch => {
 
     dispatch({
       type: SHOW_MODAL,
-      payload: {contract: response.data, showLoader: false},
+      payload: { contract: data, showLoader: false }
     });
 
     return address;
   } catch (err) {
-
     let message = 'Error in deploy contract';
     if (err.response) {
       const response = err ? err.response : null;
@@ -87,7 +91,7 @@ export const deployContract = (formValues) => async dispatch => {
 
     dispatch({
       type: SHOW_MODAL,
-      payload: {showLoader: false, error: message},
+      payload: { showLoader: false, error: message }
     });
     throw new Error(message);
   }
@@ -97,13 +101,12 @@ export const convertCurrencies = conversionValues => async dispatch => {
   const fromAmount = conversionValues.fromAmount ? conversionValues.fromAmount : '0';
   const fromCurrency = conversionValues.fromCurrency ? conversionValues.fromCurrency : 'usd';
   const toCurrency = conversionValues.toCurrency ? conversionValues.toCurrency : 'eth';
-  let res = {};
   const apiRequestUrl = `https://openexchangerates.org/api/convert/${fromAmount}/${fromCurrency}/${toCurrency}?app_id=d34199d67d85445a846040c0cf621510`;
 
   try {
-    res = await axios.get(apiRequestUrl);
-    dispatch({type: CONVERT_CURRENCIES, payload: res.data.response});
-    return res.data.response;
+    const data = await dispatch(apiGet(apiRequestUrl));
+    dispatch({ type: CONVERT_CURRENCIES, payload: data.response });
+    return data.response;
   } catch (err) {
     console.log('Error in convertCurrencies', err);
   }

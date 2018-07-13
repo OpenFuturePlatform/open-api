@@ -3,15 +3,21 @@ import { Card, Grid } from 'semantic-ui-react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { ScaffoldStatusContainer } from '../components/ScaffoldStatus';
-import { fetchScaffoldSummary, editScaffold } from '../actions/scaffolds';
+import { fetchScaffoldDetails, editScaffold } from '../actions/scaffolds';
 import { ShareHolders } from '../components/ShareHolders';
 import { WalletSelect } from '../components/WalletSelect';
 import { ScaffoldEdit } from '../components/ScaffoldEdit';
+import { ScaffoldTransaction } from '../components/ScaffoldTransactions';
+import { WordWrap } from '../components-ui/WordWrap';
+import { subscribeEthAccount, unsubscribeEthAccount } from '../actions/eth-account';
+import { subscribeTransactionsByApi, unsubscribeTransactionsByApi } from '../actions/scaffold-transactions';
 
 class ScaffoldSummary extends Component {
-  componentDidMount() {
+  async componentDidMount() {
     const scaffoldAddress = this.getScaffoldAddress();
-    this.props.actions.fetchScaffoldSummary(scaffoldAddress);
+    await this.props.actions.subscribeEthAccount();
+    await this.props.actions.fetchScaffoldDetails(scaffoldAddress);
+    this.props.actions.subscribeTransactionsByApi(scaffoldAddress);
   }
 
   componentDidUpdate(prevProps) {
@@ -20,8 +26,13 @@ class ScaffoldSummary extends Component {
 
     if (byApiMethodChanged) {
       const scaffoldAddress = this.getScaffoldAddress();
-      this.props.actions.fetchScaffoldSummary(scaffoldAddress);
+      this.props.actions.fetchScaffoldDetails(scaffoldAddress);
     }
+  }
+
+  componentWillUnmount() {
+    this.props.actions.unsubscribeEthAccount();
+    this.props.actions.unsubscribeTransactionsByApi();
   }
 
   getScaffoldAddress = () => this.props.match.params.scaffoldAddress;
@@ -34,8 +45,6 @@ class ScaffoldSummary extends Component {
     if (!scaffold) {
       return null;
     }
-
-    const description = summary ? summary.description : scaffold.description;
 
     return (
       <div style={{ marginTop: '20px' }}>
@@ -55,10 +64,10 @@ class ScaffoldSummary extends Component {
                 </Card.Content>
                 <Card.Content>
                   <div>
-                    Scaffold Description: {description}{' '}
-                    <ScaffoldEdit description={description} onSubmit={this.onEditScaffold} />
+                    Scaffold Title: <WordWrap>{scaffold.title}</WordWrap>{' '}
+                    <ScaffoldEdit scaffold={scaffold} onSubmit={this.onEditScaffold} />
                   </div>
-                  <div>Scaffold Owner Address: {scaffold.vendorAddress}</div>
+                  <div>Scaffold Owner Address: {scaffold.developerAddress}</div>
                 </Card.Content>
                 <Card.Content>
                   <div>
@@ -79,6 +88,7 @@ class ScaffoldSummary extends Component {
           </Grid.Row>
         </Grid>
         <ShareHolders scaffold={scaffold} />
+        <ScaffoldTransaction scaffold={scaffold} />
       </div>
     );
   }
@@ -97,7 +107,17 @@ const mapStateToProps = (
 };
 
 const mapDispatchToProps = dispatch => ({
-  actions: bindActionCreators({ fetchScaffoldSummary, editScaffold }, dispatch)
+  actions: bindActionCreators(
+    {
+      fetchScaffoldDetails,
+      editScaffold,
+      subscribeEthAccount,
+      unsubscribeEthAccount,
+      subscribeTransactionsByApi,
+      unsubscribeTransactionsByApi
+    },
+    dispatch
+  )
 });
 
 export const ScaffoldSummaryContainer = connect(

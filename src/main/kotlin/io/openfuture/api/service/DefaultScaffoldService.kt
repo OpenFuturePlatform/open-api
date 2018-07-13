@@ -3,6 +3,8 @@ package io.openfuture.api.service
 import io.openfuture.api.component.scaffold.ScaffoldCompiler
 import io.openfuture.api.component.web3.Web3Wrapper
 import io.openfuture.api.config.propety.EthereumProperties
+import io.openfuture.api.domain.holder.AddShareHolderRequest
+import io.openfuture.api.domain.holder.UpdateShareHolderRequest
 import io.openfuture.api.domain.scaffold.*
 import io.openfuture.api.entity.auth.User
 import io.openfuture.api.entity.scaffold.Scaffold
@@ -19,12 +21,11 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import org.web3j.abi.FunctionEncoder
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.Utf8String
+import org.web3j.abi.datatypes.generated.Bytes32
 import org.web3j.abi.datatypes.generated.Uint256
-import org.web3j.abi.datatypes.generated.Uint8
 import org.web3j.utils.Convert.Unit.ETHER
 import org.web3j.utils.Convert.toWei
 import java.math.BigInteger
@@ -48,14 +49,13 @@ class DefaultScaffoldService(
         private const val ADD_SHARE_HOLDER_METHOD_NAME = "addShareHolder"
         private const val UPDATE_SHARE_HOLDER_METHOD_NAME = "editShareHolder"
         private const val REMOVE_SHARE_HOLDER_METHOD_NAME = "deleteShareHolder"
-        private const val SET_DESCRIPTION_METHOD_NAME = "setDescription"
         private const val GET_SHARE_HOLDER_NUMBER_METHOD_NAME = "getShareHolderCount"
         private const val GET_SHARE_HOLDER_AT_INDEX_METHOD_NAME = "getShareHolderAddressAndShareAtIndex"
     }
 
     @Transactional(readOnly = true)
     override fun getAll(user: User, pageRequest: Pageable): Page<Scaffold> =
-            repository.findAllByOpenKeyUser(user, pageRequest)
+            repository.findAllByOpenKeyUserOrderByIdDesc(user, pageRequest)
 
     @Transactional(readOnly = true)
     override fun get(address: String, user: User): Scaffold = repository.findByAddressAndOpenKeyUser(address, user)
@@ -76,16 +76,17 @@ class DefaultScaffoldService(
     override fun deploy(request: DeployScaffoldRequest): Scaffold {
         val compiledScaffold = compile(CompileScaffoldRequest(request.openKey, request.properties))
         val credentials = properties.getCredentials()
-        val encodedConstructor = FunctionEncoder.encodeConstructor(listOf(
-                Address(request.developerAddress),
-                Address(credentials.address),
-                Utf8String(request.description),
-                Utf8String(request.fiatAmount),
-                Utf8String(request.currency!!.getValue()),
-                Uint256(toWei(request.conversionAmount, ETHER).toBigInteger()))
+        val contactAddress = web3.deploy(
+                compiledScaffold.bin,
+                listOf(
+                        Address(request.developerAddress),
+                        Address(credentials.address),
+                        Utf8String(request.fiatAmount),
+                        Utf8String(request.currency!!.getValue()),
+                        Uint256(toWei(request.conversionAmount, ETHER).toBigInteger())
+                )
         )
 
-        val contactAddress = web3.deploy(compiledScaffold.bin + encodedConstructor)
         return save(SaveScaffoldRequest(
                 contactAddress,
                 compiledScaffold.abi,
@@ -106,6 +107,7 @@ class DefaultScaffoldService(
         val scaffold = repository.save(Scaffold.of(request, openKey))
         val properties = request.properties.map { propertyRepository.save(ScaffoldProperty.of(scaffold, it)) }
         scaffold.property.addAll(properties)
+        getScaffoldSummary(scaffold)
         return scaffold
     }
 
@@ -113,8 +115,6 @@ class DefaultScaffoldService(
     override fun update(address: String, user: User, request: UpdateScaffoldRequest): Scaffold {
         val scaffold = get(address, user)
 
-        web3.callTransaction(SET_DESCRIPTION_METHOD_NAME, listOf(Utf8String(request.description!!)), listOf(),
-                scaffold.address)
         scaffold.description = request.description!!
 
         return repository.save(scaffold)
@@ -136,10 +136,10 @@ class DefaultScaffoldService(
     }
 
     @Transactional
-    override fun getScaffoldSummary(address: String, user: User, cache: Boolean): ScaffoldSummary {
+    override fun getScaffoldSummary(address: String, user: User, force: Boolean): ScaffoldSummary {
         val scaffold = get(address, user)
         val cacheSummary = summaryRepository.findByScaffold(scaffold)
-        if (null != cacheSummary && addMinutes(cacheSummary.date, properties.cachePeriodInMinutest).after(Date()) && cache) {
+        if (!force && null != cacheSummary && addMinutes(cacheSummary.date, properties.cachePeriodInMinutest).after(Date())) {
             return cacheSummary
         }
 
@@ -156,31 +156,32 @@ class DefaultScaffoldService(
     override fun deactivate(address: String, user: User): ScaffoldSummary {
         val scaffold = get(address, user)
         web3.callTransaction(DEACTIVATE_SCAFFOLD_METHOD_NAME, listOf(), listOf(), scaffold.address)
-        return getScaffoldSummary(address, user, false)
+        return getScaffoldSummary(address, user, true)
     }
 
     @Transactional
     override fun addShareHolder(address: String, user: User, request: AddShareHolderRequest): ScaffoldSummary {
         val scaffold = get(address, user)
         web3.callTransaction(ADD_SHARE_HOLDER_METHOD_NAME, listOf(Address(request.address),
-                Uint8(request.percent.toLong())), listOf(), scaffold.address)
-        return getScaffoldSummary(address, user, false)
+                Uint256(request.percent!!.toLong())), listOf(), scaffold.address)
+        return getScaffoldSummary(address, user, true)
     }
 
     @Transactional
-    override fun updateShareHolder(address: String, user: User, request: UpdateShareHolderRequest): ScaffoldSummary {
+    override fun updateShareHolder(address: String, user: User,
+                                   holderAddress: String, request: UpdateShareHolderRequest): ScaffoldSummary {
         val scaffold = get(address, user)
-        web3.callTransaction(UPDATE_SHARE_HOLDER_METHOD_NAME, listOf(Address(request.address),
-                Uint8(request.percent.toLong())), listOf(), scaffold.address)
-        return getScaffoldSummary(address, user, false)
+        web3.callTransaction(UPDATE_SHARE_HOLDER_METHOD_NAME, listOf(Address(holderAddress),
+                Uint256(request.percent!!.toLong())), listOf(), scaffold.address)
+        return getScaffoldSummary(address, user, true)
     }
 
     @Transactional
-    override fun removeShareHolder(address: String, user: User, request: RemoveShareHolderRequest): ScaffoldSummary {
+    override fun removeShareHolder(address: String, user: User, holderAddress: String): ScaffoldSummary {
         val scaffold = get(address, user)
-        web3.callTransaction(REMOVE_SHARE_HOLDER_METHOD_NAME, listOf(Address(request.address)), listOf(),
+        web3.callTransaction(REMOVE_SHARE_HOLDER_METHOD_NAME, listOf(Address(holderAddress)), listOf(),
                 scaffold.address)
-        return getScaffoldSummary(address, user, false)
+        return getScaffoldSummary(address, user, true)
     }
 
     private fun getScaffoldSummary(scaffold: Scaffold): ScaffoldSummary {
@@ -188,9 +189,8 @@ class DefaultScaffoldService(
                 GET_SCAFFOLD_SUMMARY_METHOD_NAME,
                 listOf(),
                 listOf(
-                        object : TypeReference<Utf8String>() {},
-                        object : TypeReference<Utf8String>() {},
-                        object : TypeReference<Utf8String>() {},
+                        object : TypeReference<Bytes32>() {},
+                        object : TypeReference<Bytes32>() {},
                         object : TypeReference<Uint256>() {},
                         object : TypeReference<Uint256>() {},
                         object : TypeReference<Address>() {},
@@ -201,9 +201,9 @@ class DefaultScaffoldService(
 
         return ScaffoldSummary(
                 scaffold,
-                result[4].value as BigInteger,
-                result[6].value as BigInteger,
-                result[6].value as BigInteger >= BigInteger.valueOf(properties.enabledContactTokenCount.toLong())
+                result[3].value as BigInteger,
+                result[5].value as BigInteger,
+                result[5].value as BigInteger >= BigInteger.valueOf(properties.enabledContactTokenCount.toLong())
         )
     }
 

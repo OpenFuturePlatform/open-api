@@ -8,10 +8,8 @@ import io.openfuture.api.config.propety.EthereumProperties
 import io.openfuture.api.domain.scaffold.*
 import io.openfuture.api.entity.auth.OpenKey
 import io.openfuture.api.entity.auth.User
-import io.openfuture.api.entity.scaffold.Currency.USD
 import io.openfuture.api.entity.scaffold.PropertyType.STRING
 import io.openfuture.api.entity.scaffold.Scaffold
-import io.openfuture.api.entity.scaffold.ScaffoldProperty
 import io.openfuture.api.entity.scaffold.ScaffoldSummary
 import io.openfuture.api.exception.NotFoundException
 import io.openfuture.api.repository.ScaffoldPropertyRepository
@@ -28,12 +26,7 @@ import org.mockito.Mockito.never
 import org.mockito.Mockito.verify
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
-import org.web3j.abi.FunctionEncoder
-import org.web3j.abi.datatypes.Address
-import org.web3j.abi.datatypes.Utf8String
-import org.web3j.abi.datatypes.generated.Uint256
 import org.web3j.crypto.Credentials
-import org.web3j.utils.Convert
 import java.math.BigInteger
 import java.util.*
 
@@ -65,7 +58,7 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
         val user = createUser()
         val expectedScaffoldPages = PageImpl(Collections.singletonList(createScaffold()), pageable, 1)
 
-        given(repository.findAllByOpenKeyUser(user, pageable)).willReturn(expectedScaffoldPages)
+        given(repository.findAllByOpenKeyUserOrderByIdDesc(user, pageable)).willReturn(expectedScaffoldPages)
 
         val actualScaffoldPages = service.getAll(user, pageable)
 
@@ -128,63 +121,6 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
         service.compile(request)
 
         verify(compiler, never()).compile(request.properties)
-    }
-
-    @Test
-    fun deployTest() {
-        val openKeyValue = "op_pk_9de7cbb4-857c-49e9-87d2-fc91428c4c12"
-        val addressValue = "0xba37163625b3f2e96112562858c12b75963af138"
-        val expectedScaffold = createScaffold()
-        val request = DeployScaffoldRequest(openKeyValue, addressValue, "description", "1", USD, "1",
-                null, listOf(createScaffoldPropertyDto()))
-        val contractMetadata = CompilationResult.ContractMetadata().apply { abi = "abi"; bin = "bin" }
-        val encodedConstructor = FunctionEncoder.encodeConstructor(listOf(
-                Address(request.developerAddress),
-                Address(addressValue),
-                Utf8String(request.description),
-                Utf8String(request.fiatAmount),
-                Utf8String(request.currency!!.getValue()),
-                Uint256(Convert.toWei(request.conversionAmount, Convert.Unit.ETHER).toBigInteger()))
-        )
-
-        given(openKeyService.get(openKeyValue)).willReturn(expectedScaffold.openKey)
-        given(properties.allowedDisabledContracts).willReturn(10)
-        given(compiler.compile(request.properties)).willReturn(contractMetadata)
-        given(properties.getCredentials()).willReturn(credentials)
-        given(credentials.address).willReturn(addressValue)
-        given(web3.deploy(contractMetadata.bin + encodedConstructor)).willReturn(addressValue)
-
-        given(repository.save(any(Scaffold::class.java))).will {invocation -> invocation.arguments[0] }
-        given(propertyRepository.save(any(ScaffoldProperty::class.java))).will {invocation -> invocation.arguments[0] }
-
-        val actualScaffold = service.deploy(request)
-
-        assertThat(actualScaffold).isNotNull
-        assertThat(actualScaffold.address).isEqualTo(addressValue)
-    }
-
-    @Test
-    fun saveTest() {
-        val openKeyValue = "op_pk_9de7cbb4-857c-49e9-87d2-fc91428c4c12"
-        val addressValue = "0xba37163625b3f2e96112562858c12b75963af138"
-        val user = createUser()
-        val openKey = OpenKey(user.apply { id = 1L }, null, openKeyValue).apply { id = 1L }
-        val scaffold = createScaffold()
-        val scaffoldPropertyDto = createScaffoldPropertyDto()
-        val scaffoldProperty = ScaffoldProperty.of(scaffold, scaffoldPropertyDto)
-        val request = SaveScaffoldRequest(addressValue, "abi", openKeyValue, "developerAddress",
-                "description", "1", USD, "1", null, listOf(scaffoldPropertyDto))
-        val expectedScaffold = createScaffold().apply { property.add(scaffoldProperty) }
-
-        given(openKeyService.get(openKeyValue)).willReturn(openKey)
-        given(repository.save(any(Scaffold::class.java))).will { invocation -> invocation.arguments[0] }
-        given(propertyRepository.save(any(ScaffoldProperty::class.java))).will { invocation -> invocation.arguments[0] }
-
-        val actualScaffold = service.save(request)
-
-        assertThat(actualScaffold.abi).isEqualTo(expectedScaffold.abi)
-        assertThat(actualScaffold.openKey).isEqualTo(expectedScaffold.openKey)
-        assertThat(actualScaffold.property[0].name).isEqualTo(expectedScaffold.property[0].name)
     }
 
     @Test

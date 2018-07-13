@@ -3,31 +3,35 @@ import { Icon, Modal, Button, Input } from 'semantic-ui-react';
 import { withVisible } from '../components-ui/withVisible';
 import { withSaving } from '../components-ui/withSaving';
 import { TransactionError } from '../components-ui/TransactionError';
+import { ErrorMessage } from '../components-ui/ErrorMessage';
 
 class ScaffoldEditComponent extends Component {
   state = {
-    description: ''
+    title: ''
   };
 
   onShow = () => {
-    const { onShow, description } = this.props;
-    this.setState({ description });
+    const { onShow, scaffold } = this.props;
+    const { title } = scaffold;
+    this.setState({ title });
     onShow();
   };
 
-  isSubmitEnabled = () => {
+  isSubmitDisabled = () => {
     const { isSaving } = this.props;
-    const { description } = this.state;
-    return isSaving || !description || description === this.props.description;
+    const { scaffold } = this.props;
+    const { title } = scaffold;
+    return isSaving || !this.state.title || title === this.state.title;
   };
 
-  onDescriptionChange = e => this.setState({ description: e.target.value });
+  onTitleChange = e => this.setState({ title: e.target.value });
 
-  onSubmit = () => this.props.submitWithSaving({ description: this.state.description });
+  onSubmit = () => this.props.submitWithSaving({ title: this.state.title });
 
   render() {
-    const { isVisible, isSaving, onHide, transactionError } = this.props;
-    const { description } = this.state;
+    const { isVisible, isSaving, onHide, transactionError, fieldErrors } = this.props;
+    const titleErrorList = fieldErrors.title || [];
+    const { title } = this.state;
 
     return (
       <span>
@@ -35,8 +39,9 @@ class ScaffoldEditComponent extends Component {
         <Modal size="tiny" open={isVisible} onClose={isSaving ? () => {} : onHide}>
           <Modal.Header>Edit Scaffold</Modal.Header>
           <Modal.Content>
-            <div>Description:</div>
-            <Input fluid value={description} disabled={isSaving} onChange={this.onDescriptionChange} />
+            <div>Title:</div>
+            <Input fluid value={title} disabled={isSaving} onChange={this.onTitleChange} />
+            <ErrorMessage errorList={titleErrorList} isVisible={titleErrorList.length} />
             <TransactionError message={transactionError} />
           </Modal.Content>
           <Modal.Actions>
@@ -46,7 +51,7 @@ class ScaffoldEditComponent extends Component {
             <Button
               positive
               loading={isSaving}
-              disabled={this.isSubmitEnabled()}
+              disabled={this.isSubmitDisabled()}
               icon="checkmark"
               labelPosition="right"
               content="Yes"

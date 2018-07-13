@@ -1,7 +1,10 @@
-import { validateWebHook } from '../actions/deploy-contract';
+import axios from 'axios';
 import { solidityReservedWords } from '../const/solidity-reserved-words';
+import { getValidateUrlPath } from './apiPathes';
 
 const urlErrorMessage = 'Webhook needs to be url with format [protocol]://[url]/[path]';
+
+export const validateWebHook = async url => await axios.post(getValidateUrlPath(), { url });
 
 export const validateScaffoldProperties = values => {
   const scaffoldFieldsArrayErrors = [];
@@ -69,10 +72,11 @@ const isUrl = str => {
 };
 
 export const asyncValidate = async values => {
+  console.log('hi', values);
   if (!values.webHook) {
     return;
   }
-
+  console.log('test');
   try {
     return await validateWebHook(values.webHook);
   } catch (e) {
@@ -90,8 +94,8 @@ export const validate = values => {
   if (!values.developerAddress) {
     errors.developerAddress = 'A developer address is required.';
   }
-  if (!values.description) {
-    errors.description = 'A scaffold title is required.';
+  if (!values.title) {
+    errors.title = 'A scaffold title is required.';
   }
   if (!values.fiatAmount) {
     errors.fiatAmount = 'Fiat Amount is required.';

@@ -15,6 +15,7 @@ import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.verify
 import org.mockito.Mock
 import org.mockito.Mockito.never
+import org.springframework.context.ApplicationEventPublisher
 import org.web3j.protocol.core.methods.response.Log
 
 internal class TransactionHandlerTests : UnitTest() {
@@ -22,13 +23,14 @@ internal class TransactionHandlerTests : UnitTest() {
     @Mock private lateinit var transactionService: TransactionService
     @Mock private lateinit var scaffoldRepository: ScaffoldRepository
     @Mock private lateinit var eventDecoder: ProcessorEventDecoder
+    @Mock private lateinit var publisher: ApplicationEventPublisher
 
     private lateinit var transactionHandler: TransactionHandler
 
 
     @Before
     fun setUp() {
-        transactionHandler = TransactionHandler(transactionService, scaffoldRepository, eventDecoder)
+        transactionHandler = TransactionHandler(transactionService, scaffoldRepository, eventDecoder, publisher)
     }
 
     @Test
@@ -38,7 +40,7 @@ internal class TransactionHandlerTests : UnitTest() {
         val scaffold = Scaffold("0xba37163625b32e96112562858c12b75963af138", OpenKey(user), "abi", "developerAddress",
                 "description", "fiatAmount", 1, "conversionAmount", "https://test.com", mutableListOf())
 
-        given(scaffoldRepository.findByAddress(log.address)).willReturn(scaffold)
+        given(scaffoldRepository.findByAddressIgnoreCase(log.address)).willReturn(scaffold)
         given(transactionService.save(any(Transaction::class.java))).will { invocation -> invocation.arguments[0] }
 
         transactionHandler.handle(log)
@@ -48,12 +50,13 @@ internal class TransactionHandlerTests : UnitTest() {
     fun handleWhenEmptyScaffoldShouldNotSaveTransactionTest() {
         val log = createLog()
 
-        given(scaffoldRepository.findByAddress(log.address)).willReturn(null)
+        given(scaffoldRepository.findByAddressIgnoreCase(log.address)).willReturn(null)
 
         transactionHandler.handle(log)
 
         verify(transactionService, never()).save(any(Transaction::class.java))
     }
 
-    private fun createLog(): Log = Log().apply { address = "0xba37163625b3f2e96112562858c12b75963af138"; data = "data" ; type = "type"}
+    private fun createLog(): Log = Log().apply { transactionHash = "hash";
+        address = "0xba37163625b3f2e96112562858c12b75963af138"; data = "data" ; type = "type"}
 }

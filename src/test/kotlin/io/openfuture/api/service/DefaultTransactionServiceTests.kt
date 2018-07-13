@@ -34,7 +34,7 @@ internal class DefaultTransactionServiceTests : UnitTest() {
         val scaffold = createScaffold()
         val expectedTransactionPages = PageImpl(Collections.singletonList(createTransaction()), pageable, 1)
 
-        given(repository.findAllByScaffold(scaffold, pageable)).willReturn(expectedTransactionPages)
+        given(repository.findAllByScaffoldOrderByDateDesc(scaffold, pageable)).willReturn(expectedTransactionPages)
 
         val actualTransactionPages = service.getAll(scaffold, pageable)
 
@@ -50,11 +50,10 @@ internal class DefaultTransactionServiceTests : UnitTest() {
         val actualTransaction = service.save(transaction)
 
         assertThat(actualTransaction.data).isEqualTo(transaction.data)
-        assertThat(actualTransaction.type).isEqualTo(transaction.type)
         assertThat(actualTransaction.scaffold).isEqualTo(transaction.scaffold)
     }
 
-    private fun createTransaction(): Transaction = Transaction(createScaffold(), "data binary", "type")
+    private fun createTransaction(): Transaction = Transaction("hash", createScaffold(), "data binary")
 
     private fun createScaffold(): Scaffold {
         val openKey = OpenKey(User("104113085667282103363"))
