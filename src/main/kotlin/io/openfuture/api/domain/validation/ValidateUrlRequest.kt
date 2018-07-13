@@ -1,7 +1,8 @@
 package io.openfuture.api.domain.validation
 
 import io.openfuture.api.annotation.Url
+import javax.validation.constraints.NotNull
 
 data class ValidateUrlRequest(
-        @Url var url: String? = null
+        @field:NotNull @Url var url: String? = null
 )
