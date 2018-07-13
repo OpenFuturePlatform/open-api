@@ -29,9 +29,10 @@ class TransactionHandler(
     @Transactional
     fun handle(transactionLog: Log) {
         val contract = repository.findByAddressIgnoreCase(transactionLog.address) ?: return
+        if (null != service.find(transactionLog.transactionHash)) return
+        val transaction = service.save(Transaction.of(contract, transactionLog))
 
         try {
-            val transaction = service.save(Transaction.of(contract, transactionLog))
             val event = eventDecoder.getEvent(contract.address, transaction.data)
             val transactionDto = TransactionDto(transaction, event)
             contract.webHook?.let { RestTemplate().postForLocation(it, transactionDto) }

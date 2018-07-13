@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Show events on scaffold page
+- Updates events in realtime
+- Show message on current token expired
+- Smart contract optimization
+
+### Removed
+- Remove field description from scaffold
 
 ## [2.3.0] - 2018-06-29
 ### Added

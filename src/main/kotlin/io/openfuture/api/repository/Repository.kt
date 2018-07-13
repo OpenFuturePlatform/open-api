@@ -51,6 +51,8 @@ interface TransactionRepository : BaseRepository<Transaction> {
 
     fun findAllByScaffoldOrderByDateDesc(scaffold: Scaffold, pageable: Pageable): Page<Transaction>
 
+    fun findByHash(hash: String): Transaction?
+
 }
 
 @Repository
