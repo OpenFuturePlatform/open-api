@@ -83,6 +83,8 @@ interface TransactionService {
 
     fun getAll(scaffold: Scaffold, pageRequest: Pageable): Page<Transaction>
 
+    fun find(hash: String): Transaction?
+
     fun save(transaction: Transaction): Transaction
 
 }

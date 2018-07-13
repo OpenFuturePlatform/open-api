@@ -9,6 +9,9 @@ import javax.persistence.*
 @Table(name = "transactions")
 class Transaction(
 
+        @Column(name = "hash", nullable = false, unique = true)
+        val hash: String,
+
         @ManyToOne
         @JoinColumn(name = "scaffold_id", nullable = false)
         val scaffold: Scaffold,
@@ -22,7 +25,7 @@ class Transaction(
 ) : BaseModel() {
 
     companion object {
-        fun of(scaffold: Scaffold, log: Log): Transaction = Transaction(scaffold, log.data)
+        fun of(scaffold: Scaffold, log: Log): Transaction = Transaction(log.transactionHash, scaffold, log.data)
     }
 
 }
