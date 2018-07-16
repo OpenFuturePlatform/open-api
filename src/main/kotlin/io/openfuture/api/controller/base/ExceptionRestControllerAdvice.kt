@@ -49,11 +49,13 @@ class ExceptionRestControllerAdvice {
     @ResponseStatus(code = BAD_REQUEST)
     @ExceptionHandler(IllegalStateException::class)
     fun illegalStateExceptionHandler(exception: IllegalStateException): ExceptionResponse =
-            ExceptionResponse(BAD_REQUEST.value(), exception.message!!)
+            ExceptionResponse(BAD_REQUEST.value(), exception.message ?: """Something went wrong. Please read the
+                |documentation https://docs.openfuture.io/ or contact us openplatform@zensoft.io""".trimMargin())
 
     @ResponseStatus(code = BAD_REQUEST)
     @ExceptionHandler(IllegalArgumentException::class)
     fun illegalArgumentExceptionHandler(exception: IllegalArgumentException): ExceptionResponse =
-            ExceptionResponse(BAD_REQUEST.value(), exception.message!!)
+            ExceptionResponse(BAD_REQUEST.value(), exception.message ?: """Something went wrong. Please read the
+                |documentation https://docs.openfuture.io/ or contact us openplatform@zensoft.io""".trimMargin())
 
 }
