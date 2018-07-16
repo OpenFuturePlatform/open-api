@@ -91,6 +91,7 @@ jacocoTestReport {
                     'io/openfuture/api/*Application*',
                     'io/openfuture/api/model/**',
                     'io/openfuture/api/exception/**',
+                    'io/openfuture/api/annotation/**',
                     'io/openfuture/api/config/**'
             ])
         })
