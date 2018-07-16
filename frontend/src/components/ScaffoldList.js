@@ -43,7 +43,7 @@ class ScaffoldList extends Component {
               </Grid.Row>
               <Grid.Row>
                 <Grid.Column width={4}>Fiat Amount: {scaffoldData.fiatAmount}</Grid.Column>
-                <Grid.Column width={4}>Currecy: {scaffoldData.currency}</Grid.Column>
+                <Grid.Column width={4}>Currency: {scaffoldData.currency}</Grid.Column>
                 <Grid.Column width={8}>Scaffold Amount: {scaffoldData.conversionAmount} Ether</Grid.Column>
               </Grid.Row>
             </Grid>

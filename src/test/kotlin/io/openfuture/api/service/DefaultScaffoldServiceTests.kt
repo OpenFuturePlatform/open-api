@@ -55,7 +55,7 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
         val user = createUser()
         val expectedScaffoldPages = PageImpl(Collections.singletonList(createScaffold()), pageable, 1)
 
-        given(repository.findAllByOpenKeyUser(user, pageable)).willReturn(expectedScaffoldPages)
+        given(repository.findAllByOpenKeyUserOrderByIdDesc(user, pageable)).willReturn(expectedScaffoldPages)
 
         val actualScaffoldPages = service.getAll(user, pageable)
 

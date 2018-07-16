@@ -30,10 +30,10 @@ internal class TransactionRepositoryTests : RepositoryTests() {
                 "conversionAmount", V1.getId(), "webHook", Collections.emptyList())
         entityManager.persist(scaffold)
 
-        val transaction = Transaction(scaffold, "data binary")
+        val transaction = Transaction("hash", scaffold, "data binary")
         entityManager.persist(transaction)
 
-        val actualOpenKeys = repository.findAllByScaffold(scaffold, PageRequest())
+        val actualOpenKeys = repository.findAllByScaffoldOrderByDateDesc(scaffold, PageRequest())
 
         assertThat(actualOpenKeys.contains(transaction)).isTrue()
     }

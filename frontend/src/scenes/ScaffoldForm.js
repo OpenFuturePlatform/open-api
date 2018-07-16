@@ -14,7 +14,7 @@ import WrappedInput from '../components-ui/inputs/WrappedInput';
 import { convertCurrencies, deployContract, compileContract, deployContractByApi } from '../actions/deploy-contract';
 import { subscribeEthAccount, unsubscribeEthAccount } from '../actions/eth-account';
 import { MIN_BALANCE } from '../const/index';
-import { getMetaMaskError } from '../selectors/getMetaMaskError';
+import { getMetaMaskErrorMessage } from '../selectors/getMetaMaskError';
 import { TemplateSelect } from '../components/TemplateSelect';
 import { WalletSelect } from '../components/WalletSelect';
 import { fetchKeys } from '../actions/keys';
@@ -36,7 +36,7 @@ class ScaffoldForm extends Component {
     const prevEthAccount = prevProps.ethAccount;
     const { ethAccount, initialValues, byApiMethod, dispatch, blur } = this.props;
     const accountChanged = prevEthAccount.account !== ethAccount.account;
-    const networkChanged = prevEthAccount.trueNetwork !== ethAccount.trueNetwork;
+    const networkChanged = prevEthAccount.activeNetworkId !== ethAccount.activeNetworkId;
     const balanceChanged = prevEthAccount.balance !== ethAccount.balance;
     const initialValuesChanged = prevProps.initialValues !== initialValues;
     const byApiMethodChanged = prevProps.byApiMethod !== byApiMethod;
@@ -269,7 +269,7 @@ const mapStateToProps = state => {
   const openKeyOptions = state.keys.filter(it => it.enabled).map(it => ({ text: it.value, value: it.value }));
   const ethAccount = state.ethAccount;
   const byApiMethod = state.auth.byApiMethod;
-  const metaMaskError = getMetaMaskError(state);
+  const metaMaskError = getMetaMaskErrorMessage(state);
 
   return {
     initialValues,

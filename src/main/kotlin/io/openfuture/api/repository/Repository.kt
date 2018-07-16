@@ -24,9 +24,9 @@ interface ScaffoldRepository : BaseRepository<Scaffold> {
 
     fun findByAddressAndOpenKeyUser(address: String, user: User): Scaffold?
 
-    fun findByAddress(address: String): Scaffold?
+    fun findByAddressIgnoreCase(address: String): Scaffold?
 
-    fun findAllByOpenKeyUser(user: User, pageable: Pageable): Page<Scaffold>
+    fun findAllByOpenKeyUserOrderByIdDesc(user: User, pageable: Pageable): Page<Scaffold>
 
 }
 
@@ -49,7 +49,9 @@ interface OpenKeyRepository : BaseRepository<OpenKey> {
 @Repository
 interface TransactionRepository : BaseRepository<Transaction> {
 
-    fun findAllByScaffold(scaffold: Scaffold, pageable: Pageable): Page<Transaction>
+    fun findAllByScaffoldOrderByDateDesc(scaffold: Scaffold, pageable: Pageable): Page<Transaction>
+
+    fun findByHash(hash: String): Transaction?
 
 }
 

@@ -1,11 +1,13 @@
 package io.openfuture.api.component.web3
 
+import io.openfuture.api.component.event.AddTransactionEvent
 import io.openfuture.api.component.web3.event.ProcessorEventDecoder
 import io.openfuture.api.domain.transaction.TransactionDto
 import io.openfuture.api.entity.scaffold.Transaction
 import io.openfuture.api.repository.ScaffoldRepository
 import io.openfuture.api.service.TransactionService
 import org.slf4j.LoggerFactory
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.client.RestTemplate
@@ -15,7 +17,8 @@ import org.web3j.protocol.core.methods.response.Log
 class TransactionHandler(
         private val service: TransactionService,
         private val repository: ScaffoldRepository,
-        private val eventDecoder: ProcessorEventDecoder
+        private val eventDecoder: ProcessorEventDecoder,
+        private val publisher: ApplicationEventPublisher
 ) {
 
     companion object {
@@ -25,12 +28,15 @@ class TransactionHandler(
 
     @Transactional
     fun handle(transactionLog: Log) {
-        val contract = repository.findByAddress(transactionLog.address) ?: return
+        val contract = repository.findByAddressIgnoreCase(transactionLog.address) ?: return
+        if (null != service.find(transactionLog.transactionHash)) return
+        val transaction = service.save(Transaction.of(contract, transactionLog))
 
         try {
-            val transaction = service.save(Transaction.of(contract, transactionLog))
             val event = eventDecoder.getEvent(contract.address, transaction.data)
-            contract.webHook?.let { RestTemplate().postForLocation(it, TransactionDto(transaction, event)) }
+            val transactionDto = TransactionDto(transaction, event)
+            contract.webHook?.let { RestTemplate().postForLocation(it, transactionDto) }
+            publisher.publishEvent(AddTransactionEvent(this, transactionDto))
         } catch (e: Exception) {
             log.warn(e.message)
         }

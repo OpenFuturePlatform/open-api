@@ -41,7 +41,7 @@ class TransactionApiControllerTests : ControllerTests() {
         val openKey = createOpenKey(setOf(Role("ROLE_MASTER")))
         val scaffold = createScaffold(openKey)
         val pageRequest = PageRequest()
-        val transaction = Transaction(scaffold, "data", Date(1531128228590))
+        val transaction = Transaction("hash", scaffold, "data", Date(1531128228590))
 
         given(keyService.find(openKey.value)).willReturn(openKey)
         given(scaffoldService.get(scaffold.address, openKey.user)).willReturn(scaffold)

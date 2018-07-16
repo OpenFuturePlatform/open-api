@@ -32,20 +32,24 @@ export const TransactionEvent = ({
     transactionAmount,
     scaffoldTransactionIndex
   }
-}) => (
-  <div>
-    {date ? formatDate(date) : null} <i>{type.replace(/_/g, ' ')}</i>
+}) => {
+  const resultType = type === 'ACTIVATED_SCAFFOLD' ? 'DEACTIVATED_SCAFFOLD' : type;
+  return (
     <div>
-      {renderAddress('User Address', userAddress)}
-      {renderAddress('to Address', toAddress)}
-      {renderAddress('Customer Address', customerAddress)}
-      {activated ? <TransactionParam>Activated: {activated}</TransactionParam> : null}
-      {partnerShare ? <TransactionParam>Partner Share: {partnerShare}%</TransactionParam> : null}
-      {amount ? <TransactionParam>Amount: {amount}%</TransactionParam> : null}
-      {transactionAmount ? <TransactionParam>Transaction Amount: {transactionAmount}%</TransactionParam> : null}
-      {scaffoldTransactionIndex ? (
-        <TransactionParam>Transaction Index: {scaffoldTransactionIndex}%</TransactionParam>
-      ) : null}
+      {/* <b>{date ? formatDate(date, DD_MMM_YYYY + ' HH:MM') : null}</b> <i>{resultType.replace(/_/g, ' ')}</i> */}
+      <b>{date ? formatDate(date) : null}</b> <i>{resultType.replace(/_/g, ' ')}</i>
+      <div>
+        {renderAddress('User Address', userAddress)}
+        {renderAddress('to Address', toAddress)}
+        {renderAddress('Customer Address', customerAddress)}
+        {activated ? <TransactionParam>Activated: {activated}</TransactionParam> : null}
+        {partnerShare ? <TransactionParam>Partner Share: {partnerShare}%</TransactionParam> : null}
+        {amount ? <TransactionParam>Amount: {amount}%</TransactionParam> : null}
+        {transactionAmount ? <TransactionParam>Transaction Amount: {transactionAmount}%</TransactionParam> : null}
+        {scaffoldTransactionIndex ? (
+          <TransactionParam>Transaction Index: {scaffoldTransactionIndex}%</TransactionParam>
+        ) : null}
+      </div>
     </div>
-  </div>
-);
+  );
+};

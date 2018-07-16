@@ -34,7 +34,7 @@ class DefaultScaffoldService(
 
     @Transactional(readOnly = true)
     override fun getAll(user: User, pageRequest: Pageable): Page<Scaffold> =
-            repository.findAllByOpenKeyUser(user, pageRequest)
+            repository.findAllByOpenKeyUserOrderByIdDesc(user, pageRequest)
 
     @Transactional(readOnly = true)
     override fun get(address: String, user: User): Scaffold = repository.findByAddressAndOpenKeyUser(address, user)
