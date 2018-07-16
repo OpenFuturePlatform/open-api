@@ -18,7 +18,7 @@ class TemplateProcessor(private val freemarkerConfig: Configuration) {
 
             return out.toString()
         } catch (e: Exception) {
-            throw TemplateProcessingException(e.message)
+            throw TemplateProcessingException(e.localizedMessage)
         }
     }
 

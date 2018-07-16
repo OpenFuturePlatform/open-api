@@ -1,3 +1,3 @@
 package io.openfuture.api.exception
 
-class TemplateProcessingException(message: String?) : RuntimeException(message)
+class TemplateProcessingException(message: String) : RuntimeException(message)
