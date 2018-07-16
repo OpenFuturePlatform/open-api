@@ -138,14 +138,14 @@ class DefaultScaffoldService(
     override fun updateShareHolder(address: String, user: User,
                                    holderAddress: String, request: UpdateShareHolderRequest): ScaffoldSummary {
         val scaffold = get(address, user)
-        processor.updateShareHolder(scaffold, address, request.percent!!.toLong())
+        processor.updateShareHolder(scaffold, holderAddress, request.percent!!.toLong())
         return getScaffoldSummary(address, user, true)
     }
 
     @Transactional
     override fun removeShareHolder(address: String, user: User, holderAddress: String): ScaffoldSummary {
         val scaffold = get(address, user)
-        processor.removeShareHolder(scaffold, address)
+        processor.removeShareHolder(scaffold, holderAddress)
         return getScaffoldSummary(address, user, true)
     }
 

@@ -43,6 +43,17 @@ internal class DefaultTransactionServiceTests : UnitTest() {
     }
 
     @Test
+    fun findShouldReturnTransactionByHash() {
+        val expectedTransaction = createTransaction()
+
+        given(repository.findByHash(expectedTransaction.hash)).willReturn(expectedTransaction)
+
+        val actualTransaction = service.find(expectedTransaction.hash)
+
+        assertThat(actualTransaction).isEqualTo(expectedTransaction)
+    }
+
+    @Test
     fun saveTest() {
         val transaction = createTransaction()
 
