@@ -21,20 +21,20 @@ import java.math.BigInteger
 
 abstract class BaseVersionedScaffoldProcessor(
         private val version: ScaffoldVersion,
-        private val compiler: VersionedScaffoldCompiler,
-        private val web3: Web3Wrapper,
-        private val properties: EthereumProperties,
-        private val scaffoldProperties: ScaffoldProperties
+        protected val compiler: VersionedScaffoldCompiler,
+        protected val web3: Web3Wrapper,
+        protected val properties: EthereumProperties,
+        protected val scaffoldProperties: ScaffoldProperties
 ): VersionedScaffoldProcessor {
 
     companion object {
-        private const val GET_SCAFFOLD_SUMMARY_METHOD_NAME = "getScaffoldSummary"
-        private const val DEACTIVATE_SCAFFOLD_METHOD_NAME = "deactivate"
-        private const val ADD_SHARE_HOLDER_METHOD_NAME = "addShareHolder"
-        private const val UPDATE_SHARE_HOLDER_METHOD_NAME = "editShareHolder"
-        private const val REMOVE_SHARE_HOLDER_METHOD_NAME = "deleteShareHolder"
-        private const val GET_SHARE_HOLDER_NUMBER_METHOD_NAME = "getShareHolderCount"
-        private const val GET_SHARE_HOLDER_AT_INDEX_METHOD_NAME = "getShareHolderAddressAndShareAtIndex"
+        const val GET_SCAFFOLD_SUMMARY_METHOD_NAME = "getScaffoldSummary"
+        const val DEACTIVATE_SCAFFOLD_METHOD_NAME = "deactivate"
+        const val ADD_SHARE_HOLDER_METHOD_NAME = "addShareHolder"
+        const val UPDATE_SHARE_HOLDER_METHOD_NAME = "editShareHolder"
+        const val REMOVE_SHARE_HOLDER_METHOD_NAME = "deleteShareHolder"
+        const val GET_SHARE_HOLDER_NUMBER_METHOD_NAME = "getShareHolderCount"
+        const val GET_SHARE_HOLDER_AT_INDEX_METHOD_NAME = "getShareHolderAddressAndShareAtIndex"
     }
 
 

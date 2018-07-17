@@ -226,6 +226,22 @@ class ScaffoldApiControllerTests : ControllerTests() {
     }
 
     @Test
+    fun activateTest() {
+        val scaffoldAddress = "address"
+        val openKey = createOpenKey(setOf(Role("ROLE_MASTER")))
+
+        given(keyService.find(openKey.value)).willReturn(openKey)
+        given(service.activate(scaffoldAddress, openKey.user)).willReturn(createScaffoldSummary())
+
+        mvc.perform(post("/api/scaffolds/$scaffoldAddress")
+                .header(AUTHORIZATION, openKey.value))
+
+                .andExpect(status().isOk)
+
+        verify(service).activate(scaffoldAddress, openKey.user)
+    }
+
+    @Test
     fun getQuotaTest() {
         val scaffoldQuotaDto = ScaffoldQuotaDto(1, 10)
         val openKey = createOpenKey(setOf(Role("ROLE_MASTER")))
