@@ -62,12 +62,11 @@ contract OpenScaffold {
     // event protocol
     uint256 constant PAYMENT_COMPLETED = 1;
     uint256 constant FUNDS_DEPOSITED = 2;
-    uint256 constant SCAFFOLD_ACTIVATED = 3;
+    uint256 constant SCAFFOLD_ACTIVATION = 3;
     uint256 constant SHARE_HOLDER_ADDED = 4;
     uint256 constant SHARE_HOLDER_EDITED = 5;
     uint256 constant SHARE_HOLDER_DELETED = 6;
     uint256 constant PAID_FOR_SHARE_HOLDER = 7;
-    uint256 constant SCAFFOLD_DEACTIVATED = 8;
 
     // events
     event PaymentCompleted(
@@ -77,7 +76,7 @@ contract OpenScaffold {
         uint256 _scaffoldTransactionIndex
     );
     event FundsDeposited(uint256 _eventType, uint256 _amount, address _toAddress);
-    event ActivationScaffold(uint256 _eventType);
+    event ActivationScaffold(uint256 _eventType, bool activated);
     event ShareHolderEvent(uint256 _eventType, address _shareHolderAddress, uint256 _share);
     event PaidForShareHolder(uint256 _eventType, address _userAddress, uint256 _amount);
 
@@ -145,7 +144,7 @@ contract OpenScaffold {
         require(ACTIVATING_TOKENS_AMOUNT <= OPENToken.balanceOf(address(this)));
 
         activated = true;
-        ActivationScaffold(SCAFFOLD_ACTIVATED);
+        ActivationScaffold(SCAFFOLD_ACTIVATION, activated);
     }
 
     // deactivate Scaffold contract
@@ -156,7 +155,7 @@ contract OpenScaffold {
     {
         activated = false;
         OPENToken.transfer(developerAddress, OPENToken.balanceOf(address(this)));
-        ActivationScaffold(SCAFFOLD_DEACTIVATED);
+        ActivationScaffold(SCAFFOLD_ACTIVATION, activated);
     }
 
     // add new shareholder(partner)
