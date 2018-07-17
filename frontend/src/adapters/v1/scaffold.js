@@ -1,4 +1,4 @@
-export const adaptScaffold = fields => {
+export const adaptScaffoldV1 = fields => {
   let adapted = { ...fields };
   if (fields.description) {
     adapted = { ...adapted, title: fields.description };
@@ -9,7 +9,7 @@ export const adaptScaffold = fields => {
   return adapted;
 };
 
-export const serializeScaffold = fields => {
+export const serializeScaffoldV1 = fields => {
   let serialized = { ...fields };
   if (fields.title) {
     serialized = { ...serialized, description: fields.title };

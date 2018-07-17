@@ -1,0 +1,8 @@
+CREATE TABLE versions(
+  id INT PRIMARY KEY,
+  key VARCHAR NOT NULL UNIQUE
+);
+
+INSERT INTO versions(id, key) VALUES (1, 'V1');
+
+ALTER TABLE scaffolds ADD COLUMN version_id INT NOT NULL DEFAULT 1 REFERENCES versions

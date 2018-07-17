@@ -72,7 +72,6 @@ const isUrl = str => {
 };
 
 export const asyncValidate = async values => {
-  console.log('hi', values);
   if (!values.webHook) {
     return;
   }
