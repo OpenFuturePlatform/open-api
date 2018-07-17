@@ -3,6 +3,7 @@ package io.openfuture.api.domain.scaffold
 import io.openfuture.api.domain.auth.UserDto
 import io.openfuture.api.entity.scaffold.Currency
 import io.openfuture.api.entity.scaffold.Scaffold
+import io.openfuture.api.entity.scaffold.ScaffoldVersion
 
 data class ScaffoldDto(
         val address: String,
@@ -14,7 +15,8 @@ data class ScaffoldDto(
         val conversionAmount: String,
         val developerAddress: String,
         val webHook: String?,
-        val properties: List<ScaffoldPropertyDto>
+        val properties: List<ScaffoldPropertyDto>,
+        val version: ScaffoldVersion
 ) {
 
     constructor(scaffold: Scaffold) : this(
@@ -27,7 +29,8 @@ data class ScaffoldDto(
             scaffold.conversionAmount,
             scaffold.developerAddress,
             scaffold.webHook,
-            scaffold.property.map { ScaffoldPropertyDto(it) }
+            scaffold.property.map { ScaffoldPropertyDto(it) },
+            scaffold.getVersion()
     )
 
 }

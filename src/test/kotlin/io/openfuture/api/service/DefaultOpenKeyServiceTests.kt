@@ -7,6 +7,7 @@ import io.openfuture.api.entity.auth.OpenKey
 import io.openfuture.api.entity.auth.User
 import io.openfuture.api.exception.NotFoundException
 import io.openfuture.api.repository.OpenKeyRepository
+import org.apache.commons.lang3.time.DateUtils
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
@@ -72,6 +73,18 @@ class DefaultOpenKeyServiceTests : UnitTest() {
     }
 
     @Test
+    fun findWhenDateExpiredShouldReturnNull() {
+        val openKeyValue = "op_pk_9de7cbb4-857c-49e9-87d2-fc91428c4c12"
+        val expectedOpenKey = createOpenKey(DateUtils.addMinutes(Date(), -1))
+
+        given(repository.findByValueAndEnabledIsTrue(eq(openKeyValue))).willReturn(expectedOpenKey)
+
+        val actualOpenKey = service.find(openKeyValue)
+
+        assertThat(actualOpenKey).isNull()
+    }
+
+    @Test
     fun generateTest() {
         val user = createUser()
 
@@ -98,7 +111,9 @@ class DefaultOpenKeyServiceTests : UnitTest() {
         assertThat(actualOpenKey.enabled).isFalse()
     }
 
-    private fun createOpenKey(): OpenKey = OpenKey(createUser(), null, "op_pk_9de7cbb4-857c-49e9-87d2-fc91428c4c12", true)
+    private fun createOpenKey(): OpenKey = createOpenKey(null)
+
+    private fun createOpenKey(date: Date?): OpenKey = OpenKey(createUser(), date, "op_pk_9de7cbb4-857c-49e9-87d2-fc91428c4c12", true)
 
     private fun createUser(): User = User("104113085667282103363", 0, Collections.emptySet(), Collections.emptySet())
 

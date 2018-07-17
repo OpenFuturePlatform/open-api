@@ -115,8 +115,7 @@ class ScaffoldStatus extends Component {
   }
 
   render() {
-    const { error, tokenBalance } = this.props;
-    const status = tokenBalance >= MIN_CONTRACT_DEPOSIT;
+    const { error, tokenBalance, activated } = this.props;
 
     if (error) {
       return <div style={{ color: 'red' }}>{error}</div>;
@@ -124,9 +123,9 @@ class ScaffoldStatus extends Component {
 
     return (
       <div>
-        Status: {status ? 'Active' : 'Disabled'} ({this.props.tokenBalance || 0} tokens)
+        Status: {activated ? 'Active' : 'Disabled'} ({tokenBalance || 0} tokens)
         <div style={{ marginTop: '10px' }}>
-          {status ? this.renderDeactivateButton() : this.renderActivateButton()}
+          {activated ? this.renderDeactivateButton() : this.renderActivateButton()}
           {/*{this.renderDeactivateButton()} {this.renderActivateButton()}*/}
         </div>
       </div>
@@ -134,10 +133,22 @@ class ScaffoldStatus extends Component {
   }
 }
 
-const mapStateToProps = (state, { scaffoldAddress, abi, summary: { tokenBalance, developerAddress }, error }) => {
+const mapStateToProps = (
+  state,
+  { scaffoldAddress, abi, summary: { tokenBalance, developerAddress, activated }, error }
+) => {
   const { ethAccount } = state;
   const metaMaskError = getMetaMaskErrorMessage(state);
-  return { ethAccount, developerAddress, scaffoldAddress, abi, tokenBalance, metaMaskError, fetchError: error };
+  return {
+    ethAccount,
+    developerAddress,
+    scaffoldAddress,
+    abi,
+    tokenBalance,
+    metaMaskError,
+    fetchError: error,
+    activated
+  };
 };
 
 const mapDispatchToProps = dispatch => ({
