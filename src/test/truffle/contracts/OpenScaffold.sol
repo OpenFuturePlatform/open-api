@@ -62,11 +62,12 @@ contract OpenScaffold {
     // event protocol
     uint256 constant PAYMENT_COMPLETED = 1;
     uint256 constant FUNDS_DEPOSITED = 2;
-    uint256 constant ACTIVATED_SCAFFOLD = 3;
-    uint256 constant ADDED_SHARE_HOLDER = 4;
-    uint256 constant EDITED_SHARE_HOLDER = 5;
-    uint256 constant DELETED_SHARE_HOLDER = 6;
-    uint256 constant PAYED_FOR_SHARE_HOLDER = 7;
+    uint256 constant SCAFFOLD_ACTIVATED = 3;
+    uint256 constant SHARE_HOLDER_ADDED = 4;
+    uint256 constant SHARE_HOLDER_EDITED = 5;
+    uint256 constant SHARE_HOLDER_DELETED = 6;
+    uint256 constant PAID_FOR_SHARE_HOLDER = 7;
+    uint256 constant SCAFFOLD_DEACTIVATED = 8;
 
     // events
     event PaymentCompleted(
@@ -76,9 +77,9 @@ contract OpenScaffold {
         uint256 _scaffoldTransactionIndex
     );
     event FundsDeposited(uint256 _eventType, uint256 _amount, address _toAddress);
-    event ActivatedScaffold(uint256 _eventType, bool _activated);
+    event ActivationScaffold(uint256 _eventType);
     event ShareHolderEvent(uint256 _eventType, address _shareHolderAddress, uint256 _share);
-    event PayedForShareHolder(uint256 _eventType, address _userAddress, uint256 _amount);
+    event PaidForShareHolder(uint256 _eventType, address _userAddress, uint256 _amount);
 
 
     // custom dataTypes
@@ -91,7 +92,6 @@ contract OpenScaffold {
 
     // constructor variables
     address public developerAddress;
-    string public scaffoldDescription;
     bytes32 public fiatAmount;
     bytes32 public fiatCurrency;
     uint256 public scaffoldAmount;
@@ -106,6 +106,7 @@ contract OpenScaffold {
     uint256 constant private ACTIVATING_TOKENS_AMOUNT = 10 * 10**8;
     address constant private OPEN_TOKEN_ADDRESS = 0x0;
     ERC20Token public OPENToken = ERC20Token(OPEN_TOKEN_ADDRESS);
+    bool public activated = false;
 
 
     // Throws if called by any account other than the developer or OPEN platform addresses.
@@ -115,8 +116,8 @@ contract OpenScaffold {
     }
 
     // Throws if contract is not activated.
-    modifier activated() {
-//        require(ACTIVATING_TOKENS_AMOUNT <= OPENToken.balanceOf(address(this)));
+    modifier onlyActivated() {
+//        require(activated);
         _;
     }
 
@@ -125,7 +126,6 @@ contract OpenScaffold {
     function OpenScaffold(
         address _developerAddress,
         address _platformAddress,
-        string _description,
         bytes32 _fiatAmount,
         bytes32 _fiatCurrency,
         uint256 _scaffoldAmount
@@ -134,25 +134,29 @@ contract OpenScaffold {
     {
         developerAddress = _developerAddress;
         platformAddress = _platformAddress;
-        scaffoldDescription = _description;
         fiatAmount = _fiatAmount;
         fiatCurrency = _fiatCurrency;
         scaffoldAmount = _scaffoldAmount;
     }
 
-    // set Scaffold description
-    function setDescription(string _description) public onlyDeveloper {
-        scaffoldDescription = _description;
+    // activate Scaffold contract
+    function activate() public onlyDeveloper {
+        require(!activated);
+        require(ACTIVATING_TOKENS_AMOUNT <= OPENToken.balanceOf(address(this)));
+
+        activated = true;
+        ActivationScaffold(SCAFFOLD_ACTIVATED);
     }
 
     // deactivate Scaffold contract
     function deactivate()
         public
         onlyDeveloper
-        activated
+        onlyActivated
     {
+        activated = false;
         OPENToken.transfer(developerAddress, OPENToken.balanceOf(address(this)));
-        ActivatedScaffold(ACTIVATED_SCAFFOLD, false);
+        ActivationScaffold(SCAFFOLD_DEACTIVATED);
     }
 
     // add new shareholder(partner)
@@ -163,14 +167,14 @@ contract OpenScaffold {
         require(!isShareHolder(_shareHolderAddress));
         require(totalAmountShares + _partnerShare <= 100);
 
-        // add share for total amount
-        totalAmountShares += _partnerShare;
-
         partners[_shareHolderAddress].share = _partnerShare;
         //set index for shareholder
         partners[_shareHolderAddress].index = shareHolderAddresses.push(_shareHolderAddress) - 1;
 
-        createShareHolderEvent(ADDED_SHARE_HOLDER, _shareHolderAddress, _partnerShare);
+        // add share for total amount
+        totalAmountShares += _partnerShare;
+
+        createShareHolderEvent(SHARE_HOLDER_ADDED, _shareHolderAddress, _partnerShare);
     }
 
     // edit partner share
@@ -189,7 +193,7 @@ contract OpenScaffold {
 
         partners[_shareHolderAddress].share = _partnerShare;
 
-        createShareHolderEvent(EDITED_SHARE_HOLDER, _shareHolderAddress, _partnerShare);
+        createShareHolderEvent(SHARE_HOLDER_EDITED, _shareHolderAddress, _partnerShare);
     }
 
     // delete partner share
@@ -210,7 +214,7 @@ contract OpenScaffold {
 
         shareHolderAddresses.length--;
 
-        createShareHolderEvent(DELETED_SHARE_HOLDER, _shareHolderAddress, partners[_shareHolderAddress].share);
+        createShareHolderEvent(SHARE_HOLDER_DELETED, _shareHolderAddress, partners[_shareHolderAddress].share);
     }
 
     // get shareholder share by address
@@ -252,8 +256,8 @@ contract OpenScaffold {
     }
 
     // payable function for receiving customer funds
-    function payDeveloper() public payable activated {
-        require(msg.value == scaffoldAmount);
+    function payDeveloper() public payable onlyActivated {
+        require(scaffoldAmount == msg.value);
         payWithShares(msg.sender, msg.value);
     }
 
@@ -293,8 +297,8 @@ contract OpenScaffold {
             // transfer amount for shareholder
             withdrawFunds(shareHolderAddress, shareHolderAmount);
 
-            PayedForShareHolder(
-                PAYED_FOR_SHARE_HOLDER,
+            PaidForShareHolder(
+                PAID_FOR_SHARE_HOLDER,
                 shareHolderAddress,
                 shareHolderAmount
             );
@@ -358,23 +362,23 @@ contract OpenScaffold {
         public
         view
         returns (
-        string,
-        bytes32,
-        bytes32,
-        uint256,
-        uint256,
-        address,
-        uint256
+            bytes32,
+            bytes32,
+            uint256,
+            uint256,
+            address,
+            uint256,
+            bool
         )
     {
         return (
-        scaffoldDescription,
-        fiatAmount,
-        fiatCurrency,
-        scaffoldAmount,
-        scaffoldTransactionIndex,
-        developerAddress,
-        OPENToken.balanceOf(address(this))
+            fiatAmount,
+            fiatCurrency,
+            scaffoldAmount,
+            scaffoldTransactionIndex,
+            developerAddress,
+            OPENToken.balanceOf(address(this)),
+            activated
         );
     }
 
