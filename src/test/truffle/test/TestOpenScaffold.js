@@ -15,7 +15,7 @@ contract('OpenScaffold JS TEST', (accounts) => {
 
 
     describe("Deploy contract", function() {
-        it("should have OpenScaffold deployed", () => {
+        it("Should have OpenScaffold deployed", () => {
             assert(scaffoldContract !== undefined, "OpenScaffold is deployed");
         });
     });
@@ -23,32 +23,25 @@ contract('OpenScaffold JS TEST', (accounts) => {
 
     describe("Testing constructor variables", function() {
 
-        it('has a developerAddress address', async () => {
+        it('Has a developerAddress', async () => {
             assert.equal(await scaffoldContract.developerAddress.call(), developerAddress);
         });
 
-        it('has a developer address', async () => {
-            let scaffoldDescription = await scaffoldContract.scaffoldDescription.call();
-
-            assert.equal(await !!scaffoldDescription, true, "Description is not set");
-            assert.equal(await scaffoldDescription, "test description", "Wrong description");
-        });
-
-        it('has a fiatAmount', async () => {
+        it('Has a fiatAmount', async () => {
             let fiatAmount = await scaffoldContract.fiatAmount.call();
 
-            assert.equal( !!fiatAmount, true, "FiatAmount is not set");
-            assert.equal( Web3Utils.hexToNumber(fiatAmount.replace(/\B0+/g, '')),100, "Wrong fiatAmount value");
+            assert.equal(!!fiatAmount, true, "FiatAmount is not set");
+            assert.equal(Web3Utils.hexToNumber(fiatAmount.replace(/\B0+/g, '')), 100, "Wrong fiatAmount value");
         });
 
-        it('has a fiatCurrency', async () => {
+        it('Has a fiatCurrency', async () => {
             let fiatCurrency = await scaffoldContract.fiatCurrency.call();
 
             assert.equal(await !!fiatCurrency, true, "FiatCurrency is not set");
             assert.equal(await Web3Utils.hexToString(fiatCurrency), "USD", "Wrong fiatCurrency value");
         });
 
-        it('has a scaffoldAmount', async () => {
+        it('Has a scaffoldAmount', async () => {
             let scaffoldAmount  = await scaffoldContract.scaffoldAmount.call();
             let amountValue     = 10*10**18;
 
@@ -125,7 +118,7 @@ contract('OpenScaffold JS TEST', (accounts) => {
             assert.equal(shareAmount, share, "Wrong, share amount is not equal");
         });
 
-        it('Has a share holder address and share from index', async () => {
+        it('Has a share holder address and share at index', async () => {
             let shareHolderAtIndex = await scaffoldContract.getShareHolderAtIndex(0);
             let holdersShare = await scaffoldContract.getHoldersShare(shareHolderAtIndex);
             let addressAndShare = await scaffoldContract.getShareHolderAddressAndShareAtIndex(0);
@@ -155,18 +148,7 @@ contract('OpenScaffold JS TEST', (accounts) => {
 
     describe("Testing Main Scaffold functions", async function() {
 
-        it('Has a new scaffold description', async () => {
-            let oldDescription = await scaffoldContract.scaffoldDescription.call();
-
-             await scaffoldContract.setDescription("new description");
-
-            let newDescription = await scaffoldContract.scaffoldDescription.call();
-
-            assert(!!newDescription, "Wrong, description is empty");
-            assert(newDescription !== oldDescription, "Wrong, contract description is not set");
-        });
-
-        it('Has a coins payed to shareholders', async () => {
+        it('Has a funds paid to shareholders', async () => {
             // customer wallet
             let accountForPay = accounts[7];
             // amount of coins sent
@@ -192,7 +174,6 @@ contract('OpenScaffold JS TEST', (accounts) => {
                 return (web3.fromWei(web3.eth.getBalance(account))).toNumber();
             }
 
-
             // get accounts balance before send coins
             vendorAddressBalanceBeforeSend      = await (getBalance(accounts[0]));
             platformAddressBalanceBeforeSend    = await (getBalance(accounts[1]));
@@ -203,8 +184,7 @@ contract('OpenScaffold JS TEST', (accounts) => {
             let hldrOneShare = (await scaffoldContract.getHoldersShare(accounts[2])).toNumber();
             let hldrTwoShare = (await scaffoldContract.getHoldersShare(accounts[4])).toNumber();
 
-
-             new Promise((resolve, reject) => {
+            new Promise((resolve, reject) => {
 
                 // pay from customer to contract
                 let handleReceipt = (error, receipt) => {

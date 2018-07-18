@@ -128,6 +128,13 @@ class DefaultScaffoldService(
     }
 
     @Transactional
+    override fun activate(address: String, user: User): ScaffoldSummary {
+        val scaffold = get(address, user)
+        processor.activate(scaffold)
+        return getScaffoldSummary(address, user, true)
+    }
+
+    @Transactional
     override fun addShareHolder(address: String, user: User, request: AddShareHolderRequest): ScaffoldSummary {
         val scaffold = get(address, user)
         processor.addShareHolder(scaffold, request.address!!, request.percent!!.toLong())

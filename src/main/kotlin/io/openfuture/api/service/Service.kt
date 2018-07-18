@@ -34,6 +34,8 @@ interface ScaffoldService {
 
     fun deactivate(address: String, user: User): ScaffoldSummary
 
+    fun activate(address: String, user: User): ScaffoldSummary
+
     fun addShareHolder(address: String, user: User, request: AddShareHolderRequest): ScaffoldSummary
 
     fun updateShareHolder(address: String, user: User,
@@ -83,7 +85,7 @@ interface TransactionService {
 
     fun getAll(scaffold: Scaffold, pageRequest: Pageable): Page<Transaction>
 
-    fun find(hash: String): Transaction?
+    fun find(hash: String, index: String): Transaction?
 
     fun save(transaction: Transaction): Transaction
 

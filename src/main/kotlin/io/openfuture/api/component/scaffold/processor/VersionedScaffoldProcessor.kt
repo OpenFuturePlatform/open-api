@@ -18,6 +18,8 @@ interface VersionedScaffoldProcessor {
 
     fun deactivate(scaffold: Scaffold)
 
+    fun activate(scaffold: Scaffold)
+
     fun addShareHolder(scaffold: Scaffold, address: String, percent: Long)
 
     fun updateShareHolder(scaffold: Scaffold, address: String, percent: Long)

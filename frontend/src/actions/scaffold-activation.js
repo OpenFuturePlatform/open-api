@@ -1,56 +1,80 @@
-import eth from '../utils/eth';
-import { SET_CURRENT_ETH_ACCOUNT } from './types';
 import { fetchScaffoldDetails } from './scaffolds';
-import { openTokenSelector } from '../selectors/open-token';
-import { apiPost } from './apiRequest';
-import { getScaffoldDeactivateScaffoldPath } from '../utils/apiPathes';
+import { openTokenSelectorWeb3 } from '../selectors/open-token';
+import { apiPost, apiDelete } from './apiRequest';
+import { getScaffoldsPath } from '../utils/apiPathes';
+import { getWalletMethod } from '../selectors/getWalletMethod';
+import { getWeb3Contract } from '../utils/web3';
+import { parseApiError } from '../utils/parseApiError';
 
-export const activateScaffold = (scaffoldAddress, fromAddress, amount = '10.0') => async (dispatch, getState) => {
-  const openToken = openTokenSelector(getState());
-  const hash = await openToken.transfer(scaffoldAddress, amount * 100000000, { from: fromAddress });
-
-  dispatch({ type: SET_CURRENT_ETH_ACCOUNT, payload: { activating: true, activatingHash: hash } });
-  dispatch(subscribeScaffoldActivation(hash, scaffoldAddress));
+export const deactivateScaffoldByMetaMask = scaffold => async () => {
+  const contract = getWeb3Contract(scaffold);
+  if (!contract) {
+    throw new Error('Install MetaMask to activate Scaffold via Private Wallet');
+  }
+  return await contract.methods.deactivate().send({ from: scaffold.developerAddress });
 };
 
-export const deactivateScaffold = (scaffoldAddress, abi, developerAddress) => async dispatch => {
-  const scaffoldContract = eth.contract(JSON.parse(abi)).at(scaffoldAddress);
-  const hash = await scaffoldContract.deactivate({ from: developerAddress });
-
-  dispatch({ type: SET_CURRENT_ETH_ACCOUNT, payload: { activating: true, activatingHash: hash } });
-  dispatch(subscribeScaffoldActivation(hash, scaffoldAddress));
-};
-
-export const deactivateScaffoldByApi = scaffoldAddress => async dispatch => {
+export const deactivateScaffoldByApi = scaffold => async dispatch => {
   try {
-    await dispatch(apiPost(getScaffoldDeactivateScaffoldPath()));
-    dispatch(fetchScaffoldDetails(scaffoldAddress));
-  } catch (err) {
-    console.log('Error deactivating scaffolds', err);
+    await dispatch(apiDelete(getScaffoldsPath(scaffold.address)));
+  } catch (e) {
+    throw parseApiError(e);
   }
 };
 
-let interval;
+export const deactivateScaffold = scaffold => async (dispatch, getState) => {
+  const state = getState();
+  const { byApiMethod } = getWalletMethod(state);
 
-export const subscribeScaffoldActivation = (hash, scaffoldAddress) => async dispatch => {
-  if (!hash) {
-    dispatch({ type: SET_CURRENT_ETH_ACCOUNT, payload: { activating: false, activatingHash: null } });
+  if (byApiMethod) {
+    await dispatch(deactivateScaffoldByApi(scaffold));
+  } else {
+    await dispatch(deactivateScaffoldByMetaMask(scaffold));
   }
 
-  if (interval || !hash) {
-    return;
+  dispatch(fetchScaffoldDetails(scaffold.address));
+};
+
+export const topUpTokenBalance = (scaffold, amount = '10.0') => async (dispatch, getState) => {
+  const state = getState();
+  const openToken = openTokenSelectorWeb3(state);
+  const tokenDonorWallet = state.ethAccount.account;
+
+  const result = await openToken.methods
+    .transfer(scaffold.address, amount * 100000000)
+    .send({ from: tokenDonorWallet });
+
+  dispatch(fetchScaffoldDetails(scaffold.address));
+  return result;
+};
+
+export const activateScaffoldByMetaMask = scaffold => async () => {
+  const contract = getWeb3Contract(scaffold);
+
+  if (!contract) {
+    throw new Error('Install MetaMask to activate Scaffold via Private Wallet');
   }
 
-  interval = setInterval(async () => {
-    try {
-      const receipt = await eth.getTransactionReceipt(hash);
-      if (!receipt) return;
-      clearInterval(interval);
-      interval = null;
-      dispatch({ type: SET_CURRENT_ETH_ACCOUNT, payload: { activating: false, activatingHash: null } });
-      dispatch(fetchScaffoldDetails(scaffoldAddress));
-    } catch (reason) {
-      clearInterval(interval);
-    }
-  }, 1000);
+  return await contract.methods.activate().send({ from: scaffold.developerAddress });
+};
+
+export const activateScaffoldByApi = scaffold => async dispatch => {
+  try {
+    return await dispatch(apiPost(getScaffoldsPath(scaffold.address), {}));
+  } catch (e) {
+    throw parseApiError(e);
+  }
+};
+
+export const activateScaffold = scaffold => async (dispatch, getState) => {
+  const state = getState();
+  const { byApiMethod } = getWalletMethod(state);
+
+  if (byApiMethod) {
+    await dispatch(activateScaffoldByApi(scaffold));
+  } else {
+    await dispatch(activateScaffoldByMetaMask(scaffold));
+  }
+
+  dispatch(fetchScaffoldDetails(scaffold.address));
 };

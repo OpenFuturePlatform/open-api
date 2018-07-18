@@ -221,7 +221,8 @@ internal class V1ScaffoldCompilerTests : UnitTest() {
     }
 
     private fun createScaffoldContent(): String {
-        val resource = javaClass.classLoader.getResource("templates/scaffold.ftl")
+        val resource = javaClass.classLoader
+                .getResource("templates/scaffold_${scaffoldCompiler.getVersion().name.toLowerCase()}.ftl")
         return IOUtils.toString(resource, Charset.defaultCharset())
     }
 

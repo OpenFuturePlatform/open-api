@@ -1,17 +1,16 @@
-var OpenScaffold = artifacts.require("./OpenScaffold.sol");
-var ExposedOpenScaffold = artifacts.require("./ExposedOpenScaffold.sol");
+const OpenScaffold = artifacts.require("./OpenScaffold.sol");
+const ExposedOpenScaffold = artifacts.require("./ExposedOpenScaffold.sol");
 
-let developerAddress = web3.eth.accounts[0];
-let platformAddress = web3.eth.accounts[1];
+const developerAddress = web3.eth.accounts[0];
+const platformAddress = web3.eth.accounts[1];
 
-let description = "test description";
-let fiatCurrency = "100";
-let fiatAmount = "USD";
+const fiatCurrency = "100";
+const fiatAmount = "USD";
 // amount in wei (1 ether = 1*10^18 wei)
-let weiAmount = 10*10**18;
+const weiAmount = 10*10**18;
 
 module.exports = function(deployer) {
-  deployer.deploy(OpenScaffold, developerAddress, platformAddress, description, fiatCurrency, fiatAmount, weiAmount);
+  deployer.deploy(OpenScaffold, developerAddress, platformAddress, fiatCurrency, fiatAmount, weiAmount);
   deployer.link(OpenScaffold, ExposedOpenScaffold);
-  deployer.deploy(ExposedOpenScaffold, developerAddress, platformAddress, description, fiatCurrency, fiatAmount, weiAmount);
+  deployer.deploy(ExposedOpenScaffold, developerAddress, platformAddress, fiatCurrency, fiatAmount, weiAmount);
 };

@@ -4,13 +4,15 @@ import { setShareHolders } from './share-holders';
 import { getScaffoldsSummaryPath } from '../utils/apiPathes';
 import { apiGet } from './apiRequest';
 import { contractVersion } from '../adapters/contract-version';
+import { parseApiError } from '../utils/parseApiError';
 
 export const fetchScaffoldSummaryFromApi = scaffold => async dispatch => {
   const { address } = scaffold;
   dispatch({ type: SET_SCAFFOLD_SET, payload: { address, loading: true } });
 
   try {
-    const summary = await dispatch(apiGet(getScaffoldsSummaryPath(address)));
+    const summaryResponse = await dispatch(apiGet(getScaffoldsSummaryPath(address)));
+    const summary = contractVersion(scaffold.version).serializeScaffoldSummaryByApi(summaryResponse);
     const shareHolders = summary.shareHolders.map(it => ({
       ...it,
       share: it.percent
@@ -18,9 +20,9 @@ export const fetchScaffoldSummaryFromApi = scaffold => async dispatch => {
     dispatch({ type: SET_SCAFFOLD_SET, payload: { address, summary, loading: false } });
     dispatch(setShareHolders(address, shareHolders));
   } catch (e) {
-    const error = `${e.response.status}: ${e.response.message || e.response.statusText}`;
-    dispatch({ type: SET_SCAFFOLD_SET, payload: { address, error, loading: false } });
-    throw e;
+    const error = parseApiError(e);
+    dispatch({ type: SET_SCAFFOLD_SET, payload: { address, error: error.message, loading: false } });
+    throw error;
   }
 };
 
@@ -38,7 +40,7 @@ export const fetchScaffoldSummaryFromChain = scaffold => async dispatch => {
 
   try {
     const summaryResponse = await contract.getScaffoldSummary();
-    const summary = contractVersion(scaffold.version).serializeScaffoldSummary(summaryResponse);
+    const summary = contractVersion(scaffold.version).serializeScaffoldSummaryByMetaMask(summaryResponse);
     const payload = { address, summary, loading: false };
     dispatch({ type: SET_SCAFFOLD_SET, payload });
   } catch (e) {
