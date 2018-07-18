@@ -36,7 +36,6 @@ internal class TransactionHandlerTests : UnitTest() {
         given(log.transactionHash).willReturn("hash")
         given(log.address).willReturn("0xba37163625b3f2e96112562858c12b75963af138")
         given(log.data).willReturn("data")
-        given(log.type).willReturn("type")
         given(log.logIndexRaw).willReturn("index")
     }
 
