@@ -25,6 +25,7 @@ internal class TransactionHandlerTests : UnitTest() {
     @Mock private lateinit var scaffoldRepository: ScaffoldRepository
     @Mock private lateinit var eventDecoder: ProcessorEventDecoder
     @Mock private lateinit var publisher: ApplicationEventPublisher
+    @Mock private lateinit var log: Log
 
     private lateinit var transactionHandler: TransactionHandler
 
@@ -32,11 +33,15 @@ internal class TransactionHandlerTests : UnitTest() {
     @Before
     fun setUp() {
         transactionHandler = TransactionHandler(transactionService, scaffoldRepository, eventDecoder, publisher)
+        given(log.transactionHash).willReturn("hash")
+        given(log.address).willReturn("0xba37163625b3f2e96112562858c12b75963af138")
+        given(log.data).willReturn("data")
+        given(log.type).willReturn("type")
+        given(log.logIndexRaw).willReturn("index")
     }
 
     @Test
     fun handleTest() {
-        val log = createLog()
         val user = User("104113085667282103363")
         val scaffold = Scaffold("0xba37163625b32e96112562858c12b75963af138", OpenKey(user), "abi", "developerAddress",
                 "description", "fiatAmount", 1, "conversionAmount", V1.getId(), "https://test.com", mutableListOf())
@@ -49,8 +54,6 @@ internal class TransactionHandlerTests : UnitTest() {
 
     @Test
     fun handleWhenEmptyScaffoldShouldNotSaveTransactionTest() {
-        val log = createLog()
-
         given(scaffoldRepository.findByAddressIgnoreCase(log.address)).willReturn(null)
 
         transactionHandler.handle(log)
@@ -58,6 +61,4 @@ internal class TransactionHandlerTests : UnitTest() {
         verify(transactionService, never()).save(any(Transaction::class.java))
     }
 
-    private fun createLog(): Log = Log().apply { transactionHash = "hash";
-        address = "0xba37163625b3f2e96112562858c12b75963af138"; data = "data" ; type = "type"}
 }

@@ -46,9 +46,9 @@ internal class DefaultTransactionServiceTests : UnitTest() {
     fun findShouldReturnTransactionByHash() {
         val expectedTransaction = createTransaction()
 
-        given(repository.findByHash(expectedTransaction.hash)).willReturn(expectedTransaction)
+        given(repository.findByHashAndIndex(expectedTransaction.hash, expectedTransaction.index)).willReturn(expectedTransaction)
 
-        val actualTransaction = service.find(expectedTransaction.hash)
+        val actualTransaction = service.find(expectedTransaction.hash, expectedTransaction.index)
 
         assertThat(actualTransaction).isEqualTo(expectedTransaction)
     }
@@ -65,7 +65,7 @@ internal class DefaultTransactionServiceTests : UnitTest() {
         assertThat(actualTransaction.scaffold).isEqualTo(transaction.scaffold)
     }
 
-    private fun createTransaction(): Transaction = Transaction("hash", createScaffold(), "data binary")
+    private fun createTransaction(): Transaction = Transaction("hash", "index", createScaffold(), "data binary")
 
     private fun createScaffold(): Scaffold {
         val openKey = OpenKey(User("104113085667282103363"))

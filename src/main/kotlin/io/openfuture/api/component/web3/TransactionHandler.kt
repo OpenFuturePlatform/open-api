@@ -29,7 +29,7 @@ class TransactionHandler(
     @Transactional
     fun handle(transactionLog: Log) {
         val contract = repository.findByAddressIgnoreCase(transactionLog.address) ?: return
-        if (null != service.find(transactionLog.transactionHash)) return
+        if (null != service.find(transactionLog.transactionHash, transactionLog.logIndexRaw)) return
         val transaction = service.save(Transaction.of(contract, transactionLog))
 
         try {
