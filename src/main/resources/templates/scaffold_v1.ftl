@@ -196,17 +196,15 @@ contract OpenScaffold {
         // delete share percent
         totalAmountShares -= partners[_shareHolderAddress].share;
 
-        uint256 indexToDelete = partners[_shareHolderAddress].index;
-        address addressToMove = shareHolderAddresses[shareHolderAddresses.length - 1];
+        uint256 rowToDelete = partners[_shareHolderAddress].index;
+        address keyToMove = shareHolderAddresses[shareHolderAddresses.length - 1];
 
-        shareHolderAddresses[indexToDelete] = addressToMove;
+        shareHolderAddresses[rowToDelete] = keyToMove;
+        partners[keyToMove].index = rowToDelete;
+
         shareHolderAddresses.length--;
 
-        partners[addressToMove].index = indexToDelete;
-        uint256 partnerShare = partners[_shareHolderAddress].share;
-        delete partners[_shareHolderAddress];
-
-        createShareHolderEvent(DELETED_SHARE_HOLDER, _shareHolderAddress, partnerShare);
+        createShareHolderEvent(DELETED_SHARE_HOLDER, _shareHolderAddress, partners[_shareHolderAddress].share);
     }
 
     // get shareholder share by address
