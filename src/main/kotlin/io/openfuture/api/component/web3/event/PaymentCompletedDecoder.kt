@@ -9,6 +9,8 @@ import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.Bool
 import org.web3j.abi.datatypes.generated.Bytes32
 import org.web3j.abi.datatypes.generated.Uint256
+import org.web3j.utils.Convert.Unit.ETHER
+import org.web3j.utils.Convert.fromWei
 import java.math.BigInteger
 
 class PaymentCompletedDecoder(private val scaffoldPropertyRepository: ScaffoldPropertyRepository) : Decoder<PaymentCompletedEvent> {
@@ -19,7 +21,7 @@ class PaymentCompletedDecoder(private val scaffoldPropertyRepository: ScaffoldPr
         val response = getResponse(rawData, getSignature(scaffoldProperties))
 
         val customerAddress = response[1].value as String
-        val transactionAmount = response[2].value as BigInteger
+        val transactionAmount = fromWei((response[2].value as BigInteger).toBigDecimal(), ETHER)
         val scaffoldTransactionIndex = response[3].value as BigInteger
 
         val properties = mutableMapOf<String, Any>()
