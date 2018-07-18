@@ -33,7 +33,8 @@ export const TransactionEvent = ({
     scaffoldTransactionIndex
   }
 }) => {
-  const resultType = type === 'ACTIVATED_SCAFFOLD' ? 'DEACTIVATED_SCAFFOLD' : type;
+  const deactivateCondition = type === 'ACTIVATED_SCAFFOLD' && !activated;
+  const resultType = deactivateCondition ? 'DEACTIVATED_SCAFFOLD' : type;
   return (
     <div>
       {/* <b>{date ? formatDate(date, DD_MMM_YYYY + ' HH:MM') : null}</b> <i>{resultType.replace(/_/g, ' ')}</i> */}
@@ -42,7 +43,6 @@ export const TransactionEvent = ({
         {renderAddress('User Address', userAddress)}
         {renderAddress('to Address', toAddress)}
         {renderAddress('Customer Address', customerAddress)}
-        {activated ? <TransactionParam>Activated: {activated}</TransactionParam> : null}
         {partnerShare ? <TransactionParam>Partner Share: {partnerShare}%</TransactionParam> : null}
         {amount ? <TransactionParam>Amount: {amount}%</TransactionParam> : null}
         {transactionAmount ? <TransactionParam>Transaction Amount: {transactionAmount}%</TransactionParam> : null}

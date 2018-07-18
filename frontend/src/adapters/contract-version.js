@@ -1,5 +1,6 @@
 import { adaptScaffoldV1, serializeScaffoldV1 } from './v1/scaffold';
 import { serializeScaffoldSummaryByMetaMaskV1, serializeScaffoldSummaryByApiV1 } from './v1/scaffold-summary';
+import { serializeScaffoldSummaryByMetaMaskV2 } from './v2/scaffold-summary';
 
 const versionMap = {
   V1: {
@@ -8,10 +9,11 @@ const versionMap = {
     serializeScaffold: serializeScaffoldV1,
     serializeScaffoldSummaryByMetaMask: serializeScaffoldSummaryByMetaMaskV1,
     serializeScaffoldSummaryByApi: serializeScaffoldSummaryByApiV1
+  },
+  V2: {
+    version: () => 'V2',
+    serializeScaffoldSummaryByMetaMask: serializeScaffoldSummaryByMetaMaskV2
   }
-  // V2: {
-  //   version: () => 'V2'
-  // }
 };
 
 export const contractVersion = initVersion => {

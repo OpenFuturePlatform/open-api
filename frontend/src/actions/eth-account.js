@@ -2,7 +2,7 @@ import { SET_CURRENT_ETH_ACCOUNT } from './types';
 import web3 from '../utils/web3';
 import eth from '../utils/eth';
 import ethUnit from 'ethjs-unit';
-import { openTokenSelector } from '../selectors/open-token';
+import { openTokenSelectorEth } from '../selectors/open-token';
 
 const setNetworkId = () => async dispatch => {
   const activeNetworkId = await web3.eth.net.getId();
@@ -23,7 +23,7 @@ const setEthAccount = account => async (dispatch, getState) => {
 
   const ethBalanceResult = await eth.getBalance(account);
   const ethBalance = ethUnit.fromWei(ethBalanceResult, 'ether');
-  const openToken = openTokenSelector(getState());
+  const openToken = openTokenSelectorEth(getState());
   const tokenBalanceResults = await openToken.balanceOf(account);
   const supply = Number(tokenBalanceResults[0]) / 100000000;
   const tokenBalance = supply.toString();
@@ -52,4 +52,7 @@ export const subscribeEthAccount = () => async dispatch => {
   return dispatch(setNetworkId());
 };
 
-export const unsubscribeEthAccount = () => () => clearInterval(ethAccountTimer);
+export const unsubscribeEthAccount = () => () => {
+  clearInterval(ethAccountTimer);
+  ethAccountTimer = null;
+};
