@@ -17,9 +17,7 @@ contract TestOpenScaffold {
 
 
     function createScaffold() public returns(OpenScaffold) {
-        return new OpenScaffold(0x1,
-                                0x2,
-                                "description", "100", "usd", 10*10**18);
+        return new OpenScaffold(0x1, 0x2, "0x12", "0x12", 10*10**18);
     }
 
     function testAddShareHolder() public {

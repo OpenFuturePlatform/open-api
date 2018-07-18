@@ -1,7 +1,7 @@
 import { getFromBN } from '../../utils/getFromBN';
 import { MIN_CONTRACT_DEPOSIT } from '../../const';
 
-export const serializeScaffoldSummaryV1 = source => {
+export const serializeScaffoldSummaryByMetaMaskV1 = source => {
   const {
     0: fiatAmount,
     1: currency,
@@ -20,4 +20,10 @@ export const serializeScaffoldSummaryV1 = source => {
     tokenBalance: getFromBN(tokenBalance) / 100000000,
     activated
   };
+};
+
+export const serializeScaffoldSummaryByApiV1 = rawSummary => {
+  const tokenBalance = rawSummary.tokenBalance / 100000000;
+  const activated = rawSummary.enabled;
+  return { ...rawSummary, activated, tokenBalance };
 };

@@ -73,6 +73,13 @@ class ScaffoldApiController(
         return ScaffoldSummaryDto(summary)
     }
 
+    @PreAuthorize("hasRole('MASTER')")
+    @PostMapping("/{address}")
+    fun activate(@CurrentUser user: User, @PathVariable address: String): ScaffoldSummaryDto {
+        val summary = service.activate(address, user)
+        return ScaffoldSummaryDto(summary)
+    }
+
     @GetMapping("/quota")
     fun getQuota(@CurrentUser user: User): ScaffoldQuotaDto = service.getQuota(user)
 

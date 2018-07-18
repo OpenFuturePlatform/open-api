@@ -11,6 +11,7 @@ import { ScaffoldTransaction } from '../components/ScaffoldTransactions';
 import { WordWrap } from '../components-ui/WordWrap';
 import { subscribeEthAccount, unsubscribeEthAccount } from '../actions/eth-account';
 import { subscribeTransactionsByApi, unsubscribeTransactionsByApi } from '../actions/scaffold-transactions';
+import { EtherscanLink } from '../components-ui/EtherscanLink';
 
 class ScaffoldSummary extends Component {
   async componentDidMount() {
@@ -40,7 +41,7 @@ class ScaffoldSummary extends Component {
   onEditScaffold = fields => this.props.actions.editScaffold(this.props.scaffold, fields);
 
   render() {
-    const { address, scaffold, summary, error } = this.props;
+    const { scaffold, summary, error } = this.props;
 
     if (!scaffold) {
       return null;
@@ -55,19 +56,19 @@ class ScaffoldSummary extends Component {
               <Card fluid>
                 <Card.Content header="On-chain Scaffold Summary" meta="This data is coming from the Ethereum Network" />
                 <Card.Content>
-                  <ScaffoldStatusContainer
-                    scaffoldAddress={address}
-                    abi={scaffold.abi}
-                    summary={summary || {}}
-                    error={error}
-                  />
+                  <ScaffoldStatusContainer scaffold={scaffold} summary={summary || {}} error={error} />
                 </Card.Content>
                 <Card.Content>
                   <div>
                     Scaffold Title: <WordWrap>{scaffold.title}</WordWrap>{' '}
                     <ScaffoldEdit scaffold={scaffold} onSubmit={this.onEditScaffold} />
                   </div>
-                  <div>Scaffold Owner Address: {scaffold.developerAddress}</div>
+                  <div>
+                    Scaffold Address: <EtherscanLink>{scaffold.address}</EtherscanLink>
+                  </div>
+                  <div>
+                    Scaffold Owner Address: <EtherscanLink>{scaffold.developerAddress}</EtherscanLink>
+                  </div>
                 </Card.Content>
                 <Card.Content>
                   <div>

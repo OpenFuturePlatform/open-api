@@ -19,7 +19,6 @@ abstract class BaseScaffoldCompiler(
 ) : VersionedScaffoldCompiler {
 
     companion object {
-        private const val SCAFFOLD_TEMPLATE_PATH = "templates/scaffold.ftl"
         private const val SCAFFOLD_KEY = "OpenScaffold"
         private const val STRUCT_PROPERTIES = "SCAFFOLD_STRUCT_PROPERTIES"
         private const val CUSTOM_PARAMETERS = "CUSTOM_SCAFFOLD_PARAMETERS"
@@ -50,7 +49,7 @@ abstract class BaseScaffoldCompiler(
                 OPEN_TOKEN_ADDRESS to this.properties.openTokenAddress!!
         )
 
-        val resource = javaClass.classLoader.getResource(SCAFFOLD_TEMPLATE_PATH)
+        val resource = javaClass.classLoader.getResource("templates/scaffold_${version.name.toLowerCase()}.ftl")
         val scaffoldContent = IOUtils.toString(resource, Charset.defaultCharset())
         val preparedTemplate = templateProcessor.getContent(scaffoldContent, parameters)
 

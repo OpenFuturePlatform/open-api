@@ -18,7 +18,7 @@ class DefaultTransactionService(
             repository.findAllByScaffoldOrderByDateDesc(scaffold, pageRequest)
 
     @Transactional(readOnly = true)
-    override fun find(hash: String): Transaction? = repository.findByHash(hash)
+    override fun find(hash: String, index: String): Transaction? = repository.findByHashAndIndex(hash, index)
 
     @Transactional
     override fun save(transaction: Transaction): Transaction = repository.save(transaction)

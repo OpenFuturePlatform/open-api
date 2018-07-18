@@ -207,6 +207,24 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
     }
 
     @Test
+    fun activateShouldReturnActualSummary() {
+        val scaffold = createScaffold()
+        val expectedSummary = createSummary(scaffold)
+
+        given(repository.findByAddressAndOpenKeyUser(scaffold.address, scaffold.openKey.user)).willReturn(scaffold)
+        given(processor.getScaffoldSummary(scaffold)).willReturn(expectedSummary)
+        given(summaryRepository.save(any(ScaffoldSummary::class.java)))
+                .will { invocation -> invocation.arguments[0] }
+        given(processor.getShareHolders(expectedSummary)).willReturn(listOf())
+
+        val actualSummary = service.activate(scaffold.address, scaffold.openKey.user)
+
+        verify(processor).activate(scaffold)
+        assertThat(actualSummary).isEqualTo(expectedSummary)
+    }
+
+
+    @Test
     fun addShareHolderShouldReturnActualSummary() {
         val scaffold = createScaffold()
         val expectedSummary = createSummary(scaffold)

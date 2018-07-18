@@ -22,6 +22,8 @@ class ScaffoldProcessor(
 
     fun deactivate(scaffold: Scaffold) = getProcessor(scaffold.getVersion()).deactivate(scaffold)
 
+    fun activate(scaffold: Scaffold) = getProcessor(scaffold.getVersion()).activate(scaffold)
+
     fun addShareHolder(scaffold: Scaffold, address: String, percent: Long) =
             getProcessor(scaffold.getVersion()).addShareHolder(scaffold, address, percent)
 

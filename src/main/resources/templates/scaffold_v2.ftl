@@ -49,7 +49,8 @@ contract OpenScaffold {
 
     // on-chain transaction storage
     struct OpenScaffoldTransaction {
-    address customerAddress;
+        address customerAddress;
+        ${SCAFFOLD_STRUCT_PROPERTIES}
     }
 
     // shareholder struct
@@ -73,7 +74,8 @@ contract OpenScaffold {
         uint256 _eventType,
         address _customerAddress,
         uint256 _transactionAmount,
-        uint256 _scaffoldTransactionIndex
+        uint256 _scaffoldTransactionIndex,
+        ${CUSTOM_SCAFFOLD_PARAMETERS}
     );
     event FundsDeposited(uint256 _eventType, uint256 _amount, address _toAddress);
     event ActivationScaffold(uint256 _eventType, bool activated);
@@ -103,20 +105,20 @@ contract OpenScaffold {
 
     // OPEN token
     uint256 constant private ACTIVATING_TOKENS_AMOUNT = 10 * 10**8;
-    address constant private OPEN_TOKEN_ADDRESS = 0x0;
+    address constant private OPEN_TOKEN_ADDRESS = ${OPEN_TOKEN_ADDRESS};
     ERC20Token public OPENToken = ERC20Token(OPEN_TOKEN_ADDRESS);
     bool public activated = false;
 
 
     // Throws if called by any account other than the developer or OPEN platform addresses.
     modifier onlyDeveloper() {
-//        require(developerAddress == msg.sender || platformAddress == msg.sender);
+        require(developerAddress == msg.sender || platformAddress == msg.sender);
         _;
     }
 
     // Throws if contract is not activated.
     modifier onlyActivated() {
-//        require(activated);
+        require(activated);
         _;
     }
 
@@ -129,7 +131,7 @@ contract OpenScaffold {
         bytes32 _fiatCurrency,
         uint256 _scaffoldAmount
     )
-    public
+        public
     {
         developerAddress = _developerAddress;
         platformAddress = _platformAddress;
@@ -205,17 +207,15 @@ contract OpenScaffold {
         // delete share percent
         totalAmountShares -= partners[_shareHolderAddress].share;
 
-        uint256 indexToDelete = partners[_shareHolderAddress].index;
-        address addressToMove = shareHolderAddresses[shareHolderAddresses.length - 1];
+        uint256 rowToDelete = partners[_shareHolderAddress].index;
+        address keyToMove = shareHolderAddresses[shareHolderAddresses.length - 1];
 
-        shareHolderAddresses[indexToDelete] = addressToMove;
+        shareHolderAddresses[rowToDelete] = keyToMove;
+        partners[keyToMove].index = rowToDelete;
+
         shareHolderAddresses.length--;
 
-        partners[addressToMove].index = indexToDelete;
-        uint256 partnerShare = partners[_shareHolderAddress].share;
-        delete partners[_shareHolderAddress];
-
-        createShareHolderEvent(SHARE_HOLDER_DELETED, _shareHolderAddress, partnerShare);
+        createShareHolderEvent(SHARE_HOLDER_DELETED, _shareHolderAddress, partners[_shareHolderAddress].share);
     }
 
     // get shareholder share by address
@@ -257,13 +257,13 @@ contract OpenScaffold {
     }
 
     // payable function for receiving customer funds
-    function payDeveloper() public payable onlyActivated {
+    function payDeveloper(${CUSTOM_SCAFFOLD_PARAMETERS}) public payable onlyActivated {
         require(scaffoldAmount == msg.value);
-        payWithShares(msg.sender, msg.value);
+        payWithShares(msg.sender, msg.value, ${CUSTOM_RETURN_VARIABLES});
     }
 
     // transfer amount according shares
-    function payWithShares(address _customerAddress, uint _transactionAmount) internal {
+    function payWithShares(address _customerAddress, uint _transactionAmount, ${CUSTOM_SCAFFOLD_PARAMETERS}) internal {
         // platform fee
         uint256 platformFee = _transactionAmount.div(100).mul(3);
         // pay for shareholders and get developer amount
@@ -276,7 +276,7 @@ contract OpenScaffold {
             withdrawFunds(developerAddress, developerAmount);
         }
 
-        generateTransaction(_customerAddress, developerAmount);
+        generateTransaction(_customerAddress, developerAmount, ${CUSTOM_RETURN_VARIABLES});
     }
 
     // pay to shareholders according to their shares
@@ -310,27 +310,30 @@ contract OpenScaffold {
 
     function generateTransaction(
         address _customerAddress,
-        uint256 _developerAmount
+        uint256 _developerAmount,
+        ${CUSTOM_SCAFFOLD_PARAMETERS}
     ) internal
     {
         // create transaction
-        uint256 transactionIndex  = createScaffoldTransaction(_customerAddress);
+        uint256 transactionIndex  = createScaffoldTransaction(_customerAddress, ${CUSTOM_RETURN_VARIABLES});
 
         PaymentCompleted(
             PAYMENT_COMPLETED,
             _customerAddress,
             _developerAmount,
-            transactionIndex
+            transactionIndex,
+            ${CUSTOM_RETURN_VARIABLES}
         );
     }
 
     // create Scaffold transaction and add to array
-    function createScaffoldTransaction(address _customerAddress)
+    function createScaffoldTransaction(address _customerAddress, ${CUSTOM_SCAFFOLD_PARAMETERS})
         internal
         returns(uint256)
     {
         OpenScaffoldTransaction memory newTransaction = OpenScaffoldTransaction({
-        customerAddress: _customerAddress
+            customerAddress: _customerAddress,
+            ${SCAFFOLD_STRUCT_TRANSACTION_ARGUMENTS}
         });
 
         openScaffoldTransactions.push(newTransaction);
