@@ -217,7 +217,7 @@ contract OpenScaffold {
         uint256 partnerShare = partners[_shareHolderAddress].share;
         delete partners[_shareHolderAddress];
 
-        createShareHolderEvent(DELETED_SHARE_HOLDER, _shareHolderAddress, partnerShare);
+        createShareHolderEvent(SHARE_HOLDER_DELETED, _shareHolderAddress, partnerShare);
     }
 
     // get shareholder share by address
