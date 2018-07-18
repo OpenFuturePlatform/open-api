@@ -2,6 +2,7 @@ import React from 'react';
 import { EtherscanLink } from '../components-ui/EtherscanLink';
 import styled from 'styled-components';
 import { formatDate } from '../utils/format-date';
+import { HH_mm_DD_MMM_YYY } from '../const/time-formats';
 
 export const TransactionParam = styled.div`
   display: inline-block;
@@ -36,8 +37,7 @@ export const TransactionEvent = ({
   const resultType = type === 'ACTIVATED_SCAFFOLD' ? 'DEACTIVATED_SCAFFOLD' : type;
   return (
     <div>
-      {/* <b>{date ? formatDate(date, DD_MMM_YYYY + ' HH:MM') : null}</b> <i>{resultType.replace(/_/g, ' ')}</i> */}
-      <b>{date ? formatDate(date) : null}</b> <i>{resultType.replace(/_/g, ' ')}</i>
+      <b>{date ? formatDate(date, HH_mm_DD_MMM_YYY) : null}</b> <i>{resultType.replace(/_/g, ' ')}</i>
       <div>
         {renderAddress('User Address', userAddress)}
         {renderAddress('to Address', toAddress)}
