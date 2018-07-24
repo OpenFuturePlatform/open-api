@@ -22,7 +22,7 @@ class ExceptionRestControllerAdvice {
         val errors = exception.bindingResult.allErrors
         val error = errors.firstOrNull { it is FieldError } as FieldError?
         val message = error?.let { "Request is not valid because ${it.field} ${it.defaultMessage}" }
-                ?: "Some of request parameters is wrong. Please check request  according do documentation https://docs.openfuture.io/."
+                ?: "Some of request parameters are wrong. Please check request  according do documentation https://docs.openfuture.io/."
         return ExceptionResponse(BAD_REQUEST.value(), message, errors.map { ErrorDto(it) })
     }
 
