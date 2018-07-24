@@ -44,10 +44,10 @@ export const TransactionEvent = ({
         {renderAddress('to Address', toAddress)}
         {renderAddress('Customer Address', customerAddress)}
         {partnerShare ? <TransactionParam>Partner Share: {partnerShare}%</TransactionParam> : null}
-        {amount ? <TransactionParam>Amount: {amount}%</TransactionParam> : null}
-        {transactionAmount ? <TransactionParam>Transaction Amount: {transactionAmount}%</TransactionParam> : null}
+        {amount ? <TransactionParam>Amount: {amount}</TransactionParam> : null}
+        {transactionAmount ? <TransactionParam>Transaction Amount: {transactionAmount}</TransactionParam> : null}
         {scaffoldTransactionIndex ? (
-          <TransactionParam>Transaction Index: {scaffoldTransactionIndex}%</TransactionParam>
+          <TransactionParam>Transaction Index: {scaffoldTransactionIndex}</TransactionParam>
         ) : null}
       </div>
     </div>
