@@ -66,7 +66,7 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
     }
 
     @Test
-    fun getTest() {
+    fun getWithUserTest() {
         val addressValue = "0xba37163625b3f2e96112562858c12b75963af138"
         val user = createUser()
         val expectedScaffold = createScaffold()
@@ -79,13 +79,32 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
     }
 
     @Test(expected = NotFoundException::class)
-    fun getWhenScaffoldNotFoundShouldTrowExceptionTest() {
+    fun getWithUserWhenScaffoldNotFoundShouldTrowExceptionTest() {
         val addressValue = "0xba37163625b3f2e96112562858c12b75963af138"
         val user = createUser()
 
         given(repository.findByAddressAndOpenKeyUser(addressValue, user)).willReturn(null)
 
         service.get(addressValue, user)
+    }
+
+    @Test
+    fun getTest() {
+        val addressValue = "0xba37163625b3f2e96112562858c12b75963af138"
+        val expectedScaffold = createScaffold()
+
+        given(repository.findByAddress(addressValue)).willReturn(expectedScaffold)
+
+        val actualScaffold = service.get(addressValue)
+
+        assertThat(actualScaffold).isEqualTo(expectedScaffold)
+    }
+
+    @Test(expected = NotFoundException::class)
+    fun getWhenScaffoldNotFoundShouldTrowExceptionTest() {
+        val addressValue = "0xba37163625b3f2e96112562858c12b75963af138"
+
+        service.get(addressValue)
     }
 
     @Test

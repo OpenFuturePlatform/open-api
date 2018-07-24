@@ -18,6 +18,8 @@ interface ScaffoldService {
 
     fun get(address: String, user: User): Scaffold
 
+    fun get(address: String): Scaffold
+
     fun compile(request: CompileScaffoldRequest): CompiledScaffoldDto
 
     fun deploy(request: DeployScaffoldRequest): Scaffold

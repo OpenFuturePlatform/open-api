@@ -41,6 +41,10 @@ class DefaultScaffoldService(
             ?: throw NotFoundException("Not found scaffold with address $address")
 
     @Transactional(readOnly = true)
+    override fun get(address: String): Scaffold = repository.findByAddress(address)
+            ?: throw NotFoundException("Not found scaffold with address $address")
+
+    @Transactional(readOnly = true)
     override fun compile(request: CompileScaffoldRequest): CompiledScaffoldDto {
         val openKey = openKeyService.get(request.openKey!!)
         if (summaryRepository.countByEnabledIsFalseAndScaffoldOpenKeyUser(openKey.user) >= properties.allowedDisabledContracts) {
