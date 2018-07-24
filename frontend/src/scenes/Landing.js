@@ -1,6 +1,5 @@
 import React from 'react';
 import { Button, Icon } from 'semantic-ui-react';
-import { LOGIN_URL } from '../const/index';
 
 const Landing = () => {
   return (
@@ -9,7 +8,7 @@ const Landing = () => {
       <section className="background" />
       <div className="logo">
         <img id="logo" src="img/svg/logo-circle.svg" alt="logo" style={{ transform: 'rotate(1.5deg)' }} />
-        <img src={LOGIN_URL} alt="logo" />
+        <img src="img/svg/logo-name.svg" alt="logo" />
       </div>
       <div className="menu-landing-page menu-main" id="burger">
         <a href="/oauth2/authorization/google">
