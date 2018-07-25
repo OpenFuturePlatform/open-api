@@ -4,6 +4,7 @@ import { Button, Divider } from 'semantic-ui-react';
 import { withSaving } from '../components-ui/withSaving';
 import { ConfirmationModal } from '../components-ui/ConfirmationModal';
 import styled from 'styled-components';
+import { t } from '../utils/messageTexts';
 
 const ErrorMessage = styled.div`
   display: inline-block;
@@ -19,13 +20,13 @@ const ScaffoldActivateComponent = ({ children, ...props }) => (
       </Button>
       <ConfirmationModal {...props}>
         <div>
-          You are about to activate the Scaffold. Proceed?
+          {t('sure to activate scaffold')}
           <Divider />
-          <span>PS: Please be patient this may take a while...</span>
+          <span>{t('it may take a while')}</span>
         </div>
       </ConfirmationModal>
     </span>
-    <ErrorMessage>Your scaffold is created but is inactive.</ErrorMessage>
+    <ErrorMessage>{t('scaffold not activated')}</ErrorMessage>
   </div>
 );
 

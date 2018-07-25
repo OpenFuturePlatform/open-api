@@ -4,19 +4,20 @@ import { EtherscanLink } from '../components-ui/EtherscanLink';
 import { ConfirmationModal } from '../components-ui/ConfirmationModal';
 import { withVisible } from '../components-ui/withVisible';
 import { withSaving } from '../components-ui/withSaving';
+import { t } from '../utils/messageTexts';
 
 export const ScaffoldDeactivateComponent = ({ developerAddress, ...props }) => (
   <span>
     <Button onClick={props.onShow}>Deactivate</Button>
     <ConfirmationModal {...props}>
       <div>
-        You are about to deactivate the Scaffold. Are you sure?
+        {t('sure to deactivate scaffold')}
         <Divider />
         <span>
-          Note: Tokens will be send to Developer Address: <EtherscanLink>{developerAddress}</EtherscanLink>
+          {t('tokens will be returned to dev address')} <EtherscanLink>{developerAddress}</EtherscanLink>
         </span>
         <Divider />
-        <span>PS: Please be patient this may take a while...</span>
+        <span>{t('it may take a while')}</span>
       </div>
     </ConfirmationModal>
   </span>
