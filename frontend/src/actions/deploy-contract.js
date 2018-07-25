@@ -20,13 +20,13 @@ export const compileContract = (openKey, properties) => async dispatch => {
   return await dispatch(apiPost(getScaffoldDoCompile(), { openKey, properties }));
 };
 
-export const processDeploy = async (contract, bin, formValues) => {
+export const processDeploy = async (contract, bin, platformAddress, formValues) => {
   return await contract
     .deploy({
       data: bin,
       arguments: [
         formValues.developerAddress,
-        formValues.developerAddress,
+        platformAddress,
         ethUtil.fromAscii(formValues.fiatAmount),
         ethUtil.fromAscii(formValues.currency),
         Eth.toWei(formValues.conversionAmount.toString(), 'ether')
@@ -35,11 +35,13 @@ export const processDeploy = async (contract, bin, formValues) => {
     .send({ from: formValues.developerAddress });
 };
 
-export const deployContractByMetaMask = formValues => async dispatch => {
+export const deployContractByMetaMask = formValues => async (dispatch, getState) => {
+  const {
+    globalProperties: { platformAddress }
+  } = getState();
   const { abi, bin } = await dispatch(compileContract(formValues.openKey, formValues.properties));
   const contract = new web3.eth.Contract(JSON.parse(abi));
-  const newContractInstance = await processDeploy(contract, bin, formValues);
-
+  const newContractInstance = await processDeploy(contract, bin, platformAddress, formValues);
   const address = newContractInstance.options.address;
   await dispatch(apiPost(getScaffoldsPath(), { ...formValues, abi, address }));
   return address;
