@@ -38,6 +38,7 @@ class ScaffoldWidgetControllerTests : ControllerTests() {
     private fun expectScaffoldJson(scaffold: Scaffold) = """
         {
                       "address": ${scaffold.address},
+                      "abi": ${scaffold.abi},
                       "description": ${scaffold.description},
                       "fiatAmount": "${scaffold.fiatAmount}",
                       "currency": ${scaffold.getCurrency().name},

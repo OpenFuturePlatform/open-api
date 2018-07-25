@@ -5,6 +5,7 @@ import io.openfuture.api.entity.scaffold.Scaffold
 
 class ScaffoldInfoDto(
         val address: String,
+        val abi: String,
         val description: String,
         val fiatAmount: String,
         val currency: Currency,
@@ -14,6 +15,7 @@ class ScaffoldInfoDto(
 
     constructor(scaffold: Scaffold) : this(
             scaffold.address,
+            scaffold.abi,
             scaffold.description,
             scaffold.fiatAmount,
             scaffold.getCurrency(),
