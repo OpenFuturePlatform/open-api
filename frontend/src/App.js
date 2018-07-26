@@ -8,6 +8,15 @@ import Keys from './scenes/Keys';
 import Header from './components/Header';
 import { Container } from 'semantic-ui-react';
 import './css/main.css';
+import { t } from './utils/messageTexts';
+import styled from 'styled-components';
+
+const UnAuthorizeMessage = styled.div`
+  font-size: 18px;
+  text-align: center;
+  padding-top: 20px;
+  color: rgb(137, 137, 138);
+`;
 
 class App extends Component {
   async componentDidMount() {
@@ -18,7 +27,7 @@ class App extends Component {
   renderAuthorizedContent = () => {
     const { auth, globalProperties } = this.props;
     if (!auth.isAuthorized || !globalProperties.network.id) {
-      return null;
+      return <UnAuthorizeMessage>{t('session was expired')}</UnAuthorizeMessage>;
     }
 
     return (

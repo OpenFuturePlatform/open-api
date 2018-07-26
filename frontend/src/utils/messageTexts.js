@@ -51,5 +51,8 @@ const messageTextMap = {
   'sure to remove shareholder': 'You are about to remove the Share Holder. Are you sure?',
 
   // key management
-  'sure to deactivate key': 'You are about to deactivate the key. Are you sure?'
+  'sure to deactivate key': 'You are about to deactivate the key. Are you sure?',
+
+  // other
+  'session was expired': 'Your session has expired. Please login again.'
 };
