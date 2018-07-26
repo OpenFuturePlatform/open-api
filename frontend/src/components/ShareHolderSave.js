@@ -6,6 +6,7 @@ import { TransactionError } from '../components-ui/TransactionError';
 import { withSaving } from '../components-ui/withSaving';
 import { ShowAddEditButton } from '../components-ui/ShowAddEditButton';
 import { ErrorMessage } from '../components-ui/ErrorMessage';
+import { t } from '../utils/messageTexts';
 
 class ShareHolderSaveComponent extends React.Component {
   constructor(props) {
@@ -91,7 +92,7 @@ class ShareHolderSaveComponent extends React.Component {
             <Input min={0} step={1} fluid value={share} disabled={isSaving} onChange={this.onShareChange} />
             <ErrorMessage errorList={shareErrorList} isVisible={shareErrorList.length} />
             <Divider />
-            <span>PS: Please be patient this may take a while...</span>
+            <span>{t('it may take a while')}</span>
             <TransactionError message={transactionError} />
           </Modal.Content>
           <Modal.Actions>

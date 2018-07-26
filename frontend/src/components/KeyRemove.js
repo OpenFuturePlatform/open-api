@@ -1,8 +1,9 @@
 import React from 'react';
 import { EntityRemove } from './EntityRemove';
+import { t } from '../utils/messageTexts';
 
 export const KeyRemove = ({ onSubmit }) => (
   <EntityRemove onSubmit={onSubmit} header="Key Deactivation">
-    <div>You are about to deactivate the key. Are you sure?</div>
+    <div>{t('sure to deactivate key')}</div>
   </EntityRemove>
 );
