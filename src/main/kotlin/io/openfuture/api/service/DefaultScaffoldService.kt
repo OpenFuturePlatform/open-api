@@ -9,11 +9,13 @@ import io.openfuture.api.entity.auth.User
 import io.openfuture.api.entity.scaffold.Scaffold
 import io.openfuture.api.entity.scaffold.ScaffoldProperty
 import io.openfuture.api.entity.scaffold.ScaffoldSummary
+import io.openfuture.api.exception.AddressException
 import io.openfuture.api.exception.NotFoundException
 import io.openfuture.api.repository.ScaffoldPropertyRepository
 import io.openfuture.api.repository.ScaffoldRepository
 import io.openfuture.api.repository.ScaffoldSummaryRepository
 import io.openfuture.api.repository.ShareHolderRepository
+import io.openfuture.api.util.EthereumUtils
 import org.apache.commons.lang3.time.DateUtils.addMinutes
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -56,6 +58,7 @@ class DefaultScaffoldService(
 
     @Transactional
     override fun deploy(request: DeployScaffoldRequest): Scaffold {
+        checkAddress(request.developerAddress!!)
         val compiledScaffold = compile(CompileScaffoldRequest(request.openKey, request.properties, request.version))
         val contractAddress = processor.deploy(compiledScaffold.bin, request)
         return save(SaveScaffoldRequest(
@@ -140,6 +143,7 @@ class DefaultScaffoldService(
 
     @Transactional
     override fun addShareHolder(address: String, user: User, request: AddShareHolderRequest): ScaffoldSummary {
+        checkAddress(request.address!!)
         val scaffold = get(address, user)
         processor.addShareHolder(scaffold, request.address!!, request.percent!!.toLong())
         return getScaffoldSummary(address, user, true)
@@ -148,6 +152,7 @@ class DefaultScaffoldService(
     @Transactional
     override fun updateShareHolder(address: String, user: User,
                                    holderAddress: String, request: UpdateShareHolderRequest): ScaffoldSummary {
+        checkAddress(holderAddress)
         val scaffold = get(address, user)
         processor.updateShareHolder(scaffold, holderAddress, request.percent!!.toLong())
         return getScaffoldSummary(address, user, true)
@@ -155,9 +160,14 @@ class DefaultScaffoldService(
 
     @Transactional
     override fun removeShareHolder(address: String, user: User, holderAddress: String): ScaffoldSummary {
+        checkAddress(holderAddress)
         val scaffold = get(address, user)
         processor.removeShareHolder(scaffold, holderAddress)
         return getScaffoldSummary(address, user, true)
+    }
+
+    private fun checkAddress(address: String) {
+        if (!EthereumUtils.isValidChecksumAddress(address)) throw AddressException("Invalid address")
     }
 
 }

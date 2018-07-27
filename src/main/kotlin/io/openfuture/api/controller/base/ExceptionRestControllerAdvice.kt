@@ -2,10 +2,7 @@ package io.openfuture.api.controller.base
 
 import io.openfuture.api.domain.exception.ErrorDto
 import io.openfuture.api.domain.exception.ExceptionResponse
-import io.openfuture.api.exception.CompileException
-import io.openfuture.api.exception.ExecuteTransactionException
-import io.openfuture.api.exception.FunctionCallException
-import io.openfuture.api.exception.TemplateProcessingException
+import io.openfuture.api.exception.*
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.validation.FieldError
 import org.springframework.web.bind.MethodArgumentNotValidException
@@ -34,6 +31,11 @@ class ExceptionRestControllerAdvice {
     @ResponseStatus(code = BAD_REQUEST)
     @ExceptionHandler(ExecuteTransactionException::class)
     fun executeTransactionExceptionHandler(exception: ExecuteTransactionException): ExceptionResponse =
+            ExceptionResponse(BAD_REQUEST.value(), exception.message!!)
+
+    @ResponseStatus(code = BAD_REQUEST)
+    @ExceptionHandler(AddressException::class)
+    fun addressExceptionHandler(exception: AddressException): ExceptionResponse =
             ExceptionResponse(BAD_REQUEST.value(), exception.message!!)
 
     @ResponseStatus(code = BAD_REQUEST)
