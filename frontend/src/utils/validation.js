@@ -22,6 +22,9 @@ export const validateScaffoldProperties = values => {
       if (field.name.match(/[\s\/\\]/) !== null)
         /* eslint-enable */
         scaffoldFieldsErrors.push(t('space forbidden'));
+      if (field.name.match(/^[a-zA-Z0-9]+$/g) === null) {
+        scaffoldFieldsErrors.push(t('special characters are forbidden'));
+      }
       if (solidityReservedWords.includes(field.name))
         scaffoldFieldsErrors.push(t('field name is forbidden', field.name));
       if (propertyNames.filter(it => it === field.name).length > 1) scaffoldFieldsErrors.push(t('Name must be unique'));
