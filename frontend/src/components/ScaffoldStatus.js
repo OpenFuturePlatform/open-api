@@ -1,155 +1,64 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import {
-  activateScaffold,
-  deactivateScaffold,
-  deactivateScaffoldByApi,
-  subscribeScaffoldActivation
-} from '../actions/scaffold-activation';
-import { Button } from 'semantic-ui-react';
+import { activateScaffold, deactivateScaffold, topUpTokenBalance } from '../actions/scaffold-activation';
 import { MIN_CONTRACT_DEPOSIT } from '../const/index';
-import { getMetaMaskErrorMessage } from '../selectors/getMetaMaskError';
+import { ScaffoldDeactivate } from './ScaffoldDeactivate';
+import { ScaffoldActivate } from './ScaffoldActivate';
+import styled from 'styled-components';
+import { ScaffoldTopUpTokens } from './ScaffoldTopUpTokens';
+
+const ButtonContainer = styled.div`
+  padding-top: 10px;
+`;
+
+const RedText = styled.div`
+  color: red;
+`;
 
 class ScaffoldStatus extends Component {
-  constructor(props) {
-    super(props);
-    this.handleOnDeactivate = this.handleOnDeactivate.bind(this);
-    this.handleOnActivate = this.handleOnActivate.bind(this);
-  }
-
-  componentDidMount() {
-    const { scaffoldAddress } = this.props;
-    const { activating, activatingHash } = this.props.ethAccount;
-    if (activating) {
-      this.props.actions.subscribeScaffoldActivation(activatingHash, scaffoldAddress);
-    }
-  }
-
-  handleOnDeactivate() {
-    const { scaffoldAddress, abi, developerAddress } = this.props;
-    this.props.actions.deactivateScaffold(scaffoldAddress, abi, developerAddress);
-  }
-
-  handleOnDeactivateByApi() {
-    const { scaffoldAddress } = this.props;
-    this.props.actions.deactivateScaffoldByApi(scaffoldAddress);
-  }
-
-  handleOnActivate() {
-    const { scaffoldAddress, ethAccount } = this.props;
-    this.props.actions.activateScaffold(scaffoldAddress, ethAccount.account);
-  }
-
   validateTokenBalance() {
-    const { tokenBalance } = this.props.ethAccount;
+    const { tokenBalance } = this.props.summary;
     return tokenBalance >= MIN_CONTRACT_DEPOSIT;
   }
 
-  renderDeactivateButton() {
-    const { metaMaskError } = this.props;
-    const loading = this.props.ethAccount.activating;
-    const disabled = loading;
-
-    return (
-      <div style={{ display: 'flex' }}>
-        <div style={{ paddingRight: 30 }}>
-          <Button loading={loading} disabled={disabled} onClick={this.handleOnDeactivate}>
-            Deactivate
-          </Button>
-        </div>
-        <div style={{ color: 'red', paddingTop: 8 }}>{metaMaskError}</div>
-      </div>
-    );
-  }
-
-  renderMetaMaskMessage() {
-    const { metaMaskError } = this.props;
-    if (metaMaskError) {
-      return metaMaskError;
+  renderActivateButton = () => {
+    const { scaffold, summary, actions } = this.props;
+    const { activated, developerAddress } = summary;
+    const onDeactivate = () => actions.deactivateScaffold(scaffold);
+    if (activated) {
+      return <ScaffoldDeactivate developerAddress={developerAddress} onSubmit={onDeactivate} />;
     }
-
     if (!this.validateTokenBalance()) {
-      return `MetaMask account have no OPEN Tokens. Select account with ${MIN_CONTRACT_DEPOSIT} OPEN tokens or top up the balance.`;
+      return <ScaffoldTopUpTokens scaffold={scaffold} />;
     }
-
-    return '';
-  }
-
-  renderMessage() {
-    const { scaffoldAddress } = this.props;
-    const activationAllowed = this.validateTokenBalance();
-
-    if (activationAllowed) {
-      return null;
-    }
-
-    return (
-      <div>
-        <div style={{ color: 'red' }}>Your scaffold is created but is inactive.</div>
-        <div style={{ color: 'red' }}>
-          To activate your scaffold you need to have {MIN_CONTRACT_DEPOSIT} OPEN Tokens on scaffold contract.
-        </div>
-        <div style={{ color: 'red' }}>
-          You can transfer OPEN Tokens to <i className="selectable">{scaffoldAddress}</i>, or ...
-        </div>
-        <div style={{ color: 'red' }}>Use MetaMask: {this.renderMetaMaskMessage()}</div>
-      </div>
-    );
-  }
-
-  renderActivateButton() {
-    const loading = this.props.ethAccount.activating;
-    const activationAllowed = this.validateTokenBalance();
-    const disabled = loading || !activationAllowed;
-    return (
-      <div style={{ display: 'flex' }}>
-        <div style={{ paddingRight: 30 }}>
-          <Button primary loading={loading} disabled={disabled} onClick={this.handleOnActivate}>
-            Activate
-          </Button>
-        </div>
-        {this.renderMessage()}
-      </div>
-    );
-  }
+    return <ScaffoldActivate onSubmit={() => actions.activateScaffold(scaffold)} />;
+  };
 
   render() {
-    const { error, tokenBalance } = this.props;
-    const status = tokenBalance >= MIN_CONTRACT_DEPOSIT;
+    const { error, summary } = this.props;
+    const { tokenBalance, activated } = summary;
 
     if (error) {
-      return <div style={{ color: 'red' }}>{error}</div>;
+      return <RedText>{error}</RedText>;
     }
-
     return (
       <div>
-        Status: {status ? 'Active' : 'Disabled'} ({this.props.tokenBalance || 0} tokens)
-        <div style={{ marginTop: '10px' }}>
-          {status ? this.renderDeactivateButton() : this.renderActivateButton()}
-          {/*{this.renderDeactivateButton()} {this.renderActivateButton()}*/}
-        </div>
+        Status: {activated ? 'Active' : 'Disabled'} ({tokenBalance || 0} tokens)
+        <ButtonContainer>{this.renderActivateButton()}</ButtonContainer>
       </div>
     );
   }
 }
 
-const mapStateToProps = (state, { scaffoldAddress, abi, summary: { tokenBalance, developerAddress }, error }) => {
-  const { ethAccount } = state;
-  const metaMaskError = getMetaMaskErrorMessage(state);
-  return { ethAccount, developerAddress, scaffoldAddress, abi, tokenBalance, metaMaskError, fetchError: error };
-};
+const mapStateToProps = (state, { scaffold, summary, error }) => ({
+  summary,
+  scaffold,
+  fetchError: error
+});
 
 const mapDispatchToProps = dispatch => ({
-  actions: bindActionCreators(
-    {
-      deactivateScaffold,
-      deactivateScaffoldByApi,
-      activateScaffold,
-      subscribeScaffoldActivation
-    },
-    dispatch
-  )
+  actions: bindActionCreators({ deactivateScaffold, activateScaffold, topUpTokenBalance }, dispatch)
 });
 
 export const ScaffoldStatusContainer = connect(

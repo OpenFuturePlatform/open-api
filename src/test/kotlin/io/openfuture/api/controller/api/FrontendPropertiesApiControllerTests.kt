@@ -6,12 +6,14 @@ import io.openfuture.api.config.propety.EthereumProperties
 import io.openfuture.api.entity.auth.Role
 import org.junit.Test
 import org.mockito.BDDMockito.given
+import org.mockito.Mock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.web3j.crypto.Credentials
 import org.web3j.spring.autoconfigure.Web3jProperties
 
 @WebMvcTest(FrontendPropertiesApiController::class)
@@ -26,6 +28,9 @@ class FrontendPropertiesApiControllerTests : ControllerTests() {
     @MockBean
     private lateinit var properties: EthereumProperties
 
+    @Mock
+    private lateinit var credentials: Credentials
+
 
     @Test
     fun getTest() {
@@ -33,11 +38,14 @@ class FrontendPropertiesApiControllerTests : ControllerTests() {
         val version = "version"
         val clientAddress = "clientAddress"
         val openTokenAddress = "address"
+        val platformAddress = "address"
 
         given(keyService.find(openKey.value)).willReturn(openKey)
         given(web3.getNetVersion()).willReturn(version)
         given(web3Properties.clientAddress).willReturn(clientAddress)
         given(properties.openTokenAddress).willReturn(openTokenAddress)
+        given(properties.getCredentials()).willReturn(credentials)
+        given(credentials.address).willReturn(platformAddress)
 
         mvc.perform(get("/api/properties")
                 .header(AUTHORIZATION, openKey.value))
@@ -47,7 +55,8 @@ class FrontendPropertiesApiControllerTests : ControllerTests() {
                     {
                         "networkAddress": $clientAddress,
                         "networkVersion": $version,
-                        "openTokenAddress": $openTokenAddress
+                        "openTokenAddress": $openTokenAddress,
+                        "platformAddress": $platformAddress
                     }
                     """.trimIndent(), true))
     }

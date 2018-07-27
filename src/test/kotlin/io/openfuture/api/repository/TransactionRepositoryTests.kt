@@ -5,6 +5,7 @@ import io.openfuture.api.domain.PageRequest
 import io.openfuture.api.entity.auth.OpenKey
 import io.openfuture.api.entity.auth.User
 import io.openfuture.api.entity.scaffold.Scaffold
+import io.openfuture.api.entity.scaffold.ScaffoldVersion.V1
 import io.openfuture.api.entity.scaffold.Transaction
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -26,10 +27,10 @@ internal class TransactionRepositoryTests : RepositoryTests() {
         entityManager.persist(expectedOpenKey)
 
         val scaffold = Scaffold("address", expectedOpenKey, "abi", "developerAddress", "description", "fiatAmount", 1,
-                "conversionAmount", "webHook", Collections.emptyList())
+                "conversionAmount", V1.getId(), "webHook", Collections.emptyList())
         entityManager.persist(scaffold)
 
-        val transaction = Transaction("hash", scaffold, "data binary")
+        val transaction = Transaction("hash", "index", scaffold, "data binary")
         entityManager.persist(transaction)
 
         val actualOpenKeys = repository.findAllByScaffoldOrderByDateDesc(scaffold, PageRequest())

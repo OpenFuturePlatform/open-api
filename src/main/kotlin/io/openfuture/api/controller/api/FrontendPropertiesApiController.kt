@@ -19,7 +19,8 @@ class FrontendPropertiesApiController(
     @GetMapping
     fun get(): FrontendPropertiesDto {
         val version = web3.getNetVersion()
-        return FrontendPropertiesDto(web3Properties.clientAddress, version, properties.openTokenAddress!!)
+        return FrontendPropertiesDto(web3Properties.clientAddress, version, properties.openTokenAddress!!,
+                properties.getCredentials().address)
     }
 
 }

@@ -2,98 +2,84 @@ import web3 from '../utils/web3';
 import Eth from 'ethjs';
 import ethUtil from 'ethjs-util';
 import { CONVERT_CURRENCIES, SHOW_MODAL } from './types';
-import { serializeScaffold } from '../utils/scaffold-adapter';
 import { getScaffoldsPath, getScaffoldDoCompile, getScaffoldDoDeploy } from '../utils/apiPathes';
 import { apiPost, apiPatch, apiGet } from './apiRequest';
+import { contractVersion } from '../adapters/contract-version';
+import { getWalletMethod } from '../selectors/getWalletMethod';
+import { parseApiError } from '../utils/parseApiError';
 
 const setWebHook = (address, webHook) => async dispatch =>
   await dispatch(apiPatch(getScaffoldsPath(address), { webHook }));
 
-export const deployContractByApi = (formValues, history) => async dispatch => {
-  dispatch({ type: SHOW_MODAL, payload: { showModal: true } });
-
-  try {
-    const scaffold = await dispatch(apiPost(getScaffoldDoDeploy(), serializeScaffold(formValues)));
-    if (formValues.webHook) {
-      await dispatch(setWebHook(scaffold.address, formValues.webHook));
-    }
-    dispatch({
-      type: SHOW_MODAL,
-      payload: { contract: scaffold, showLoader: false }
-    });
-    return scaffold.address;
-  } catch (err) {
-    const response = err ? err.response : null;
-    const status = response ? response.status : '';
-    const data = response ? response.data : null;
-    const backendMessage = data ? data.message : null;
-    const message = status + ': ' + (backendMessage || 'Error in deploy contract');
-
-    dispatch({
-      type: SHOW_MODAL,
-      payload: { showLoader: false, error: message }
-    });
-    throw new Error('Error in deploy contract: ' + message);
-  }
+export const deployContractByApi = formValues => async dispatch => {
+  const scaffold = await dispatch(apiPost(getScaffoldDoDeploy(), formValues));
+  return scaffold.address;
 };
 
 export const compileContract = (openKey, properties) => async dispatch => {
   return await dispatch(apiPost(getScaffoldDoCompile(), { openKey, properties }));
 };
 
-export const processDeploy = async (contract, bin, formValues) => {
+export const processDeploy = async (contract, bin, platformAddress, formValues) => {
   return await contract
     .deploy({
       data: bin,
       arguments: [
         formValues.developerAddress,
-        formValues.developerAddress,
+        platformAddress,
         ethUtil.fromAscii(formValues.fiatAmount),
         ethUtil.fromAscii(formValues.currency),
         Eth.toWei(formValues.conversionAmount.toString(), 'ether')
       ]
     })
-    .send({ from: formValues.developerAddress })
-    .on('error', error => console.log('>> ', error));
+    .send({ from: formValues.developerAddress });
 };
 
-export const deployContract = formValues => async dispatch => {
-  dispatch({ type: SHOW_MODAL, payload: { showModal: true, showLoader: true } });
+export const deployContractByMetaMask = formValues => async (dispatch, getState) => {
+  const {
+    globalProperties: { platformAddress }
+  } = getState();
+  const { abi, bin } = await dispatch(compileContract(formValues.openKey, formValues.properties));
+  const contract = new web3.eth.Contract(JSON.parse(abi));
+  const newContractInstance = await processDeploy(contract, bin, platformAddress, formValues);
+  const address = newContractInstance.options.address;
+  await dispatch(apiPost(getScaffoldsPath(), { ...formValues, abi, address }));
+  return address;
+};
+
+export const deployContract = formValues => async (dispatch, getState) => {
+  dispatch({ type: SHOW_MODAL, payload: { showLoader: true, showModal: true } });
+  const state = getState();
+  const { byApiMethod } = getWalletMethod(state);
+  const version = contractVersion('latest').version();
+  const serializedFormValues = contractVersion(version).serializeScaffold({ ...formValues, version });
+  let address;
+
   try {
-    const { abi, bin } = await dispatch(compileContract(formValues.openKey, formValues.properties));
-    const contract = new web3.eth.Contract(JSON.parse(abi));
-    const newContractInstance = await processDeploy(contract, bin, formValues);
-
-    const address = newContractInstance.options.address;
-    const data = await dispatch(apiPost(getScaffoldsPath(), { ...serializeScaffold(formValues), abi, address }));
-
+    if (byApiMethod) {
+      address = await dispatch(deployContractByApi(serializedFormValues));
+    } else {
+      address = await dispatch(deployContractByMetaMask(serializedFormValues));
+    }
     if (formValues.webHook) {
       await setWebHook(address, formValues.webHook);
     }
 
     dispatch({
       type: SHOW_MODAL,
-      payload: { contract: data, showLoader: false }
+      payload: { contract: address, showLoader: false }
     });
 
     return address;
-  } catch (err) {
-    let message = 'Error in deploy contract';
-    if (err.response) {
-      const response = err ? err.response : null;
-      const status = response ? response.status : '';
-      const data = response ? response.data : null;
-      const backendMessage = data ? data.message : null;
-      message = status + ': ' + (backendMessage || 'Error in deploy contract');
-    } else {
-      message = err.message;
-    }
+  } catch (e) {
+    const error = parseApiError(e);
 
     dispatch({
       type: SHOW_MODAL,
-      payload: { showLoader: false, error: message }
+      payload: { showLoader: false, error: error.message }
     });
-    throw new Error(message);
+
+    throw error;
   }
 };
 

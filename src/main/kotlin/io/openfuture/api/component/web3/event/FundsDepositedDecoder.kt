@@ -4,6 +4,8 @@ import io.openfuture.api.domain.event.FundsDepositedEvent
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.generated.Uint256
+import org.web3j.utils.Convert.Unit.ETHER
+import org.web3j.utils.Convert.fromWei
 import java.math.BigInteger
 
 class FundsDepositedDecoder : Decoder<FundsDepositedEvent> {
@@ -12,7 +14,7 @@ class FundsDepositedDecoder : Decoder<FundsDepositedEvent> {
         val response = getResponse(rawData, listOf(object : TypeReference<Uint256>() {}, object : TypeReference<Uint256>() {},
                 object : TypeReference<Address>() {}))
 
-        val amount = response[1].value as BigInteger
+        val amount = fromWei((response[1].value as BigInteger).toBigDecimal(), ETHER)
         val toAddress = response[2].value as String
 
         return FundsDepositedEvent(amount, toAddress)

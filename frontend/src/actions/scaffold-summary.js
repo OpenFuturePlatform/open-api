@@ -1,16 +1,18 @@
 import { getContract } from '../utils/eth';
 import { SET_SCAFFOLD_SET } from './types';
 import { setShareHolders } from './share-holders';
-import { getFromBN } from '../utils/getFromBN';
 import { getScaffoldsSummaryPath } from '../utils/apiPathes';
 import { apiGet } from './apiRequest';
+import { contractVersion } from '../adapters/contract-version';
+import { parseApiError } from '../utils/parseApiError';
 
 export const fetchScaffoldSummaryFromApi = scaffold => async dispatch => {
   const { address } = scaffold;
   dispatch({ type: SET_SCAFFOLD_SET, payload: { address, loading: true } });
 
   try {
-    const summary = await dispatch(apiGet(getScaffoldsSummaryPath(address)));
+    const summaryResponse = await dispatch(apiGet(getScaffoldsSummaryPath(address)));
+    const summary = contractVersion(scaffold.version).serializeScaffoldSummaryByApi(summaryResponse);
     const shareHolders = summary.shareHolders.map(it => ({
       ...it,
       share: it.percent
@@ -18,9 +20,9 @@ export const fetchScaffoldSummaryFromApi = scaffold => async dispatch => {
     dispatch({ type: SET_SCAFFOLD_SET, payload: { address, summary, loading: false } });
     dispatch(setShareHolders(address, shareHolders));
   } catch (e) {
-    const error = `${e.response.status}: ${e.response.message || e.response.statusText}`;
-    dispatch({ type: SET_SCAFFOLD_SET, payload: { address, error, loading: false } });
-    throw e;
+    const error = parseApiError(e);
+    dispatch({ type: SET_SCAFFOLD_SET, payload: { address, error: error.message, loading: false } });
+    throw error;
   }
 };
 
@@ -38,7 +40,7 @@ export const fetchScaffoldSummaryFromChain = scaffold => async dispatch => {
 
   try {
     const summaryResponse = await contract.getScaffoldSummary();
-    const summary = mapScaffoldSummary(summaryResponse);
+    const summary = contractVersion(scaffold.version).serializeScaffoldSummaryByMetaMask(summaryResponse);
     const payload = { address, summary, loading: false };
     dispatch({ type: SET_SCAFFOLD_SET, payload });
   } catch (e) {
@@ -47,23 +49,4 @@ export const fetchScaffoldSummaryFromChain = scaffold => async dispatch => {
     dispatch({ type: SET_SCAFFOLD_SET, payload });
     throw e;
   }
-};
-
-const mapScaffoldSummary = source => {
-  const {
-    0: fiatAmount,
-    1: currency,
-    2: conversionAmount,
-    3: transactionIndex,
-    4: developerAddress,
-    5: tokenBalance
-  } = source;
-  return {
-    fiatAmount,
-    currency,
-    conversionAmount: getFromBN(conversionAmount),
-    transactionIndex: getFromBN(transactionIndex),
-    developerAddress,
-    tokenBalance: getFromBN(tokenBalance) / 100000000
-  };
 };

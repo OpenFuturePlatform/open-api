@@ -25,6 +25,7 @@ class SecurityConfig(
 ) : WebSecurityConfigurerAdapter() {
 
     override fun configure(http: HttpSecurity) {
+        http.cors()
         http.csrf().disable()
 
         // @formatter:off
@@ -35,6 +36,7 @@ class SecurityConfig(
                     .antMatchers("/img/**").permitAll()
                     .antMatchers("/static/**").permitAll()
                     .antMatchers("**.js").permitAll()
+                    .antMatchers("/widget/**").permitAll()
                     .anyRequest().authenticated()
 
                 .and()

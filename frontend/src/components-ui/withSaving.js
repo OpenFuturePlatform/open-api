@@ -28,10 +28,19 @@ export const withSaving = Component =>
       this.setSaving(false);
     };
 
+    onShow = async () => {
+      const { onShow } = this.props;
+      if (typeof onShow === 'function') {
+        onShow();
+      }
+      this.setTransactionError('');
+    };
+
     render() {
       return (
         <Component
           {...this.props}
+          onShow={this.onShow}
           isSaving={this.state.isSaving}
           setSaving={this.setSaving}
           transactionError={this.state.transactionError}

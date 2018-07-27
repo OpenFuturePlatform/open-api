@@ -8,6 +8,7 @@ import io.openfuture.api.entity.auth.OpenKey
 import io.openfuture.api.entity.auth.Role
 import io.openfuture.api.entity.scaffold.Currency.USD
 import io.openfuture.api.entity.scaffold.Scaffold
+import io.openfuture.api.entity.scaffold.ScaffoldVersion.V1
 import io.openfuture.api.entity.scaffold.Transaction
 import io.openfuture.api.service.ScaffoldService
 import io.openfuture.api.service.TransactionService
@@ -40,7 +41,7 @@ class TransactionApiControllerTests : ControllerTests() {
         val openKey = createOpenKey(setOf(Role("ROLE_MASTER")))
         val scaffold = createScaffold(openKey)
         val pageRequest = PageRequest()
-        val transaction = Transaction("hash", scaffold, "data", Date(1531128228590))
+        val transaction = Transaction("hash", "index", scaffold, "data", Date(1531128228590))
 
         given(keyService.find(openKey.value)).willReturn(openKey)
         given(scaffoldService.get(scaffold.address, openKey.user)).willReturn(scaffold)
@@ -62,7 +63,7 @@ class TransactionApiControllerTests : ControllerTests() {
     }
 
     private fun createScaffold(openKey: OpenKey) = Scaffold("address", openKey, "abi", "developerAddress",
-            "description", "2", USD.getId(), "0.00023")
+            "description", "2", USD.getId(), "0.00023", V1.getId())
 
 
     private fun expectTransactionJson(transaction: Transaction) = """
@@ -92,7 +93,8 @@ class TransactionApiControllerTests : ControllerTests() {
                           "currency": ${transaction.scaffold.getCurrency().name},
                           "conversionAmount": "${transaction.scaffold.conversionAmount}",
                           "webHook": ${transaction.scaffold.webHook},
-                          "properties": ${Arrays.toString(transaction.scaffold.property.toTypedArray())}
+                          "properties": ${Arrays.toString(transaction.scaffold.property.toTypedArray())},
+                          "version": ${transaction.scaffold.getVersion()}
                         },
                         "event":{"activated":true,"type":"ACTIVATED_SCAFFOLD"},
                         "date": "2018-07-09T09:23:48.590+0000"

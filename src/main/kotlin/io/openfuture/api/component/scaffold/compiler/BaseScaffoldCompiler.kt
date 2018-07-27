@@ -1,25 +1,24 @@
-package io.openfuture.api.component.scaffold
+package io.openfuture.api.component.scaffold.compiler
 
 import io.openfuture.api.component.template.TemplateProcessor
 import io.openfuture.api.config.propety.EthereumProperties
 import io.openfuture.api.domain.scaffold.ScaffoldPropertyDto
+import io.openfuture.api.entity.scaffold.ScaffoldVersion
 import io.openfuture.api.exception.CompileException
 import org.apache.commons.io.IOUtils
 import org.ethereum.solidity.compiler.CompilationResult
 import org.ethereum.solidity.compiler.CompilationResult.ContractMetadata
 import org.ethereum.solidity.compiler.SolidityCompiler
 import org.ethereum.solidity.compiler.SolidityCompiler.Options.*
-import org.springframework.stereotype.Component
 import java.nio.charset.Charset
 
-@Component
-class ScaffoldCompiler(
+abstract class BaseScaffoldCompiler(
+        private val version: ScaffoldVersion,
         private val templateProcessor: TemplateProcessor,
         private val properties: EthereumProperties
-) {
+) : VersionedScaffoldCompiler {
 
     companion object {
-        private const val SCAFFOLD_TEMPLATE_PATH = "templates/scaffold.ftl"
         private const val SCAFFOLD_KEY = "OpenScaffold"
         private const val STRUCT_PROPERTIES = "SCAFFOLD_STRUCT_PROPERTIES"
         private const val CUSTOM_PARAMETERS = "CUSTOM_SCAFFOLD_PARAMETERS"
@@ -28,8 +27,9 @@ class ScaffoldCompiler(
         private const val OPEN_TOKEN_ADDRESS = "OPEN_TOKEN_ADDRESS"
     }
 
+    override fun getVersion(): ScaffoldVersion = version
 
-    fun compile(properties: List<ScaffoldPropertyDto>): ContractMetadata {
+    override fun compile(properties: List<ScaffoldPropertyDto>): ContractMetadata {
         val scaffold = generateScaffold(properties)
         val compiled = SolidityCompiler.compile(scaffold, true, ABI, BIN, INTERFACE, METADATA)
 
@@ -40,7 +40,7 @@ class ScaffoldCompiler(
         return CompilationResult.parse(compiled.output).getContract(SCAFFOLD_KEY)
     }
 
-    private fun generateScaffold(properties: List<ScaffoldPropertyDto>): ByteArray {
+    protected open fun generateScaffold(properties: List<ScaffoldPropertyDto>): ByteArray {
         val parameters = mapOf(
                 STRUCT_PROPERTIES to properties.joinToString(separator = ";\n\t", postfix = ";") { "${it.type!!.getValue()} ${it.name}" },
                 CUSTOM_PARAMETERS to properties.joinToString(separator = ", ") { "${it.type!!.getValue()} ${it.name}" },
@@ -49,7 +49,7 @@ class ScaffoldCompiler(
                 OPEN_TOKEN_ADDRESS to this.properties.openTokenAddress!!
         )
 
-        val resource = javaClass.classLoader.getResource(SCAFFOLD_TEMPLATE_PATH)
+        val resource = javaClass.classLoader.getResource("templates/scaffold_${version.name.toLowerCase()}.ftl")
         val scaffoldContent = IOUtils.toString(resource, Charset.defaultCharset())
         val preparedTemplate = templateProcessor.getContent(scaffoldContent, parameters)
 

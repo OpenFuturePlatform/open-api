@@ -1,8 +1,9 @@
 import axios from 'axios';
 import { solidityReservedWords } from '../const/solidity-reserved-words';
 import { getValidateUrlPath } from './apiPathes';
+import { t } from './messageTexts';
 
-const urlErrorMessage = 'Webhook needs to be url with format [protocol]://[url]/[path]';
+const urlErrorMessage = t('wrong url message');
 
 export const validateWebHook = async url => await axios.post(getValidateUrlPath(), { url });
 
@@ -16,28 +17,21 @@ export const validateScaffoldProperties = values => {
     const scaffoldFieldsErrors = [];
 
     if (field.name) {
-      if (field.name[0].match(/[a-z]/) === null)
-        scaffoldFieldsErrors.push('A property should begin with a lowercase letter');
+      if (field.name[0].match(/[a-z]/) === null) scaffoldFieldsErrors.push(t('first letter must be lowercase'));
       /* eslint-disable */
       if (field.name.match(/[\s\/\\]/) !== null)
         /* eslint-enable */
-        scaffoldFieldsErrors.push('A property should not contain a space, / and \\');
+        scaffoldFieldsErrors.push(t('space forbidden'));
       if (solidityReservedWords.includes(field.name))
-        scaffoldFieldsErrors.push(`${field.name} is a reserved word, pick another property name.`);
-      if (propertyNames.filter(it => it === field.name).length > 1) scaffoldFieldsErrors.push('Name must be unique');
-    } else {
-      // scaffoldFieldsErrors.push('Name is required');
+        scaffoldFieldsErrors.push(t('field name is forbidden', field.name));
+      if (propertyNames.filter(it => it === field.name).length > 1) scaffoldFieldsErrors.push(t('Name must be unique'));
     }
-
-    // if (!field.type) {
-    // scaffoldFieldsErrors.push('Type is required');
-    // }
 
     const ifNumber = field.type === 'NUMBER';
     const regexTest = field.defaultValue === undefined ? false : digitRegex.test(field.defaultValue);
 
     if (ifNumber && regexTest) {
-      scaffoldFieldsErrors.push('Only integers are allowed in number datatype');
+      scaffoldFieldsErrors.push(t('only integers'));
     }
     scaffoldFieldsArrayErrors[fieldIndex] = scaffoldFieldsErrors;
   });
@@ -47,8 +41,8 @@ export const validateScaffoldProperties = values => {
 
 export const validateAddress = address => {
   let errors = [];
-  if (!address.startsWith('0x')) errors.push('A developer address should begin with 0x');
-  if (address.length !== 42) errors.push('A developer address should be 42 characters long');
+  if (!address.startsWith('0x')) errors.push(t('dev address should begin with 0x'));
+  if (address.length !== 42) errors.push(t('dev address should has length 42'));
   return errors;
 };
 
@@ -61,7 +55,7 @@ export const warn = values => {
     warnings.developerAddress = validateAddress(values.developerAddress);
   }
   if (values.fiatAmount && regexTest) {
-    warnings.fiatAmount = 'Fiat amount should be a number';
+    warnings.fiatAmount = t('fiat should be a number');
   }
   return warnings;
 };
@@ -72,11 +66,9 @@ const isUrl = str => {
 };
 
 export const asyncValidate = async values => {
-  console.log('hi', values);
   if (!values.webHook) {
     return;
   }
-  console.log('test');
   try {
     return await validateWebHook(values.webHook);
   } catch (e) {
@@ -89,19 +81,19 @@ export const validate = values => {
   errors.properties = [];
 
   if (!values.openKey) {
-    errors.openKey = 'A Open Key is required.';
+    errors.openKey = t('open key is required');
   }
   if (!values.developerAddress) {
-    errors.developerAddress = 'A developer address is required.';
+    errors.developerAddress = t('dev address is required');
   }
   if (!values.title) {
-    errors.title = 'A scaffold title is required.';
+    errors.title = t('scaffold title is required');
   }
   if (!values.fiatAmount) {
-    errors.fiatAmount = 'Fiat Amount is required.';
+    errors.fiatAmount = t('fiat is required');
   }
   if (!values.currency) {
-    errors.currency = 'Currency is required.';
+    errors.currency = t('currency is required');
   }
   if (values.webHook && !isUrl(values.webHook)) {
     errors.webHook = urlErrorMessage;

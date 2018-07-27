@@ -18,6 +18,8 @@ interface ScaffoldService {
 
     fun get(address: String, user: User): Scaffold
 
+    fun get(address: String): Scaffold
+
     fun compile(request: CompileScaffoldRequest): CompiledScaffoldDto
 
     fun deploy(request: DeployScaffoldRequest): Scaffold
@@ -33,6 +35,8 @@ interface ScaffoldService {
     fun getScaffoldSummary(address: String, user: User, force: Boolean = false): ScaffoldSummary
 
     fun deactivate(address: String, user: User): ScaffoldSummary
+
+    fun activate(address: String, user: User): ScaffoldSummary
 
     fun addShareHolder(address: String, user: User, request: AddShareHolderRequest): ScaffoldSummary
 
@@ -83,7 +87,7 @@ interface TransactionService {
 
     fun getAll(scaffold: Scaffold, pageRequest: Pageable): Page<Transaction>
 
-    fun find(hash: String): Transaction?
+    fun find(hash: String, index: String): Transaction?
 
     fun save(transaction: Transaction): Transaction
 

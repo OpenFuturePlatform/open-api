@@ -1,5 +1,7 @@
 package io.openfuture.api.component.scaffold
 
+import io.openfuture.api.component.scaffold.compiler.BaseScaffoldCompiler
+import io.openfuture.api.component.scaffold.compiler.V1ScaffoldCompiler
 import io.openfuture.api.component.template.TemplateProcessor
 import io.openfuture.api.config.UnitTest
 import io.openfuture.api.config.propety.EthereumProperties
@@ -13,17 +15,17 @@ import org.mockito.BDDMockito.given
 import org.mockito.Mock
 import java.nio.charset.Charset
 
-internal class ScaffoldCompilerTests : UnitTest() {
+internal class V1ScaffoldCompilerTests : UnitTest() {
 
     @Mock private lateinit var templateProcessor: TemplateProcessor
     @Mock private lateinit var properties: EthereumProperties
 
-    private lateinit var scaffoldCompiler: ScaffoldCompiler
+    private lateinit var scaffoldCompiler: BaseScaffoldCompiler
 
 
     @Before
     fun setUp() {
-        scaffoldCompiler = ScaffoldCompiler(templateProcessor, properties)
+        scaffoldCompiler = V1ScaffoldCompiler(templateProcessor, properties)
     }
 
     @Test
@@ -219,7 +221,8 @@ internal class ScaffoldCompilerTests : UnitTest() {
     }
 
     private fun createScaffoldContent(): String {
-        val resource = javaClass.classLoader.getResource("templates/scaffold.ftl")
+        val resource = javaClass.classLoader
+                .getResource("templates/scaffold_${scaffoldCompiler.getVersion().name.toLowerCase()}.ftl")
         return IOUtils.toString(resource, Charset.defaultCharset())
     }
 

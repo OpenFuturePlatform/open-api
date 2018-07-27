@@ -1,15 +1,15 @@
 import React from 'react';
 import { Divider } from 'semantic-ui-react';
 
-export const TransactionError = ({ message }) => {
-  if (!message) {
+export const TransactionError = ({ message, children }) => {
+  if (!message && !children) {
     return null;
   }
 
   return (
     <div>
       <Divider />
-      <div style={{ color: 'red' }}>{message}</div>
+      <div style={{ color: 'red' }}>{message || children}</div>
     </div>
   );
 };

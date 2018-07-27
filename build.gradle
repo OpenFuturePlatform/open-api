@@ -11,7 +11,7 @@ plugins {
 apply plugin: "io.spring.dependency-management"
 
 group = "io.openfuture.api"
-version = "2.4.0"
+version = "2.5.0"
 sourceCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
@@ -91,6 +91,7 @@ jacocoTestReport {
                     'io/openfuture/api/*Application*',
                     'io/openfuture/api/model/**',
                     'io/openfuture/api/exception/**',
+                    'io/openfuture/api/annotation/**',
                     'io/openfuture/api/config/**'
             ])
         })

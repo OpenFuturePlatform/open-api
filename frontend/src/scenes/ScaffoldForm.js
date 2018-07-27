@@ -11,13 +11,14 @@ import ScaffoldActionField from '../components-ui/inputs/ActionField';
 import ScaffoldField from '../components-ui/inputs/Field';
 import ScaffoldPropertyFields from '../components-ui/inputs/PropertyFields';
 import WrappedInput from '../components-ui/inputs/WrappedInput';
-import { convertCurrencies, deployContract, compileContract, deployContractByApi } from '../actions/deploy-contract';
+import { convertCurrencies, deployContract } from '../actions/deploy-contract';
 import { subscribeEthAccount, unsubscribeEthAccount } from '../actions/eth-account';
 import { MIN_BALANCE } from '../const/index';
 import { getMetaMaskErrorMessage } from '../selectors/getMetaMaskError';
 import { TemplateSelect } from '../components/TemplateSelect';
 import { WalletSelect } from '../components/WalletSelect';
 import { fetchKeys } from '../actions/keys';
+import { t } from '../utils/messageTexts';
 
 class ScaffoldForm extends Component {
   componentDidMount() {
@@ -67,9 +68,7 @@ class ScaffoldForm extends Component {
       return metaMaskError;
     }
 
-    return ethAccount.ethBalance < MIN_BALANCE
-      ? 'Minimum balance: 0,0087 Eth. Change MetaMask account or top up the balance.'
-      : null;
+    return ethAccount.ethBalance < MIN_BALANCE ? t('low balance') : null;
   };
 
   handleOnConvert = async (newCurrency, fiatAmount) => {
@@ -83,16 +82,10 @@ class ScaffoldForm extends Component {
   };
 
   handleOnSubmit = async e => {
-    const { actions, history, formValues, byApiMethod } = this.props;
+    const { actions, history, formValues } = this.props;
     e.preventDefault();
     try {
-      let contractAddress;
-
-      if (byApiMethod) {
-        contractAddress = await actions.deployContractByApi(formValues);
-      } else {
-        contractAddress = await actions.deployContract(formValues);
-      }
+      const contractAddress = await actions.deployContract(formValues);
       history.push(`/scaffolds/${contractAddress}`);
     } catch (e) {
       console.warn('Deployment Error: ', e);
@@ -289,9 +282,7 @@ const mapDispatchToProps = dispatch => ({
       convertCurrencies,
       deployContract,
       subscribeEthAccount,
-      compileContract,
       unsubscribeEthAccount,
-      deployContractByApi,
       fetchKeys
     },
     dispatch

@@ -5,6 +5,7 @@ import io.openfuture.api.config.any
 import io.openfuture.api.entity.auth.OpenKey
 import io.openfuture.api.entity.auth.User
 import io.openfuture.api.entity.scaffold.Scaffold
+import io.openfuture.api.entity.scaffold.ScaffoldVersion.V1
 import io.openfuture.api.entity.scaffold.Transaction
 import io.openfuture.api.repository.TransactionRepository
 import org.assertj.core.api.Assertions.assertThat
@@ -42,6 +43,17 @@ internal class DefaultTransactionServiceTests : UnitTest() {
     }
 
     @Test
+    fun findShouldReturnTransactionByHash() {
+        val expectedTransaction = createTransaction()
+
+        given(repository.findByHashAndIndex(expectedTransaction.hash, expectedTransaction.index)).willReturn(expectedTransaction)
+
+        val actualTransaction = service.find(expectedTransaction.hash, expectedTransaction.index)
+
+        assertThat(actualTransaction).isEqualTo(expectedTransaction)
+    }
+
+    @Test
     fun saveTest() {
         val transaction = createTransaction()
 
@@ -53,13 +65,13 @@ internal class DefaultTransactionServiceTests : UnitTest() {
         assertThat(actualTransaction.scaffold).isEqualTo(transaction.scaffold)
     }
 
-    private fun createTransaction(): Transaction = Transaction("hash", createScaffold(), "data binary")
+    private fun createTransaction(): Transaction = Transaction("hash", "index", createScaffold(), "data binary")
 
     private fun createScaffold(): Scaffold {
         val openKey = OpenKey(User("104113085667282103363"))
 
         return Scaffold("address", openKey, "abi", "developerAddress", "description", "fiatAmount", 1,
-                "conversionAmount", "webHook", Collections.emptyList()).apply { id = 1L }
+                "conversionAmount", V1.getId(), "webHook", Collections.emptyList()).apply { id = 1L }
     }
 
 }

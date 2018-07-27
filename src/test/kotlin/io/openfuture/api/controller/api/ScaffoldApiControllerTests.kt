@@ -10,6 +10,7 @@ import io.openfuture.api.entity.scaffold.Currency.USD
 import io.openfuture.api.entity.scaffold.PropertyType
 import io.openfuture.api.entity.scaffold.Scaffold
 import io.openfuture.api.entity.scaffold.ScaffoldSummary
+import io.openfuture.api.entity.scaffold.ScaffoldVersion.V1
 import io.openfuture.api.service.ScaffoldService
 import org.junit.Test
 import org.mockito.BDDMockito.given
@@ -225,6 +226,22 @@ class ScaffoldApiControllerTests : ControllerTests() {
     }
 
     @Test
+    fun activateTest() {
+        val scaffoldAddress = "address"
+        val openKey = createOpenKey(setOf(Role("ROLE_MASTER")))
+
+        given(keyService.find(openKey.value)).willReturn(openKey)
+        given(service.activate(scaffoldAddress, openKey.user)).willReturn(createScaffoldSummary())
+
+        mvc.perform(post("/api/scaffolds/$scaffoldAddress")
+                .header(AUTHORIZATION, openKey.value))
+
+                .andExpect(status().isOk)
+
+        verify(service).activate(scaffoldAddress, openKey.user)
+    }
+
+    @Test
     fun getQuotaTest() {
         val scaffoldQuotaDto = ScaffoldQuotaDto(1, 10)
         val openKey = createOpenKey(setOf(Role("ROLE_MASTER")))
@@ -245,7 +262,7 @@ class ScaffoldApiControllerTests : ControllerTests() {
     }
 
     private fun createScaffold(openKey: OpenKey) = Scaffold("address", openKey, "abi", "developerAddress",
-            "description", "2", USD.getId(), "0.00023")
+            "description", "2", USD.getId(), "0.00023", V1.getId())
 
     private fun createScaffoldPropertyDto() = ScaffoldPropertyDto("name", PropertyType.STRING, "value")
 
@@ -275,7 +292,8 @@ class ScaffoldApiControllerTests : ControllerTests() {
                       "currency": ${scaffold.getCurrency().name},
                       "conversionAmount": "${scaffold.conversionAmount}",
                       "webHook": ${scaffold.webHook},
-                      "properties": ${Arrays.toString(scaffold.property.toTypedArray())}
+                      "properties": ${Arrays.toString(scaffold.property.toTypedArray())},
+                      "version": ${scaffold.getVersion()}
                     }
                     """.trimIndent()
 
@@ -289,7 +307,7 @@ class ScaffoldApiControllerTests : ControllerTests() {
                     }
                     """.trimIndent()
 
-    private fun createScaffoldSummary() = ScaffoldSummary(Scaffold("address", OpenKey(User("")), "", "", "", "", 1, ""),
-            ZERO, ZERO, true)
+    private fun createScaffoldSummary() = ScaffoldSummary(Scaffold("address", OpenKey(User("")), "", "", "", "", 1, "",
+            V1.getId()), ZERO, ZERO, true)
 
 }
