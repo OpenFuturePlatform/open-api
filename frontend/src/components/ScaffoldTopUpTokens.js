@@ -9,6 +9,7 @@ import { validateMMTokenBalance } from '../selectors/getMetaMaskError';
 import { topUpTokenBalance } from '../actions/scaffold-activation';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
+import { t } from '../utils/messageTexts';
 
 const ErrorMessage = styled.div`
   display: inline-block;
@@ -25,16 +26,17 @@ const ScaffoldTopUpTokensComponent = ({ children, topUpError, ...props }) => (
       </Button>
       <ConfirmationModal {...props} submitDisabled={!!topUpError}>
         <div>
-          You are about to top up Scaffold Token Balance. Proceed?
+          {t('sure to top up balance')}
           <Divider />
-          <span>PS: Please be patient this may take a while...</span>
+          <span>{t('it may take a while')}</span>
           <TransactionError>{topUpError}</TransactionError>
         </div>
       </ConfirmationModal>
     </span>
     <ErrorMessage>
-      Your scaffold is created but is inactive.<br />
-      To activate your scaffold you need to have {MIN_CONTRACT_DEPOSIT} OPEN Tokens on scaffold contract.
+      {t('scaffold not activated')}
+      <br />
+      {t('to activate you need tokens', MIN_CONTRACT_DEPOSIT)}
     </ErrorMessage>
   </div>
 );

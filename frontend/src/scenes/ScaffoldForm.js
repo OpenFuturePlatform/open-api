@@ -18,6 +18,7 @@ import { getMetaMaskErrorMessage } from '../selectors/getMetaMaskError';
 import { TemplateSelect } from '../components/TemplateSelect';
 import { WalletSelect } from '../components/WalletSelect';
 import { fetchKeys } from '../actions/keys';
+import { t } from '../utils/messageTexts';
 
 class ScaffoldForm extends Component {
   componentDidMount() {
@@ -67,9 +68,7 @@ class ScaffoldForm extends Component {
       return metaMaskError;
     }
 
-    return ethAccount.ethBalance < MIN_BALANCE
-      ? 'Minimum balance: 0,0087 Eth. Change MetaMask account or top up the balance.'
-      : null;
+    return ethAccount.ethBalance < MIN_BALANCE ? t('low balance') : null;
   };
 
   handleOnConvert = async (newCurrency, fiatAmount) => {

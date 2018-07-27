@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Button, Icon, Loader, Modal } from 'semantic-ui-react';
 import { connect } from 'react-redux';
 import * as actions from '../actions';
+import { t } from '../utils/messageTexts';
 
 class WaitingModal extends Component {
   renderCloseButton = () => {
@@ -30,13 +31,13 @@ class WaitingModal extends Component {
     if (modalInfo.contract) {
       return (
         <div>
-          <div>Congratulations your scaffold is deployed.</div>
+          <div>{t('scaffold deployed')}</div>
           {this.renderCloseButton()}
         </div>
       );
     }
 
-    return <div>Open is deploying your scaffold on-chain. Please be patient this may take a while...</div>;
+    return <div>{t('is deploying')}</div>;
   };
 
   render() {
