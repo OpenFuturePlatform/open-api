@@ -6,7 +6,7 @@ export const setAuthorized = isAuthorized => ({ type: SET_AUTH, payload: isAutho
 
 export const fetchUser = () => async dispatch => {
   const data = await dispatch(apiGet(getCurrentUserPath()));
-  dispatch({ type: FETCH_USER, payload: data });
+  dispatch({ type: FETCH_USER, payload: data, isLoading: false });
   dispatch(setAuthorized(true));
 };
 
