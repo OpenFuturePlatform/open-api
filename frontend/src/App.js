@@ -20,12 +20,17 @@ const UnAuthorizeMessage = styled.div`
 
 class App extends Component {
   async componentDidMount() {
-    await this.props.fetchUser();
     await this.props.fetchGlobalProperties();
+    await this.props.fetchUser();
   }
 
   renderAuthorizedContent = () => {
     const { auth, globalProperties } = this.props;
+
+    if (auth.isLoading) {
+      return null;
+    }
+
     if (!auth.isAuthorized || !globalProperties.network.id) {
       return <UnAuthorizeMessage>{t('session was expired')}</UnAuthorizeMessage>;
     }

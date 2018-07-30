@@ -38,6 +38,10 @@ class Header extends Component {
   }
 
   renderContent() {
+    if (this.props.isLoading) {
+      return null;
+    }
+
     if (!this.props.isAuthorized) {
       return this.renderNotAuthorizedContent();
     }
@@ -68,6 +72,10 @@ class Header extends Component {
   }
 }
 
-const mapStateToProps = ({ auth: { user, isAuthorized } }) => ({ currentUser: user, isAuthorized });
+const mapStateToProps = ({ auth: { user, isAuthorized, isLoading } }) => ({
+  currentUser: user,
+  isAuthorized,
+  isLoading
+});
 
 export default connect(mapStateToProps)(Header);
