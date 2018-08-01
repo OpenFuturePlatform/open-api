@@ -21,4 +21,7 @@ class MainController(
     @GetMapping("/", "/scaffold", "/scaffolds", "/scaffolds/**", "/keys", "/keys/**")
     fun frontend() = "frontend"
 
+    @GetMapping("/widget")
+    fun widget() = "widget"
+
 }
