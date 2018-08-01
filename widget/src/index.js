@@ -105,8 +105,8 @@ function validateForm(){
 
 
 
-async function openWidget(scaffold){
-  const scaffoldAddress =  scaffold || await window.parent.document.getElementById('open-widget-iframe').dataset.address;
+async function openWidget(){
+  const scaffoldAddress = await window.parent.document.getElementById('open-widget-iframe').dataset.address;
   const OPEN_URL  = `https://api.open-platform.zensoft.io/widget/scaffolds/${scaffoldAddress}`;
   windgetData = await getContractData(OPEN_URL);
 
@@ -228,4 +228,4 @@ function toHex(data){
     return _web3.utils.toHex(data);
 }
 
-openWidget('0x3D788EDDf0c5B71dF0f19b97b1360611CbDF5cDa')
+openWidget()
