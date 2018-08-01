@@ -2,9 +2,6 @@ package io.openfuture.api.util
 
 import org.web3j.crypto.Keys
 
-/**
- * @author Igor Pahomov
- */
 object EthereumUtils {
 
     private const val NULL_ADDRESS = "0x0000000000000000000000000000000000000000"
@@ -13,8 +10,6 @@ object EthereumUtils {
 
     fun isValidChecksumAddress(address: String): Boolean =
             isValidAddress(address) && !isAllOneCase(address) && (toChecksumAddress(address) == address)
-
-    private fun toChecksumAddress(address: String): String = Keys.toChecksumAddress(address)
 
     private fun isValidAddress(address: String): Boolean {
         if (NULL_ADDRESS == address) return false
@@ -26,5 +21,7 @@ object EthereumUtils {
         val upperCase = address.toUpperCase()
         return address == lowerCase || address == upperCase
     }
+
+    private fun toChecksumAddress(address: String): String = Keys.toChecksumAddress(address)
 
 }

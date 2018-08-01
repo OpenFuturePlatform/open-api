@@ -1,15 +1,16 @@
 package io.openfuture.api.domain.scaffold
 
+import io.openfuture.api.annotation.Address
 import io.openfuture.api.entity.scaffold.Currency
 import io.openfuture.api.entity.scaffold.ScaffoldVersion
 import javax.validation.Valid
 import javax.validation.constraints.*
 
 data class SaveScaffoldRequest(
-        @field:NotBlank var address: String? = null,
+        @Address @field:NotBlank var address: String? = null,
         @field:NotBlank var abi: String? = null,
         @field:NotBlank var openKey: String? = null,
-        @field:NotBlank var developerAddress: String? = null,
+        @field:NotBlank @field:Address var developerAddress: String? = null,
         @field:NotBlank var description: String? = null,
         @field:NotBlank @field:Digits(integer = Int.MAX_VALUE, fraction = Int.MAX_VALUE) var fiatAmount: String? = null,
         @field:NotNull var currency: Currency? = null,

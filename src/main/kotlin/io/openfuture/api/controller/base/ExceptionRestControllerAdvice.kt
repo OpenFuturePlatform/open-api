@@ -9,6 +9,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestControllerAdvice
+import javax.validation.ConstraintViolationException
 
 @RestControllerAdvice
 class ExceptionRestControllerAdvice {
@@ -21,6 +22,12 @@ class ExceptionRestControllerAdvice {
         val message = error?.let { "Request is not valid because ${it.field} ${it.defaultMessage}" }
                 ?: "Some of request parameters are wrong. Please check request  according do documentation https://docs.openfuture.io/."
         return ExceptionResponse(BAD_REQUEST.value(), message, errors.map { ErrorDto(it) })
+    }
+
+    @ResponseStatus(code = BAD_REQUEST)
+    @ExceptionHandler(ConstraintViolationException::class)
+    fun constraintViolationExceptionHandler(exception: ConstraintViolationException): ExceptionResponse {
+        return ExceptionResponse(BAD_REQUEST.value(), exception.message!!)
     }
 
     @ResponseStatus(code = BAD_REQUEST)
