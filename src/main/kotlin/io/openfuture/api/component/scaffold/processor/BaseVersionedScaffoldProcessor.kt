@@ -11,6 +11,7 @@ import io.openfuture.api.entity.scaffold.Scaffold
 import io.openfuture.api.entity.scaffold.ScaffoldSummary
 import io.openfuture.api.entity.scaffold.ScaffoldVersion
 import io.openfuture.api.entity.scaffold.ShareHolder
+import io.openfuture.api.util.EthereumUtils.toChecksumAddress
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.Utf8String
@@ -118,7 +119,7 @@ abstract class BaseVersionedScaffoldProcessor(
             )
             shareHolders.add(ShareHolder(
                     summary,
-                    shareHolderResult[0].value as String,
+                    toChecksumAddress(shareHolderResult[0].value as String),
                     (shareHolderResult[1].value as BigInteger).toInt()
             ))
         }

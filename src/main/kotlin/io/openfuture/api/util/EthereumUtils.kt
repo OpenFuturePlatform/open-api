@@ -11,6 +11,8 @@ object EthereumUtils {
     fun isValidChecksumAddress(address: String): Boolean =
             isValidAddress(address) && !isAllOneCase(address) && (toChecksumAddress(address) == address)
 
+    fun toChecksumAddress(address: String): String = Keys.toChecksumAddress(address)
+
     private fun isValidAddress(address: String): Boolean {
         if (NULL_ADDRESS == address) return false
         return address.matches(Regex(ADDRESS_REGEX))
@@ -21,7 +23,5 @@ object EthereumUtils {
         val upperCase = address.toUpperCase()
         return address == lowerCase || address == upperCase
     }
-
-    private fun toChecksumAddress(address: String): String = Keys.toChecksumAddress(address)
 
 }

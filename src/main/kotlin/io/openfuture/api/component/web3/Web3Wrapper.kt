@@ -3,6 +3,7 @@ package io.openfuture.api.component.web3
 import io.openfuture.api.config.propety.EthereumProperties
 import io.openfuture.api.exception.ExecuteTransactionException
 import io.openfuture.api.exception.FunctionCallException
+import io.openfuture.api.util.EthereumUtils.toChecksumAddress
 import org.springframework.stereotype.Component
 import org.web3j.abi.FunctionEncoder
 import org.web3j.abi.FunctionReturnDecoder
@@ -56,7 +57,7 @@ class Web3Wrapper(
         val transaction = createContractTransaction(getNonce(credentials.address), GAS_PRICE, GAS_LIMIT, ZERO,
                 bin + encodedConstructor)
         val result = executeTransaction(transaction, credentials)
-        return result.contractAddress
+        return toChecksumAddress(result.contractAddress)
     }
 
     fun callFunction(methodName: String, inputParams: List<Type<*>>, outputParams: List<TypeReference<*>>,
