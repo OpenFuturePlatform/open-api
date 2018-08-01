@@ -33,10 +33,7 @@ internal class TransactionHandlerTests : UnitTest() {
     @Before
     fun setUp() {
         transactionHandler = TransactionHandler(transactionService, scaffoldRepository, eventDecoder, publisher)
-        given(log.transactionHash).willReturn("hash")
         given(log.address).willReturn("0xba37163625b3f2e96112562858c12b75963af138")
-        given(log.data).willReturn("data")
-        given(log.logIndexRaw).willReturn("index")
     }
 
     @Test
@@ -45,7 +42,7 @@ internal class TransactionHandlerTests : UnitTest() {
         val scaffold = Scaffold("0xba37163625b32e96112562858c12b75963af138", OpenKey(user), "abi", "developerAddress",
                 "description", "fiatAmount", 1, "conversionAmount", V1.getId(), "https://test.com", mutableListOf())
 
-        given(scaffoldRepository.findByAddressIgnoreCase(log.address)).willReturn(scaffold)
+        given(scaffoldRepository.findByAddressIgnoreCase("0xba37163625b3f2e96112562858c12b75963af138")).willReturn(scaffold)
         given(transactionService.save(any(Transaction::class.java))).will { invocation -> invocation.arguments[0] }
 
         transactionHandler.handle(log)
@@ -53,7 +50,7 @@ internal class TransactionHandlerTests : UnitTest() {
 
     @Test
     fun handleWhenEmptyScaffoldShouldNotSaveTransactionTest() {
-        given(scaffoldRepository.findByAddressIgnoreCase(log.address)).willReturn(null)
+        given(scaffoldRepository.findByAddressIgnoreCase("0xba37163625b3f2e96112562858c12b75963af138")).willReturn(null)
 
         transactionHandler.handle(log)
 
