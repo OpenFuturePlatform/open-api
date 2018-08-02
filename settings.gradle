@@ -1,3 +1,5 @@
 rootProject.name = 'open-api'
 
 include 'frontend'
+include 'widget'
+

@@ -5,13 +5,13 @@ plugins {
     id "org.jetbrains.kotlin.kapt" version "1.2.51"
     id "org.jetbrains.kotlin.plugin.spring" version "1.2.51"
     id "org.jetbrains.kotlin.plugin.jpa" version "1.2.51"
-    id "org.springframework.boot" version "2.0.3.RELEASE"
+    id "org.springframework.boot" version "2.0.4.RELEASE"
 }
 
 apply plugin: "io.spring.dependency-management"
 
 group = "io.openfuture.api"
-version = "2.5.0"
+version = "2.6.0"
 sourceCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
@@ -62,6 +62,7 @@ dependencies {
 sourceSets {
     main.kotlin.srcDirs += 'src/main/kotlin'
     main.resources.srcDirs += 'frontend/build/resources'
+    main.resources.srcDirs += 'widget/build/resources'
 }
 
 // Kotlin
@@ -101,3 +102,4 @@ check.dependsOn jacocoTestReport
 
 // Front
 processResources.dependsOn(':frontend:assemble')
+processResources.dependsOn(':widget:assemble')

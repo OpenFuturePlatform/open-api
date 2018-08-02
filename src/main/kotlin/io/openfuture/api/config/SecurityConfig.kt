@@ -27,6 +27,7 @@ class SecurityConfig(
     override fun configure(http: HttpSecurity) {
         http.cors()
         http.csrf().disable()
+        http.headers().frameOptions().disable()
 
         // @formatter:off
         http
