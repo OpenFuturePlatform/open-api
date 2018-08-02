@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.6.0] - 2018-08-02
+### Added
+- Payment widget. Now you can pay a scaffold using a widget.
+- Widget: an iFrame element for embedding the payment widget to the seller's website
+- Widget: Browser detecting logic
+- Widget: Error tips
+- Widget: Web3 script with required functionality
+
 ## [2.5.0] - 2018-07-27
 ### Added
 - Scaffold v2
@@ -134,6 +142,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - "Withdraw" button is removed
 
 [Unreleased]: https://github.com/OpenFuturePlatform/open-api/compare/master...sprint
+[2.6.0]: https://github.com/OpenFuturePlatform/open-api/compare/v2.5.0...v2.6.0
 [2.5.0]: https://github.com/OpenFuturePlatform/open-api/compare/v2.4.0...v2.5.0
 [2.4.0]: https://github.com/OpenFuturePlatform/open-api/compare/v2.3.0...v2.4.0
 [2.3.0]: https://github.com/OpenFuturePlatform/open-api/compare/v2.2.1...v2.3.0
