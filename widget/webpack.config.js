@@ -6,7 +6,7 @@ module.exports = {
   devtool: 'source-map',
   entry: './src/index.js',
   output: {
-    filename: 'main.js',
+    filename: 'open-widget.js',
     path: path.resolve(`${__dirname}`, 'build/js')
   },
   performance: {

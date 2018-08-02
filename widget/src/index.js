@@ -106,14 +106,16 @@ function validateForm(){
 
 
 async function openWidget(){
-  const scaffoldAddress = await window.parent.document.getElementById('open-widget-iframe').dataset.address;
+  const scaffoldAddress = await document.body.dataset.address;
   const OPEN_URL  = `https://api.open-platform.zensoft.io/widget/scaffolds/${scaffoldAddress}`;
   windgetData = await getContractData(OPEN_URL);
 
   let widgetEl = document.createElement('div');
-  widgetEl.setAttribute('id','open-widget');
+      widgetEl.setAttribute('id','open-widget');
   let conteiner = document.body.appendChild(widgetEl);
 
+  let form = document.createElement('form');
+  form.setAttribute('name','openWidgetForm');
 
   //if browser not support Ethereum Ðapps
   if(!browserIsSupported){
@@ -122,11 +124,13 @@ async function openWidget(){
     warn.textContent = `Oops! Your browser does not support Ethereum Ðapps.`;
     conteiner.appendChild(warn);
   }
-  
 
-
-  let form = document.createElement('form');
-  form.setAttribute('name','openWidgetForm');
+  if(!windgetData.description){
+    let warn = document.createElement('h3');
+    warn.textContent = `INVALID SCAFFOLD ADDRESS`;
+    document.body.appendChild(warn);
+    return;
+  }
 
   //create scaffold description
   let desc = document.createElement('h3');
