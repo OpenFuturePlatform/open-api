@@ -1,15 +1,15 @@
 # Open-widget
-This is a payment widget that you can embed in your site for receiving payments from customers in the Crypto currency via [OPEN platform](https://api.openfuture.io/) API.
+This is a payment widget that you can embed to your site for processing payments from customers in the Cryptocurrency via  [OPEN platform](https://api.openfuture.io/) API.
 
 This widget requires [Metamask wallet](https://metamask.io/).
 
 [![](http://joxi.net/VrwNex4COodeMA.png)]()
 
-### Usage
+### How to use a widget
 
-width and height parameters.
-You also need to put your scaffold address in the src element after  - "https://www.openfuture.io/widget/" 
-The best solution is to do this dynamically, especially if you have created a lot of scaffolds.k
+Paste the code below to a location at your site where you'd like to use this widget and set the width and height parameters.
+You also have to put your scaffold address in the src element: 'https://www.openfuture.io/widget/your_scaffold_address'
+The best solution is to do it dynamically, especially if you have created a lot of scaffolds.
 
 
  ```html
@@ -19,5 +19,5 @@ The best solution is to do this dynamically, especially if you have created a lo
 
 
 The widget can contain a maximum of 9 fields of 3 types (string, number, boolean). 
-Field names and type are set in a [personal OPEN-platform account](https://api.open-platform.zensoft.io/scaffolds/new) , before creating a smart contract.
+Field names and types are set in a [personal OPEN-platform account](https://api.open-platform.zensoft.io/scaffolds/new) during a smart contract creation.
 
