@@ -107,7 +107,7 @@ function validateForm(){
 
 async function openWidget(){
   const scaffoldAddress = await document.body.dataset.address;
-  const OPEN_URL  = `https://api.open-platform.zensoft.io/widget/scaffolds/${scaffoldAddress}`;
+  const OPEN_URL  = `https://api.openfuture.io/widget/scaffolds/${scaffoldAddress}`;
   windgetData = await getContractData(OPEN_URL);
 
   let widgetEl = document.createElement('div');
