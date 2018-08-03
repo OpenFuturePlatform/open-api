@@ -237,6 +237,7 @@ certificates-development:
     DEPLOY_HOST: $DEPLOY_HOST_DEV
     DEPLOY_KEY: $DEPLOY_KEY_DEV
     SERVER_NAME: "api.open-platform.zensoft.io"
+    WIDGET_HOST: "https://api.open-platform.zensoft.io"
   before_script: *prepare_key
   script: *update_certificates
   only:
@@ -250,6 +251,7 @@ certificates-production:
     DEPLOY_HOST: $DEPLOY_HOST_PROD
     DEPLOY_KEY: $DEPLOY_KEY_PROD
     SERVER_NAME: "api.openfuture.io"
+    WIDGET_HOST: "https://api.openfuture.io"
   before_script: *prepare_key
   script: *update_certificates
   only:

@@ -7,7 +7,7 @@ module.exports = {
   entry: './src/index.js',
   output: {
     filename: 'open-widget.js',
-    path: path.resolve(`${__dirname}`, 'build/js')
+    path: path.resolve(`${__dirname}`, 'build/static/js')
   },
   performance: {
     maxEntrypointSize: 512000,
