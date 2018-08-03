@@ -1,7 +1,6 @@
 import * as internalWeb3 from 'web3';
-import * as style from './style.css';
 
-const _web3 = new internalWeb3(internalWeb3.givenProvider || 'http://localhost:8545');
+const _web3 = new internalWeb3(internalWeb3.givenProvider);
 let   windgetData;
 let   userInputData = [];
 let   currentNetwork;
@@ -107,7 +106,8 @@ function validateForm(){
 
 async function openWidget(){
   const scaffoldAddress = await document.body.dataset.address;
-  const OPEN_URL  = `https://api.open-platform.zensoft.io/widget/scaffolds/${scaffoldAddress}`;
+  const host = await document.body.dataset.host;
+  const OPEN_URL  = `${host}/widget/scaffolds/${scaffoldAddress}`;
   windgetData = await getContractData(OPEN_URL);
 
   let widgetEl = document.createElement('div');
