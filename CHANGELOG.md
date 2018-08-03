@@ -145,6 +145,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - "Withdraw" button is removed
 
 [Unreleased]: https://github.com/OpenFuturePlatform/open-api/compare/master...sprint
+[2.6.1]: https://github.com/OpenFuturePlatform/open-api/compare/v2.6.0...v2.6.1
 [2.6.0]: https://github.com/OpenFuturePlatform/open-api/compare/v2.5.0...v2.6.0
 [2.5.0]: https://github.com/OpenFuturePlatform/open-api/compare/v2.4.0...v2.5.0
 [2.4.0]: https://github.com/OpenFuturePlatform/open-api/compare/v2.3.0...v2.4.0
