@@ -1,4 +1,5 @@
 import * as internalWeb3 from 'web3';
+import * as style from './style.css';
 
 const _web3 = new internalWeb3(internalWeb3.givenProvider);
 let   windgetData;
