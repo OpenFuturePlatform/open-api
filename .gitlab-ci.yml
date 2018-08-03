@@ -150,6 +150,7 @@ package-docker:
                  -e "ETHEREUM_PRIVATE_KEY=${ETHEREUM_PRIVATE_KEY}" \
                  -e "OPEN_TOKEN_ADDRESS=${OPEN_TOKEN_ADDRESS}" \
                  -e "EVENT_SUBSCRIPTION=${EVENT_SUBSCRIPTION}" \
+                 -e "WIDGET_HOST=${WIDGET_HOST}" \
                  ${IMAGE_NAME}:${IMAGE_TAG}
     "
 
@@ -171,6 +172,7 @@ deploy-development:
     ETHEREUM_PRIVATE_KEY: $ETHEREUM_PRIVATE_KEY_DEV
     OPEN_TOKEN_ADDRESS: $OPEN_TOKEN_ADDRESS_DEV
     EVENT_SUBSCRIPTION: "true"
+    WIDGET_HOST: "https://api.open-platform.zensoft.io"
     IMAGE_TAG: sprint
   before_script: *prepare_key
   script: *deploy_to_host
@@ -200,6 +202,7 @@ deploy-production:
     ETHEREUM_PRIVATE_KEY: $ETHEREUM_PRIVATE_KEY_PROD
     OPEN_TOKEN_ADDRESS: $OPEN_TOKEN_ADDRESS_PROD
     EVENT_SUBSCRIPTION: "true"
+    WIDGET_HOST: "https://api.openfuture.io"
     IMAGE_TAG: latest
   before_script: *prepare_key
   script: *deploy_to_host
@@ -237,7 +240,6 @@ certificates-development:
     DEPLOY_HOST: $DEPLOY_HOST_DEV
     DEPLOY_KEY: $DEPLOY_KEY_DEV
     SERVER_NAME: "api.open-platform.zensoft.io"
-    WIDGET_HOST: "https://api.open-platform.zensoft.io"
   before_script: *prepare_key
   script: *update_certificates
   only:
@@ -251,7 +253,6 @@ certificates-production:
     DEPLOY_HOST: $DEPLOY_HOST_PROD
     DEPLOY_KEY: $DEPLOY_KEY_PROD
     SERVER_NAME: "api.openfuture.io"
-    WIDGET_HOST: "https://api.openfuture.io"
   before_script: *prepare_key
   script: *update_certificates
   only:

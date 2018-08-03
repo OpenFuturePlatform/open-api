@@ -21,7 +21,7 @@ const messageTextMap = {
   'open key is required': 'A Open Key is required.',
   'dev address is required': 'A developer address is required.',
   'scaffold title is required': 'A scaffold title is required.',
-  'special characters are forbidden': 'special characters are forbidden',
+  'special characters are forbidden': 'Special characters are forbidden',
   'currency is required': 'Currency is required.',
   'low balance': 'Minimum balance: 0,0087 Eth. Change MetaMask account or top up the balance.',
 

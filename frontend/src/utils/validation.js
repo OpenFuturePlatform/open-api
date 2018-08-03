@@ -18,11 +18,7 @@ export const validateScaffoldProperties = values => {
 
     if (field.name) {
       if (field.name[0].match(/[a-z]/) === null) scaffoldFieldsErrors.push(t('first letter must be lowercase'));
-      /* eslint-disable */
-      if (field.name.match(/[\s\/\\]/) !== null)
-        /* eslint-enable */
-        scaffoldFieldsErrors.push(t('space forbidden'));
-      if (field.name.match(/^[a-zA-Z0-9]+$/g) === null) {
+      if (field.name.match(/^[a-zA-Z0-9_]+$/g) === null) {
         scaffoldFieldsErrors.push(t('special characters are forbidden'));
       }
       if (solidityReservedWords.includes(field.name))
