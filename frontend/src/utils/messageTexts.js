@@ -24,6 +24,7 @@ const messageTextMap = {
   'special characters are forbidden': 'Special characters are forbidden',
   'currency is required': 'Currency is required.',
   'low balance': 'Minimum balance: 0,0087 Eth. Change MetaMask account or top up the balance.',
+  'invalid address': 'Invalid Eherium Address',
 
   // deploy contract process messages
   'it may take a while': 'PS: Please be patient this may take a while...',
