@@ -7,6 +7,7 @@ import { withSaving } from '../components-ui/withSaving';
 import { ShowAddEditButton } from '../components-ui/ShowAddEditButton';
 import { ErrorMessage } from '../components-ui/ErrorMessage';
 import { t } from '../utils/messageTexts';
+import { toChecksumAddress } from '../utils/toChecksumAddress';
 
 class ShareHolderSaveComponent extends React.Component {
   constructor(props) {
@@ -60,7 +61,8 @@ class ShareHolderSaveComponent extends React.Component {
 
   onSubmit = async () => {
     const { submitWithSaving } = this.props;
-    const { address, share } = this.state;
+    const { share } = this.state;
+    const address = toChecksumAddress(this.state.address);
     this.setState({ isSaving: true });
     submitWithSaving({ address, share });
   };

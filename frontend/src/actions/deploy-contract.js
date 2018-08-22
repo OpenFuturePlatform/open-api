@@ -7,6 +7,7 @@ import { apiPost, apiPatch, apiGet } from './apiRequest';
 import { contractVersion } from '../adapters/contract-version';
 import { getWalletMethod } from '../selectors/getWalletMethod';
 import { parseApiError } from '../utils/parseApiError';
+import { toChecksumAddress } from '../utils/toChecksumAddress';
 
 const setWebHook = (address, webHook) => async dispatch =>
   await dispatch(apiPatch(getScaffoldsPath(address), { webHook }));
@@ -47,30 +48,34 @@ export const deployContractByMetaMask = formValues => async (dispatch, getState)
   return address;
 };
 
-export const deployContract = formValues => async (dispatch, getState) => {
+export const deployContract = formValuesInit => async (dispatch, getState) => {
   dispatch({ type: SHOW_MODAL, payload: { showLoader: true, showModal: true } });
   const state = getState();
   const { byApiMethod } = getWalletMethod(state);
-  const version = contractVersion('latest').version();
-  const serializedFormValues = contractVersion(version).serializeScaffold({ ...formValues, version });
-  let address;
 
   try {
+    const developerAddress = toChecksumAddress(formValuesInit.developerAddress);
+    const vendorAddress = toChecksumAddress(formValuesInit.vendorAddress);
+    const formValues = { ...formValuesInit, developerAddress, vendorAddress };
+    const version = contractVersion('latest').version();
+    const serializedFormValues = contractVersion(version).serializeScaffold({ ...formValues, version });
+    let contractAddress;
+
     if (byApiMethod) {
-      address = await dispatch(deployContractByApi(serializedFormValues));
+      contractAddress = await dispatch(deployContractByApi(serializedFormValues));
     } else {
-      address = await dispatch(deployContractByMetaMask(serializedFormValues));
+      contractAddress = await dispatch(deployContractByMetaMask(serializedFormValues));
     }
     if (formValues.webHook) {
-      await setWebHook(address, formValues.webHook);
+      await setWebHook(contractAddress, formValues.webHook);
     }
 
     dispatch({
       type: SHOW_MODAL,
-      payload: { contract: address, showLoader: false }
+      payload: { contract: contractAddress, showLoader: false }
     });
 
-    return address;
+    return contractAddress;
   } catch (e) {
     const error = parseApiError(e);
 
