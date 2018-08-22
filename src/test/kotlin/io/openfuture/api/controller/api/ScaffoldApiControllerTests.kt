@@ -100,7 +100,7 @@ class ScaffoldApiControllerTests : ControllerTests() {
     fun deployTest() {
         val openKey = createOpenKey(setOf(Role("ROLE_MASTER")))
         val scaffold = createScaffold(openKey)
-        val request = DeployScaffoldRequest("openKey", "developerAddress", "description",
+        val request = DeployScaffoldRequest("openKey", "0x8cf1664B09F216538bc9A32B2c26f85a19fd76B5", "description",
                 "2", USD, "0.0023", "webHook", listOf(createScaffoldPropertyDto()))
         val requestJson = objectMapper.writeValueAsString(request)
 
@@ -119,7 +119,7 @@ class ScaffoldApiControllerTests : ControllerTests() {
     @Test
     fun deployWhenUserWithoutDeployRoleShouldRedirectToIndexPageTest() {
         val openKey = createOpenKey(setOf(Role("ROLE_INAPPROPRIATE")))
-        val request = DeployScaffoldRequest("openKey", "developerAddress", "description",
+        val request = DeployScaffoldRequest("openKey", "0x8cf1664B09F216538bc9A32B2c26f85a19fd76B5", "description",
                 "2", USD, "0.0023", "webHook", listOf(createScaffoldPropertyDto()))
         val requestJson = objectMapper.writeValueAsString(request)
 
@@ -137,8 +137,8 @@ class ScaffoldApiControllerTests : ControllerTests() {
     fun saveTest() {
         val openKey = createOpenKey(setOf(Role("ROLE_MASTER")))
         val scaffold = createScaffold(openKey)
-        val request = SaveScaffoldRequest("address", "abi", "openKey", "developerAddress",
-                "description", "2", USD, "0.0023", "webHook",
+        val request = SaveScaffoldRequest("0x8cf1664B09F216538bc9A32B2c26f85a19fd76B5", "abi", "openKey",
+                "0x8cf1664B09F216538bc9A32B2c26f85a19fd76B5", "description", "2", USD, "0.0023", "webHook",
                 listOf(createScaffoldPropertyDto()))
         val requestJson = objectMapper.writeValueAsString(request)
 

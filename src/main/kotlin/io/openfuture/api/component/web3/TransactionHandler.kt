@@ -6,6 +6,7 @@ import io.openfuture.api.domain.transaction.TransactionDto
 import io.openfuture.api.entity.scaffold.Transaction
 import io.openfuture.api.repository.ScaffoldRepository
 import io.openfuture.api.service.TransactionService
+import io.openfuture.api.util.EthereumUtils.toChecksumAddress
 import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Component
@@ -28,7 +29,7 @@ class TransactionHandler(
 
     @Transactional
     fun handle(transactionLog: Log) {
-        val contract = repository.findByAddressIgnoreCase(transactionLog.address) ?: return
+        val contract = repository.findByAddressIgnoreCase(toChecksumAddress(transactionLog.address)) ?: return
         if (null != service.find(transactionLog.transactionHash, transactionLog.logIndexRaw)) return
         val transaction = service.save(Transaction.of(contract, transactionLog))
 

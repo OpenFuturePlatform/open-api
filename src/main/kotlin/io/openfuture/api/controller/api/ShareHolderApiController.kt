@@ -1,5 +1,6 @@
 package io.openfuture.api.controller.api
 
+import io.openfuture.api.annotation.Address
 import io.openfuture.api.annotation.CurrentUser
 import io.openfuture.api.domain.holder.AddShareHolderRequest
 import io.openfuture.api.domain.holder.UpdateShareHolderRequest
@@ -7,11 +8,13 @@ import io.openfuture.api.domain.scaffold.ScaffoldSummaryDto
 import io.openfuture.api.entity.auth.User
 import io.openfuture.api.service.ScaffoldService
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
 @RestController
 @RequestMapping("/api/scaffolds/{address}/holders")
+@Validated
 class ShareHolderApiController(
         private val service: ScaffoldService
 ) {
@@ -27,7 +30,7 @@ class ShareHolderApiController(
     @PreAuthorize("hasRole('MASTER')")
     @PutMapping("/{holderAddress}")
     fun updateShareHolder(@Valid @RequestBody request: UpdateShareHolderRequest, @CurrentUser user: User,
-                          @PathVariable address: String, @PathVariable holderAddress: String): ScaffoldSummaryDto {
+                          @PathVariable address: String, @Address @PathVariable holderAddress: String): ScaffoldSummaryDto {
         val summary = service.updateShareHolder(address, user, holderAddress, request)
         return ScaffoldSummaryDto(summary)
     }
@@ -35,7 +38,7 @@ class ShareHolderApiController(
     @PreAuthorize("hasRole('MASTER')")
     @DeleteMapping("/{holderAddress}")
     fun removeShareHolder(@CurrentUser user: User, @PathVariable address: String,
-                          @PathVariable holderAddress: String): ScaffoldSummaryDto {
+                          @PathVariable @Address holderAddress: String): ScaffoldSummaryDto {
         val summary = service.removeShareHolder(address, user, holderAddress)
         return ScaffoldSummaryDto(summary)
     }
