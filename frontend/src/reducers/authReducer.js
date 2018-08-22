@@ -11,7 +11,7 @@ export default function(state = { isLoading: true }, action) {
       return { ...state, byApiMethod: action.payload };
     case SET_AUTH:
       const isAuthorized = action.payload;
-      return { ...state, isAuthorized };
+      return { ...state, isAuthorized, isLoading: false };
     default:
       return state;
   }

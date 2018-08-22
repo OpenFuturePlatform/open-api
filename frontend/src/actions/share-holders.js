@@ -6,6 +6,7 @@ import { fetchScaffoldDetails } from './scaffolds';
 import { parseApiError } from '../utils/parseApiError';
 import { getShareHoldersPath } from '../utils/apiPathes';
 import { apiPost, apiPut, apiDelete } from './apiRequest';
+import { toChecksumAddress } from '../utils/toChecksumAddress';
 
 export const fetchShareHoldersFromChain = scaffold => async dispatch => {
   const address = scaffold.address;
@@ -22,7 +23,7 @@ export const fetchShareHoldersFromChain = scaffold => async dispatch => {
 
     for (let i = 0; i < shareHolderCount; i++) {
       const shareHolderResult = await contract.getShareHolderAtIndex(i);
-      const address = shareHolderResult[0];
+      const address = toChecksumAddress(shareHolderResult[0]);
       const shareResult = await contract.getHoldersShare(address);
       const share = shareResult[0].toString(10);
       shareHolders.push({ address, share });
