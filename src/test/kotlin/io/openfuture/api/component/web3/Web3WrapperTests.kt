@@ -76,7 +76,7 @@ internal class Web3WrapperTests : UnitTest() {
         val actualAddress = web3Wrapper.deploy("data", listOf())
 
         assertThat(actualAddress).isNotEmpty()
-        assertThat(actualAddress).isEqualTo(addressValue)
+        assertThat(actualAddress).isEqualToIgnoringCase(addressValue)
     }
 
     @Test(expected = ExecuteTransactionException::class)

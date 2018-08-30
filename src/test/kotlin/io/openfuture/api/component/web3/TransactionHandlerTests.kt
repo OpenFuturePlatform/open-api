@@ -10,6 +10,7 @@ import io.openfuture.api.entity.scaffold.ScaffoldVersion.V1
 import io.openfuture.api.entity.scaffold.Transaction
 import io.openfuture.api.repository.ScaffoldRepository
 import io.openfuture.api.service.TransactionService
+import io.openfuture.api.util.EthereumUtils
 import org.junit.Before
 import org.junit.Test
 import org.mockito.BDDMockito.given
@@ -28,13 +29,14 @@ internal class TransactionHandlerTests : UnitTest() {
     @Mock private lateinit var log: Log
 
     private lateinit var transactionHandler: TransactionHandler
+    private val address = EthereumUtils.toChecksumAddress("0xba37163625b3f2e96112562858c12b75963af138")
 
 
     @Before
     fun setUp() {
         transactionHandler = TransactionHandler(transactionService, scaffoldRepository, eventDecoder, publisher)
         given(log.transactionHash).willReturn("hash")
-        given(log.address).willReturn("0xba37163625b3f2e96112562858c12b75963af138")
+        given(log.address).willReturn(address)
         given(log.data).willReturn("data")
         given(log.logIndexRaw).willReturn("index")
     }
@@ -42,7 +44,7 @@ internal class TransactionHandlerTests : UnitTest() {
     @Test
     fun handleTest() {
         val user = User("104113085667282103363")
-        val scaffold = Scaffold("0xba37163625b32e96112562858c12b75963af138", OpenKey(user), "abi", "developerAddress",
+        val scaffold = Scaffold(address, OpenKey(user), "abi", "developerAddress",
                 "description", "fiatAmount", 1, "conversionAmount", V1.getId(), "https://test.com", mutableListOf())
 
         given(scaffoldRepository.findByAddressIgnoreCase(log.address)).willReturn(scaffold)

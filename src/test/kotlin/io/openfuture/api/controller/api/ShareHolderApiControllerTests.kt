@@ -30,7 +30,7 @@ class ShareHolderApiControllerTests : ControllerTests() {
 
     @Test
     fun addShareHolderTest() {
-        val address = "address"
+        val address = "0x8cf1664B09F216538bc9A32B2c26f85a19fd76B5"
         val request = AddShareHolderRequest(address, 3)
         val openKey = createOpenKey(setOf(Role("ROLE_MASTER")))
         val requestJson = objectMapper.writeValueAsString(request)
@@ -50,7 +50,7 @@ class ShareHolderApiControllerTests : ControllerTests() {
 
     @Test
     fun updateShareHolderTest() {
-        val address = "address"
+        val address = "0x8cf1664B09F216538bc9A32B2c26f85a19fd76B5"
         val request = UpdateShareHolderRequest(3)
         val openKey = createOpenKey(setOf(Role("ROLE_MASTER")))
         val requestJson = objectMapper.writeValueAsString(request)
@@ -70,7 +70,7 @@ class ShareHolderApiControllerTests : ControllerTests() {
 
     @Test
     fun removeShareHolderTest() {
-        val address = "address"
+        val address = "0x8cf1664B09F216538bc9A32B2c26f85a19fd76B5"
         val openKey = createOpenKey(setOf(Role("ROLE_MASTER")))
 
         given(keyService.find(openKey.value)).willReturn(openKey)
@@ -84,7 +84,7 @@ class ShareHolderApiControllerTests : ControllerTests() {
         verify(service).removeShareHolder(address, openKey.user, address)
     }
 
-    private fun createScaffoldSummary() = ScaffoldSummary(Scaffold("address", OpenKey(User("")), "", "", "", "", 1, "",
-            V1.getId()), ZERO, ZERO, true)
+    private fun createScaffoldSummary() = ScaffoldSummary(Scaffold("0x8cf1664B09F216538bc9A32B2c26f85a19fd76B5",
+            OpenKey(User("")), "", "0x8cf1664B09F216538bc9A32B2c26f85a19fd76B5", "", "", 1, "", V1.getId()), ZERO, ZERO, true)
 
 }

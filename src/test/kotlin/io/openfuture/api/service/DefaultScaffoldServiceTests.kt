@@ -266,7 +266,7 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
         val scaffold = createScaffold()
         val expectedSummary = createSummary(scaffold)
         val request = createUpdateShareHolderRequest()
-        val holderAddress = "0x123123123"
+        val holderAddress = "0x8cf1664B09F216538bc9A32B2c26f85a19fd76B5"
 
         given(repository.findByAddressAndOpenKeyUser(scaffold.address, scaffold.openKey.user)).willReturn(scaffold)
         given(processor.getScaffoldSummary(scaffold)).willReturn(expectedSummary)
@@ -284,7 +284,7 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
     fun removeShareHolderShouldReturnActualSummary() {
         val scaffold = createScaffold()
         val expectedSummary = createSummary(scaffold)
-        val holderAddress = "0x123123123"
+        val holderAddress = "0x8cf1664B09F216538bc9A32B2c26f85a19fd76B5"
 
         given(repository.findByAddressAndOpenKeyUser(scaffold.address, scaffold.openKey.user)).willReturn(scaffold)
         given(processor.getScaffoldSummary(scaffold)).willReturn(expectedSummary)
@@ -375,7 +375,7 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
 
     private fun createSummary(scaffold: Scaffold): ScaffoldSummary = ScaffoldSummary(scaffold, ZERO, ZERO, true)
 
-    private fun createAddShareHolderRequest(): AddShareHolderRequest = AddShareHolderRequest("0x123123123", 1)
+    private fun createAddShareHolderRequest(): AddShareHolderRequest = AddShareHolderRequest("0x8cf1664B09F216538bc9A32B2c26f85a19fd76B5", 1)
 
     private fun createUpdateShareHolderRequest(): UpdateShareHolderRequest = UpdateShareHolderRequest(1)
 
@@ -386,8 +386,8 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
             SaveScaffoldRequest(address, abi, request.openKey, request.developerAddress, request.description,
                     request.fiatAmount, request.currency, request.conversionAmount)
 
-    private fun createDeployScaffoldRequest(): DeployScaffoldRequest = DeployScaffoldRequest("ok_123", "da", "desc",
-            "1", USD, "0.1")
+    private fun createDeployScaffoldRequest(): DeployScaffoldRequest = DeployScaffoldRequest("ok_123",
+            "0x8cf1664B09F216538bc9A32B2c26f85a19fd76B5", "desc", "1", USD, "0.1")
 
     private fun createCompiledScaffold(): CompiledScaffoldDto = CompiledScaffoldDto("abi", "bin")
 
