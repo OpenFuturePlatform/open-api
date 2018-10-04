@@ -14,6 +14,7 @@ Documentation is available at https://docs.openfuture.io.
 ## Running the application
 
 ### Environment Variables
+
 The OPEN Platform API uses several environment variables. All variables are required.
 
 #### Google service
