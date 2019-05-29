@@ -15,7 +15,7 @@ class WithdrawModal extends Component {
           }`}</div>
           <div>This is the developer address set for the scaffold.</div>
           <div>
-            <a href={`https://${ETHEREUM_NETWORK}/tx/${this.props.withdrawModalInfo.transactionHash}`} target="_blank">
+            <a href={`https://${ETHEREUM_NETWORK}/tx/${this.props.withdrawModalInfo.transactionHash}`} target="_blank" rel="noopener noreferrer">
               Visit this link to see the transaction on-chain.
             </a>
           </div>
@@ -36,7 +36,7 @@ class WithdrawModal extends Component {
     } else if (withdrawModalInfo.events && withdrawModalInfo.events.fundsDeposited) {
       return (
         <div>
-          <a href={`https://${ETHEREUM_NETWORK}/tx/${this.props.withdrawModalInfo.transactionHash}`} target="_blank">
+          <a href={`https://${ETHEREUM_NETWORK}/tx/${this.props.withdrawModalInfo.transactionHash}`} target="_blank" rel="noopener noreferrer">
             Congratulations your funds have deposited to your developer address. Visit this link to see the transaction
             on-chain.
           </a>

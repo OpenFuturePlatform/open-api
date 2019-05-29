@@ -1,5 +1,4 @@
 import React from 'react';
-import { Button, Icon } from 'semantic-ui-react';
 
 const Landing = () => {
   return (
@@ -12,7 +11,7 @@ const Landing = () => {
           <a href="/about.html">About</a>
           <a href="/developer-portal.html">Developer Portal</a>
           <a href="/bug-bounty-program.html">Bug Bounty Program</a>
-          <a href="https://blog.openfuture.io/" target="_blank">Blog</a>
+          <a href="https://blog.openfuture.io/" target="_blank" rel="noopener noreferrer">Blog</a>
           <a href="/support.html">Support</a>
         </nav>
 
@@ -28,17 +27,17 @@ const Landing = () => {
               <a href="/about.html">About</a>
               <a href="/developer-portal.html">Developer Portal</a>
               <a href="/bug-bounty-program.html">Bug Bounty Program</a>
-              <a href="https://blog.openfuture.io/" target="_blank">Blog</a>
+              <a href="https://blog.openfuture.io/" target="_blank" rel="noopener noreferrer">Blog</a>
               <a href="/support.html">Support</a>
             </div>
             <div className="soc-links">
-              <a href="https://twitter.com/OpenPlatformICO" target="_blank">
+              <a href="https://twitter.com/OpenPlatformICO" target="_blank" rel="noopener noreferrer">
                 <img src="img/landing_new/Twitter.png" alt="Twitter"/>
               </a>
-              <a href="https://www.facebook.com/OpenPlatformICO/" target="_blank">
+              <a href="https://www.facebook.com/OpenPlatformICO/" target="_blank" rel="noopener noreferrer">
                 <img src="img/landing_new/Facebook.png" alt="Facebook"/>
               </a>
-              <a href="https://t.me/joinchat/FDNbh0M079p5fnfOHFEJaw" target="_blank">
+              <a href="https://t.me/joinchat/FDNbh0M079p5fnfOHFEJaw" target="_blank" rel="noopener noreferrer">
                 <img src="img/landing_new/Telegram.png" alt="Telegram"/>
               </a>
             </div>
@@ -98,13 +97,13 @@ const Landing = () => {
           <a href="/"><img src="img/landing_new/logo.svg" alt="logo"/></a>
         </div>
         <div className="social_links">
-          <a href="https://twitter.com/OpenPlatformICO" target="_blank">
+          <a href="https://twitter.com/OpenPlatformICO" target="_blank" rel="noopener noreferrer">
             <img src="img/landing_new/Twitter.png" alt="Twitter"/>
           </a>
-          <a href="https://www.facebook.com/OpenPlatformICO/" target="_blank">
+          <a href="https://www.facebook.com/OpenPlatformICO/" target="_blank" rel="noopener noreferrer">
             <img src="img/landing_new/Facebook.png" alt="Facebook"/>
           </a>
-          <a href="https://t.me/joinchat/FDNbh0M079p5fnfOHFEJaw" target="_blank">
+          <a href="https://t.me/joinchat/FDNbh0M079p5fnfOHFEJaw" target="_blank" rel="noopener noreferrer">
             <img src="img/landing_new/Telegram.png" alt="Telegram"/>
           </a>
         </div>
