@@ -16,6 +16,7 @@
     "ethjs-unit": "^0.1.6",
     "ethjs-util": "^0.1.6",
     "moment": "^2.22.2",
+    "node-gyp": "^4.0.0",
     "react": "^16.4.1",
     "react-copy-to-clipboard": "^5.0.1",
     "react-dates": "^17.0.0",
@@ -40,7 +41,7 @@
     "eject": "react-scripts eject"
   },
   "devDependencies": {
-    "lodash": "^4.17.10"
+    "lodash": "^4.17.11"
   },
   "browserslist": {
     "production": [
