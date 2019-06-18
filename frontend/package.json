@@ -11,7 +11,7 @@
     }
   },
   "dependencies": {
-    "axios": "^0.16.2",
+    "axios": ">=0.18.1",
     "ethjs": "^0.4.0",
     "ethjs-unit": "^0.1.6",
     "ethjs-util": "^0.1.6",
@@ -41,7 +41,7 @@
     "eject": "react-scripts eject"
   },
   "devDependencies": {
-    "lodash": "^4.17.11"
+    "lodash": ">=4.17.11"
   },
   "browserslist": {
     "production": [
