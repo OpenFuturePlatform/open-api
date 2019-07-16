@@ -1,6 +1,5 @@
 import web3 from '../utils/web3';
 import Eth from 'ethjs';
-import ethUtil from 'ethjs-util';
 import { CONVERT_CURRENCIES, SHOW_MODAL } from './types';
 import { getScaffoldsPath, getScaffoldDoCompile, getScaffoldDoDeploy } from '../utils/apiPathes';
 import { apiPost, apiPatch, apiGet } from './apiRequest';
@@ -27,9 +26,9 @@ export const processDeploy = async (contract, bin, platformAddress, formValues) 
       arguments: [
         formValues.developerAddress,
         platformAddress,
-        ethUtil.fromAscii(formValues.fiatAmount),
-        ethUtil.fromAscii(formValues.currency),
-        Eth.toWei(formValues.conversionAmount.toString(), 'ether')
+        web3.utils.fromAscii(formValues.fiatAmount),
+        web3.utils.fromAscii(formValues.currency),
+        Eth.toWei(formValues.conversionAmount.toString(), 'ether').toNumber()
       ]
     })
     .send({ from: formValues.developerAddress });
