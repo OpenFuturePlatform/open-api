@@ -5,10 +5,10 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import io.openfuture.api.exception.StateApiException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.IOException
-import java.lang.RuntimeException
 
 object BodyConverter {
 
@@ -32,7 +32,7 @@ object BodyConverter {
         } catch (ex: IOException) {
             val message = "Error on json read:\n$body"
             log.warn(message)
-            throw RuntimeException(message)
+            throw StateApiException(message)
         }
     }
 
