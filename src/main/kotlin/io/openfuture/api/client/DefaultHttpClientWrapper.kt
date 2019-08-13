@@ -1,10 +1,13 @@
 package io.openfuture.api.client
 
+import org.apache.http.auth.AuthScope
+import org.apache.http.auth.UsernamePasswordCredentials
 import org.apache.http.client.methods.*
 import org.apache.http.entity.ContentType
 import org.apache.http.entity.StringEntity
+import org.apache.http.impl.client.BasicCredentialsProvider
 import org.apache.http.impl.client.CloseableHttpClient
-import org.apache.http.impl.client.HttpClients
+import org.apache.http.impl.client.HttpClientBuilder
 import org.apache.http.util.EntityUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -13,12 +16,19 @@ import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
 
 @Component
-class DefaultHttpClientWrapper(
-        private val httpClient: CloseableHttpClient = HttpClients.createDefault()
-) : HttpClientWrapper {
+class DefaultHttpClientWrapper : HttpClientWrapper {
+
+    private lateinit var httpClient: CloseableHttpClient
 
     val log: Logger = LoggerFactory.getLogger(DefaultHttpClientWrapper::class.java)
 
+
+    init {
+        val provider = BasicCredentialsProvider().apply {
+            setCredentials(AuthScope.ANY, UsernamePasswordCredentials("user", "password"))
+        }
+        httpClient = HttpClientBuilder.create().setDefaultCredentialsProvider(provider).build()
+    }
 
     override fun get(path: String, headers: Map<String, String>, params: Map<String, String>): HttpResponse {
         val url = buildRequestUrl(path, params)

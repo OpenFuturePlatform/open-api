@@ -10,7 +10,7 @@ interface StateApi {
 
     // accounts
 
-    fun createAccount(webHook: String, blockchainId: Int, address: String): Long
+    fun createAccount(webHook: String, address: String, blockchainId: Int): AccountDto
 
     fun getAccount(id: Long): AccountDto
 
