@@ -18,7 +18,7 @@ interface StateApi {
 
     fun deleteAccount(id: Long): AccountDto
 
-    fun addWallet(accountId: Long, blockchainId: Int, address: String): AccountDto
+    fun addWallet(accountId: Long, address: String, blockchainId: Int): AccountDto
 
     fun deleteWallet(accountId: Long, walletId: Long): AccountDto
 
@@ -34,6 +34,6 @@ interface StateApi {
 
     fun getTransaction(id: Long, walletId: Long): StateTransactionDto
 
-    fun getAllByWalletId(walletId: Long, pageable: Pageable): Page<StateTransactionDto>
+    fun getAllByWalletId(walletId: Long, pageRequest: Pageable): Page<StateTransactionDto>
 
 }
