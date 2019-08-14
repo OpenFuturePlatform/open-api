@@ -8,12 +8,12 @@ This widget requires [Metamask Wallet](https://metamask.io/).
 ### How to use a widget
 
 Paste the code below to a location at your site where you'd like to use this widget and set the width and height parameters.
-You also have to put your scaffold address in the src element: 'https://openfuture.io/widget/your_scaffold_address'
+You also have to put your scaffold address in the src element: 'https://api.openfuture.io/widget/your_scaffold_address'
 The best solution is to do it dynamically, especially if you have created a lot of scaffolds.
 
 
  ```html
- <iframe id="open-widget-iframe" src="https://openfuture.io/widget/your_scaffold_address_here" width="400" height="600" scrolling="no" frameborder="0" allowfullscreen></iframe>
+ <iframe id="open-widget-iframe" src="https://api.openfuture.io/widget/your_scaffold_address_here" width="400" height="600" scrolling="no" frameborder="0" allowfullscreen></iframe>
 
  ```
 

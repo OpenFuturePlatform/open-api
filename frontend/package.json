@@ -11,18 +11,19 @@
     }
   },
   "dependencies": {
-    "axios": "^0.16.2",
+    "axios": ">=0.18.1",
     "ethjs": "^0.4.0",
     "ethjs-unit": "^0.1.6",
     "ethjs-util": "^0.1.6",
     "moment": "^2.22.2",
+    "node-gyp": "^4.0.0",
     "react": "^16.4.1",
     "react-copy-to-clipboard": "^5.0.1",
     "react-dates": "^17.0.0",
     "react-dom": "^16.4.1",
     "react-redux": "^5.0.5",
     "react-router-dom": "^4.1.1",
-    "react-scripts": "^1.1.4",
+    "react-scripts": "^3.0.1",
     "react-semantic-redux-form": "^1.2.6",
     "react-table": "^6.8.6",
     "redux": "^3.7.1",
@@ -30,7 +31,7 @@
     "redux-thunk": "^2.2.0",
     "semantic-ui-react": "^0.81.3",
     "styled-components": "^3.3.3",
-    "web3": "^1.0.0-beta.34",
+    "web3": "^1.0.0-beta.55",
     "websocket": "^1.0.26"
   },
   "scripts": {
@@ -40,6 +41,6 @@
     "eject": "react-scripts eject"
   },
   "devDependencies": {
-    "lodash": "^4.17.10"
+    "lodash": ">=4.17.11"
   }
 }

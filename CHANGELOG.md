@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [2.6.5] - 2019-06-18
+### Changed
+- Frontend dependencies versions
+
+## [2.6.4] - 2019-05-29
+### Fixed
+- Landing page
+
+## [2.6.3] - 2019-05-29
+### Changed
+- Landing page redesing
+
 ## [2.6.2] - 2018-08-10
 ### Changed
 - Kotlin version is updated to 1.2.60
@@ -149,6 +161,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - "Withdraw" button is removed
 
 [Unreleased]: https://github.com/OpenFuturePlatform/open-api/compare/master...sprint
+[2.6.5]: https://github.com/OpenFuturePlatform/open-api/compare/v2.6.4...v2.6.5
+[2.6.4]: https://github.com/OpenFuturePlatform/open-api/compare/v2.6.3...v2.6.4
+[2.6.3]: https://github.com/OpenFuturePlatform/open-api/compare/v2.6.2...v2.6.3
 [2.6.2]: https://github.com/OpenFuturePlatform/open-api/compare/v2.6.1...v2.6.2
 [2.6.1]: https://github.com/OpenFuturePlatform/open-api/compare/v2.6.0...v2.6.1
 [2.6.0]: https://github.com/OpenFuturePlatform/open-api/compare/v2.5.0...v2.6.0
