@@ -30,7 +30,7 @@ object BodyConverter {
         try {
             return objectMapper.readValue(body)
         } catch (ex: IOException) {
-            val message = "Error on json read:\n$body"
+            val message = "Error response from OPEN API:\n$body"
             log.warn(message)
             throw StateApiException(message)
         }

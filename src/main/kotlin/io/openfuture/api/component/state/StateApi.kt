@@ -4,6 +4,7 @@ import io.openfuture.api.domain.state.AccountDto
 import io.openfuture.api.domain.state.StateTransactionDto
 import io.openfuture.api.domain.state.WalletDto
 import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 
 interface StateApi {
@@ -25,15 +26,15 @@ interface StateApi {
 
     // wallets
 
-    fun getAllByAccount(accountId: Long): List<WalletDto>
+    fun getAllWalletsByAccount(accountId: Long): List<WalletDto>
 
-    fun getWallet(id: Long, accountId: Long): WalletDto
+    fun getWalletByAccount(id: Long, accountId: Long): WalletDto
 
 
     // transactions
 
     fun getTransaction(id: Long, walletId: Long): StateTransactionDto
 
-    fun getAllByWalletId(walletId: Long, pageRequest: Pageable): Page<StateTransactionDto>
+    fun getAllTransactionsByWalletId(walletId: Long, pageRequest: PageRequest): Page<StateTransactionDto>
 
 }

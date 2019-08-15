@@ -11,6 +11,7 @@ import org.apache.http.impl.client.HttpClientBuilder
 import org.apache.http.util.EntityUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Component
 import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
@@ -18,7 +19,7 @@ import java.net.URI
 @Component
 class DefaultHttpClientWrapper : HttpClientWrapper {
 
-    private lateinit var httpClient: CloseableHttpClient
+    private val httpClient: CloseableHttpClient
 
     val log: Logger = LoggerFactory.getLogger(DefaultHttpClientWrapper::class.java)
 
@@ -32,6 +33,15 @@ class DefaultHttpClientWrapper : HttpClientWrapper {
 
     override fun get(path: String, headers: Map<String, String>, params: Map<String, String>): HttpResponse {
         val url = buildRequestUrl(path, params)
+        val request = HttpGet(url)
+        headers.entries.forEach { request.addHeader(it.key, it.value) }
+
+        log.info("Send GET request: $url")
+        return execute(request)
+    }
+
+    override fun getPageable(path: String, headers: Map<String, String>, pageRequest: PageRequest): HttpResponse {
+        val url = buildRequestUrl(path, pageRequest.toRequestParams())
         val request = HttpGet(url)
         headers.entries.forEach { request.addHeader(it.key, it.value) }
 
@@ -71,7 +81,7 @@ class DefaultHttpClientWrapper : HttpClientWrapper {
         return execute(request)
     }
 
-    private fun buildRequestUrl(path: String, params: Map<String, String>): URI {
+    private fun buildRequestUrl(path: String, params: Map<String, Any>): URI {
         val builder = UriComponentsBuilder.fromHttpUrl(path)
         params.forEach { builder.queryParam(it.key, it.value) }
         return builder.build().toUri()
@@ -86,6 +96,14 @@ class DefaultHttpClientWrapper : HttpClientWrapper {
             log.info("Received response: ${httpResponse.entity}")
             return httpResponse
         }
+    }
+
+    private fun PageRequest.toRequestParams(): Map<String, Any> {
+        return mapOf("offset" to this.offset,
+                "pageNumber" to this.pageNumber,
+                "pageSize" to this.pageSize,
+                "sort.sorted" to this.sort.isSorted,
+                "sort.unsorted" to this.sort.isUnsorted)
     }
 
 }

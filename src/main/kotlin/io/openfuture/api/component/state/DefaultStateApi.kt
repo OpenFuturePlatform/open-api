@@ -5,6 +5,7 @@ import io.openfuture.api.client.HttpClientWrapper
 import io.openfuture.api.domain.state.*
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
 
@@ -47,7 +48,7 @@ class DefaultStateApi(
     override fun addWallet(accountId: Long, address: String, blockchainId: Int): AccountDto {
         val url = "$stateUrl/accounts/$accountId/wallets"
         val request = AddWalletRequest(setOf(CreateIntegrationRequest(address, blockchainId)))
-        val response = clientHttp.put(url, prepareHeader(), request)
+        val response = clientHttp.post(url, prepareHeader(), request)
 
         return BodyConverter.deserialize(response.entity)
     }
@@ -59,14 +60,14 @@ class DefaultStateApi(
         return BodyConverter.deserialize(response.entity)
     }
 
-    override fun getAllByAccount(accountId: Long): List<WalletDto> {
+    override fun getAllWalletsByAccount(accountId: Long): List<WalletDto> {
         val url = "$stateUrl/accounts/$accountId/wallets"
         val response = clientHttp.get(url, prepareHeader())
 
         return BodyConverter.deserialize(response.entity)
     }
 
-    override fun getWallet(id: Long, accountId: Long): WalletDto {
+    override fun getWalletByAccount(id: Long, accountId: Long): WalletDto {
         val url = "$stateUrl/accounts/$accountId/wallets/$id"
         val response = clientHttp.get(url, prepareHeader())
 
@@ -80,9 +81,9 @@ class DefaultStateApi(
         return BodyConverter.deserialize(response.entity)
     }
 
-    override fun getAllByWalletId(walletId: Long, pageRequest: Pageable): Page<StateTransactionDto> {
+    override fun getAllTransactionsByWalletId(walletId: Long, pageRequest: PageRequest): Page<StateTransactionDto> {
         val url = "$stateUrl/wallets/$walletId/transactions"
-        val response = clientHttp.get(url, prepareHeader(), mapOf())
+        val response = clientHttp.getPageable(url, prepareHeader(), pageRequest)
 
         return BodyConverter.deserialize(response.entity)
     }
