@@ -5,9 +5,7 @@ import io.openfuture.api.client.HttpClientWrapper
 import io.openfuture.api.domain.PageResponse
 import io.openfuture.api.domain.state.*
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
 
 @Component
