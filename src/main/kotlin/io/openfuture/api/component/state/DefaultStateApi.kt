@@ -2,6 +2,7 @@ package io.openfuture.api.component.state
 
 import io.openfuture.api.client.BodyConverter
 import io.openfuture.api.client.HttpClientWrapper
+import io.openfuture.api.domain.PageResponse
 import io.openfuture.api.domain.state.*
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.Page
@@ -81,7 +82,7 @@ class DefaultStateApi(
         return BodyConverter.deserialize(response.entity)
     }
 
-    override fun getAllTransactionsByWalletId(walletId: Long, pageRequest: PageRequest): Page<StateTransactionDto> {
+    override fun getAllTransactionsByWalletId(walletId: Long, pageRequest: PageRequest): PageResponse<StateTransactionDto> {
         val url = "$stateUrl/wallets/$walletId/transactions"
         val response = clientHttp.getPageable(url, prepareHeader(), pageRequest)
 
