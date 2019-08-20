@@ -73,6 +73,8 @@ interface OpenKeyService {
 
     fun disable(key: String): OpenKey
 
+    fun update(openKey: OpenKey): OpenKey
+
 }
 
 interface UserService {
