@@ -88,7 +88,7 @@ class DefaultScaffoldService(
         trackState(openKey, scaffold.address, scaffold.webHook)
         val properties = request.properties.map { propertyRepository.save(ScaffoldProperty.of(scaffold, it)) }
         scaffold.property.addAll(properties)
-//        getScaffoldSummary(scaffold.address, openKey.user, true)
+        getScaffoldSummary(scaffold.address, openKey.user, true)
         return scaffold
     }
 

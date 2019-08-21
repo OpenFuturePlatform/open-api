@@ -366,7 +366,7 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
     private fun createScaffold(request: SaveScaffoldRequest): Scaffold {
         val addressValue = request.address!!
         val user = createUser()
-        val openKey = OpenKey(user.apply { id = 1L }, null, request.openKey!!).apply { id = 1L }
+        val openKey = OpenKey(user.apply { id = 1L }, null, request.openKey!!, 1).apply { id = 1L }
 
         return Scaffold(addressValue, openKey, request.abi!!, request.developerAddress!!, request.description!!,
                 request.fiatAmount!!, request.currency!!.getId(), request.conversionAmount!!, request.version.getId(),
