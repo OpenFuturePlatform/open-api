@@ -6,6 +6,7 @@ import io.openfuture.api.config.propety.ScaffoldProperties
 import io.openfuture.api.domain.holder.AddShareHolderRequest
 import io.openfuture.api.domain.holder.UpdateShareHolderRequest
 import io.openfuture.api.domain.scaffold.*
+import io.openfuture.api.entity.auth.OpenKey
 import io.openfuture.api.entity.auth.User
 import io.openfuture.api.entity.scaffold.Blockchain.Ethereum
 import io.openfuture.api.entity.scaffold.Scaffold
@@ -75,7 +76,7 @@ class DefaultScaffoldService(
                 request.version
         ))
 
-        trackState(request.openKey, savedScaffold.address, request.webHook)
+
 
         return savedScaffold
     }
@@ -84,9 +85,10 @@ class DefaultScaffoldService(
     override fun save(request: SaveScaffoldRequest): Scaffold {
         val openKey = openKeyService.get(request.openKey!!)
         val scaffold = repository.save(Scaffold.of(request, openKey))
+        trackState(openKey, scaffold.address, scaffold.webHook)
         val properties = request.properties.map { propertyRepository.save(ScaffoldProperty.of(scaffold, it)) }
         scaffold.property.addAll(properties)
-        getScaffoldSummary(scaffold.address, openKey.user, true)
+//        getScaffoldSummary(scaffold.address, openKey.user, true)
         return scaffold
     }
 
@@ -167,9 +169,7 @@ class DefaultScaffoldService(
         return getScaffoldSummary(address, user, true)
     }
 
-    private fun trackState(openKeyString: String, address: String, webHook: String?) {
-        val openKey = openKeyService.find(openKeyString) ?: return
-
+    private fun trackState(openKey: OpenKey, address: String, webHook: String?) {
         if (openKey.stateAccountId == null) {
             val stateAccount = stateApi.createAccount(webHook, address, Ethereum.getId())
             openKey.stateAccountId = stateAccount.id

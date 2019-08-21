@@ -67,7 +67,7 @@ export const warn = values => {
 };
 
 const isUrl = str => {
-  const regexp = /^((https?|ftp|smtp):\/\/)(www.)?[a-z0-9]+\.[a-z]+(\/[a-zA-Z0-9#]+\/?)*$/;
+  const regexp = /^((https?|ftp|smtp):\/\/)(www.)?[a-z0-9]+\.[a-z]+(\/[a-zA-Z0-9#/-]+\/?)*$/;
   return regexp.test(str);
 };
 
