@@ -62,7 +62,7 @@ class DefaultScaffoldService(
     override fun deploy(request: DeployScaffoldRequest): Scaffold {
         val compiledScaffold = compile(CompileScaffoldRequest(request.openKey, request.properties, request.version))
         val contractAddress = processor.deploy(compiledScaffold.bin, request)
-        val savedScaffold = save(SaveScaffoldRequest(
+        return save(SaveScaffoldRequest(
                 contractAddress,
                 compiledScaffold.abi,
                 request.openKey,
@@ -75,17 +75,12 @@ class DefaultScaffoldService(
                 request.properties,
                 request.version
         ))
-
-
-
-        return savedScaffold
     }
 
     @Transactional
     override fun save(request: SaveScaffoldRequest): Scaffold {
         val openKey = openKeyService.get(request.openKey!!)
         val scaffold = repository.save(Scaffold.of(request, openKey))
-        trackState(openKey, scaffold.address, scaffold.webHook)
         val properties = request.properties.map { propertyRepository.save(ScaffoldProperty.of(scaffold, it)) }
         scaffold.property.addAll(properties)
         getScaffoldSummary(scaffold.address, openKey.user, true)
@@ -106,6 +101,8 @@ class DefaultScaffoldService(
         val scaffold = get(address, user)
 
         scaffold.webHook = request.webHook
+
+        updateStateWebHook(scaffold.openKey, request.webHook)
 
         return repository.save(scaffold)
     }
@@ -140,10 +137,17 @@ class DefaultScaffoldService(
         return getScaffoldSummary(address, user, true)
     }
 
+    private fun stopTrackState(openKey: OpenKey, address: String) {
+        if (openKey.stateAccountId == null) return
+
+        stateApi.deleteWallet(openKey.stateAccountId!!, address, Ethereum.getId())
+    }
+
     @Transactional
     override fun activate(address: String, user: User): ScaffoldSummary {
         val scaffold = get(address, user)
         processor.activate(scaffold)
+        trackState(scaffold.openKey, scaffold.address, scaffold.webHook)
         return getScaffoldSummary(address, user, true)
     }
 
@@ -178,6 +182,12 @@ class DefaultScaffoldService(
         }
 
         stateApi.addWallet(openKey.stateAccountId!!, address, Ethereum.getId())
+    }
+
+    private fun updateStateWebHook(openKey: OpenKey, webHook: String) {
+        if (openKey.stateAccountId == null) return
+
+        stateApi.updateWebhook(openKey.stateAccountId!!, webHook)
     }
 
 }

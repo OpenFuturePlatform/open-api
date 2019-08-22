@@ -13,4 +13,5 @@ interface HttpClientWrapper {
     fun put(path: String, headers: Map<String, String>, body: Any, params: Map<String, String> = mapOf()): HttpResponse
 
     fun delete(path: String, headers: Map<String, String>, params: Map<String, String> = mapOf()): HttpResponse
+
 }
