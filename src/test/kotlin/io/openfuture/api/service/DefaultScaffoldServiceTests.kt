@@ -1,6 +1,7 @@
 package io.openfuture.api.service
 
 import io.openfuture.api.component.scaffold.processor.ScaffoldProcessor
+import io.openfuture.api.component.state.StateApi
 import io.openfuture.api.config.UnitTest
 import io.openfuture.api.config.any
 import io.openfuture.api.config.propety.ScaffoldProperties
@@ -40,6 +41,7 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
     @Mock private lateinit var propertyRepository: ScaffoldPropertyRepository
     @Mock private lateinit var summaryRepository: ScaffoldSummaryRepository
     @Mock private lateinit var shareHolderRepository: ShareHolderRepository
+    @Mock private lateinit var stateApi: StateApi
 
     @Mock
     private lateinit var pageable: Pageable
@@ -50,7 +52,7 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
     @Before
     fun setUp() {
         service = DefaultScaffoldService(processor, properties, repository, propertyRepository, summaryRepository,
-                shareHolderRepository, openKeyService)
+                shareHolderRepository, openKeyService, stateApi)
     }
 
     @Test
@@ -364,7 +366,7 @@ internal class DefaultScaffoldServiceTests : UnitTest() {
     private fun createScaffold(request: SaveScaffoldRequest): Scaffold {
         val addressValue = request.address!!
         val user = createUser()
-        val openKey = OpenKey(user.apply { id = 1L }, null, request.openKey!!).apply { id = 1L }
+        val openKey = OpenKey(user.apply { id = 1L }, null, request.openKey!!, 1).apply { id = 1L }
 
         return Scaffold(addressValue, openKey, request.abi!!, request.developerAddress!!, request.description!!,
                 request.fiatAmount!!, request.currency!!.getId(), request.conversionAmount!!, request.version.getId(),

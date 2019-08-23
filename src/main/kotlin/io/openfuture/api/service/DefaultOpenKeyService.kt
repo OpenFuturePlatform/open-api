@@ -47,4 +47,9 @@ class DefaultOpenKeyService(
         return repository.save(openKey)
     }
 
+    @Transactional
+    override fun update(openKey: OpenKey): OpenKey {
+        return repository.save(openKey)
+    }
+
 }

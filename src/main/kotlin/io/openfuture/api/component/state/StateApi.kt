@@ -10,7 +10,7 @@ interface StateApi {
 
     // accounts
 
-    fun createAccount(webHook: String, address: String, blockchainId: Int): AccountDto
+    fun createAccount(webHook: String?, address: String, blockchainId: Int): AccountDto
 
     fun getAccount(id: Long): AccountDto
 
@@ -20,7 +20,7 @@ interface StateApi {
 
     fun addWallet(accountId: Long, address: String, blockchainId: Int): AccountDto
 
-    fun deleteWallet(accountId: Long, walletId: Long): AccountDto
+    fun deleteWallet(accountId: Long, address: String, blockchainId: Int): AccountDto
 
 
     // wallets

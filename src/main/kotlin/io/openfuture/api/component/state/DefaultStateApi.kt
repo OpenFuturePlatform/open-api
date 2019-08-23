@@ -14,7 +14,7 @@ class DefaultStateApi(
         @Value("\${open.state.url}") private val stateUrl: String
 ) : StateApi {
 
-    override fun createAccount(webHook: String, address: String, blockchainId: Int): AccountDto {
+    override fun createAccount(webHook: String?, address: String, blockchainId: Int): AccountDto {
         val url = "$stateUrl/accounts"
         val request = CreateAccountRequest(webHook, setOf(CreateIntegrationRequest(address, blockchainId)))
         val response = clientHttp.post(url, prepareHeader(), request)
@@ -52,9 +52,10 @@ class DefaultStateApi(
         return BodyConverter.deserialize(response.entity)
     }
 
-    override fun deleteWallet(accountId: Long, walletId: Long): AccountDto {
-        val url = "$stateUrl/accounts/$accountId/wallets/$walletId"
-        val response = clientHttp.delete(url, prepareHeader())
+    override fun deleteWallet(accountId: Long, address: String, blockchainId: Int): AccountDto {
+        val url = "$stateUrl/accounts/$accountId/wallets/delete"
+        val request = DeleteWalletRequest(accountId, address, blockchainId)
+        val response = clientHttp.post(url, prepareHeader(), request)
 
         return BodyConverter.deserialize(response.entity)
     }

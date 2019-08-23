@@ -1,11 +1,14 @@
 package io.openfuture.api.service
 
 import io.openfuture.api.component.scaffold.processor.ScaffoldProcessor
+import io.openfuture.api.component.state.StateApi
 import io.openfuture.api.config.propety.ScaffoldProperties
 import io.openfuture.api.domain.holder.AddShareHolderRequest
 import io.openfuture.api.domain.holder.UpdateShareHolderRequest
 import io.openfuture.api.domain.scaffold.*
+import io.openfuture.api.entity.auth.OpenKey
 import io.openfuture.api.entity.auth.User
+import io.openfuture.api.entity.scaffold.Blockchain.Ethereum
 import io.openfuture.api.entity.scaffold.Scaffold
 import io.openfuture.api.entity.scaffold.ScaffoldProperty
 import io.openfuture.api.entity.scaffold.ScaffoldSummary
@@ -29,7 +32,8 @@ class DefaultScaffoldService(
         private val propertyRepository: ScaffoldPropertyRepository,
         private val summaryRepository: ScaffoldSummaryRepository,
         private val shareHolderRepository: ShareHolderRepository,
-        private val openKeyService: OpenKeyService
+        private val openKeyService: OpenKeyService,
+        private val stateApi: StateApi
 ) : ScaffoldService {
 
     @Transactional(readOnly = true)
@@ -98,6 +102,8 @@ class DefaultScaffoldService(
 
         scaffold.webHook = request.webHook
 
+        updateStateWebHook(scaffold.openKey, request.webHook)
+
         return repository.save(scaffold)
     }
 
@@ -128,13 +134,21 @@ class DefaultScaffoldService(
     override fun deactivate(address: String, user: User): ScaffoldSummary {
         val scaffold = get(address, user)
         processor.deactivate(scaffold)
+        stopTrackState(scaffold.openKey, scaffold.address)
         return getScaffoldSummary(address, user, true)
+    }
+
+    private fun stopTrackState(openKey: OpenKey, address: String) {
+        if (openKey.stateAccountId == null) return
+
+        stateApi.deleteWallet(openKey.stateAccountId!!, address, Ethereum.getId())
     }
 
     @Transactional
     override fun activate(address: String, user: User): ScaffoldSummary {
         val scaffold = get(address, user)
         processor.activate(scaffold)
+        trackState(scaffold.openKey, scaffold.address, scaffold.webHook)
         return getScaffoldSummary(address, user, true)
     }
 
@@ -158,6 +172,23 @@ class DefaultScaffoldService(
         val scaffold = get(address, user)
         processor.removeShareHolder(scaffold, holderAddress)
         return getScaffoldSummary(address, user, true)
+    }
+
+    private fun trackState(openKey: OpenKey, address: String, webHook: String?) {
+        if (openKey.stateAccountId == null) {
+            val stateAccount = stateApi.createAccount(webHook, address, Ethereum.getId())
+            openKey.stateAccountId = stateAccount.id
+            openKeyService.update(openKey)
+            return
+        }
+
+        stateApi.addWallet(openKey.stateAccountId!!, address, Ethereum.getId())
+    }
+
+    private fun updateStateWebHook(openKey: OpenKey, webHook: String) {
+        if (openKey.stateAccountId == null) return
+
+        stateApi.updateWebhook(openKey.stateAccountId!!, webHook)
     }
 
 }

@@ -19,6 +19,9 @@ class OpenKey(
         @Column(name = "value", nullable = false, unique = true)
         val value: String = "op_pk_${UUID.randomUUID()}",
 
+        @Column(name = "state_account_id", nullable = true)
+        var stateAccountId: Long? = null,
+
         @Column(name = "enabled", nullable = false)
         var enabled: Boolean = true
 
