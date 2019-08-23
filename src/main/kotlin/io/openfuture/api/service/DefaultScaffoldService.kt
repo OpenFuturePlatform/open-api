@@ -134,6 +134,7 @@ class DefaultScaffoldService(
     override fun deactivate(address: String, user: User): ScaffoldSummary {
         val scaffold = get(address, user)
         processor.deactivate(scaffold)
+        stopTrackState(scaffold.openKey, scaffold.address)
         return getScaffoldSummary(address, user, true)
     }
 

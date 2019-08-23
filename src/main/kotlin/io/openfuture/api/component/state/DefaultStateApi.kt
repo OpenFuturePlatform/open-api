@@ -53,7 +53,7 @@ class DefaultStateApi(
     }
 
     override fun deleteWallet(accountId: Long, address: String, blockchainId: Int): AccountDto {
-        val url = "$stateUrl/accounts/$accountId/wallets"
+        val url = "$stateUrl/accounts/$accountId/wallets/delete"
         val request = DeleteWalletRequest(accountId, address, blockchainId)
         val response = clientHttp.post(url, prepareHeader(), request)
 
