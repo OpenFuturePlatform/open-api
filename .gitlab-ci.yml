@@ -79,7 +79,7 @@ build-jar:
     - export GRADLE_USER_HOME=`pwd`/.gradle
     - apt update && apt install make gcc g++ -y
   script:
-    - ./gradlew assemble -Penv=${CI_MERGE_REQUEST_SOURCE_BRANCH_NAME}
+    - ./gradlew assemble -Penv=${CI_COMMIT_REF_NAME}
   cache:
     paths:
       - .gradle/wrapper
