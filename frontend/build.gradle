@@ -11,7 +11,7 @@ node {
 }
 
 task assemble(type: NpmTask) {
-    def build = ""
+    def build = "build"
 
     def environment =  System.getenv("env")
     println environment
