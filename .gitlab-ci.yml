@@ -32,7 +32,6 @@ unit-tests:
     ETHEREUM_PRIVATE_KEY: $ETHEREUM_PRIVATE_KEY_DEV
     OPEN_TOKEN_ADDRESS: $OPEN_TOKEN_ADDRESS_DEV
     EVENT_SUBSCRIPTION: "false"
-    OPEN_API_URL: "open-api-url"
     STATE_API_URL: "state-api-url"
   services:
     - name: postgres
@@ -153,7 +152,6 @@ package-docker:
                  -e "OPEN_TOKEN_ADDRESS=${OPEN_TOKEN_ADDRESS}" \
                  -e "EVENT_SUBSCRIPTION=${EVENT_SUBSCRIPTION}" \
                  -e "WIDGET_HOST=${WIDGET_HOST}" \
-                 -e "OPEN_API_URL=${OPEN_API_URL}" \
                  -e "STATE_API_URL=${STATE_API_URL}" \
                  ${IMAGE_NAME}:${IMAGE_TAG}
     "
@@ -177,7 +175,6 @@ deploy-development:
     OPEN_TOKEN_ADDRESS: $OPEN_TOKEN_ADDRESS_DEV
     EVENT_SUBSCRIPTION: "true"
     WIDGET_HOST: "https://api.open-platform.zensoft.io"
-    OPEN_API_URL: $DEPLOY_HOST_DEV
     STATE_API_URL: "http://35.236.244.135/api"
     IMAGE_TAG: sprint
   before_script: *prepare_key
@@ -209,7 +206,6 @@ deploy-production:
     OPEN_TOKEN_ADDRESS: $OPEN_TOKEN_ADDRESS_PROD
     EVENT_SUBSCRIPTION: "true"
     WIDGET_HOST: "https://api.openfuture.io"
-    OPEN_API_URL: $DEPLOY_HOST_PROD
     STATE_API_URL: "http:/35.236.227.112/api"
     IMAGE_TAG: latest
   before_script: *prepare_key
