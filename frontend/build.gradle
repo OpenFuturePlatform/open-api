@@ -11,8 +11,9 @@ node {
 }
 
 task assemble(type: NpmTask) {
-    println env ?: "undefined env"
-    args = ['run', "build:${env ?: ""}"]
+    def environment =  System.getenv("env") ?: "undefined env"
+    println environment
+    args = ['run', "build:$environment"]
 }
 
 assemble.doLast {
