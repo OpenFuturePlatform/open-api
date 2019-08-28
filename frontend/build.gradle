@@ -11,9 +11,20 @@ node {
 }
 
 task assemble(type: NpmTask) {
-    def environment =  System.getenv("env") ?: "undefined env"
+    def build = ""
+
+    def environment =  System.getenv("env")
     println environment
-    args = ['run', "build:$environment"]
+    
+    if (environment == "sprint") {
+        build = "build:sprint"
+    } else if (environment == "master" || environment == "tags") {
+        build = "build:master"
+    } else if (environment == "state-integrating") {
+        build = "build"
+    }
+
+    args = ['run', build]
 }
 
 assemble.doLast {

@@ -79,7 +79,7 @@ build-jar:
     - export GRADLE_USER_HOME=`pwd`/.gradle
     - apt update && apt install make gcc g++ -y
   script:
-    - ./gradlew assemble -Penv=${CI_COMMIT_REF_NAME}
+    - ./gradlew assemble -Penv=${CI_MERGE_REQUEST_SOURCE_BRANCH_NAME}
   cache:
     paths:
       - .gradle/wrapper
@@ -89,6 +89,11 @@ build-jar:
     paths:
       - build/libs/*.jar
     expire_in: 1 week
+  only:
+    - state-integrating
+    - master
+    - sprint
+    - tags
   except:
     - schedules
 
