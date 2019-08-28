@@ -11,7 +11,8 @@ node {
 }
 
 task assemble(type: NpmTask) {
-    args = ['run', 'build:dev']
+    println env
+    args = ['run', "build:$env"]
 }
 
 assemble.doLast {
