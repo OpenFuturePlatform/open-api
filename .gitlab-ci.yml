@@ -79,7 +79,7 @@ build-jar:
     - export GRADLE_USER_HOME=`pwd`/.gradle
     - apt update && apt install make gcc g++ -y
   script:
-    - ./gradlew assemble -Penv='sprint'
+    - ./gradlew assemble
   cache:
     paths:
       - .gradle/wrapper
@@ -90,7 +90,6 @@ build-jar:
       - build/libs/*.jar
     expire_in: 1 week
   only:
-    - state-integrating
     - master
     - sprint
     - tags
