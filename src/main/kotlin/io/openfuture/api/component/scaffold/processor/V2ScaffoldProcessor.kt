@@ -48,6 +48,8 @@ class V2ScaffoldProcessor(
                 scaffold.address
         )
 
+        if(result.isEmpty()) return ScaffoldSummary(scaffold, BigInteger.ZERO, BigInteger.ZERO, false)
+
         return ScaffoldSummary(
                 scaffold,
                 result[3].value as BigInteger,
