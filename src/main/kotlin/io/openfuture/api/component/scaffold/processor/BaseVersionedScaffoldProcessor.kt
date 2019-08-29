@@ -107,7 +107,11 @@ abstract class BaseVersionedScaffoldProcessor(
                 listOf(object : TypeReference<Uint256>() {}),
                 summary.scaffold.address
         )
-        val count = (countResult[0].value as BigInteger).toInt()
+
+        var count = 0
+        if (countResult.isNotEmpty()) {
+            count = (countResult[0].value as BigInteger).toInt()
+        }
 
         val shareHolders = mutableListOf<ShareHolder>()
         for (i in 0 until count) {
