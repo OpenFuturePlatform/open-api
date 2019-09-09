@@ -41,7 +41,7 @@ class Web3Wrapper(
         if (!properties.eventSubscription) {
             return
         }
-        web3j.transactionObservable().subscribe {
+        web3j.transactionFlowable().subscribe {
             val logs = web3j.ethGetLogs(EthFilter(DefaultBlockParameter.valueOf(it.blockNumber), LATEST, it.to)).send().logs
             logs?.forEach {
                 if (it is EthLog.LogObject) {
