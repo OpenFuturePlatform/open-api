@@ -1,18 +1,21 @@
-import { adaptScaffoldV1, serializeScaffoldV1 } from './v1/scaffold';
-import { serializeScaffoldSummaryByMetaMaskV1, serializeScaffoldSummaryByApiV1 } from './v1/scaffold-summary';
-import { serializeScaffoldSummaryByMetaMaskV2 } from './v2/scaffold-summary';
+import {adaptEthereumScaffoldV1, serializeEthereumScaffoldV1} from './v1/ethereum-scaffold';
+import {
+  serializeEthereumScaffoldSummaryByApiV1,
+  serializeEthereumScaffoldSummaryByMetaMaskV1
+} from './v1/ethereum-scaffold-summary';
+import {serializeEthereumScaffoldSummaryByMetaMaskV2} from './v2/ethereum-scaffold-summary';
 
 const versionMap = {
   V1: {
     version: () => 'V1',
-    adaptScaffold: adaptScaffoldV1,
-    serializeScaffold: serializeScaffoldV1,
-    serializeScaffoldSummaryByMetaMask: serializeScaffoldSummaryByMetaMaskV1,
-    serializeScaffoldSummaryByApi: serializeScaffoldSummaryByApiV1
+    adaptScaffold: adaptEthereumScaffoldV1,
+    serializeScaffold: serializeEthereumScaffoldV1,
+    serializeScaffoldSummaryByMetaMask: serializeEthereumScaffoldSummaryByMetaMaskV1,
+    serializeScaffoldSummaryByApi: serializeEthereumScaffoldSummaryByApiV1
   },
   V2: {
     version: () => 'V2',
-    serializeScaffoldSummaryByMetaMask: serializeScaffoldSummaryByMetaMaskV2
+    serializeScaffoldSummaryByMetaMask: serializeEthereumScaffoldSummaryByMetaMaskV2
   }
 };
 

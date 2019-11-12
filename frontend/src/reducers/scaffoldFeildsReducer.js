@@ -1,4 +1,4 @@
-import { GET_SCAFFOLD_FIELDS, LOAD_SCAFFOLD_FIELDS } from '../actions/types';
+import {GET_ETHEREUM_SCAFFOLD_FIELDS, LOAD_ETHEREUM_SCAFFOLD_FIELDS} from '../actions/types';
 
 const initialState = {
   currency: 'USD',
@@ -20,9 +20,9 @@ const initialState = {
 export default function(state = initialState, action) {
   const { payload, type } = action;
   switch (type) {
-    case LOAD_SCAFFOLD_FIELDS:
+    case LOAD_ETHEREUM_SCAFFOLD_FIELDS:
       return { ...state, ...action.payload };
-    case GET_SCAFFOLD_FIELDS:
+    case GET_ETHEREUM_SCAFFOLD_FIELDS:
       return payload;
     default:
       return state;
