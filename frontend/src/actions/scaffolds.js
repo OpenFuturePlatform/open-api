@@ -1,69 +1,85 @@
-import { SET_SCAFFOLD_SET, FETCH_SCAFFOLDS } from './types';
-import { fetchShareHoldersFromChain } from './share-holders';
-import { parseApiError } from '../utils/parseApiError';
-import { getScaffoldsPath } from '../utils/apiPathes';
-import { apiGet, apiPut } from './apiRequest';
-import { getApiUsing } from '../selectors/getApiUsing';
-import { fetchScaffoldSummaryFromApi, fetchScaffoldSummaryFromChain } from './scaffold-summary';
-import { fetchScaffoldTransactionsFromApi } from './scaffold-transactions';
-import { contractVersion } from '../adapters/contract-version';
+import {FETCH_ETHEREUM_SCAFFOLDS, FETCH_OPEN_SCAFFOLDS, SET_ETHEREUM_SCAFFOLD_SET, SHOW_MODAL} from './types';
+import {fetchEthereumShareHoldersFromChain} from './ethereum-share-holders';
+import {parseApiError} from '../utils/parseApiError';
+import {getEthereumScaffoldsPath, getOpenScaffoldsPath} from '../utils/apiPathes';
+import {apiGet, apiPut} from './apiRequest';
+import {getApiUsing} from '../selectors/getApiUsing';
+import {fetchEthereumScaffoldSummaryFromApi, fetchEthereumScaffoldSummaryFromChain} from './ethereum-scaffold-summary';
+import {fetchEthereumScaffoldTransactionsFromApi} from './ethereum-scaffold-transactions';
+import {contractVersion} from '../adapters/contract-version';
 
-export const fetchScaffolds = (offset = 0, limit = 10) => async dispatch => {
+export const fetchOpenScaffolds = (offset = 0, limit = 10) => async dispatch => {
   const params = { offset, limit };
 
   try {
-    const data = await dispatch(apiGet(getScaffoldsPath(), params));
+    const data = await dispatch(apiGet(getOpenScaffoldsPath(), params));
+    dispatch({ type: FETCH_OPEN_SCAFFOLDS, payload: data });
+  } catch (err) {
+    const error = parseApiError(err);
+    dispatch({
+      type: SHOW_MODAL,
+      payload: {showLoader: false, showModal: true, error: error.message}
+    });
+    throw error;
+  }
+};
+
+export const fetchEthereumScaffolds = (offset = 0, limit = 10) => async dispatch => {
+  const params = { offset, limit };
+
+  try {
+    const data = await dispatch(apiGet(getEthereumScaffoldsPath(), params));
     const list = data.list.map(scaffold => contractVersion(scaffold.version).adaptScaffold(scaffold));
     const adaptedData = { ...data, list };
-    dispatch({ type: FETCH_SCAFFOLDS, payload: adaptedData });
+    dispatch({ type: FETCH_ETHEREUM_SCAFFOLDS, payload: adaptedData });
   } catch (err) {
     console.log('Error getting scaffolds', err);
   }
 };
 
-const fetchScaffoldItem = address => async dispatch => {
-  dispatch({ type: SET_SCAFFOLD_SET, payload: { address, loading: true } });
+const fetchEthereumScaffoldItem = address => async dispatch => {
+  dispatch({ type: SET_ETHEREUM_SCAFFOLD_SET, payload: { address, loading: true } });
   try {
-    const scaffoldRaw = await dispatch(apiGet(getScaffoldsPath(address)));
+    const scaffoldRaw = await dispatch(apiGet(getEthereumScaffoldsPath(address)));
     const scaffold = contractVersion(scaffoldRaw.version).adaptScaffold(scaffoldRaw);
     const error = '';
     const payload = { address, scaffold, error, loading: false };
-    dispatch({ type: SET_SCAFFOLD_SET, payload });
+    dispatch({ type: SET_ETHEREUM_SCAFFOLD_SET, payload });
     return scaffold;
   } catch (e) {
     const response = e.response || {};
     const error = `${response.status}: ${response.message || response.statusText}`;
     const payload = { address, error, loading: false };
-    dispatch({ type: SET_SCAFFOLD_SET, payload });
+    dispatch({ type: SET_ETHEREUM_SCAFFOLD_SET, payload });
     throw e;
   }
 };
 
-export const fetchScaffoldDetails = scaffoldAddress => async (dispatch, getState) => {
+export const fetchEthereumScaffoldDetails = scaffoldAddress => async (dispatch, getState) => {
   const state = getState();
   const apiUsing = getApiUsing(state);
-  const scaffold = await dispatch(fetchScaffoldItem(scaffoldAddress));
+  const scaffold = await dispatch(fetchEthereumScaffoldItem(scaffoldAddress));
 
   if (apiUsing) {
-    dispatch(fetchScaffoldSummaryFromApi(scaffold));
+    dispatch(fetchEthereumScaffoldSummaryFromApi(scaffold));
   } else {
-    dispatch(fetchScaffoldSummaryFromChain(scaffold));
-    dispatch(fetchShareHoldersFromChain(scaffold));
+    dispatch(fetchEthereumScaffoldSummaryFromChain(scaffold));
+    dispatch(fetchEthereumShareHoldersFromChain(scaffold));
   }
-  dispatch(fetchScaffoldTransactionsFromApi(scaffold));
+  dispatch(fetchEthereumScaffoldTransactionsFromApi(scaffold));
 };
 
-export const editScaffoldByApi = ({ address, version }, fields) => async dispatch => {
+export const editEthereumScaffoldByApi = ({ address, version }, fields) => async dispatch => {
   try {
     const serializedScaffold = contractVersion(version).serializeScaffold(fields);
-    await dispatch(apiPut(getScaffoldsPath(address), serializedScaffold));
+    await dispatch(apiPut(getEthereumScaffoldsPath(address), serializedScaffold));
   } catch (e) {
     throw parseApiError(e);
   }
 };
 
-export const editScaffold = (scaffold, fields) => async dispatch => {
-  await dispatch(editScaffoldByApi(scaffold, fields));
+export const editEthereumScaffold = (scaffold, fields) => async dispatch => {
+  await dispatch(editEthereumScaffoldByApi(scaffold, fields));
 
-  dispatch(fetchScaffoldDetails(scaffold.address));
+  dispatch(fetchEthereumScaffoldDetails(scaffold.address));
 };

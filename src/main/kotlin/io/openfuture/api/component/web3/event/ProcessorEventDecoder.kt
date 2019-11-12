@@ -1,7 +1,7 @@
 package io.openfuture.api.component.web3.event
 
 import io.openfuture.api.domain.event.Event
-import io.openfuture.api.repository.ScaffoldPropertyRepository
+import io.openfuture.api.repository.EthereumScaffoldPropertyRepository
 import org.springframework.stereotype.Component
 import org.web3j.abi.FunctionReturnDecoder
 import org.web3j.abi.TypeReference
@@ -11,7 +11,7 @@ import java.math.BigInteger
 import javax.annotation.PostConstruct
 
 @Component
-class ProcessorEventDecoder(private val scaffoldPropertyRepository: ScaffoldPropertyRepository) {
+class ProcessorEventDecoder(private val ethereumScaffoldPropertyRepository: EthereumScaffoldPropertyRepository) {
 
     private lateinit var decoders: List<Decoder<out Event>>
 
@@ -25,7 +25,7 @@ class ProcessorEventDecoder(private val scaffoldPropertyRepository: ScaffoldProp
                 EditedShareHolderDecoder(),
                 FundsDepositedDecoder(),
                 PaidForShareHolderDecoder(),
-                PaymentCompletedDecoder(scaffoldPropertyRepository)
+                PaymentCompletedDecoder(ethereumScaffoldPropertyRepository)
         )
     }
 

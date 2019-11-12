@@ -14,6 +14,14 @@ class DefaultStateApi(
         @Value("\${open.state.url}") private val stateUrl: String
 ) : StateApi {
 
+    override fun saveOpenScaffold(webHook: String, address: String) :OpenScaffoldDto {
+        val url = "$stateUrl/open-scaffolds"
+        val request = SaveScaffoldRequest(address, webHook)
+        val response = clientHttp.post(url, prepareHeader(), request)
+
+        return BodyConverter.deserialize(response.entity)
+    }
+
     override fun createAccount(webHook: String?, address: String, blockchainId: Int): AccountDto {
         val url = "$stateUrl/accounts"
         val request = CreateAccountRequest(webHook, setOf(CreateIntegrationRequest(address, blockchainId)))

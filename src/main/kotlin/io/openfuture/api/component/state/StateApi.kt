@@ -2,6 +2,7 @@ package io.openfuture.api.component.state
 
 import io.openfuture.api.domain.PageResponse
 import io.openfuture.api.domain.state.AccountDto
+import io.openfuture.api.domain.state.OpenScaffoldDto
 import io.openfuture.api.domain.state.StateTransactionDto
 import io.openfuture.api.domain.state.WalletDto
 import org.springframework.data.domain.PageRequest
@@ -35,5 +36,10 @@ interface StateApi {
     fun getTransaction(id: Long, walletId: Long): StateTransactionDto
 
     fun getAllTransactionsByWalletId(walletId: Long, pageRequest: PageRequest): PageResponse<StateTransactionDto>
+
+
+    // open scaffolds
+
+    fun saveOpenScaffold(webHook: String, address: String): OpenScaffoldDto
 
 }

@@ -1,11 +1,11 @@
 package io.openfuture.api.component.scaffold
 
-import io.openfuture.api.component.scaffold.compiler.BaseScaffoldCompiler
-import io.openfuture.api.component.scaffold.compiler.V1ScaffoldCompiler
+import io.openfuture.api.component.scaffold.compiler.EthereumScaffoldCompiler
+import io.openfuture.api.component.scaffold.compiler.V1EthereumScaffoldCompiler
 import io.openfuture.api.component.template.TemplateProcessor
 import io.openfuture.api.config.UnitTest
 import io.openfuture.api.config.propety.EthereumProperties
-import io.openfuture.api.domain.scaffold.ScaffoldPropertyDto
+import io.openfuture.api.domain.scaffold.EthereumScaffoldPropertyDto
 import io.openfuture.api.entity.scaffold.PropertyType.STRING
 import io.openfuture.api.exception.CompileException
 import org.apache.commons.io.IOUtils
@@ -20,12 +20,12 @@ internal class V1ScaffoldCompilerTests : UnitTest() {
     @Mock private lateinit var templateProcessor: TemplateProcessor
     @Mock private lateinit var properties: EthereumProperties
 
-    private lateinit var scaffoldCompiler: BaseScaffoldCompiler
+    private lateinit var ethereumScaffoldCompiler: EthereumScaffoldCompiler
 
 
     @Before
     fun setUp() {
-        scaffoldCompiler = V1ScaffoldCompiler(templateProcessor, properties)
+        ethereumScaffoldCompiler = V1EthereumScaffoldCompiler(templateProcessor, properties)
     }
 
     @Test
@@ -180,7 +180,7 @@ internal class V1ScaffoldCompilerTests : UnitTest() {
                     }
                 }""")
 
-        scaffoldCompiler.compile(createScaffoldPropertyDtos())
+        ethereumScaffoldCompiler.compile(createScaffoldPropertyDtos())
     }
 
     @Test(expected = CompileException::class)
@@ -204,10 +204,10 @@ internal class V1ScaffoldCompilerTests : UnitTest() {
 
                 }""")
 
-        scaffoldCompiler.compile(createScaffoldPropertyDtos())
+        ethereumScaffoldCompiler.compile(createScaffoldPropertyDtos())
     }
 
-    private fun createScaffoldPropertyDtos(): List<ScaffoldPropertyDto> = listOf(ScaffoldPropertyDto("value", STRING, "defaultValue"))
+    private fun createScaffoldPropertyDtos(): List<EthereumScaffoldPropertyDto> = listOf(EthereumScaffoldPropertyDto("value", STRING, "defaultValue"))
 
     private fun createParameters(): Map<String, String> {
         val params = HashMap<String, String>()
@@ -222,7 +222,7 @@ internal class V1ScaffoldCompilerTests : UnitTest() {
 
     private fun createScaffoldContent(): String {
         val resource = javaClass.classLoader
-                .getResource("templates/scaffold_${scaffoldCompiler.getVersion().name.toLowerCase()}.ftl")
+                .getResource("templates/ethereum/scaffold_${ethereumScaffoldCompiler.getVersion().name.toLowerCase()}.ftl")
         return IOUtils.toString(resource, Charset.defaultCharset())
     }
 

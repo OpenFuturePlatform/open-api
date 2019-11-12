@@ -1,4 +1,4 @@
-import { getScaffoldSetSelector } from './getScaffoldSet';
+import {getScaffoldSetSelector} from './getEthereumScaffoldSet';
 
 export const getTransactionSelector = (state, scaffoldAddress) => {
   const scaffoldSet = getScaffoldSetSelector(state, scaffoldAddress);

@@ -1,23 +1,28 @@
 import web3 from '../utils/web3';
 import Eth from 'ethjs-unit';
-import { CONVERT_CURRENCIES, SHOW_MODAL } from './types';
-import { getScaffoldsPath, getScaffoldDoCompile, getScaffoldDoDeploy } from '../utils/apiPathes';
-import { apiPost, apiPatch, apiGet } from './apiRequest';
-import { contractVersion } from '../adapters/contract-version';
-import { getWalletMethod } from '../selectors/getWalletMethod';
-import { parseApiError } from '../utils/parseApiError';
-import { toChecksumAddress } from '../utils/toChecksumAddress';
+import {CONVERT_CURRENCIES, SHOW_MODAL} from './types';
+import {
+  getEthereumScaffoldDoCompile,
+  getEthereumScaffoldDoDeploy,
+  getEthereumScaffoldsPath,
+  getOpenScaffoldsPath
+} from '../utils/apiPathes';
+import {apiGet, apiPatch, apiPost} from './apiRequest';
+import {contractVersion} from '../adapters/contract-version';
+import {getWalletMethod} from '../selectors/getWalletMethod';
+import {parseApiError} from '../utils/parseApiError';
+import {toChecksumAddress} from '../utils/toChecksumAddress';
 
 const setWebHook = (address, webHook) => async dispatch =>
-  await dispatch(apiPatch(getScaffoldsPath(address), { webHook }));
+  await dispatch(apiPatch(getEthereumScaffoldsPath(address), { webHook }));
 
-export const deployContractByApi = formValues => async dispatch => {
-  const scaffold = await dispatch(apiPost(getScaffoldDoDeploy(), formValues));
+export const deployEthereumContractByApi = formValues => async dispatch => {
+  const scaffold = await dispatch(apiPost(getEthereumScaffoldDoDeploy(), formValues));
   return scaffold.address;
 };
 
-export const compileContract = (openKey, properties) => async dispatch => {
-  return await dispatch(apiPost(getScaffoldDoCompile(), { openKey, properties }));
+export const compileEthereumContract = (openKey, properties) => async dispatch => {
+  return await dispatch(apiPost(getEthereumScaffoldDoCompile(), { openKey, properties }));
 };
 
 export const processDeploy = async (contract, bin, platformAddress, formValues) => {
@@ -35,19 +40,19 @@ export const processDeploy = async (contract, bin, platformAddress, formValues) 
     .send({ from: formValues.developerAddress });
 };
 
-export const deployContractByMetaMask = formValues => async (dispatch, getState) => {
+export const deployEthereumContractByMetaMask = formValues => async (dispatch, getState) => {
   const {
     globalProperties: { platformAddress }
   } = getState();
-  const { abi, bin } = await dispatch(compileContract(formValues.openKey, formValues.properties));
+  const { abi, bin } = await dispatch(compileEthereumContract(formValues.openKey, formValues.properties));
   const contract = new web3.eth.Contract(JSON.parse(abi));
   const newContractInstance = await processDeploy(contract, bin, platformAddress, formValues);
   const address = newContractInstance.options.address;
-  await dispatch(apiPost(getScaffoldsPath(), { ...formValues, abi, address }));
+  await dispatch(apiPost(getEthereumScaffoldsPath(), { ...formValues, abi, address }));
   return address;
 };
 
-export const deployContract = formValuesInit => async (dispatch, getState) => {
+export const deployEthereumContract = formValuesInit => async (dispatch, getState) => {
   dispatch({ type: SHOW_MODAL, payload: { showLoader: true, showModal: true } });
   const state = getState();
   const { byApiMethod } = getWalletMethod(state);
@@ -61,9 +66,9 @@ export const deployContract = formValuesInit => async (dispatch, getState) => {
     let contractAddress;
 
     if (byApiMethod) {
-      contractAddress = await dispatch(deployContractByApi(serializedFormValues));
+      contractAddress = await dispatch(deployEthereumContractByApi(serializedFormValues));
     } else {
-      contractAddress = await dispatch(deployContractByMetaMask(serializedFormValues));
+      contractAddress = await dispatch(deployEthereumContractByMetaMask(serializedFormValues));
     }
     if (formValues.webHook) {
       await setWebHook(contractAddress, formValues.webHook);
@@ -99,5 +104,19 @@ export const convertCurrencies = conversionValues => async dispatch => {
     return data.response;
   } catch (err) {
     console.log('Error in convertCurrencies', err);
+  }
+};
+
+export const saveOpenScaffold = formValues => async (dispatch) => {
+  try {
+    const description = formValues.title;
+    await dispatch(apiPost(getOpenScaffoldsPath(), {...formValues, description}));
+  } catch (e) {
+    const error = parseApiError(e);
+    dispatch({
+      type: SHOW_MODAL,
+      payload: {showLoader: false, showModal: true, error: error.message}
+    });
+    throw error;
   }
 };
