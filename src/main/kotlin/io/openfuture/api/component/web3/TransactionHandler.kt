@@ -2,10 +2,11 @@ package io.openfuture.api.component.web3
 
 import io.openfuture.api.component.event.AddTransactionEvent
 import io.openfuture.api.component.web3.event.ProcessorEventDecoder
-import io.openfuture.api.domain.transaction.TransactionDto
-import io.openfuture.api.entity.scaffold.Transaction
-import io.openfuture.api.repository.ScaffoldRepository
-import io.openfuture.api.service.TransactionService
+import io.openfuture.api.domain.transaction.EthereumTransactionDto
+import io.openfuture.api.entity.scaffold.EthereumTransaction
+import io.openfuture.api.repository.EthereumScaffoldRepository
+import io.openfuture.api.service.EthereumTransactionService
+import io.openfuture.api.util.EthereumUtils.toChecksumAddress
 import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Component
@@ -15,8 +16,8 @@ import org.web3j.protocol.core.methods.response.Log
 
 @Component
 class TransactionHandler(
-        private val service: TransactionService,
-        private val repository: ScaffoldRepository,
+        private val service: EthereumTransactionService,
+        private val repositoryEthereum: EthereumScaffoldRepository,
         private val eventDecoder: ProcessorEventDecoder,
         private val publisher: ApplicationEventPublisher
 ) {
@@ -28,13 +29,13 @@ class TransactionHandler(
 
     @Transactional
     fun handle(transactionLog: Log) {
-        val contract = repository.findByAddressIgnoreCase(transactionLog.address) ?: return
+        val contract = repositoryEthereum.findByAddressIgnoreCase(toChecksumAddress(transactionLog.address)) ?: return
         if (null != service.find(transactionLog.transactionHash, transactionLog.logIndexRaw)) return
-        val transaction = service.save(Transaction.of(contract, transactionLog))
+        val transaction = service.save(EthereumTransaction.of(contract, transactionLog))
 
         try {
             val event = eventDecoder.getEvent(contract.address, transaction.data)
-            val transactionDto = TransactionDto(transaction, event)
+            val transactionDto = EthereumTransactionDto(transaction, event)
             contract.webHook?.let { RestTemplate().postForLocation(it, transactionDto) }
             publisher.publishEvent(AddTransactionEvent(this, transactionDto))
         } catch (e: Exception) {

@@ -1,9 +1,9 @@
 package io.openfuture.api.component.web3.event
 
 import io.openfuture.api.domain.event.PaymentCompletedEvent
+import io.openfuture.api.entity.scaffold.EthereumScaffoldProperty
 import io.openfuture.api.entity.scaffold.PropertyType.*
-import io.openfuture.api.entity.scaffold.ScaffoldProperty
-import io.openfuture.api.repository.ScaffoldPropertyRepository
+import io.openfuture.api.repository.EthereumScaffoldPropertyRepository
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.Bool
@@ -13,10 +13,10 @@ import org.web3j.utils.Convert.Unit.ETHER
 import org.web3j.utils.Convert.fromWei
 import java.math.BigInteger
 
-class PaymentCompletedDecoder(private val scaffoldPropertyRepository: ScaffoldPropertyRepository) : Decoder<PaymentCompletedEvent> {
+class PaymentCompletedDecoder(private val ethereumScaffoldPropertyRepository: EthereumScaffoldPropertyRepository) : Decoder<PaymentCompletedEvent> {
 
     override fun decode(addressScaffold: String, rawData: String): PaymentCompletedEvent {
-        val scaffoldProperties = scaffoldPropertyRepository.findAllByScaffoldAddress(addressScaffold)
+        val scaffoldProperties = ethereumScaffoldPropertyRepository.findAllByEthereumScaffoldAddress(addressScaffold)
 
         val response = getResponse(rawData, getSignature(scaffoldProperties))
 
@@ -37,7 +37,7 @@ class PaymentCompletedDecoder(private val scaffoldPropertyRepository: ScaffoldPr
         return PaymentCompletedEvent(customerAddress, transactionAmount, scaffoldTransactionIndex, properties)
     }
 
-    private fun getSignature(properties: List<ScaffoldProperty>): List<TypeReference<*>> {
+    private fun getSignature(properties: List<EthereumScaffoldProperty>): List<TypeReference<*>> {
         val signature = mutableListOf(
                 object : TypeReference<Uint256>() {},
                 object : TypeReference<Address>() {},

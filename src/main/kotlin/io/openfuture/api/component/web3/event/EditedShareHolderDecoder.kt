@@ -1,6 +1,7 @@
 package io.openfuture.api.component.web3.event
 
 import io.openfuture.api.domain.event.EditedShareHolderEvent
+import io.openfuture.api.util.EthereumUtils.toChecksumAddress
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.generated.Uint256
@@ -12,7 +13,7 @@ class EditedShareHolderDecoder : Decoder<EditedShareHolderEvent> {
         val response = getResponse(rawData, listOf(object : TypeReference<Uint256>() {}, object : TypeReference<Address>() {},
                 object : TypeReference<Uint256>() {}))
 
-        val userAddress = response[1].value as String
+        val userAddress = toChecksumAddress(response[1].value as String)
         val partnerShare = response[2].value as BigInteger
 
         return EditedShareHolderEvent(userAddress, partnerShare)

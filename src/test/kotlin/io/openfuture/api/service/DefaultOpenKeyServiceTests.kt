@@ -113,7 +113,7 @@ class DefaultOpenKeyServiceTests : UnitTest() {
 
     private fun createOpenKey(): OpenKey = createOpenKey(null)
 
-    private fun createOpenKey(date: Date?): OpenKey = OpenKey(createUser(), date, "op_pk_9de7cbb4-857c-49e9-87d2-fc91428c4c12", true)
+    private fun createOpenKey(date: Date?): OpenKey = OpenKey(createUser(), date, "op_pk_9de7cbb4-857c-49e9-87d2-fc91428c4c12", enabled = true)
 
     private fun createUser(): User = User("104113085667282103363", 0, Collections.emptySet(), Collections.emptySet())
 

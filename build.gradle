@@ -43,6 +43,7 @@ dependencies {
 
     // Ethereum
     compile("org.web3j:web3j-spring-boot-starter:1.6.0")
+    compile 'org.web3j:core:4.5.0'
     compile("org.ethereum:ethereumj-core:1.7.2-RELEASE")
 
     // AWS

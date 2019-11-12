@@ -1,6 +1,7 @@
 package io.openfuture.api.component.web3.event
 
 import io.openfuture.api.domain.event.FundsDepositedEvent
+import io.openfuture.api.util.EthereumUtils.toChecksumAddress
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Address
 import org.web3j.abi.datatypes.generated.Uint256
@@ -15,7 +16,7 @@ class FundsDepositedDecoder : Decoder<FundsDepositedEvent> {
                 object : TypeReference<Address>() {}))
 
         val amount = fromWei((response[1].value as BigInteger).toBigDecimal(), ETHER)
-        val toAddress = response[2].value as String
+        val toAddress = toChecksumAddress(response[2].value as String)
 
         return FundsDepositedEvent(amount, toAddress)
     }

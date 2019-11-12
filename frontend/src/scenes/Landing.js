@@ -50,7 +50,7 @@ const Landing = () => {
           <h1>OPEN Scaffold Generator</h1>
           <p className="subtext-h1-h2">Create and edit smart contracts with different <br/> settings in the blockchain.</p>
           <div className="button">
-            <a href="https://api.openfuture.io/oauth2/authorization/google">
+            <a href="/oauth2/authorization/google">
               <button type="button">
                 <img src="img/landing_new/google.svg" alt="Img"/> LOGIN WITH GOOGLE
               </button>

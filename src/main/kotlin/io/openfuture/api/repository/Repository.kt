@@ -20,22 +20,28 @@ interface UserRepository : BaseRepository<User> {
 }
 
 @Repository
-interface ScaffoldRepository : BaseRepository<Scaffold> {
+interface EthereumScaffoldRepository : BaseRepository<EthereumScaffold> {
 
-    fun findByAddressAndOpenKeyUser(address: String, user: User): Scaffold?
+    fun findByAddressAndOpenKeyUser(address: String, user: User): EthereumScaffold?
 
-    fun findByAddress(address: String): Scaffold?
+    fun findByAddress(address: String): EthereumScaffold?
 
-    fun findByAddressIgnoreCase(address: String): Scaffold?
+    fun findByAddressIgnoreCase(address: String): EthereumScaffold?
 
-    fun findAllByOpenKeyUserOrderByIdDesc(user: User, pageable: Pageable): Page<Scaffold>
+    fun findAllByOpenKeyUserOrderByIdDesc(user: User, pageable: Pageable): Page<EthereumScaffold>
 
 }
 
 @Repository
-interface ScaffoldPropertyRepository : BaseRepository<ScaffoldProperty> {
+interface OpenScaffoldRepository : BaseRepository<OpenScaffold> {
 
-    fun findAllByScaffoldAddress(address: String): List<ScaffoldProperty>
+    fun findAllByOpenKeyUserOrderByIdDesc(user: User, pageable: Pageable): Page<OpenScaffold>
+}
+
+@Repository
+interface EthereumScaffoldPropertyRepository : BaseRepository<EthereumScaffoldProperty> {
+
+    fun findAllByEthereumScaffoldAddress(address: String): List<EthereumScaffoldProperty>
 
 }
 
@@ -49,36 +55,36 @@ interface OpenKeyRepository : BaseRepository<OpenKey> {
 }
 
 @Repository
-interface TransactionRepository : BaseRepository<Transaction> {
+interface EthereumTransactionRepository : BaseRepository<EthereumTransaction> {
 
-    fun findAllByScaffoldOrderByDateDesc(scaffold: Scaffold, pageable: Pageable): Page<Transaction>
+    fun findAllByEthereumScaffoldOrderByDateDesc(ethereumScaffold: EthereumScaffold, pageable: Pageable): Page<EthereumTransaction>
 
-    fun findByHashAndIndex(hash: String, index: String): Transaction?
-
-}
-
-@Repository
-interface ScaffoldTemplateRepository : BaseRepository<ScaffoldTemplate> {
-
-    fun findAllByDeletedIsFalse(): List<ScaffoldTemplate>
+    fun findByHashAndIndex(hash: String, index: String): EthereumTransaction?
 
 }
 
 @Repository
-interface ScaffoldTemplatePropertyRepository : BaseRepository<ScaffoldTemplateProperty>
+interface EthereumScaffoldTemplateRepository : BaseRepository<EthereumScaffoldTemplate> {
 
-@Repository
-interface ScaffoldSummaryRepository : BaseRepository<ScaffoldSummary> {
-
-    fun findByScaffold(scaffold: Scaffold): ScaffoldSummary?
-
-    fun countByEnabledIsFalseAndScaffoldOpenKeyUser(user: User): Int
+    fun findAllByDeletedIsFalse(): List<EthereumScaffoldTemplate>
 
 }
 
 @Repository
-interface ShareHolderRepository : BaseRepository<ShareHolder> {
+interface ScaffoldTemplatePropertyRepository : BaseRepository<EthereumScaffoldTemplateProperty>
 
-    fun deleteAllBySummary(summary: ScaffoldSummary)
+@Repository
+interface EthereumScaffoldSummaryRepository : BaseRepository<EthereumScaffoldSummary> {
+
+    fun findByEthereumScaffold(ethereumScaffold: EthereumScaffold): EthereumScaffoldSummary?
+
+    fun countByEnabledIsFalseAndEthereumScaffoldOpenKeyUser(user: User): Int
+
+}
+
+@Repository
+interface ShareHolderRepository : BaseRepository<EthereumShareHolder> {
+
+    fun deleteAllBySummary(summary: EthereumScaffoldSummary)
 
 }
