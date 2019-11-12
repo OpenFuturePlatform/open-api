@@ -22,7 +22,7 @@ class MainController(
         return "redirect:/"
     }
 
-    @GetMapping("/", "/scaffold", "/scaffolds", "/scaffolds/**", "/keys", "/keys/**")
+    @GetMapping("/", "/ethereum-scaffold", "/ethereum-scaffolds", "/ethereum-scaffolds/**", "/keys", "/keys/**")
     fun frontend() = "frontend"
 
     @GetMapping("/widget/{address}")

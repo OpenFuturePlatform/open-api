@@ -1,33 +1,33 @@
 package io.openfuture.api.component.scaffold.processor
 
 import io.openfuture.api.domain.scaffold.CompiledScaffoldDto
-import io.openfuture.api.domain.scaffold.DeployScaffoldRequest
-import io.openfuture.api.domain.scaffold.ScaffoldPropertyDto
-import io.openfuture.api.entity.scaffold.Scaffold
-import io.openfuture.api.entity.scaffold.ScaffoldSummary
+import io.openfuture.api.domain.scaffold.DeployEthereumScaffoldRequest
+import io.openfuture.api.domain.scaffold.EthereumScaffoldPropertyDto
+import io.openfuture.api.entity.scaffold.EthereumScaffold
+import io.openfuture.api.entity.scaffold.EthereumScaffoldSummary
+import io.openfuture.api.entity.scaffold.EthereumShareHolder
 import io.openfuture.api.entity.scaffold.ScaffoldVersion
-import io.openfuture.api.entity.scaffold.ShareHolder
 
 interface VersionedScaffoldProcessor {
 
     fun getVersion(): ScaffoldVersion
 
-    fun compile(properties: List<ScaffoldPropertyDto>): CompiledScaffoldDto
+    fun compile(properties: List<EthereumScaffoldPropertyDto>): CompiledScaffoldDto
 
-    fun deploy(data: String, request: DeployScaffoldRequest): String
+    fun deploy(data: String, request: DeployEthereumScaffoldRequest): String
 
-    fun deactivate(scaffold: Scaffold)
+    fun deactivate(ethereumScaffold: EthereumScaffold)
 
-    fun activate(scaffold: Scaffold)
+    fun activate(ethereumScaffold: EthereumScaffold)
 
-    fun addShareHolder(scaffold: Scaffold, address: String, percent: Long)
+    fun addShareHolder(ethereumScaffold: EthereumScaffold, address: String, percent: Long)
 
-    fun updateShareHolder(scaffold: Scaffold, address: String, percent: Long)
+    fun updateShareHolder(ethereumScaffold: EthereumScaffold, address: String, percent: Long)
 
-    fun removeShareHolder(scaffold: Scaffold, address: String)
+    fun removeShareHolder(ethereumScaffold: EthereumScaffold, address: String)
 
-    fun getScaffoldSummary(scaffold: Scaffold): ScaffoldSummary
+    fun getScaffoldSummary(ethereumScaffold: EthereumScaffold): EthereumScaffoldSummary
 
-    fun getShareHolders(summary: ScaffoldSummary): List<ShareHolder>
+    fun getShareHolders(summary: EthereumScaffoldSummary): List<EthereumShareHolder>
 
 }

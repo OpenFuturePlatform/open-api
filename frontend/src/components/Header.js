@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
-import { Button, Icon, Menu } from 'semantic-ui-react';
-import { LOGIN_URL } from '../const/index';
+import React, {Component} from 'react';
+import {connect} from 'react-redux';
+import {Link} from 'react-router-dom';
+import {Button, Dropdown, Icon, Menu} from 'semantic-ui-react';
+import {LOGIN_URL} from '../const/index';
 
 class Header extends Component {
   renderNotAuthorizedContent() {
@@ -24,9 +24,12 @@ class Header extends Component {
         <Link className="item" to={'/scaffolds'}>
           Open Tokens: {this.props.currentUser.credits}
         </Link>
-        <Link className="item" to={'/scaffolds'}>
-          Scaffolds
-        </Link>
+        <Dropdown className="item" text="Scaffolds">
+          <Dropdown.Menu>
+            <Dropdown.Item text='Ethereum' as={Link} to={'/scaffolds/ethereum'}/>
+            <Dropdown.Item text='Open' as={Link} to={'/scaffolds/open'}/>
+          </Dropdown.Menu>
+        </Dropdown>
         <Link className="item" to={'/keys'}>
           Key Management
         </Link>

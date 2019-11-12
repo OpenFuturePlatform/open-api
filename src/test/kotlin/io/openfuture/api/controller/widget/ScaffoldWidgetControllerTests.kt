@@ -4,9 +4,9 @@ import io.openfuture.api.config.ControllerTests
 import io.openfuture.api.entity.auth.OpenKey
 import io.openfuture.api.entity.auth.User
 import io.openfuture.api.entity.scaffold.Currency.USD
-import io.openfuture.api.entity.scaffold.Scaffold
+import io.openfuture.api.entity.scaffold.EthereumScaffold
 import io.openfuture.api.entity.scaffold.ScaffoldVersion.V1
-import io.openfuture.api.service.ScaffoldService
+import io.openfuture.api.service.EthereumScaffoldService
 import org.junit.Test
 import org.mockito.BDDMockito.given
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -20,7 +20,7 @@ import java.util.*
 class ScaffoldWidgetControllerTests : ControllerTests() {
 
     @MockBean
-    private lateinit var service: ScaffoldService
+    private lateinit var service: EthereumScaffoldService
 
 
     @Test
@@ -35,19 +35,18 @@ class ScaffoldWidgetControllerTests : ControllerTests() {
                 .andExpect(content().json(expectScaffoldJson(scaffold), true))
     }
 
-    private fun expectScaffoldJson(scaffold: Scaffold) = """
+    private fun expectScaffoldJson(ethereumScaffold: EthereumScaffold) = """
         {
-                      "address": ${scaffold.address},
-                      "abi": ${scaffold.abi},
-                      "description": ${scaffold.description},
-                      "fiatAmount": "${scaffold.fiatAmount}",
-                      "currency": ${scaffold.getCurrency().name},
-                      "conversionAmount": "${scaffold.conversionAmount}",
-                      "properties": ${Arrays.toString(scaffold.property.toTypedArray())}
+                      "address": ${ethereumScaffold.address},
+                      "abi": ${ethereumScaffold.abi},
+                      "description": ${ethereumScaffold.description},
+                      "fiatAmount": "${ethereumScaffold.fiatAmount}",
+                      "currency": ${ethereumScaffold.getCurrency().name},
+                      "conversionAmount": "${ethereumScaffold.conversionAmount}",
+                      "properties": ${Arrays.toString(ethereumScaffold.property.toTypedArray())}
                     }
     """.trimIndent()
 
-    private fun createScaffold() = Scaffold("address", OpenKey(User("")), "abi", "developerAddress",
-            "description", "2", USD.getId(), "0.00023", V1.getId())
+    private fun createScaffold() = EthereumScaffold("address", "abi", "2", USD.getId(), "0.00023", mutableListOf(), V1.getId(), OpenKey(User("")), "developerAddress", "description")
 
 }

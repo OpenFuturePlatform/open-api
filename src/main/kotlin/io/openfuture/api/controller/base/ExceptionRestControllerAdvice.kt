@@ -2,16 +2,15 @@ package io.openfuture.api.controller.base
 
 import io.openfuture.api.domain.exception.ErrorDto
 import io.openfuture.api.domain.exception.ExceptionResponse
-import io.openfuture.api.exception.CompileException
-import io.openfuture.api.exception.ExecuteTransactionException
-import io.openfuture.api.exception.FunctionCallException
-import io.openfuture.api.exception.TemplateProcessingException
+import io.openfuture.api.exception.*
 import org.springframework.http.HttpStatus.BAD_REQUEST
+import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.validation.FieldError
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestControllerAdvice
+import javax.validation.ConstraintViolationException
 
 @RestControllerAdvice
 class ExceptionRestControllerAdvice {
@@ -22,9 +21,21 @@ class ExceptionRestControllerAdvice {
         val errors = exception.bindingResult.allErrors
         val error = errors.firstOrNull { it is FieldError } as FieldError?
         val message = error?.let { "Request is not valid because ${it.field} ${it.defaultMessage}" }
-                ?: "Some of request parameters are wrong. Please check request  according do documentation https://docs.openfuture.io/."
+                ?: "Some of request parameters are wrong. Please check request according to documentation https://docs.openfuture.io/."
         return ExceptionResponse(BAD_REQUEST.value(), message, errors.map { ErrorDto(it) })
     }
+
+    @ResponseStatus(code = BAD_REQUEST)
+    @ExceptionHandler(HttpMessageNotReadableException::class)
+    fun httpMessageNotReadableExceptionHandler(exception: HttpMessageNotReadableException): ExceptionResponse =
+            ExceptionResponse(BAD_REQUEST.value(), exception.message!!)
+
+
+    @ResponseStatus(code = BAD_REQUEST)
+    @ExceptionHandler(ConstraintViolationException::class)
+    fun constraintViolationExceptionHandler(exception: ConstraintViolationException): ExceptionResponse =
+            ExceptionResponse(BAD_REQUEST.value(), exception.message!!)
+
 
     @ResponseStatus(code = BAD_REQUEST)
     @ExceptionHandler(CompileException::class)
@@ -34,6 +45,11 @@ class ExceptionRestControllerAdvice {
     @ResponseStatus(code = BAD_REQUEST)
     @ExceptionHandler(ExecuteTransactionException::class)
     fun executeTransactionExceptionHandler(exception: ExecuteTransactionException): ExceptionResponse =
+            ExceptionResponse(BAD_REQUEST.value(), exception.message!!)
+
+    @ResponseStatus(code = BAD_REQUEST)
+    @ExceptionHandler(AddressException::class)
+    fun addressExceptionHandler(exception: AddressException): ExceptionResponse =
             ExceptionResponse(BAD_REQUEST.value(), exception.message!!)
 
     @ResponseStatus(code = BAD_REQUEST)

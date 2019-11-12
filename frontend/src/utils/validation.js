@@ -2,6 +2,7 @@ import axios from 'axios';
 import { solidityReservedWords } from '../const/solidity-reserved-words';
 import { getValidateUrlPath } from './apiPathes';
 import { t } from './messageTexts';
+import web3 from '../utils/web3';
 
 const urlErrorMessage = t('wrong url message');
 
@@ -42,7 +43,13 @@ export const validateAddress = address => {
   let errors = [];
   if (!address.startsWith('0x')) errors.push(t('dev address should begin with 0x'));
   if (address.length !== 42) errors.push(t('dev address should has length 42'));
-  return errors;
+  try {
+    web3.utils.toChecksumAddress(address);
+  } catch (e) {
+    errors.push(t('invalid address'));
+  } finally {
+    return errors;
+  }
 };
 
 export const warn = values => {
@@ -60,7 +67,7 @@ export const warn = values => {
 };
 
 const isUrl = str => {
-  const regexp = /^((https?|ftp|smtp):\/\/)(www.)?[a-z0-9]+\.[a-z]+(\/[a-zA-Z0-9#]+\/?)*$/;
+  const regexp = /^((https?|ftp|smtp):\/\/)(www.)?[a-z0-9]+\.[a-z]+(\/[a-zA-Z0-9#/-]+\/?)*$/;
   return regexp.test(str);
 };
 

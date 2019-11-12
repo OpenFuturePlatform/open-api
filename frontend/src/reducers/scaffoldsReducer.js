@@ -1,8 +1,8 @@
-import {FETCH_SCAFFOLDS} from '../actions/types';
+import {FETCH_ETHEREUM_SCAFFOLDS} from '../actions/types';
 
 export default function (state = {totalCount: 0, list: []}, action) {
   switch (action.type) {
-    case FETCH_SCAFFOLDS:
+    case FETCH_ETHEREUM_SCAFFOLDS:
       return action.payload;
     default:
       return state;
