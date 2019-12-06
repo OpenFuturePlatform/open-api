@@ -29,7 +29,6 @@ internal class Web3WrapperTests : UnitTest() {
 
     @Mock private lateinit var web3j: Web3j
     @Mock private lateinit var properties: EthereumProperties
-    @Mock private lateinit var transactionHandler: TransactionHandler
 
     @Mock private lateinit var call: EthCall
     @Mock private lateinit var error: Response.Error
@@ -52,7 +51,7 @@ internal class Web3WrapperTests : UnitTest() {
 
     @Before
     fun setUp() {
-        web3Wrapper = Web3Wrapper(web3j, properties, transactionHandler)
+        web3Wrapper = Web3Wrapper(web3j, properties)
     }
 
     @Test

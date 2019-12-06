@@ -16,40 +16,20 @@ import org.web3j.crypto.RawTransaction.createContractTransaction
 import org.web3j.crypto.RawTransaction.createTransaction
 import org.web3j.crypto.TransactionEncoder.signMessage
 import org.web3j.protocol.Web3j
-import org.web3j.protocol.core.DefaultBlockParameter
 import org.web3j.protocol.core.DefaultBlockParameterName.LATEST
-import org.web3j.protocol.core.methods.request.EthFilter
 import org.web3j.protocol.core.methods.request.Transaction.createFunctionCallTransaction
-import org.web3j.protocol.core.methods.response.EthLog
 import org.web3j.protocol.core.methods.response.TransactionReceipt
 import org.web3j.tx.Contract.GAS_LIMIT
 import org.web3j.tx.ManagedTransaction.GAS_PRICE
 import org.web3j.utils.Numeric.toHexString
 import java.math.BigInteger
 import java.math.BigInteger.ZERO
-import javax.annotation.PostConstruct
 
 @Component
 class Web3Wrapper(
         private val web3j: Web3j,
-        private val properties: EthereumProperties,
-        private val transactionHandler: TransactionHandler
+        private val properties: EthereumProperties
 ) {
-
-    @PostConstruct
-    fun init() {
-        if (!properties.eventSubscription) {
-            return
-        }
-        web3j.transactionFlowable().subscribe {
-            val logs = web3j.ethGetLogs(EthFilter(DefaultBlockParameter.valueOf(it.blockNumber), LATEST, it.to)).send().logs
-            logs?.forEach {
-                if (it is EthLog.LogObject) {
-                    transactionHandler.handle(it.get())
-                }
-            }
-        }
-    }
 
     fun deploy(bin: String, constructorParams: List<Type<*>>): String {
         val encodedConstructor = FunctionEncoder.encodeConstructor(constructorParams)
