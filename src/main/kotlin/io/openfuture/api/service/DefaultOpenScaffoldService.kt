@@ -19,7 +19,7 @@ class DefaultOpenScaffoldService(
 
     @Transactional
     override fun save(request: SaveOpenScaffoldRequest): OpenScaffold {
-        val openKey = openKeyService.get(request.openKey!!)
+        val openKey = openKeyService.get(request.openKey)
         request.webHook?.let { stateApi.saveOpenScaffold(it, request.developerAddress) }
 
         return openScaffoldRepository.save(OpenScaffold.of(request, openKey))
