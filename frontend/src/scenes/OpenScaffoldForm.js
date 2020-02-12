@@ -1,14 +1,16 @@
 import React, {Component} from 'react';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
-import {Field, getFormValues, reduxForm} from 'redux-form';
+import {Field, FieldArray, getFormValues, reduxForm} from 'redux-form';
 import {withRouter} from 'react-router-dom';
 import {Button, Grid} from 'semantic-ui-react';
 import {DropdownField} from 'react-semantic-redux-form';
-import {asyncValidate, validate, warn} from '../utils/validation';
+import {asyncValidate, validate, validateScaffoldProperties, warn} from '../utils/validation';
 import ScaffoldField from '../components-ui/inputs/Field';
 import {saveOpenScaffold} from '../actions/deploy-contract';
 import {fetchKeys} from '../actions/keys';
+import {TemplateSelect} from "../components/TemplateSelect";
+import ScaffoldPropertyFields from "../components-ui/inputs/PropertyFields";
 
 class OpenScaffoldForm extends Component {
 
@@ -29,12 +31,15 @@ class OpenScaffoldForm extends Component {
   };
 
   render() {
-    const {invalid: disableSubmit, openKeyOptions} = this.props;
+    const { invalid: disableSubmit,formValues, scaffoldFieldsErrors, openKeyOptions } = this.props;
 
     return (
       <form onSubmit={this.handleOnSubmit}>
         <Grid style={{paddingLeft: '15px'}}>
           <Grid.Row>
+            <Grid.Column width={16} style={{ paddingTop: '10px' }}>
+              <TemplateSelect />
+            </Grid.Column>
             <Grid.Column width={16} style={{paddingTop: '10px'}}>
               <Field
                 key={1}
@@ -106,6 +111,35 @@ class OpenScaffoldForm extends Component {
                 name="webHook"
               />
             </Grid.Column>
+            <Grid.Column width={16}>
+              <Field
+                labelStyle={{
+                  width: '187px',
+                  maxHeight: '38px',
+                  marginTop: '10px',
+                  marginBottom: '5px'
+                }}
+                inputStyle={{
+                  marginTop: '10px',
+                  marginBottom: '5px'
+                }}
+                key={5}
+                label="Openc*"
+                placeholder="Fiat Amount of Scaffold"
+                component={ScaffoldField}
+                name="fiatAmount"
+              />
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row>
+            <Grid.Column width={16}>
+              <FieldArray
+                name="properties"
+                component={ScaffoldPropertyFields}
+                scaffoldFieldsErrors={scaffoldFieldsErrors}
+                scaffoldProperties={formValues.properties || []}
+              />
+            </Grid.Column>
           </Grid.Row>
           <Grid.Row>
             <Grid.Column width={2} floated="right">
@@ -133,12 +167,16 @@ const getValues = getFormValues('openScaffoldCreationForm');
 
 const mapStateToProps = state => {
   const formValues = getValues(state) || {};
+  const initialValues = state.scaffoldFeilds;
   const openKey = state.auth ? state.auth.openKeys : undefined;
+  const scaffoldFieldsErrors = validateScaffoldProperties(formValues.properties || []);
   const openKeyOptions = state.keys.filter(it => it.enabled).map(it => ({text: it.value, value: it.value}));
 
   return {
     formValues,
+    initialValues,
     openKey,
+    scaffoldFieldsErrors,
     openKeyOptions
   };
 };
