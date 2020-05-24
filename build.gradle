@@ -1,10 +1,10 @@
 plugins {
     id 'jacoco'
     id 'idea'
-    id 'org.jetbrains.kotlin.jvm' version '1.2.60'
-    id 'org.jetbrains.kotlin.kapt' version '1.2.60'
-    id 'org.jetbrains.kotlin.plugin.spring' version '1.2.60'
-    id 'org.jetbrains.kotlin.plugin.jpa' version '1.2.60'
+    id 'org.jetbrains.kotlin.jvm' version '1.3.72'
+    id 'org.jetbrains.kotlin.kapt' version '1.3.72'
+    id 'org.jetbrains.kotlin.plugin.spring' version '1.3.72'
+    id 'org.jetbrains.kotlin.plugin.jpa' version '1.3.72'
     id 'org.springframework.boot' version '2.0.4.RELEASE'
     id 'com.palantir.git-version' version '0.12.0-rc2'
 }
@@ -13,7 +13,7 @@ apply plugin: 'io.spring.dependency-management'
 
 group = 'io.openfuture.api'
 version = versionDetails().lastTag[1..-1] + (versionDetails().isCleanTag ? '' : '-DIRTY')
-sourceCompatibility = JavaVersion.VERSION_1_8
+sourceCompatibility = 12
 
 repositories {
     mavenCentral()
@@ -71,13 +71,13 @@ sourceSets {
 compileKotlin {
     kotlinOptions {
         freeCompilerArgs = ["-Xjsr305=strict"]
-        jvmTarget = "1.8"
+        jvmTarget = "12"
     }
 }
 compileTestKotlin {
     kotlinOptions {
         freeCompilerArgs = ["-Xjsr305=strict"]
-        jvmTarget = "1.8"
+        jvmTarget = "12"
     }
 }
 
@@ -89,7 +89,7 @@ jacocoTestReport {
     }
 
     afterEvaluate {
-        classDirectories = files(classDirectories.files.collect {
+        classDirectories.from = files(classDirectories.files.collect {
             fileTree(dir: it, exclude: [
                     'io/openfuture/api/*Application*',
                     'io/openfuture/api/model/**',
