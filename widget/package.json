@@ -16,7 +16,7 @@
     "url-loader": "^1.0.1",
     "webpack": "^4.16.3",
     "webpack-cli": "^3.1.0",
-    "lodash": ">=4.17.13"
+    "lodash": ">=4.17.19"
   },
   "dependencies": {
     "web3": "1.2.0"
