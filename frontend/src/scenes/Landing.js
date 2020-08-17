@@ -107,7 +107,7 @@ const Landing = () => {
           </a>
         </div>
         </div>
-        <p className="footer_text">© 2019 OPEN. All Rights Reserved</p>
+        <p className="footer_text">© 2020 OPEN. All Rights Reserved</p>
       </footer>
 
 
