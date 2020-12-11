@@ -96,12 +96,12 @@ export const convertCurrencies = conversionValues => async dispatch => {
   const fromAmount = conversionValues.fromAmount ? conversionValues.fromAmount : '0';
   const fromCurrency = conversionValues.fromCurrency ? conversionValues.fromCurrency : 'usd';
   const toCurrency = conversionValues.toCurrency ? conversionValues.toCurrency : 'eth';
-  const apiRequestUrl = `https://openexchangerates.org/api/convert/${fromAmount}/${fromCurrency}/${toCurrency}?app_id=d34199d67d85445a846040c0cf621510`;
+  const apiRequestUrl = `https://api.binance.com/api/v3/avgPrice?symbol=${fromCurrency}${toCurrency}`;
 
   try {
     const data = await dispatch(apiGet(apiRequestUrl));
-    dispatch({ type: CONVERT_CURRENCIES, payload: data.response });
-    return data.response;
+    dispatch({ type: CONVERT_CURRENCIES, payload: data.price *fromAmount });
+    return data.price *fromAmount;
   } catch (err) {
     console.log('Error in convertCurrencies', err);
   }
