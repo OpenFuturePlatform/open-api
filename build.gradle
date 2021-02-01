@@ -12,7 +12,8 @@ plugins {
 apply plugin: 'io.spring.dependency-management'
 
 group = 'io.openfuture.api'
-version = versionDetails().lastTag[1..-1] + (versionDetails().isCleanTag ? '' : '-DIRTY')
+// Temporary solution
+version = 'v2.6.9'   //versionDetails().lastTag[1..-1] + (versionDetails().isCleanTag ? '' : '-DIRTY')
 sourceCompatibility = 12
 
 repositories {
@@ -54,11 +55,17 @@ dependencies {
     compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     compile("org.jetbrains.kotlin:kotlin-reflect")
 
+    // JAX-B dependencies for JDK 9+
+    compile('jakarta.xml.bind:jakarta.xml.bind-api:2.3.2')
+    compile('org.glassfish.jaxb:jaxb-runtime:2.3.2')
+    compile('org.javassist:javassist:3.23.1-GA')
+
     // Utils
     compile("commons-io:commons-io:2.6")
 
     // Test
     testCompile("org.springframework.boot:spring-boot-starter-test")
+    testCompile("org.mockito:mockito-core:2.22.0")
 }
 
 sourceSets {
