@@ -1,4 +1,4 @@
-FROM openjdk:12.0.2-jdk-oracle
+FROM openjdk:11.0.10-jdk
 
 WORKDIR root/
 

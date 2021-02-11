@@ -7,14 +7,13 @@ plugins {
     id 'org.jetbrains.kotlin.plugin.jpa' version '1.3.72'
     id 'org.springframework.boot' version '2.0.4.RELEASE'
     id 'com.palantir.git-version' version '0.12.0-rc2'
+    id 'io.zensoft.versioning' version '1.1.0'
 }
 
 apply plugin: 'io.spring.dependency-management'
 
 group = 'io.openfuture.api'
-// Temporary solution
-version = 'v2.6.9'   //versionDetails().lastTag[1..-1] + (versionDetails().isCleanTag ? '' : '-DIRTY')
-sourceCompatibility = 12
+sourceCompatibility = 11
 
 repositories {
     mavenCentral()
@@ -79,13 +78,13 @@ sourceSets {
 compileKotlin {
     kotlinOptions {
         freeCompilerArgs = ["-Xjsr305=strict"]
-        jvmTarget = "12"
+        jvmTarget = "11"
     }
 }
 compileTestKotlin {
     kotlinOptions {
         freeCompilerArgs = ["-Xjsr305=strict"]
-        jvmTarget = "12"
+        jvmTarget = "11"
     }
 }
 
