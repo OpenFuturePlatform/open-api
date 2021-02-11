@@ -1,0 +1,248 @@
+name: Open API CI/CD
+
+on:
+  push:
+    branches:
+      - '*'
+  release:
+    types: [published]
+
+env:
+  DEPLOY_IMAGE_NAME: openplatform/api
+  DEPLOY_IMAGE_TAG: latest
+  CONTAINER_NAME: open-api
+
+jobs:
+
+  tests:
+    name: Run tests
+    runs-on: ubuntu-latest
+    continue-on-error: false
+
+    env:
+      POSTGRES_HOST: localhost
+      POSTGRES_PASSWORD: open-api
+      POSTGRES_USER: open-api
+      POSTGRES_DB: open-api
+      GOOGLE_CLIENT_ID: secrets.GOOGLE_CLIENT_ID_DEV
+      GOOGLE_CLIENT_SECRET: secrets.GOOGLE_CLIENT_SECRET_DEV
+      NETWORK_URL: secrets.NETWORK_URL_DEV
+      ETHEREUM_PRIVATE_KEY: secrets.ETHEREUM_PRIVATE_KEY_DEV
+      OPEN_TOKEN_ADDRESS: secrets.OPEN_TOKEN_ADDRESS_DEV
+      EVENT_SUBSCRIPTION: false
+      STATE_API_URL: state-api-url
+
+    services:
+
+      postgres:
+        image: postgres:latest
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_PASSWORD: open-api
+          POSTGRES_USER: open-api
+          POSTGRES_DB: open-api
+
+      ganache:
+        image: openplatform/truffle
+
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Prepare Java SDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: ${{ runner.os }}-gradle
+
+      - name: Cache NodeJS packages
+        uses: actions/cache@v2
+        with:
+          path: frontend/.gradle/nodejs
+          key: ${{ runner.os }}-nodejs-${{ hashFiles('frontend/.gradle/nodejs') }}
+          restore-keys: ${{ runner.os }}-nodejs
+
+      - name: Execute tests
+        run: ./gradlew check
+
+      - name: Execute contract tests
+        run: |
+          sudo apt install g++
+          sudo apt install -y python3-pip
+          npm i web3-utils
+          export RPC_HOST="ganache"
+      #          cd src/test/truffle && truffle test
+
+      - name: Save test results
+        uses: actions/upload-artifact@v2
+        with:
+          name: open_api_test_results_${{ github.sha }}
+          path: build/reports/tests/test/**
+
+      - name: Execute test coverage report
+        run: ./gradlew jacocoTestReport
+
+      - name: Save test coverage results
+        uses: actions/upload-artifact@v2
+        with:
+          name: open_api_test_coverage_results_${{ github.sha }}
+          path: build/reports/jacoco/test/html/**
+
+
+  build:
+    name: Build project
+    runs-on: ubuntu-latest
+    continue-on-error: false
+    needs: [tests]
+    if: github.event.action == 'published'
+
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Prepare Java SDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+
+      - name: Build project
+        run: ./gradlew assemble
+
+      - name: Save executables
+        uses: actions/upload-artifact@v2
+        with:
+          name: open_api_assembles_${{ github.sha }}
+          path: build/libs/*.jar
+
+  package:
+    name: Packaging
+    runs-on: ubuntu-latest
+    continue-on-error: false
+    needs: [tests, build]
+
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: open_api_assembles_${{ github.sha }}
+          path: build/libs
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USER_NAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Define image tag
+        run:
+          if [[ ${{ github.ref }} == refs/heads/master ]]; then export DEPLOY_IMAGE_TAG=latest; else export DEPLOY_IMAGE_TAG=${{ github.ref }}#refs/heads/; fi;
+
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: openplatform/api:${{ env.DEPLOY_IMAGE_TAG }}
+          file: docker/Dockerfile
+
+
+  deploy-production:
+    name: Deploy Production
+    runs-on: ubuntu-latest
+    continue-on-error: false
+    needs: [tests, build, package]
+
+    steps:
+
+      - name: Setup SSH connection
+        run: |
+          eval $(ssh-agent -s)
+          echo "${{ secrets.DEPLOY_KEY_PROD }}" > deploy_key
+          chmod 600 ./deploy_key
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          ssh-keyscan ${{ secrets.DEPLOY_HOST_PROD }} >> ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+
+      - name: Deploy image
+        run: |
+          ssh -i ./deploy_key ${{ secrets.DEPLOY_USER_PROD }}@${{ secrets.DEPLOY_HOST_PROD }} "
+                docker pull ${{ env.DEPLOY_IMAGE_NAME }}:${{ env.DEPLOY_IMAGE_TAG }}
+          "
+          ssh -i ./deploy_key ${{ secrets.DEPLOY_USER_PROD }}@${{ secrets.DEPLOY_HOST_PROD }} "
+                docker stop ${{ env.CONTAINER_NAME }} && \
+                IMG=\$(docker ps -a --filter='name=^/${{ env.CONTAINER_NAME }}$' --format='{{.Image}}') &&  \
+                docker rm -f ${{ env.CONTAINER_NAME }} && \
+                docker rmi \$IMG; \
+                exit 0
+              "
+          ssh -i ./deploy_key ${{ secrets.DEPLOY_USER_PROD }}@${{ secrets.DEPLOY_HOST_PROD }} "
+                docker run -d --name '${{ env.CONTAINER_NAME }}' --restart=always \
+                           -p 8080:8080 \
+                           -e "POSTGRES_HOST=${{ secrets.POSTGRES_HOST_PROD }}" \
+                           -e "POSTGRES_DB=${{ secrets.POSTGRES_DB_PROD }}" \
+                           -e "POSTGRES_USER=${{ secrets.POSTGRES_USER_PROD }}" \
+                           -e "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD_PROD }}" \
+                           -e "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID_PROD }}" \
+                           -e "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET_PROD }}" \
+                           -e "NETWORK_URL=${{ secrets.NETWORK_URL_PROD }}" \
+                           -e "ETHEREUM_PRIVATE_KEY=${{ secrets.ETHEREUM_PRIVATE_KEY_PROD }}" \
+                           -e "OPEN_TOKEN_ADDRESS=${{ secrets.OPEN_TOKEN_ADDRESS_PROD }}" \
+                           -e "EVENT_SUBSCRIPTION=true" \
+                           -e "WIDGET_HOST=${{ secrets.WIDGET_HOST_PROD }}" \
+                           -e "STATE_API_URL=${{ secrets.STATE_API_URL_PROD }}" \
+                           ${{ env.DEPLOY_IMAGE_NAME }}:${{ env.DEPLOY_IMAGE_TAG }}
+              "
+
+
+  update-certificates-production:
+    name: Update certificate for production
+    runs-on: ubuntu-latest
+    continue-on-error: false
+    needs: [tests, build, package, deploy-production]
+
+    steps:
+
+      - name: Setup SSH connection
+        run: |
+          eval $(ssh-agent -s)
+          echo "${{ secrets.DEPLOY_KEY_PROD }}" > deploy_key
+          chmod 600 ./deploy_key
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          ssh-keyscan ${{ secrets.DEPLOY_HOST_PROD }} >> ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+
+      - name: Update SSL certificate
+        run: |
+          ssh -i ./deploy_key ${{ secrets.DEPLOY_USER_PROD }}@${{ secrets.DEPLOY_HOST_PROD }} "
+                docker run --rm --name certbot  \
+                           -v /etc/letsencrypt:/etc/letsencrypt \
+                           -v /var/www/certbot:/var/www/certbot \
+                           -v /var/log/letsencrypt:/var/log/letsencrypt \
+                           certbot/certbot \
+                           certonly --webroot -w /var/www/certbot/ \
+                           -d ${{ secrets.SERVER_NAME_PROD }} \
+                           --renew-by-default -m team@openfuture.io --eff-email --agree-tos --manual-public-ip-logging-ok
+              "
+          ssh -i ./deploy_key ${{ secrets.DEPLOY_USER_PROD }}@${{ secrets.DEPLOY_HOST_PROD }} "
+                sudo service nginx reload"
