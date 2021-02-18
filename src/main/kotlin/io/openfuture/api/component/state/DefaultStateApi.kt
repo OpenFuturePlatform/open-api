@@ -11,8 +11,8 @@ class DefaultStateApi(private val stateRestTemplate: RestTemplate) : StateApi {
 
     override fun createWallet(address: String, webHook: String, blockchain: Blockchain): StateWalletDto {
         val request = CreateStateWalletRequest(address, webHook, blockchain)
-        val result = stateRestTemplate.postForEntity("/wallets", request, StateWalletDto::class.java)
-        return result.body!!
+        val response = stateRestTemplate.postForEntity("/wallets", request, StateWalletDto::class.java)
+        return response.body!!
     }
 
 }
