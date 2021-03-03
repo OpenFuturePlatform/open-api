@@ -27,7 +27,7 @@ class AuthenticationSuccessHandler(
                 ?: keyService.generate(persistUser)
         CookieUtils.add(response, properties.cookieName!!, key.value)
 
-        response.sendRedirect("/scaffolds")
+        response.sendRedirect("/ethereum-scaffolds")
     }
 
 }
