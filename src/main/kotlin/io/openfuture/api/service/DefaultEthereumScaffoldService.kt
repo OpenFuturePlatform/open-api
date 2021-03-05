@@ -1,6 +1,7 @@
 package io.openfuture.api.service
 
 import io.openfuture.api.component.scaffold.processor.ScaffoldProcessor
+import io.openfuture.api.component.state.StateApi
 import io.openfuture.api.config.propety.ScaffoldProperties
 import io.openfuture.api.domain.holder.AddEthereumShareHolderRequest
 import io.openfuture.api.domain.holder.UpdateEthereumShareHolderRequest
@@ -9,6 +10,7 @@ import io.openfuture.api.entity.auth.User
 import io.openfuture.api.entity.scaffold.EthereumScaffold
 import io.openfuture.api.entity.scaffold.EthereumScaffoldProperty
 import io.openfuture.api.entity.scaffold.EthereumScaffoldSummary
+import io.openfuture.api.entity.state.Blockchain
 import io.openfuture.api.exception.NotFoundException
 import io.openfuture.api.repository.EthereumScaffoldPropertyRepository
 import io.openfuture.api.repository.EthereumScaffoldRepository
@@ -29,7 +31,8 @@ class DefaultEthereumScaffoldService(
         private val propertyRepository: EthereumScaffoldPropertyRepository,
         private val ethereumScaffoldSummaryRepository: EthereumScaffoldSummaryRepository,
         private val shareHolderRepository: ShareHolderRepository,
-        private val openKeyService: OpenKeyService
+        private val openKeyService: OpenKeyService,
+        private val stateApi: StateApi
 ) : EthereumScaffoldService {
 
     @Transactional(readOnly = true)
@@ -80,6 +83,7 @@ class DefaultEthereumScaffoldService(
         val properties = request.properties.map { propertyRepository.save(EthereumScaffoldProperty.of(scaffold, it)) }
         scaffold.property.addAll(properties)
         getScaffoldSummary(scaffold.address, openKey.user, true)
+        request.webHook?.let { stateApi.createWallet(scaffold.developerAddress, it, Blockchain.Ethereum) }
         return scaffold
     }
 
