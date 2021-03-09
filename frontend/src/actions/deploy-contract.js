@@ -101,7 +101,7 @@ export const convertCurrencies = conversionValues => async dispatch => {
   try {
     const data = await dispatch(apiGet(apiRequestUrl));
     dispatch({ type: CONVERT_CURRENCIES, payload: data.price *fromAmount });
-    return data.price *fromAmount;
+    return data.price * fromAmount;
   } catch (err) {
     console.log('Error in convertCurrencies', err);
   }
