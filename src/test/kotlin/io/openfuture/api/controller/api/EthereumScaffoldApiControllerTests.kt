@@ -138,7 +138,7 @@ class EthereumScaffoldApiControllerTests : ControllerTests() {
         val openKey = createOpenKey(setOf(Role("ROLE_MASTER")))
         val scaffold = createScaffold(openKey)
         val request = SaveEthereumScaffoldRequest("0x8cf1664B09F216538bc9A32B2c26f85a19fd76B5", "abi", "openKey",
-                "0x8cf1664B09F216538bc9A32B2c26f85a19fd76B5", "description", "2", USD, "0.0023", "webHook",
+                "0x8cf1664B09F216538bc9A32B2c26f85a19fd76B5", "description", "2", USD, "0.0023", "https://www.openfuture.io/api",
                 listOf(createScaffoldPropertyDto()))
         val requestJson = objectMapper.writeValueAsString(request)
 
@@ -152,6 +152,24 @@ class EthereumScaffoldApiControllerTests : ControllerTests() {
 
                 .andExpect(status().isOk)
                 .andExpect(content().json(expectScaffoldJson(scaffold), true))
+    }
+
+    @Test
+    fun saveShouldReturnBadRequestTest() {
+        val openKey = createOpenKey(setOf(Role("ROLE_MASTER")))
+        val request = SaveEthereumScaffoldRequest("0x8cf1664B09F216538bc9A32B2c26f85a19fd76B5", "abi", "openKey",
+                "0x8cf1664B09F216538bc9A32B2c26f85a19fd76B5", "description", "2", USD, "0.0023", "invalid webhhok",
+                listOf(createScaffoldPropertyDto()))
+        val requestJson = objectMapper.writeValueAsString(request)
+
+        given(keyService.find(openKey.value)).willReturn(openKey)
+
+        mvc.perform(post("/api/ethereum-scaffolds")
+                .header(AUTHORIZATION, openKey.value)
+                .contentType(APPLICATION_JSON_UTF8)
+                .content(requestJson))
+
+                .andExpect(status().isBadRequest)
     }
 
     @Test

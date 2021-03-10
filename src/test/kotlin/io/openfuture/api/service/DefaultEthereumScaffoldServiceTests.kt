@@ -1,6 +1,7 @@
 package io.openfuture.api.service
 
 import io.openfuture.api.component.scaffold.processor.ScaffoldProcessor
+import io.openfuture.api.component.state.StateApi
 import io.openfuture.api.config.UnitTest
 import io.openfuture.api.config.any
 import io.openfuture.api.config.propety.ScaffoldProperties
@@ -40,6 +41,7 @@ internal class DefaultEthereumScaffoldServiceTests : UnitTest() {
     @Mock private lateinit var propertyRepository: EthereumScaffoldPropertyRepository
     @Mock private lateinit var ethereumScaffoldSummaryRepository: EthereumScaffoldSummaryRepository
     @Mock private lateinit var shareHolderRepository: ShareHolderRepository
+    @Mock private lateinit var stateApi: StateApi
 
     @Mock
     private lateinit var pageable: Pageable
@@ -50,7 +52,7 @@ internal class DefaultEthereumScaffoldServiceTests : UnitTest() {
     @Before
     fun setUp() {
         service = DefaultEthereumScaffoldService(processor, properties, repositoryEthereum, propertyRepository, ethereumScaffoldSummaryRepository,
-                shareHolderRepository, openKeyService)
+                shareHolderRepository, openKeyService, stateApi)
     }
 
     @Test
