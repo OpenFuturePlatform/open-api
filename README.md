@@ -78,3 +78,10 @@ In order to use the Ethereum blockchain you need to create a **wallet**. A priva
 * `OPEN_TOKEN_ADDRESS`
 
 Before working in the app you need to create a **smart contract** within Ethereum. After creating a **smart contract**, you will receive an **OPEN_TOKEN_ADDRESS**.  You will need to set the **OPEN_TOKEN_ADDRESS** to include this token in order for the system to check client transfers.
+
+##### Open State
+
+* `OPEN_STATE_URL`
+
+You will need to set this variable in order to tract wallet state and get notifications to your webhook on transaction events.
+**NOTE:** At the end of Open State IP address should be added /api path. For example, `http://localhost:8545/api`
