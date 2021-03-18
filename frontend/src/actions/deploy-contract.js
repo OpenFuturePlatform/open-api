@@ -94,7 +94,7 @@ export const deployEthereumContract = formValuesInit => async (dispatch, getStat
 
 export const convertCurrencies = conversionValues => async dispatch => {
   const fromAmount = conversionValues.fromAmount ? conversionValues.fromAmount : '0';
-  let fromCurrency = conversionValues.fromCurrency ? conversionValues.fromCurrency.toUpperCase() : 'TUSD;
+  let fromCurrency = conversionValues.fromCurrency ? conversionValues.fromCurrency.toUpperCase() : 'TUSD';
   let toCurrency = conversionValues.toCurrency ? conversionValues.toCurrency.toUpperCase() : 'ETH';
 
   if (toCurrency === 'USD') {
