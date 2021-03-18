@@ -94,13 +94,22 @@ export const deployEthereumContract = formValuesInit => async (dispatch, getStat
 
 export const convertCurrencies = conversionValues => async dispatch => {
   const fromAmount = conversionValues.fromAmount ? conversionValues.fromAmount : '0';
-  const fromCurrency = conversionValues.fromCurrency ? conversionValues.fromCurrency : 'usd';
-  const toCurrency = conversionValues.toCurrency ? conversionValues.toCurrency : 'eth';
+  let fromCurrency = conversionValues.fromCurrency ? conversionValues.fromCurrency.toUpperCase() : 'TUSD;
+  let toCurrency = conversionValues.toCurrency ? conversionValues.toCurrency.toUpperCase() : 'ETH';
+
+  if (toCurrency === 'USD') {
+    toCurrency = 'TUSD'
+  }
+
+  if (fromCurrency === 'USD') {
+    fromCurrency = 'TUSD'
+  }
+
   const apiRequestUrl = `https://api.binance.com/api/v3/avgPrice?symbol=${fromCurrency}${toCurrency}`;
 
   try {
     const data = await dispatch(apiGet(apiRequestUrl));
-    dispatch({ type: CONVERT_CURRENCIES, payload: data.price *fromAmount });
+    dispatch({ type: CONVERT_CURRENCIES, payload: data.price * fromAmount });
     return data.price * fromAmount;
   } catch (err) {
     console.log('Error in convertCurrencies', err);
