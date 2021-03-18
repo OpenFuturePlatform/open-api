@@ -76,7 +76,7 @@ class EthereumScaffoldForm extends Component {
     const conversionAmount = await actions.convertCurrencies({
       fromAmount: fiatAmount || fiatAmount === 0 ? fiatAmount : formValues.fiatAmount,
       fromCurrency: newCurrency || formValues.currency,
-      toCurrency: 'eth'
+      toCurrency: 'ETH'
     });
     change('conversionAmount', conversionAmount);
   };
@@ -196,7 +196,7 @@ class EthereumScaffoldForm extends Component {
                     className="ui compact selection dropdown"
                     name="currency"
                     options={[
-                      { key: 'dollars', text: '$', value: 'USD' },
+                      { key: 'dollars', text: '$', value: 'TUSD' },
                       { key: 'pounds', text: '£', value: 'GBP' },
                       { key: 'eruo', text: '€', value: 'EUR' },
                       { key: 'reminibi', text: '¥', value: 'CNY' },

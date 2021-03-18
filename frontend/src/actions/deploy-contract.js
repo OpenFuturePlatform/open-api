@@ -96,15 +96,6 @@ export const convertCurrencies = conversionValues => async dispatch => {
   const fromAmount = conversionValues.fromAmount ? conversionValues.fromAmount : '0';
   let fromCurrency = conversionValues.fromCurrency ? conversionValues.fromCurrency.toUpperCase() : 'TUSD';
   let toCurrency = conversionValues.toCurrency ? conversionValues.toCurrency.toUpperCase() : 'ETH';
-
-  if (toCurrency === 'USD') {
-    toCurrency = 'TUSD'
-  }
-
-  if (fromCurrency === 'USD') {
-    fromCurrency = 'TUSD'
-  }
-
   const apiRequestUrl = `https://api.binance.com/api/v3/avgPrice?symbol=${fromCurrency}${toCurrency}`;
 
   try {

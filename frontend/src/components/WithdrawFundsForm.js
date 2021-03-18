@@ -27,7 +27,7 @@ class WithdrawFundsForm extends Component {
             className="ui compact selection dropdown"
             name="withdrawalCurrency"
             options={[
-              {key: 'dollars', text: '$', value: 'USD'},
+              {key: 'dollars', text: '$', value: 'TUSD'},
               {key: 'pounds', text: '£', value: 'GBP'},
               {key: 'eruo', text: '€', value: 'EUR'},
               {key: 'reminibi', text: '¥', value: 'CNY'},
