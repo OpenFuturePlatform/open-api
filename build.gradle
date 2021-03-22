@@ -46,6 +46,7 @@ dependencies {
     implementation("org.web3j:web3j-spring-boot-starter:1.6.0")
     implementation('org.web3j:core:4.5.0')
     implementation("org.ethereum:ethereumj-core:1.7.2-RELEASE")
+    implementation("org.ethereum:solcJ-all:0.4.25")
 
     // AWS
     implementation("com.amazonaws:aws-java-sdk-s3:${s3Version}")
