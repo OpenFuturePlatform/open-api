@@ -44,7 +44,7 @@ abstract class BaseVersionedScaffoldProcessor(
     override fun compile(properties: List<EthereumScaffoldPropertyDto>): CompiledScaffoldDto =
             CompiledScaffoldDto(compiler.compile(properties))
 
-    override fun deploy(data: String, request: DeployEthereumScaffoldRequest): String {
+    override fun deploy(data: String?, request: DeployEthereumScaffoldRequest): String {
         val credentials = properties.getCredentials()
         return web3.deploy(
                 data,

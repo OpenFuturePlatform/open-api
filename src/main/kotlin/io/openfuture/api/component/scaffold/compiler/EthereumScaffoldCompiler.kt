@@ -1,21 +1,21 @@
 package io.openfuture.api.component.scaffold.compiler
 
+import io.openfuture.api.component.solidity.CompilationResult
+import io.openfuture.api.component.solidity.SolidityCompiler
 import io.openfuture.api.component.template.TemplateProcessor
 import io.openfuture.api.config.propety.EthereumProperties
 import io.openfuture.api.domain.scaffold.EthereumScaffoldPropertyDto
 import io.openfuture.api.entity.scaffold.ScaffoldVersion
 import io.openfuture.api.exception.CompileException
 import org.apache.commons.io.IOUtils
-import org.ethereum.solidity.compiler.CompilationResult
-import org.ethereum.solidity.compiler.CompilationResult.ContractMetadata
-import org.ethereum.solidity.compiler.SolidityCompiler
-import org.ethereum.solidity.compiler.SolidityCompiler.Options.*
 import java.nio.charset.Charset
 
 abstract class EthereumScaffoldCompiler(
         private val version: ScaffoldVersion,
         private val templateProcessor: TemplateProcessor,
-        private val properties: EthereumProperties
+        private val properties: EthereumProperties,
+        private val solidityCompiler: SolidityCompiler,
+        private val compilationResult: CompilationResult
 ) : VersionedScaffoldCompiler {
 
     companion object {
@@ -29,16 +29,18 @@ abstract class EthereumScaffoldCompiler(
 
     override fun getVersion(): ScaffoldVersion = version
 
-    override fun compile(properties: List<EthereumScaffoldPropertyDto>): ContractMetadata {
+    override fun compile(properties: List<EthereumScaffoldPropertyDto>): CompilationResult.ContractMetadata {
         val scaffold = generateScaffold(properties)
-        val compiled = SolidityCompiler.compile(scaffold, true, ABI, BIN, INTERFACE, METADATA)
+
+        val compiled = solidityCompiler.compile(scaffold)
 
         if (compiled.isFailed) {
             throw CompileException(compiled.errors)
         }
 
-        return CompilationResult.parse(compiled.output).getContract(SCAFFOLD_KEY)
+        return compilationResult.parse(compiled.output).getContract(SCAFFOLD_KEY)
     }
+
 
     protected open fun generateScaffold(properties: List<EthereumScaffoldPropertyDto>): ByteArray {
         val parameters = mapOf(
