@@ -18,19 +18,6 @@ class CompilationResult {
     var version: String? = null
 
     @JsonIgnore
-    @Throws(IOException::class)
-    fun parse(rawJson: String?): CompilationResult {
-        return if (rawJson == null || rawJson.isEmpty()) {
-            val empty: CompilationResult = CompilationResult()
-            empty.contracts = emptyMap()
-            empty.version = ""
-            empty
-        } else {
-            ObjectMapper().readValue(rawJson, CompilationResult::class.java)
-        }
-    }
-
-    @JsonIgnore
     fun getContractPath(): Path? {
         return if (contracts!!.size > 1) {
             throw UnsupportedOperationException("Source contains more than 1 contact. Please specify the contract name. Available keys (" + getContractKeys() + ").")
@@ -80,6 +67,15 @@ class CompilationResult {
     class ContractMetadata {
         var bin: String? = null
         var abi: String? = null
+        var solInterface: String? = null
         var metadata: String? = null
+
+        fun getInterface(): String? {
+            return solInterface
+        }
+
+        fun setInterface(solInterface: String?) {
+            this.solInterface = solInterface
+        }
     }
 }

@@ -2,8 +2,6 @@ package io.openfuture.api.component.scaffold
 
 import io.openfuture.api.component.scaffold.compiler.EthereumScaffoldCompiler
 import io.openfuture.api.component.scaffold.compiler.V1EthereumScaffoldCompiler
-import io.openfuture.api.component.solidity.CompilationResult
-import io.openfuture.api.component.solidity.SolidityCompiler
 import io.openfuture.api.component.template.TemplateProcessor
 import io.openfuture.api.config.UnitTest
 import io.openfuture.api.config.propety.EthereumProperties
@@ -21,15 +19,13 @@ internal class V1ScaffoldCompilerTests : UnitTest() {
 
     @Mock private lateinit var templateProcessor: TemplateProcessor
     @Mock private lateinit var properties: EthereumProperties
-    @Mock private lateinit var solidityCompiler: SolidityCompiler
-    @Mock private lateinit var compilationResult: CompilationResult
 
     private lateinit var ethereumScaffoldCompiler: EthereumScaffoldCompiler
 
 
     @Before
     fun setUp() {
-        ethereumScaffoldCompiler = V1EthereumScaffoldCompiler(templateProcessor, properties, solidityCompiler, compilationResult)
+        ethereumScaffoldCompiler = V1EthereumScaffoldCompiler(templateProcessor, properties)
     }
 
     @Test

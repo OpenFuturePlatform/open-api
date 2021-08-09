@@ -1,5 +1,6 @@
 package io.openfuture.api.component.scaffold.compiler
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import io.openfuture.api.component.solidity.CompilationResult
 import io.openfuture.api.component.solidity.SolidityCompiler
 import io.openfuture.api.component.template.TemplateProcessor
@@ -8,14 +9,16 @@ import io.openfuture.api.domain.scaffold.EthereumScaffoldPropertyDto
 import io.openfuture.api.entity.scaffold.ScaffoldVersion
 import io.openfuture.api.exception.CompileException
 import org.apache.commons.io.IOUtils
+import org.web3j.sokt.SolcArguments
+import org.web3j.sokt.SolidityFile
 import java.nio.charset.Charset
+import java.nio.file.Files
+import java.nio.file.Path
 
 abstract class EthereumScaffoldCompiler(
         private val version: ScaffoldVersion,
         private val templateProcessor: TemplateProcessor,
-        private val properties: EthereumProperties,
-        private val solidityCompiler: SolidityCompiler,
-        private val compilationResult: CompilationResult
+        private val properties: EthereumProperties
 ) : VersionedScaffoldCompiler {
 
     companion object {
@@ -32,15 +35,32 @@ abstract class EthereumScaffoldCompiler(
     override fun compile(properties: List<EthereumScaffoldPropertyDto>): CompilationResult.ContractMetadata {
         val scaffold = generateScaffold(properties)
 
-        val compiled = solidityCompiler.compile(scaffold)
+        val tempFile: Path = Files.createTempFile("smart_contract_", ".sol")
+        Files.write(tempFile, scaffold);
 
-        if (compiled.isFailed) {
-            throw CompileException(compiled.errors)
-        }
+        val compilerInstance = SolidityFile(tempFile.toAbsolutePath().toString()).getCompilerInstance()
+        val res = compilerInstance.execute(
+            SolcArguments.COMBINED_JSON.param { "abi,bin,interface,metadata" }
+        )
+        // DELETE TMP FILE AFTER COMPILE
+        Files.deleteIfExists(tempFile)
 
-        return compilationResult.parse(compiled.output).getContract(SCAFFOLD_KEY)
+        if (res.stdOut.isEmpty())
+            throw CompileException(res.stdErr)
+
+        return parse(res.stdOut).getContract(SCAFFOLD_KEY)
     }
 
+    fun parse(rawJson: String): CompilationResult {
+        return if (rawJson.isEmpty()) {
+            val empty = CompilationResult()
+            empty.contracts = emptyMap()
+            empty.version = ""
+            empty
+        } else {
+            ObjectMapper().readValue(rawJson, CompilationResult::class.java)
+        }
+    }
 
     protected open fun generateScaffold(properties: List<EthereumScaffoldPropertyDto>): ByteArray {
         val parameters = mapOf(

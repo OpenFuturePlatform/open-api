@@ -1,16 +1,27 @@
 package io.openfuture.api.component.solidity
 
 import org.springframework.stereotype.Component
+import org.web3j.sokt.SolcArguments
+import org.web3j.sokt.SolcInstance
+import org.web3j.sokt.SolcOutput
+import org.web3j.sokt.SolidityFile
 import java.io.*
 
 @Component
 class SolidityCompiler {
 
+    fun compileSolkt(filePath: String): SolcOutput {
+        val compilerInstance = SolidityFile(filePath).getCompilerInstance()
+        return compilerInstance.execute(
+            SolcArguments.COMBINED_JSON.param { "abi,bin,interface,metadata" }
+        )
+    }
+
     fun compile(source: ByteArray): Result {
+
         val commandParts  = prepareCommand()
         commandParts.add("-")
-        val processBuilder = ProcessBuilder(commandParts)
-        val process = processBuilder.start()
+        val process = ProcessBuilder(commandParts).start()
         BufferedOutputStream(process.outputStream).use { stream -> stream.write(source) }
         val error = ParallelReader(process.errorStream)
         val output = ParallelReader(process.inputStream)

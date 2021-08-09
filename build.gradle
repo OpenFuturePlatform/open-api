@@ -42,6 +42,7 @@ dependencies {
     // Ethereum
     implementation("org.web3j:web3j-spring-boot-starter:1.6.0")
     implementation('org.web3j:core:4.5.0')
+    compile group: 'org.web3j', name: 'web3j-sokt', version: '0.2.1'
     // AWS
     implementation("com.amazonaws:aws-java-sdk-s3:${s3Version}")
 
