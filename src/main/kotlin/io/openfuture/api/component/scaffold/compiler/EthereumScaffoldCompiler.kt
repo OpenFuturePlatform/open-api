@@ -2,7 +2,6 @@ package io.openfuture.api.component.scaffold.compiler
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.openfuture.api.component.solidity.CompilationResult
-import io.openfuture.api.component.solidity.SolidityCompiler
 import io.openfuture.api.component.template.TemplateProcessor
 import io.openfuture.api.config.propety.EthereumProperties
 import io.openfuture.api.domain.scaffold.EthereumScaffoldPropertyDto
@@ -51,7 +50,7 @@ abstract class EthereumScaffoldCompiler(
         return parse(res.stdOut).getContract(SCAFFOLD_KEY)
     }
 
-    fun parse(rawJson: String): CompilationResult {
+    private fun parse(rawJson: String): CompilationResult {
         return if (rawJson.isEmpty()) {
             val empty = CompilationResult()
             empty.contracts = emptyMap()

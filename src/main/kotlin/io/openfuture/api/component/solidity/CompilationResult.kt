@@ -9,23 +9,13 @@ import java.io.IOException
 import java.nio.file.Path
 import java.nio.file.Paths
 
-@Component
 class CompilationResult {
+
     @JsonProperty("contracts")
     var contracts: Map<String, ContractMetadata>? = null
 
     @JsonProperty("version")
     var version: String? = null
-
-    @JsonIgnore
-    fun getContractPath(): Path? {
-        return if (contracts!!.size > 1) {
-            throw UnsupportedOperationException("Source contains more than 1 contact. Please specify the contract name. Available keys (" + getContractKeys() + ").")
-        } else {
-            val key = contracts!!.keys.iterator().next()
-            Paths.get(key.substring(0, key.lastIndexOf(':')))
-        }
-    }
 
     @JsonIgnore
     fun getContract(contractName: String?): ContractMetadata {
@@ -44,21 +34,6 @@ class CompilationResult {
     }
 
     @JsonIgnore
-    fun getContractName(): String? {
-        return if (contracts!!.size > 1) {
-            throw UnsupportedOperationException("Source contains more than 1 contact. Please specify the contract name. Available keys (" + getContractKeys() + ").")
-        } else {
-            val key = contracts!!.keys.iterator().next()
-            key.substring(key.lastIndexOf(':') + 1)
-        }
-    }
-
-    @JsonIgnore
-    fun getContracts(): List<ContractMetadata>? {
-        return ArrayList(contracts!!.values)
-    }
-
-    @JsonIgnore
     fun getContractKeys(): List<String> {
         return ArrayList(contracts!!.keys)
     }
@@ -67,15 +42,6 @@ class CompilationResult {
     class ContractMetadata {
         var bin: String? = null
         var abi: String? = null
-        var solInterface: String? = null
         var metadata: String? = null
-
-        fun getInterface(): String? {
-            return solInterface
-        }
-
-        fun setInterface(solInterface: String?) {
-            this.solInterface = solInterface
-        }
     }
 }
