@@ -14,6 +14,7 @@ import ethAccount from './ethAccount';
 import shareHolders from './shareHolders';
 import scaffoldTemplates from './scaffoldTemplates';
 import keys from './keys';
+import gatewayReducer from "./gatewayReducer";
 
 export default combineReducers({
   form: reduxForm,
@@ -30,5 +31,6 @@ export default combineReducers({
   ethAccount,
   globalProperties,
   shareHolders,
-  keys
+  keys,
+  gateways: gatewayReducer
 });

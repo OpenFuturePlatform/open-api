@@ -6,4 +6,5 @@ export const RINKEBY_NETWORK = 'https://rinkeby.infura.io/DUsjLle6DbxbPVvJFDhL';
 export const MAIN_NETWORK = 'https://mainnet.infura.io/5VkzsA31kYsWyrqC9GCT';
 export const LOCAL_NETWORK = 'https://localhost:8545';
 export const SCAFFOLDS_LIMIT = 10;
+export const GATEWAY_LIMIT = 10;
 export const TRANSACTIONS_LIMIT = 10;

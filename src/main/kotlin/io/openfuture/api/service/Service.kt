@@ -1,8 +1,10 @@
 package io.openfuture.api.service
 
+import io.openfuture.api.domain.application.ApplicationRequest
 import io.openfuture.api.domain.holder.AddEthereumShareHolderRequest
 import io.openfuture.api.domain.holder.UpdateEthereumShareHolderRequest
 import io.openfuture.api.domain.scaffold.*
+import io.openfuture.api.entity.application.Application
 import io.openfuture.api.entity.auth.OpenKey
 import io.openfuture.api.entity.auth.User
 import io.openfuture.api.entity.scaffold.*
@@ -98,5 +100,15 @@ interface EthereumTransactionService {
     fun find(hash: String, index: String): EthereumTransaction?
 
     fun save(transaction: EthereumTransaction): EthereumTransaction
+
+}
+
+interface ApplicationService {
+
+    fun getAll(user: User, pageRequest: Pageable): Page<Application>
+
+    fun save(request: ApplicationRequest, user: User): Application
+
+    fun delete(id: Long)
 
 }

@@ -1,5 +1,6 @@
 package io.openfuture.api.repository
 
+import io.openfuture.api.entity.application.Application
 import io.openfuture.api.entity.auth.OpenKey
 import io.openfuture.api.entity.auth.User
 import io.openfuture.api.entity.scaffold.*
@@ -67,6 +68,13 @@ interface EthereumTransactionRepository : BaseRepository<EthereumTransaction> {
 interface EthereumScaffoldTemplateRepository : BaseRepository<EthereumScaffoldTemplate> {
 
     fun findAllByDeletedIsFalse(): List<EthereumScaffoldTemplate>
+
+}
+
+@Repository
+interface ApplicationRepository : BaseRepository<Application> {
+
+    fun findAllByUser(user: User, pageable: Pageable): Page<Application>
 
 }
 

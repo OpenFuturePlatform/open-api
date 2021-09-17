@@ -5,6 +5,7 @@ import io.openfuture.api.config.propety.AuthorizationProperties
 import io.openfuture.api.entity.auth.OpenKey
 import io.openfuture.api.entity.auth.Role
 import io.openfuture.api.entity.auth.User
+import io.openfuture.api.service.ApplicationService
 import io.openfuture.api.service.OpenKeyService
 import io.openfuture.api.service.UserService
 import org.junit.runner.RunWith
@@ -33,6 +34,9 @@ abstract class ControllerTests {
 
     @MockBean
     protected lateinit var keyService: OpenKeyService
+
+    @MockBean
+    protected lateinit var applicationService: ApplicationService
 
     @MockBean
     private lateinit var properties: AuthorizationProperties
