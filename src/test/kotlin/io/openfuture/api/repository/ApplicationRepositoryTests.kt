@@ -27,5 +27,5 @@ internal class ApplicationRepositoryTests: RepositoryTests() {
     private fun persistUser(): User = entityManager.persist(User("googleId"))
 
     private fun createApplication(user: User): Application =
-        Application("Gateway 1",user, Currency.USD.getId(),null,"https://openfuture.io/webhook",true)
+        Application("Gateway 1",user, "https://openfuture.io/webhook",true, "gOd3mUAJiGpCObdmB9/g", "Uoufw+RTaK5+L0XXWJePZjS3HWwv6/ewkJJg8e/d")
 }

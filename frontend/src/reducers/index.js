@@ -15,6 +15,7 @@ import shareHolders from './shareHolders';
 import scaffoldTemplates from './scaffoldTemplates';
 import keys from './keys';
 import gatewayReducer from "./gatewayReducer";
+import gatewayById from "./gatewayById";
 
 export default combineReducers({
   form: reduxForm,
@@ -32,5 +33,6 @@ export default combineReducers({
   globalProperties,
   shareHolders,
   keys,
+  gatewayById,
   gateways: gatewayReducer
 });

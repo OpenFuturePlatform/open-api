@@ -3,8 +3,14 @@ import {connect} from 'react-redux';
 import {Button, Card, Divider, Grid, Icon} from 'semantic-ui-react';
 import {ProjectPagination} from '../components-ui/ProjectPagination';
 import {GATEWAY_LIMIT} from '../const';
-import {fetchGatewayApplications, removeGatewayApplication} from "../actions/gateways";
+import {
+    fetchGatewayApplications,
+    getGatewayApplicationWallet,
+    removeGatewayApplication
+} from "../actions/gateways";
 import {GatewayApplicationRemove} from "./GatewayApplicationRemove";
+import {WordWrap} from "../components-ui/WordWrap";
+import {Link} from "react-router-dom";
 
 
 class GatewayApplicationList extends Component {
@@ -20,26 +26,36 @@ class GatewayApplicationList extends Component {
         this.props.removeGatewayApplication(gateway.id);
     }
 
+    onFetchWallet = gateway => this.props.getGatewayApplicationWallet(gateway.id)
+
     renderApplications() {
         const gateways = this.props.gateways;
 
         return gateways.list.map((gateway, index) => {
-
             return (
                 <Card fluid key={index}>
                     <Card.Content>
-                        <div className="meta">
-                            Gateway Name: {gateway.name}
-                        </div>
+
+                        <Grid.Row>
+                            <Grid.Column width={8}>
+                                <Link to={`/applications/${gateway.id}`}>
+                                    <Card.Header>
+                                        <WordWrap>{gateway.name}</WordWrap>
+                                    </Card.Header>
+                                </Link>
+                                <div className="meta">
+                                    Webhook: {gateway.webHook}
+                                </div>
+                            </Grid.Column>
+                        </Grid.Row>
                     </Card.Content>
                     <Card.Content extra>
-                        <div className='ui two buttons'>
-                            <Button basic color='green'>
-                                Add Wallet
-                            </Button>
+                        <div className='ui three buttons'>
+
                             <Button basic color='red'>
                                 <GatewayApplicationRemove gateway={gateway} onSubmit={() => this.onRemoveGateway(gateway)} />
                             </Button>
+
                         </div>
                     </Card.Content>
                 </Card>
@@ -65,6 +81,7 @@ export default connect(
     mapStateToProps,
     {
         fetchGatewayApplications,
-        removeGatewayApplication
+        removeGatewayApplication,
+        getGatewayApplicationWallet
     }
 )(GatewayApplicationList);

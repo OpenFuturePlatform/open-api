@@ -76,38 +76,6 @@ class GatewayApplicationForm extends Component {
                                     name="webHook"
                                 />
                             </Grid.Column>
-                            <Grid.Column width={16}>
-                                <Field
-                                    key={5}
-                                    className="ui compact selection dropdown"
-                                    name="currency"
-                                    options={[
-                                        { key: 'dollars', text: 'USD', value: 'USD' },
-                                        { key: 'pounds', text: 'GBP', value: 'GBP' },
-                                        { key: 'euro', text: 'EUR', value: 'EUR' },
-                                        { key: 'ether', text: 'ETH', value: 'ETH' }
-                                    ]}
-                                    component={DropdownField}
-                                />
-                            </Grid.Column>
-                            <Grid.Column width={16}>
-                                <Field
-                                    key={3}
-                                    labelStyle={{
-                                        width: '187px',
-                                        maxHeight: '38px'
-                                    }}
-                                    inputStyle={{
-                                        marginTop: '10px',
-                                        marginBottom: '5px'
-                                    }}
-                                    action="Expire Period*"
-                                    placeholder="Expiration Period"
-                                    component={ScaffoldActionField}
-                                    type="text"
-                                    name="expirationPeriod"
-                                />
-                            </Grid.Column>
                         </Grid.Row>
                         <Grid.Row>
                             <Grid.Column width={2} floated="right">

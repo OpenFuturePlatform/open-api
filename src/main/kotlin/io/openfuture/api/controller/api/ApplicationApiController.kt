@@ -1,12 +1,14 @@
 package io.openfuture.api.controller.api
 
-import io.openfuture.api.annotation.CurrentToken
+
 import io.openfuture.api.annotation.CurrentUser
 import io.openfuture.api.domain.PageRequest
 import io.openfuture.api.domain.PageResponse
 import io.openfuture.api.domain.application.ApplicationDto
 import io.openfuture.api.domain.application.ApplicationRequest
-import io.openfuture.api.domain.auth.OpenKeyDto
+import io.openfuture.api.domain.key.GenerateWalletRequest
+import io.openfuture.api.domain.key.KeyWalletDto
+import io.openfuture.api.domain.scaffold.EthereumScaffoldDto
 import io.openfuture.api.entity.application.Application
 import io.openfuture.api.entity.auth.User
 import io.openfuture.api.service.ApplicationService
@@ -33,6 +35,12 @@ class ApplicationApiController(
     fun delete(@RequestParam id: Long): Boolean {
         service.delete(id)
         return true
+    }
+
+    @GetMapping("/{id}")
+    fun get(@CurrentUser user: User, @PathVariable id: Long): ApplicationDto {
+        val application = service.getById(id)
+        return ApplicationDto(application)
     }
 
 }

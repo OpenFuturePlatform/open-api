@@ -3,6 +3,7 @@ import {Redirect, Route, Switch} from 'react-router-dom';
 import {connect} from 'react-redux';
 import GatewayApplicationForm from './GatewayApplicationForm';
 import GatewayApplicationDashboard from "./GatewayApplicationDashboard";
+import {GatewayApplicationSummaryContainer} from "./GatewayApplicationSummary";
 
 
 class GatewayApplication extends Component {
@@ -19,6 +20,7 @@ class GatewayApplication extends Component {
                 <Switch>
                     <Route exact path={`${url}`} component={GatewayApplicationDashboard} />
                     <Route path={`${url}/new`} component={GatewayApplicationForm} />
+                    <Route path={`${url}/:id`} component={GatewayApplicationSummaryContainer}/>
                     <Redirect from="*" to={`${url}/application`} />
                 </Switch>
             </div>

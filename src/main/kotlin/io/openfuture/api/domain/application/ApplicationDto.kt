@@ -8,18 +8,18 @@ data class ApplicationDto(
     val id: Long,
     val name: String,
     val user: UserDto,
-    val defaultCurrency: Currency,
     val active: Boolean,
-    val expirationPeriod: Int,
-    val webHook: String?
+    val webHook: String?,
+    val apiAccessKey: String?,
+    val apiSecretKey: String?
 ){
     constructor(application: Application) : this(
         application.id,
         application.name,
         UserDto(application.user),
-        application.getCurrency()!!,
         application.active,
-        application.expirationPeriod!!,
-        application.webHook
+        application.webHook,
+        application.apiAccessKey,
+        application.apiSecretKey
     )
 }

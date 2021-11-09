@@ -1,5 +1,7 @@
 package io.openfuture.api.service
 
+import io.openfuture.api.component.key.KeyApi
+import io.openfuture.api.component.state.StateApi
 import io.openfuture.api.config.UnitTest
 import io.openfuture.api.config.any
 import io.openfuture.api.domain.application.ApplicationRequest
@@ -18,15 +20,23 @@ import java.util.*
 
 class DefaultApplicationTests : UnitTest() {
 
-    @Mock private lateinit var pageable: Pageable
+    @Mock
+    private lateinit var pageable: Pageable
+
     @Mock
     private lateinit var repository: ApplicationRepository
+
+    @Mock
+    private lateinit var keyApi: KeyApi
+
+    @Mock
+    private lateinit var stateApi: StateApi
 
     private lateinit var service: ApplicationService
 
     @Before
     fun setUp() {
-        service = DefaultApplicationService(repository)
+        service = DefaultApplicationService(repository,keyApi, stateApi)
     }
 
     @Test
@@ -57,8 +67,8 @@ class DefaultApplicationTests : UnitTest() {
     private fun createUser(): User = User("104113085667282103363", 0, Collections.emptySet(), Collections.emptySet())
 
     private fun createApplication(user: User): Application =
-        Application("Gateway 1",user, Currency.USD.getId(),457865,"https://openfuture.io/webhook",true)
+        Application("Gateway 1",user, "https://openfuture.io/webhook",true,"access","key")
 
     private fun createApplicationRequest(): ApplicationRequest =
-        ApplicationRequest("Gateway 1", 457865,Currency.USD,true, "https://openfuture.io/webhook")
+        ApplicationRequest("Gateway 1", true,"https://openfuture.io/webhook")
 }
