@@ -6,6 +6,7 @@ import java.security.KeyPairGenerator
 import java.security.NoSuchAlgorithmException
 import java.security.SecureRandom
 import java.util.*
+import javax.crypto.KeyGenerator
 
 @Component
 class DigitalKeyGenerator {
@@ -13,17 +14,15 @@ class DigitalKeyGenerator {
     @Throws(NoSuchAlgorithmException::class)
     fun generateApplicationAccessKey() : ApplicationAccessKey {
 
-        val keyGen = KeyPairGenerator.getInstance("DSA", "SUN")
-        val random: SecureRandom = SecureRandom.getInstance("SHA1PRNG", "SUN")
-        keyGen.initialize(512, random)
+        val generator = KeyGenerator.getInstance("HmacSHA256")
+        generator.init(120)
+        val accessKeyIdEncoded = generator.generateKey().encoded
+        generator.init(240)
+        val secretAccessKeyEncoded = generator.generateKey().encoded
 
-        val pair = keyGen.generateKeyPair()
-        val privateKey = pair.private
-        val publicKey = pair.public
+        val accessKeyId = Base64.getEncoder().encodeToString(accessKeyIdEncoded)
+        val secretAccessKey = Base64.getEncoder().encodeToString(secretAccessKeyEncoded)
 
-        val accessKeyId = Base64.getEncoder().encodeToString(publicKey.encoded)
-        val secretAccessKey = Base64.getEncoder().encodeToString(privateKey.encoded)
-
-        return ApplicationAccessKey(accessKeyId, secretAccessKey)
+        return ApplicationAccessKey("op_${accessKeyId}", "op_${secretAccessKey}")
     }
 }

@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.repository.NoRepositoryBean
 import org.springframework.stereotype.Repository
+import java.util.*
 
 @NoRepositoryBean
 interface BaseRepository<T> : JpaRepository<T, Long>
@@ -75,6 +76,10 @@ interface EthereumScaffoldTemplateRepository : BaseRepository<EthereumScaffoldTe
 interface ApplicationRepository : BaseRepository<Application> {
 
     fun findAllByUser(user: User, pageable: Pageable): Page<Application>
+
+    fun findFirstByApiAccessKey(apiAccessKey : String): Optional<Application>
+
+    fun findFirstByApiAccessKeyAndApiSecretKey(apiAccessKey : String, apiSecretKey : String): Optional<Application>
 
 }
 

@@ -38,18 +38,23 @@ class GatewayApplicationSummary extends Component {
                     <Grid.Row>
                         <Grid.Column width={16}>
                             <Card fluid>
+
                                 <Card.Content>
                                     <div>
-                                        Gateway Title: <WordWrap>{gateway.name}</WordWrap>{' '}
+                                        <strong> <WordWrap>{gateway.name}</WordWrap>{' '}</strong>
                                     </div>
                                 </Card.Content>
                                 <Card.Content>
-                                    <div>
-                                        Access Key: <WordWrap>{gateway.apiAccessKey}</WordWrap>{' '}
+                                    <div className="table-key"><strong>Access Key</strong></div>
+                                    <div className="table-value table-value-background-color access-key selectable"
+                                         id="credentials-sb">{gateway.apiAccessKey}
                                     </div>
-                                    <div>
-                                        Secret Key:  <WordWrap>{gateway.apiSecretKey}</WordWrap>{' '}
+
+                                    <div className="table-key"><strong>Secret Key</strong></div>
+                                    <div className="table-value table-value-background-color secret-key selectable"
+                                         id="credentials-sb">{gateway.apiSecretKey}
                                     </div>
+
                                 </Card.Content>
                             </Card>
 

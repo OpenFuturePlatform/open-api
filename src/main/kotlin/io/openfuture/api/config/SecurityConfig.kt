@@ -38,6 +38,7 @@ class SecurityConfig(
                     .antMatchers("/static/**").permitAll()
                     .antMatchers("**.js").permitAll()
                     .antMatchers("/widget/**").permitAll()
+                    .antMatchers("/oauth2/v1/**").permitAll()
                     .anyRequest().authenticated()
 
                 .and()

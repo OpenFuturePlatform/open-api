@@ -5,6 +5,7 @@ import io.openfuture.api.domain.holder.AddEthereumShareHolderRequest
 import io.openfuture.api.domain.holder.UpdateEthereumShareHolderRequest
 import io.openfuture.api.domain.key.GenerateWalletRequest
 import io.openfuture.api.domain.key.KeyWalletDto
+import io.openfuture.api.domain.key.OauthWalletRequest
 import io.openfuture.api.domain.scaffold.*
 import io.openfuture.api.entity.application.Application
 import io.openfuture.api.entity.auth.OpenKey
@@ -12,6 +13,7 @@ import io.openfuture.api.entity.auth.User
 import io.openfuture.api.entity.scaffold.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import javax.servlet.http.HttpServletRequest
 
 interface EthereumScaffoldService {
 
@@ -111,6 +113,10 @@ interface ApplicationService {
 
     fun getById(id: Long): Application
 
+    fun getByAccessKey(accessKey: String): Application
+
+    fun getByAccessAndSecretKey(accessKey: String, secretKey: String): Application
+
     fun save(request: ApplicationRequest, user: User): Application
 
     fun delete(id: Long)
@@ -119,10 +125,18 @@ interface ApplicationService {
 
 interface ApplicationWalletService {
 
-    fun generateWallet(request: GenerateWalletRequest, user: User): KeyWalletDto
+    fun generateWallet(request: GenerateWalletRequest): KeyWalletDto
 
     fun getAllWallets(id: Long): Array<KeyWalletDto>
 
     fun deleteWallet(applicationId: String, address: String)
+
+}
+
+interface OauthWalletService {
+
+    fun generateWallet(oauthWalletRequest: OauthWalletRequest, httpServletRequest: HttpServletRequest): KeyWalletDto
+
+    fun generateWallet(paramMap: MutableMap<String, Any>, httpServletRequest: HttpServletRequest): KeyWalletDto
 
 }

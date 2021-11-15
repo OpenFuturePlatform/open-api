@@ -15,7 +15,8 @@ class DefaultApplicationWalletService(
     private val keyApi: KeyApi,
     private val stateApi: StateApi
 ): ApplicationWalletService {
-    override fun generateWallet(request: GenerateWalletRequest, user: User): KeyWalletDto {
+
+    override fun generateWallet(request: GenerateWalletRequest): KeyWalletDto {
         // Generate address
         val keyWalletDto  = keyApi.generateKey(CreateKeyRequest(request.applicationId, request.webHook, request.blockchainType))
 
@@ -25,8 +26,8 @@ class DefaultApplicationWalletService(
         return keyWalletDto
     }
 
-    override fun getAllWallets(applicationId: Long): Array<KeyWalletDto> {
-        return keyApi.getAllKeysByApplication(applicationId.toString())
+    override fun getAllWallets(id: Long): Array<KeyWalletDto> {
+        return keyApi.getAllKeysByApplication(id.toString())
     }
 
     override fun deleteWallet(applicationId: String, address: String) {
