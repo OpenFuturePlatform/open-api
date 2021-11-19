@@ -6,6 +6,7 @@ import io.openfuture.api.domain.key.CreateKeyRequest
 import io.openfuture.api.domain.key.GenerateWalletRequest
 import io.openfuture.api.domain.key.KeyWalletDto
 import io.openfuture.api.entity.auth.User
+import io.openfuture.api.entity.state.Blockchain
 import org.springframework.stereotype.Service
 import javax.transaction.Transactional
 
@@ -16,12 +17,12 @@ class DefaultApplicationWalletService(
     private val stateApi: StateApi
 ): ApplicationWalletService {
 
-    override fun generateWallet(request: GenerateWalletRequest): KeyWalletDto {
+    override fun generateWallet(request: GenerateWalletRequest, user: User): KeyWalletDto {
         // Generate address
-        val keyWalletDto  = keyApi.generateKey(CreateKeyRequest(request.applicationId, request.webHook, request.blockchainType))
+        val keyWalletDto  = keyApi.generateKey(CreateKeyRequest(request.applicationId, user.id.toString(), request.blockchainType))
 
         // Save webhook on state
-        //request.webHook.let { stateApi.createWallet(keyWalletDto.address, it, Blockchain.valueOf(request.blockchainType.getValue())) }
+        request.webHook.let { stateApi.createWallet(keyWalletDto.address, it, Blockchain.Ethereum) }
 
         return keyWalletDto
     }
@@ -32,5 +33,6 @@ class DefaultApplicationWalletService(
 
     override fun deleteWallet(applicationId: String, address: String) {
         keyApi.deleteAllKeysByApplicationAddress(applicationId, address)
+        stateApi.deleteWallet(address, Blockchain.Ethereum)
     }
 }

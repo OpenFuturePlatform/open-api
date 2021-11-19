@@ -49,8 +49,8 @@ class GatewayApplicationForm extends Component {
                                         marginTop: '10px',
                                         marginBottom: '5px'
                                     }}
-                                    label="Gateway Title*"
-                                    placeholder="Title shown to customer at checkout"
+                                    label="Application Name*"
+                                    placeholder="Application Name"
                                     component={ScaffoldField}
                                     type="text"
                                     name="name"

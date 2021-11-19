@@ -1,13 +1,11 @@
 package io.openfuture.api.service
 
-import io.openfuture.api.component.key.KeyApi
-import io.openfuture.api.component.state.StateApi
 import io.openfuture.api.config.UnitTest
 import io.openfuture.api.config.any
+import io.openfuture.api.domain.application.ApplicationAccessKey
 import io.openfuture.api.domain.application.ApplicationRequest
 import io.openfuture.api.entity.application.Application
 import io.openfuture.api.entity.auth.User
-import io.openfuture.api.entity.scaffold.Currency
 import io.openfuture.api.repository.ApplicationRepository
 import org.assertj.core.api.Assertions
 import org.junit.Before
@@ -26,17 +24,11 @@ class DefaultApplicationTests : UnitTest() {
     @Mock
     private lateinit var repository: ApplicationRepository
 
-    @Mock
-    private lateinit var keyApi: KeyApi
-
-    @Mock
-    private lateinit var stateApi: StateApi
-
     private lateinit var service: ApplicationService
 
     @Before
     fun setUp() {
-        service = DefaultApplicationService(repository,keyApi, stateApi)
+        service = DefaultApplicationService(repository)
     }
 
     @Test
@@ -55,10 +47,11 @@ class DefaultApplicationTests : UnitTest() {
     fun saveTest() {
         val user = createUser()
         val applicationRequest = createApplicationRequest()
+        val applicationAccessKey = createApplicationAccessKey()
 
         BDDMockito.given(repository.save(any(Application::class.java))).will { invocation -> invocation.arguments[0] }
 
-        val savedApplication = service.save(applicationRequest, user)
+        val savedApplication = service.save(applicationRequest, user, applicationAccessKey)
 
         Assertions.assertThat(savedApplication.name).isEqualTo(applicationRequest.name)
 
@@ -71,4 +64,7 @@ class DefaultApplicationTests : UnitTest() {
 
     private fun createApplicationRequest(): ApplicationRequest =
         ApplicationRequest("Gateway 1", true,"https://openfuture.io/webhook")
+
+    private fun createApplicationAccessKey(): ApplicationAccessKey =
+        ApplicationAccessKey("op_YbLBy33/7EvBMmCUHNLf","op_/eXnzzL/8CKEzElHoi9CUMu1/dhT1n3xitoxWhO7")
 }

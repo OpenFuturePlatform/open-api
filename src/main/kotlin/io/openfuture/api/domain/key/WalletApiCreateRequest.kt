@@ -3,13 +3,13 @@ package io.openfuture.api.domain.key
 import com.fasterxml.jackson.annotation.JsonProperty
 import io.openfuture.api.entity.application.BlockchainType
 
-data class OauthWalletRequest(
-    @JsonProperty("timestamp")
-    var timestamp: String,
+data class WalletApiCreateRequest(
     @JsonProperty("blockchain")
-    val blockchain: BlockchainType
+    val blockchain: BlockchainType,
+    @JsonProperty("timestamp")
+    var timestamp: String
 ){
     override fun toString(): String {
-        return "{timestamp='$timestamp', blockchain='$blockchain'}"
+        return "{blockchain='$blockchain'}&timestamp='$timestamp'"
     }
 }

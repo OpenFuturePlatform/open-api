@@ -34,7 +34,7 @@ class Header extends Component {
           Key Management
         </Link>
         <Link className="item" to={'/applications'}>
-          Gateway Applications
+          Applications
         </Link>
         <a className="item" href="/logout">
           Log Out
