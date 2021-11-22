@@ -10,6 +10,6 @@ data class WalletApiCreateRequest(
     var timestamp: String
 ){
     override fun toString(): String {
-        return "{blockchain='$blockchain'}&timestamp='$timestamp'"
+        return "blockchain='$blockchain'&timestamp='$timestamp'"
     }
 }

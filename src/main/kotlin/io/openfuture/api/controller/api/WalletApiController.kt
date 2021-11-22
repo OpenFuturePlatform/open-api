@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*
 import javax.servlet.http.HttpServletRequest
 
 @RestController
-@RequestMapping("/oauth2/v1/wallet")
+@RequestMapping("/public/api/v1/wallet")
 class WalletApiController(
     private val service: WalletApiService,
     private val applicationService: ApplicationService
@@ -25,9 +25,10 @@ class WalletApiController(
     }
 
     @PostMapping("/gen")
-    fun generateWallet(@RequestBody walletApiCreateRequest: WalletApiCreateRequest, httpServletRequest: HttpServletRequest, @CurrentUser user: User): KeyWalletDto? {
-        val accessKey = httpServletRequest.getHeader("X-API-KEY")
+    fun generateWallet(@RequestBody walletApiCreateRequest: WalletApiCreateRequest, @RequestHeader("X-API-KEY") accessKey: String, @CurrentUser user: User): KeyWalletDto? {
+
         val application = applicationService.getByAccessKey(accessKey)
+
         return service.generateWallet(walletApiCreateRequest, application, user)
     }
 }
