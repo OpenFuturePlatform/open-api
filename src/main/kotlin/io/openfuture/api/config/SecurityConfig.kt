@@ -47,7 +47,7 @@ class SecurityConfig(
 
                 .addFilterAfter(AuthorizationFilter(properties, keyService), OAuth2LoginAuthenticationFilter::class.java)
                 .addFilterAfter(ApiAuthorizationFilter(mapper), AuthorizationFilter::class.java)
-                .addFilterAfter(PublicApiAuthorizationFilter(applicationService), AuthorizationFilter::class.java)
+                .addFilterAfter(PublicApiAuthorizationFilter(applicationService, mapper, properties), AuthorizationFilter::class.java)
                 .sessionManagement().sessionCreationPolicy(STATELESS)
 
                 .and()

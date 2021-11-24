@@ -31,7 +31,7 @@ fun LocalDateTime.toEpochMillis(): Long {
 }
 
 fun differenceEpochs(startTime: Long, endTime: Long): Long{
-    return TimeUnit.MILLISECONDS.toMinutes(kotlin.math.abs(
-        endTime - startTime
-    ))
+    return kotlin.math.abs(endTime - startTime)/60
 }
+
+fun currentEpochs(): Long = System.currentTimeMillis() / 1000L

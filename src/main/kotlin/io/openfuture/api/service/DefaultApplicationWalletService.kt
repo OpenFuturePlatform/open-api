@@ -32,7 +32,9 @@ class DefaultApplicationWalletService(
     }
 
     override fun deleteWallet(applicationId: String, address: String) {
+        // Delete from Open Key
         keyApi.deleteAllKeysByApplicationAddress(applicationId, address)
+        // Delete from Open State
         stateApi.deleteWallet(address, Blockchain.Ethereum)
     }
 }

@@ -138,6 +138,4 @@ interface WalletApiService {
 
     fun generateWallet(walletApiCreateRequest: WalletApiCreateRequest, application: Application, user: User): KeyWalletDto
 
-    fun generateWallet(paramMap: MutableMap<String, Any>, httpServletRequest: HttpServletRequest): KeyWalletDto
-
 }

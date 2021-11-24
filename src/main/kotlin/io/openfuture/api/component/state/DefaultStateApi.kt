@@ -16,7 +16,7 @@ class DefaultStateApi(private val stateRestTemplate: RestTemplate) : StateApi {
     }
 
     override fun deleteWallet(address: String, blockchain: Blockchain) {
-        val url = "/wallets/blockchain/${blockchain}/address/${address}"
+        val url = "/wallets/blockchain/${blockchain.getValue()}/address/${address}"
         stateRestTemplate.delete(url)
     }
 
