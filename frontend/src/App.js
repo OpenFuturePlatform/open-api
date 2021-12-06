@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import Scaffolds from './scenes/Scaffolds';
 import Keys from './scenes/Keys';
 import Header from './components/Header';
+import GatewayApplication from "./scenes/GatewayApplication";
 import { Container } from 'semantic-ui-react';
 import './css/main.css';
 import { t } from './utils/messageTexts';
@@ -39,6 +40,7 @@ class App extends Component {
       <Switch>
         <Route path="/scaffolds" component={Scaffolds} />
         <Route path="/keys" component={Keys} />
+        <Route path="/applications" component={GatewayApplication} />
         <Redirect from="*" to="/scaffolds" />
       </Switch>
     );

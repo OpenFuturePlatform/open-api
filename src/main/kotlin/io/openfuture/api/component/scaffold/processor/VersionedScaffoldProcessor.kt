@@ -14,7 +14,7 @@ interface VersionedScaffoldProcessor {
 
     fun compile(properties: List<EthereumScaffoldPropertyDto>): CompiledScaffoldDto
 
-    fun deploy(data: String, request: DeployEthereumScaffoldRequest): String
+    fun deploy(data: String?, request: DeployEthereumScaffoldRequest): String
 
     fun deactivate(ethereumScaffold: EthereumScaffold)
 

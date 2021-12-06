@@ -1,13 +1,20 @@
 package io.openfuture.api.service
 
+import io.openfuture.api.domain.application.ApplicationAccessKey
+import io.openfuture.api.domain.application.ApplicationRequest
 import io.openfuture.api.domain.holder.AddEthereumShareHolderRequest
 import io.openfuture.api.domain.holder.UpdateEthereumShareHolderRequest
+import io.openfuture.api.domain.key.GenerateWalletRequest
+import io.openfuture.api.domain.key.KeyWalletDto
+import io.openfuture.api.domain.key.WalletApiCreateRequest
 import io.openfuture.api.domain.scaffold.*
+import io.openfuture.api.entity.application.Application
 import io.openfuture.api.entity.auth.OpenKey
 import io.openfuture.api.entity.auth.User
 import io.openfuture.api.entity.scaffold.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import javax.servlet.http.HttpServletRequest
 
 interface EthereumScaffoldService {
 
@@ -98,5 +105,37 @@ interface EthereumTransactionService {
     fun find(hash: String, index: String): EthereumTransaction?
 
     fun save(transaction: EthereumTransaction): EthereumTransaction
+
+}
+
+interface ApplicationService {
+
+    fun getAll(user: User, pageRequest: Pageable): Page<Application>
+
+    fun getById(id: Long): Application
+
+    fun getByAccessKey(accessKey: String): Application
+
+    fun getByAccessAndSecretKey(accessKey: String, secretKey: String): Application
+
+    fun save(request: ApplicationRequest, user: User, applicationAccessKey: ApplicationAccessKey): Application
+
+    fun delete(id: Long)
+
+}
+
+interface ApplicationWalletService {
+
+    fun generateWallet(request: GenerateWalletRequest, user: User): KeyWalletDto
+
+    fun getAllWallets(id: Long): Array<KeyWalletDto>
+
+    fun deleteWallet(applicationId: String, address: String)
+
+}
+
+interface WalletApiService {
+
+    fun generateWallet(walletApiCreateRequest: WalletApiCreateRequest, application: Application, user: User): KeyWalletDto
 
 }

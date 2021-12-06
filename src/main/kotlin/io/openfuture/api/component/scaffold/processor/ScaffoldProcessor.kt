@@ -17,7 +17,7 @@ class ScaffoldProcessor(
     fun compile(request: CompileEthereumScaffoldRequest): CompiledScaffoldDto =
             getProcessor(request.version).compile(request.properties)
 
-    fun deploy(data: String, request: DeployEthereumScaffoldRequest): String =
+    fun deploy(data: String?, request: DeployEthereumScaffoldRequest): String =
             getProcessor(request.version).deploy(data, request)
 
     fun deactivate(ethereumScaffold: EthereumScaffold) = getProcessor(ethereumScaffold.getVersion()).deactivate(ethereumScaffold)

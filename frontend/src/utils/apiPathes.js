@@ -12,3 +12,5 @@ export const getValidateUrlPath = () => '/api/validation/url';
 export const getEthereumShareHoldersPath = (scaffoldAddress = '', holderAddress = '') =>
   `${getEthereumScaffoldsPath(scaffoldAddress)}/holders/${holderAddress}`;
 export const getOpenScaffoldsPath = () => '/api/open-scaffolds';
+export const getGatewayApplicationsPath = (id='') => `/api/application/${id}`;
+export const getGatewayApplicationWalletsPath = (gatewayId='') => `/api/application/wallet/${gatewayId}`;

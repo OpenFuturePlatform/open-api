@@ -3119,3 +3119,8 @@ footer * {
   }
 }
 
+.table-value-background-color {
+  background-color: #f5f5f5;
+  padding: 5px;
+}
+

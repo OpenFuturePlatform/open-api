@@ -1,6 +1,7 @@
 package io.openfuture.api.service
 
 import io.openfuture.api.component.scaffold.processor.ScaffoldProcessor
+import io.openfuture.api.component.solidity.CompilationResult
 import io.openfuture.api.component.state.StateApi
 import io.openfuture.api.config.UnitTest
 import io.openfuture.api.config.any
@@ -19,7 +20,6 @@ import io.openfuture.api.repository.EthereumScaffoldRepository
 import io.openfuture.api.repository.EthereumScaffoldSummaryRepository
 import io.openfuture.api.repository.ShareHolderRepository
 import org.assertj.core.api.Assertions.assertThat
-import org.ethereum.solidity.compiler.CompilationResult
 import org.junit.Before
 import org.junit.Test
 import org.mockito.BDDMockito.given
@@ -115,8 +115,7 @@ internal class DefaultEthereumScaffoldServiceTests : UnitTest() {
         val user = createUser()
         val openKey = OpenKey(user, Date(), openKeyValue)
         val request = CompileEthereumScaffoldRequest(openKeyValue)
-        val expectedContractMetadata = CompiledScaffoldDto(CompilationResult.ContractMetadata()
-                .apply { abi = "abi"; bin = "bin" })
+        val expectedContractMetadata = CompiledScaffoldDto(CompilationResult.ContractMetadata().apply { abi = "abi"; bin = "bin" })
 
         given(openKeyService.get(openKeyValue)).willReturn(openKey)
         given(ethereumScaffoldSummaryRepository.countByEnabledIsFalseAndEthereumScaffoldOpenKeyUser(user)).willReturn(1)
@@ -382,7 +381,7 @@ internal class DefaultEthereumScaffoldServiceTests : UnitTest() {
     private fun createSaveScaffoldRequest(): SaveEthereumScaffoldRequest =
             createSaveScaffoldRequest("add", "abi", createDeployScaffoldRequest())
 
-    private fun createSaveScaffoldRequest(address: String, abi: String, request: DeployEthereumScaffoldRequest): SaveEthereumScaffoldRequest =
+    private fun createSaveScaffoldRequest(address: String, abi: String?, request: DeployEthereumScaffoldRequest): SaveEthereumScaffoldRequest =
             SaveEthereumScaffoldRequest(address, abi, request.openKey, request.developerAddress, request.description,
                     request.fiatAmount, request.currency, request.conversionAmount)
 

@@ -33,6 +33,9 @@ class Header extends Component {
         <Link className="item" to={'/keys'}>
           Key Management
         </Link>
+        <Link className="item" to={'/applications'}>
+          Applications
+        </Link>
         <a className="item" href="/logout">
           Log Out
         </a>

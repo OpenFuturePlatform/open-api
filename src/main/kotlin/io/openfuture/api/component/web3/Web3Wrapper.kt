@@ -31,7 +31,7 @@ class Web3Wrapper(
         private val properties: EthereumProperties
 ) {
 
-    fun deploy(bin: String, constructorParams: List<Type<*>>): String {
+    fun deploy(bin: String?, constructorParams: List<Type<*>>): String {
         val encodedConstructor = FunctionEncoder.encodeConstructor(constructorParams)
         val credentials = properties.getCredentials()
         val transaction = createContractTransaction(getNonce(credentials.address), GAS_PRICE, GAS_LIMIT, ZERO,

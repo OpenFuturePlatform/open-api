@@ -7,4 +7,5 @@ interface StateApi {
 
     fun createWallet(address: String, webHook: String, blockchain: Blockchain): StateWalletDto
 
+    fun deleteWallet(address: String, blockchain: Blockchain)
 }

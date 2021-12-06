@@ -3,9 +3,11 @@ package io.openfuture.api.config
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.openfuture.api.config.filter.ApiAuthorizationFilter
 import io.openfuture.api.config.filter.AuthorizationFilter
+import io.openfuture.api.config.filter.PublicApiAuthorizationFilter
 import io.openfuture.api.config.handler.AuthenticationSuccessHandler
 import io.openfuture.api.config.propety.AuthorizationProperties
 import io.openfuture.api.config.repository.OAuth2AuthorizationRequestRepository
+import io.openfuture.api.service.ApplicationService
 import io.openfuture.api.service.OpenKeyService
 import io.openfuture.api.service.UserService
 import org.springframework.context.annotation.Configuration
@@ -20,6 +22,7 @@ import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationF
 class SecurityConfig(
         private val userService: UserService,
         private val keyService: OpenKeyService,
+        private val applicationService: ApplicationService,
         private val properties: AuthorizationProperties,
         private val mapper: ObjectMapper
 ) : WebSecurityConfigurerAdapter() {
@@ -44,6 +47,7 @@ class SecurityConfig(
 
                 .addFilterAfter(AuthorizationFilter(properties, keyService), OAuth2LoginAuthenticationFilter::class.java)
                 .addFilterAfter(ApiAuthorizationFilter(mapper), AuthorizationFilter::class.java)
+                .addFilterAfter(PublicApiAuthorizationFilter(applicationService, mapper, properties), AuthorizationFilter::class.java)
                 .sessionManagement().sessionCreationPolicy(STATELESS)
 
                 .and()
