@@ -3,6 +3,7 @@ package io.openfuture.api.config
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.openfuture.api.config.filter.ApiAuthorizationFilter
 import io.openfuture.api.config.filter.AuthorizationFilter
+import io.openfuture.api.config.filter.IpAddressFilter
 import io.openfuture.api.config.filter.PublicApiAuthorizationFilter
 import io.openfuture.api.config.handler.AuthenticationSuccessHandler
 import io.openfuture.api.config.propety.AuthorizationProperties
@@ -47,7 +48,9 @@ class SecurityConfig(
 
                 .addFilterAfter(AuthorizationFilter(properties, keyService), OAuth2LoginAuthenticationFilter::class.java)
                 .addFilterAfter(ApiAuthorizationFilter(mapper), AuthorizationFilter::class.java)
+                //.addFilterAfter(IpAddressFilter(properties), ApiAuthorizationFilter::class.java)
                 .addFilterAfter(PublicApiAuthorizationFilter(applicationService, mapper, properties), AuthorizationFilter::class.java)
+
                 .sessionManagement().sessionCreationPolicy(STATELESS)
 
                 .and()

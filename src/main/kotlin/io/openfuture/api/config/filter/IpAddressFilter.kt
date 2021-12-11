@@ -1,17 +1,17 @@
 package io.openfuture.api.config.filter
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import io.openfuture.api.domain.exception.ExceptionResponse
+import io.openfuture.api.config.propety.AuthorizationProperties
 import io.openfuture.api.util.getIpRange
-import org.springframework.http.HttpStatus.UNAUTHORIZED
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.util.matcher.IpAddressMatcher
 import java.io.IOException
 import javax.servlet.*
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-class ApiAuthorizationFilter(private val mapper: ObjectMapper): Filter {
+
+class IpAddressFilter(
+    private val properties: AuthorizationProperties
+) : Filter {
 
     private val IPV4_LOOPBACK = "127.0.0.1"
     private val IPV6_LOOPBACK = "0:0:0:0:0:0:0:1"
@@ -19,37 +19,32 @@ class ApiAuthorizationFilter(private val mapper: ObjectMapper): Filter {
     var allowLocalhost = true
 
     override fun init(filterConfig: FilterConfig?) {
-        ipList = getIpRange("192.168.1.0/28")
+        ipList = getIpRange(properties.cidr!!)
+        ipList.stream().map { ip -> print(ip) }
     }
 
     override fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
         request as HttpServletRequest
         response as HttpServletResponse
 
-        ipList.stream().map { ip -> print(ip) }
+        println("REMOTE ADDRESS ${request.getHeader("X-Forwarded-For")}")
 
-       /* if (!isAllowed(request)) {
-            deny(response)
-            return;
-        }*/
 
-        if (!isAllowed(request) && request.requestURI.startsWith("/api") && null == SecurityContextHolder.getContext().authentication) {
+        if (!isAllowed(request)) {
+            println("DENIED")
             deny(response)
             return
         }
-
         chain.doFilter(request, response)
-    }
-
-    override fun destroy() {
-        // Do nothing
     }
 
     @Throws(IOException::class)
     fun deny(res: HttpServletResponse) {
-        val exceptionResponse = ExceptionResponse(UNAUTHORIZED.value(), "Open token is invalid or disabled")
-        res.status = exceptionResponse.status
-        res.writer.write(mapper.writeValueAsString(exceptionResponse))
+        res.sendError(HttpServletResponse.SC_NOT_FOUND)
+    }
+
+    override fun destroy() {
+
     }
 
     fun isAllowed(request: HttpServletRequest): Boolean {
@@ -58,6 +53,13 @@ class ApiAuthorizationFilter(private val mapper: ObjectMapper): Filter {
         if (allowLocalhost && (IPV4_LOOPBACK == ip || IPV6_LOOPBACK == ip)) {
             return true
         }
+        /*var uri = request.getAttribute(WebUtils.FORWARD_REQUEST_URI_ATTRIBUTE) as String
+        if (!StringUtils.isEmpty(uri)) {
+            uri = request.requestURI
+            if (request.contextPath != "/" && uri.startsWith(request.contextPath)) {
+                uri = uri.substring(request.contextPath.length)
+            }
+        }*/
 
         val matcher = IpAddressMatcher("192.168.1.0/24")
 
@@ -67,5 +69,4 @@ class ApiAuthorizationFilter(private val mapper: ObjectMapper): Filter {
 
         return false
     }
-
 }
