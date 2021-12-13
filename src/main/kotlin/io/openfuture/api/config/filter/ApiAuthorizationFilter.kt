@@ -1,14 +1,23 @@
 package io.openfuture.api.config.filter
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import io.openfuture.api.config.propety.AuthorizationProperties
 import io.openfuture.api.domain.exception.ExceptionResponse
 import org.springframework.http.HttpStatus.UNAUTHORIZED
 import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.web.util.matcher.IpAddressMatcher
 import javax.servlet.*
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-class ApiAuthorizationFilter(private val mapper: ObjectMapper): Filter {
+class ApiAuthorizationFilter(
+    private val mapper: ObjectMapper,
+    private val properties: AuthorizationProperties
+): Filter {
+
+    private val ipV4LoopBack = "127.0.0.1"
+    private val ipV6LoopBack = "0:0:0:0:0:0:0:1"
+    var allowLocalhost = true
 
     override fun init(filterConfig: FilterConfig?) {
         // Do nothing
@@ -18,7 +27,7 @@ class ApiAuthorizationFilter(private val mapper: ObjectMapper): Filter {
         request as HttpServletRequest
         response as HttpServletResponse
 
-        if (request.requestURI.startsWith("/api") && null == SecurityContextHolder.getContext().authentication) {
+        if (request.requestURI.startsWith("/api") && null == SecurityContextHolder.getContext().authentication && !isAllowed(request)) {
             val exceptionResponse = ExceptionResponse(UNAUTHORIZED.value(), "Open token is invalid or disabled")
             response.status = exceptionResponse.status
             response.writer.write(mapper.writeValueAsString(exceptionResponse))
@@ -30,6 +39,22 @@ class ApiAuthorizationFilter(private val mapper: ObjectMapper): Filter {
 
     override fun destroy() {
         // Do nothing
+    }
+
+    fun isAllowed(request: HttpServletRequest): Boolean {
+
+        val ip = request.remoteAddr
+        if (allowLocalhost && (ipV4LoopBack == ip || ipV6LoopBack == ip)) {
+            return true
+        }
+
+        val matcher = IpAddressMatcher(properties.cidr)
+
+        if (matcher.matches(request.getHeader("X-Forwarded-For"))) {
+            return true
+        }
+
+        return false
     }
 
 }

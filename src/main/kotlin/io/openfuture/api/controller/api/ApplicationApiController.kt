@@ -37,7 +37,7 @@ class ApplicationApiController(
     }
 
     @GetMapping("/{id}")
-    fun get(@CurrentUser user: User, @PathVariable id: Long): ApplicationDto {
+    fun get(@PathVariable id: Long): ApplicationDto {
         val application = service.getById(id)
         return ApplicationDto(application)
     }

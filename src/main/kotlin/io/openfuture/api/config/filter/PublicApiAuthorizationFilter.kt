@@ -36,7 +36,7 @@ class PublicApiAuthorizationFilter(
 
             val accessKey = request.getHeader("X-API-KEY")
             val signature = request.getHeader("X-API-SIGNATURE")
-            val expirePeriod = 10L;
+            val expirePeriod = properties.expireApi!!
 
             val requestWrapper = CustomHttpRequestWrapper(request)
             val walletApiCreateRequest = mapper.readValue(requestWrapper.bodyInStringFormat, WalletApiCreateRequest::class.java)
