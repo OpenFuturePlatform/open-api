@@ -211,6 +211,7 @@ jobs:
                            -e "WIDGET_HOST=${{ secrets.WIDGET_HOST_PROD }}" \
                            -e "OPEN_STATE_URL=${{ secrets.OPEN_STATE_URLPROD }}" \
                            -e "STATE_API_URL=${{ secrets.STATE_API_URL_PROD }}" \
+                           -e "OPEN_KEY_URL=${{ secrets.OPEN_KEY_URL_PROD }}" \
                            ${{ env.DEPLOY_IMAGE_NAME }}:${{ env.DEPLOY_IMAGE_TAG }}
               "
 
