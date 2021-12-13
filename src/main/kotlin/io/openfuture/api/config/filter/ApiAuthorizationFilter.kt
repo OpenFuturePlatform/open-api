@@ -17,7 +17,6 @@ class ApiAuthorizationFilter(
 
     private val ipV4LoopBack = "127.0.0.1"
     private val ipV6LoopBack = "0:0:0:0:0:0:0:1"
-    var allowLocalhost = true
 
     override fun init(filterConfig: FilterConfig?) {
         // Do nothing
@@ -44,14 +43,16 @@ class ApiAuthorizationFilter(
     fun isAllowed(request: HttpServletRequest): Boolean {
 
         val ip = request.remoteAddr
-        if (allowLocalhost && (ipV4LoopBack == ip || ipV6LoopBack == ip)) {
+        if (properties.allowLocalHost && (ipV4LoopBack == ip || ipV6LoopBack == ip)) {
             return true
         }
 
-        val matcher = IpAddressMatcher(properties.cidr)
+        if (properties.cidr !=  null) {
+            val matcher = IpAddressMatcher(properties.cidr)
 
-        if (matcher.matches(request.getHeader("X-Forwarded-For"))) {
-            return true
+            if (matcher.matches(request.getHeader("X-Forwarded-For"))) {
+                return true
+            }
         }
 
         return false
