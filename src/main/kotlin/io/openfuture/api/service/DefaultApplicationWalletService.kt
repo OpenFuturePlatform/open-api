@@ -22,7 +22,7 @@ class DefaultApplicationWalletService(
         val keyWalletDto  = keyApi.generateKey(CreateKeyRequest(request.applicationId, user.id.toString(), request.blockchainType))
 
         // Save webhook on state
-        request.webHook.let { stateApi.createWallet(keyWalletDto.address, it, Blockchain.Ethereum) }
+        //request.webHook.let { stateApi.createWallet(keyWalletDto.address, it, Blockchain.Ethereum) }
 
         return keyWalletDto
     }
@@ -35,6 +35,6 @@ class DefaultApplicationWalletService(
         // Delete from Open Key
         keyApi.deleteAllKeysByApplicationAddress(applicationId, address)
         // Delete from Open State
-        stateApi.deleteWallet(address, Blockchain.Ethereum)
+        //stateApi.deleteWallet(address, Blockchain.Ethereum)
     }
 }

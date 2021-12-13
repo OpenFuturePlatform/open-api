@@ -6,10 +6,7 @@ import org.springframework.http.HttpStatus.UNAUTHORIZED
 import io.openfuture.api.domain.exception.ExceptionResponse
 import io.openfuture.api.domain.key.WalletApiCreateRequest
 import io.openfuture.api.service.ApplicationService
-import io.openfuture.api.util.CustomHttpRequestWrapper
-import io.openfuture.api.util.KeyGeneratorUtils
-import io.openfuture.api.util.currentEpochs
-import io.openfuture.api.util.differenceEpochs
+import io.openfuture.api.util.*
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
@@ -59,7 +56,7 @@ class PublicApiAuthorizationFilter(
             val token = UsernamePasswordAuthenticationToken(application.user, null, listOf(SimpleGrantedAuthority("ROLE_APPLICATION")))
             SecurityContextHolder.getContext().authentication = token
 
-            chain.doFilter(requestWrapper, response);
+            chain.doFilter(requestWrapper, response)
             return
         }
 
