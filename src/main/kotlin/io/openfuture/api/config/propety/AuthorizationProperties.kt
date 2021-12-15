@@ -10,5 +10,7 @@ import javax.validation.constraints.NotEmpty
 @Component
 class AuthorizationProperties(
         @field:NotEmpty var cookieName: String? = null,
-        var expireApi: Long? = 10
+        var expireApi: Long? = 10,
+        var cidr: String? = null,
+        var allowLocalHost: Boolean = false
 )
