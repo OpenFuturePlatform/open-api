@@ -209,7 +209,7 @@ jobs:
                            -e "OPEN_TOKEN_ADDRESS=${{ secrets.OPEN_TOKEN_ADDRESS_PROD }}" \
                            -e "EVENT_SUBSCRIPTION=true" \
                            -e "WIDGET_HOST=${{ secrets.WIDGET_HOST_PROD }}" \
-                           -e "OPEN_STATE_URL=${{ secrets.OPEN_STATE_URLPROD }}" \
+                           -e "OPEN_STATE_URL=${{ secrets.OPEN_STATE_URL_PROD }}" \
                            -e "STATE_API_URL=${{ secrets.STATE_API_URL_PROD }}" \
                            -e "OPEN_KEY_URL=${{ secrets.OPEN_KEY_URL_PROD }}" \
                            ${{ env.DEPLOY_IMAGE_NAME }}:${{ env.DEPLOY_IMAGE_TAG }}
