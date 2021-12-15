@@ -6,7 +6,11 @@ import {connect} from "react-redux";
 
 import {Table} from "../components-ui/Table";
 import {WalletGenerate} from "./GatewayApplicationWalletGenerate";
-import {generateGatewayApplicationWallet, removeGatewayApplicationWallet} from "../actions/gateways";
+import {
+  generateGatewayApplicationWallet,
+  getGatewayApplicationWallet,
+  removeGatewayApplicationWallet
+} from "../actions/gateway-wallet";
 
 import {getGatewayWalletSelector} from "../selectors/getGatewayWalletsSelector";
 
@@ -54,13 +58,13 @@ class GatewayApplicationWalletComponent extends React.Component {
     render() {
         const { wallets, gateway } = this.props;
 
-        const columns = getColumns(wallets, this.onRemoveWallet);
+        const columns = getColumns(wallets.list, this.onRemoveWallet);
         const noDataText = 'No Wallet exist'
         return (
             <div className="table-with-add">
                 <WalletGenerate  gateway={gateway} onSubmit={this.onGenerateWallet} />
                 <Segment attached styles={{ padding: 0 }}>
-                    <Table data={wallets} columns={columns} noDataText={noDataText} />
+                    <Table data={wallets.list} columns={columns} noDataText={noDataText} />
                 </Segment>
             </div>
         );

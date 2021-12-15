@@ -4,9 +4,7 @@ import {connect} from 'react-redux';
 import {Field, getFormValues, reduxForm} from 'redux-form';
 import {withRouter} from 'react-router-dom';
 import {Button, Grid} from 'semantic-ui-react';
-import {DropdownField} from 'react-semantic-redux-form';
 import {asyncValidate, validate, warn} from '../utils/validation';
-import ScaffoldActionField from '../components-ui/inputs/ActionField';
 import ScaffoldField from '../components-ui/inputs/Field';
 import {fetchGatewayApplications, saveGatewayApplication} from "../actions/gateways";
 

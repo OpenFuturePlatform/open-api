@@ -30,9 +30,9 @@ class Header extends Component {
             <Dropdown.Item text='Open' as={Link} to={'/scaffolds/open'}/>
           </Dropdown.Menu>
         </Dropdown>
-        <Link className="item" to={'/keys'}>
+        {/*<Link className="item" to={'/keys'}>
           Key Management
-        </Link>
+        </Link>*/}
         <Link className="item" to={'/applications'}>
           Applications
         </Link>

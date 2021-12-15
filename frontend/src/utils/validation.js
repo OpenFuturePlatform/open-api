@@ -101,6 +101,9 @@ export const validate = values => {
   if (!values.currency) {
     errors.currency = t('currency is required');
   }
+  if (!values.name) {
+    errors.name = t('application name is required');
+  }
   if (values.webHook && !isUrl(values.webHook)) {
     errors.webHook = urlErrorMessage;
   }
