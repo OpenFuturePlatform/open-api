@@ -41,12 +41,13 @@ class SecurityConfig(
                     .antMatchers("/static/**").permitAll()
                     .antMatchers("**.js").permitAll()
                     .antMatchers("/widget/**").permitAll()
+                    .antMatchers("/**").access("hasIpAddress('127.0.0.1') or hasIpAddress('0:0:0:0:0:0:0:1') or hasIpAddress('${properties.cidr}')")
                     .anyRequest().authenticated()
 
                 .and()
 
                 .addFilterAfter(AuthorizationFilter(properties, keyService), OAuth2LoginAuthenticationFilter::class.java)
-                .addFilterAfter(ApiAuthorizationFilter(mapper), AuthorizationFilter::class.java)
+                .addFilterAfter(ApiAuthorizationFilter(mapper,properties), AuthorizationFilter::class.java)
                 .addFilterAfter(PublicApiAuthorizationFilter(applicationService, mapper, properties), AuthorizationFilter::class.java)
                 .sessionManagement().sessionCreationPolicy(STATELESS)
 

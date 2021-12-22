@@ -59,6 +59,8 @@ dependencies {
     // Utils
     implementation('commons-io:commons-io:2.8.0')
     implementation 'org.apache.commons:commons-lang3:3.6'
+    implementation group: 'commons-net', name: 'commons-net', version: '3.6'
+
 
     // Test
     testImplementation('org.springframework.boot:spring-boot-starter-test')
