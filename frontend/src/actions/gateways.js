@@ -9,6 +9,7 @@ import {
     SHOW_MODAL
 } from "./types";
 import {parseApiError} from "../utils/parseApiError";
+import {getGatewayApplicationWallet} from "./gateway-wallet";
 
 
 export const fetchGatewayApplications = (offset = 0, limit = 10) => async dispatch => {
@@ -31,14 +32,14 @@ export const saveGatewayApplication = formValues => async (dispatch) => {
     await dispatch(apiPost(getGatewayApplicationsPath(), formValues));
 };
 
-export const fetchGatewayApplicationDetails = (id) => async dispatch => {
+export const fetchGatewayApplicationDetailsFromApi = (id) => async dispatch => {
     dispatch({ type: SET_GATEWAY_APPLICATION_SET, payload: { id, loading: true } });
 
     try {
         const gateway = await dispatch(apiGet(getGatewayApplicationsPath(id)));
-        const wallets = await dispatch(getGatewayApplicationWallet(id));
+
         const error = '';
-        const payload = { id, gateway, wallets, error, loading: false };
+        const payload = { id, gateway, error, loading: false };
         dispatch({ type: SET_GATEWAY_APPLICATION_SET, payload });
 
     } catch (e) {
@@ -50,6 +51,11 @@ export const fetchGatewayApplicationDetails = (id) => async dispatch => {
     }
 };
 
+export const fetchGatewayApplicationDetails = (id) => async dispatch => {
+    dispatch(fetchGatewayApplicationDetailsFromApi(id));
+    dispatch(getGatewayApplicationWallet(id));
+};
+
 export const removeGatewayApplication = (id) => async dispatch => {
     try {
         await dispatch(apiDelete(getGatewayApplicationsPath()+"?id="+id, {}));
@@ -59,23 +65,3 @@ export const removeGatewayApplication = (id) => async dispatch => {
     }
 };
 
-export const getGatewayApplicationWallet = (gatewayId) => async dispatch => {
-    const wallets = await dispatch(apiGet(getGatewayApplicationWalletsPath(gatewayId), {}));
-    const error = '';
-    dispatch({ type: SET_GATEWAY_APPLICATION_SET, payload: {gatewayId, wallets, error, loading: false} });
-    return wallets;
-};
-
-export const generateGatewayApplicationWallet = (wallet, blockchain) => async (dispatch) => {
-    await dispatch(apiPost(getGatewayApplicationWalletsPath(), {applicationId: wallet.applicationId, webHook: wallet.webHook, blockchainType: blockchain.blockchain}));
-    dispatch(fetchGatewayApplicationDetails(wallet.applicationId))
-};
-
-export const removeGatewayApplicationWallet = (gatewayId, address) => async dispatch => {
-    try {
-        await dispatch(apiDelete( getGatewayApplicationWalletsPath()+"?applicationId="+gatewayId+"&address="+address, {}));
-        await dispatch(fetchGatewayApplicationDetails(gatewayId))
-    } catch (e) {
-        throw parseApiError(e);
-    }
-};

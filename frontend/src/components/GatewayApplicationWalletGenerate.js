@@ -1,12 +1,10 @@
 import React, {Component} from "react";
 import {Button, Divider, Dropdown, Input, Modal} from "semantic-ui-react";
-import {Datepicker} from "../components-ui/Datepicker";
-import {TransactionError} from "../components-ui/TransactionError";
+
 import {withVisible} from "../components-ui/withVisible";
 import {withSaving} from "../components-ui/withSaving";
 import styled from "styled-components";
 import {t} from "../utils/messageTexts";
-import {toChecksumAddress} from "../utils/toChecksumAddress";
 
 
 const WalletGenerateContainer = styled.div`

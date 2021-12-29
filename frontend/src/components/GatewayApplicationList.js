@@ -5,7 +5,6 @@ import {ProjectPagination} from '../components-ui/ProjectPagination';
 import {GATEWAY_LIMIT} from '../const';
 import {
     fetchGatewayApplications,
-    getGatewayApplicationWallet,
     removeGatewayApplication
 } from "../actions/gateways";
 import {GatewayApplicationRemove} from "./GatewayApplicationRemove";
@@ -25,8 +24,6 @@ class GatewayApplicationList extends Component {
     onRemoveGateway = gateway => {
         this.props.removeGatewayApplication(gateway.id);
     }
-
-    onFetchWallet = gateway => this.props.getGatewayApplicationWallet(gateway.id)
 
     renderApplications() {
         const gateways = this.props.gateways;
@@ -81,7 +78,6 @@ export default connect(
     mapStateToProps,
     {
         fetchGatewayApplications,
-        removeGatewayApplication,
-        getGatewayApplicationWallet
+        removeGatewayApplication
     }
 )(GatewayApplicationList);
