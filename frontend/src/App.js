@@ -4,7 +4,6 @@ import { fetchGlobalProperties } from './actions/global-properties';
 import { fetchUser } from './actions/index';
 import { connect } from 'react-redux';
 import Scaffolds from './scenes/Scaffolds';
-import Keys from './scenes/Keys';
 import Header from './components/Header';
 import GatewayApplication from "./scenes/GatewayApplication";
 import { Container } from 'semantic-ui-react';
@@ -39,7 +38,6 @@ class App extends Component {
     return (
       <Switch>
         <Route path="/scaffolds" component={Scaffolds} />
-        <Route path="/keys" component={Keys} />
         <Route path="/applications" component={GatewayApplication} />
         <Redirect from="*" to="/scaffolds" />
       </Switch>

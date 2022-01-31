@@ -36,7 +36,7 @@ class DefaultEthereumScaffoldService(
 
     @Transactional(readOnly = true)
     override fun getAll(user: User, pageRequest: Pageable): Page<EthereumScaffold> =
-            ethereumScaffoldRepository.findAllOrderById(pageRequest)
+            ethereumScaffoldRepository.findAll(pageRequest)
 
     @Transactional(readOnly = true)
     override fun get(address: String, user: User): EthereumScaffold = ethereumScaffoldRepository.findByAddress(address)

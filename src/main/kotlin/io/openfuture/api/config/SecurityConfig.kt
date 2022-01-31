@@ -54,7 +54,11 @@ class SecurityConfig(
 
             .and()
 
-            .logout().disable()
+            .logout().invalidateHttpSession(true)
+            .clearAuthentication(true)
+            .logoutSuccessUrl("/")
+            .deleteCookies("JSESSIONID").permitAll()
+
         // @formatter:on
     }
 

@@ -27,14 +27,14 @@ interface EthereumScaffoldRepository : BaseRepository<EthereumScaffold> {
 
     fun findByAddressIgnoreCase(address: String): EthereumScaffold?
 
-    fun findAllOrderById(pageable: Pageable): Page<EthereumScaffold>
+    override fun findAll(pageable: Pageable): Page<EthereumScaffold>
 
 }
 
 @Repository
 interface OpenScaffoldRepository : BaseRepository<OpenScaffold> {
 
-    fun findAllOrderById(pageable: Pageable): Page<OpenScaffold>
+    override fun findAll(pageable: Pageable): Page<OpenScaffold>
 }
 
 @Repository

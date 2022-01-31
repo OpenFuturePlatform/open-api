@@ -21,8 +21,8 @@ export const deployEthereumContractByApi = formValues => async dispatch => {
   return scaffold.address;
 };
 
-export const compileEthereumContract = (openKey, properties) => async dispatch => {
-  return await dispatch(apiPost(getEthereumScaffoldDoCompile(), { openKey, properties }));
+export const compileEthereumContract = (properties) => async dispatch => {
+  return await dispatch(apiPost(getEthereumScaffoldDoCompile(), { properties }));
 };
 
 export const processDeploy = async (contract, bin, platformAddress, formValues) => {
@@ -44,7 +44,7 @@ export const deployEthereumContractByMetaMask = formValues => async (dispatch, g
   const {
     globalProperties: { platformAddress }
   } = getState();
-  const { abi, bin } = await dispatch(compileEthereumContract(formValues.openKey, formValues.properties));
+  const { abi, bin } = await dispatch(compileEthereumContract(formValues.properties));
   const contract = new web3.eth.Contract(JSON.parse(abi));
   const newContractInstance = await processDeploy(contract, bin, platformAddress, formValues);
   const address = newContractInstance.options.address;

@@ -21,5 +21,5 @@ class DefaultOpenScaffoldService(
 
     @Transactional(readOnly = true)
     override fun getAll(user: User, pageRequest: Pageable): Page<OpenScaffold> =
-            openScaffoldRepository.findAllOrderById(pageRequest)
+            openScaffoldRepository.findAll(pageRequest)
 }

@@ -5,10 +5,12 @@ import org.springframework.stereotype.Controller
 import org.springframework.ui.ModelMap
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
+import javax.servlet.http.Cookie
+import javax.servlet.http.HttpServletResponse
 
 @Controller
 class MainController(
-        private val widgetProperties: WidgetProperties
+    private val widgetProperties: WidgetProperties
 ) {
 
     @GetMapping("/", "/ethereum-scaffold", "/ethereum-scaffolds", "/ethereum-scaffolds/**", "/applications", "/applications/**", "/keys", "/keys/**", "/scaffolds/**")
