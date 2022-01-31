@@ -2,6 +2,14 @@
   "name": "client",
   "version": "0.1.0",
   "private": true,
+  "proxy": {
+    "/oauth2": {
+      "target": "http://localhost:8080"
+    },
+    "/api/*": {
+      "target": "http://localhost:8080"
+    }
+  },
   "dependencies": {
     "axios": "^0.21.1",
     "ethjs": "^0.4.0",
