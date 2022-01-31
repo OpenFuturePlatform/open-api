@@ -1,7 +1,6 @@
 package io.openfuture.api.repository
 
 import io.openfuture.api.entity.application.Application
-import io.openfuture.api.entity.auth.OpenKey
 import io.openfuture.api.entity.auth.User
 import io.openfuture.api.entity.scaffold.*
 import org.springframework.data.domain.Page
@@ -24,35 +23,24 @@ interface UserRepository : BaseRepository<User> {
 @Repository
 interface EthereumScaffoldRepository : BaseRepository<EthereumScaffold> {
 
-    fun findByAddressAndOpenKeyUser(address: String, user: User): EthereumScaffold?
-
     fun findByAddress(address: String): EthereumScaffold?
 
     fun findByAddressIgnoreCase(address: String): EthereumScaffold?
 
-    fun findAllByOpenKeyUserOrderByIdDesc(user: User, pageable: Pageable): Page<EthereumScaffold>
+    fun findAllOrderById(pageable: Pageable): Page<EthereumScaffold>
 
 }
 
 @Repository
 interface OpenScaffoldRepository : BaseRepository<OpenScaffold> {
 
-    fun findAllByOpenKeyUserOrderByIdDesc(user: User, pageable: Pageable): Page<OpenScaffold>
+    fun findAllOrderById(pageable: Pageable): Page<OpenScaffold>
 }
 
 @Repository
 interface EthereumScaffoldPropertyRepository : BaseRepository<EthereumScaffoldProperty> {
 
     fun findAllByEthereumScaffoldAddress(address: String): List<EthereumScaffoldProperty>
-
-}
-
-@Repository
-interface OpenKeyRepository : BaseRepository<OpenKey> {
-
-    fun findByValueAndEnabledIsTrue(value: String): OpenKey?
-
-    fun findAllByUser(user: User): List<OpenKey>
 
 }
 
@@ -91,7 +79,7 @@ interface EthereumScaffoldSummaryRepository : BaseRepository<EthereumScaffoldSum
 
     fun findByEthereumScaffold(ethereumScaffold: EthereumScaffold): EthereumScaffoldSummary?
 
-    fun countByEnabledIsFalseAndEthereumScaffoldOpenKeyUser(user: User): Int
+    fun countByEnabledIsFalse(): Int
 
 }
 

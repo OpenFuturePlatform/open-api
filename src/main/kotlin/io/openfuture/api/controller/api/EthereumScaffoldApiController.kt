@@ -29,19 +29,19 @@ class EthereumScaffoldApiController(
     }
 
     @PostMapping("/doCompile")
-    fun compile(@Valid @RequestBody request: CompileEthereumScaffoldRequest): CompiledScaffoldDto =
-            service.compile(request)
+    fun compile(@Valid @RequestBody request: CompileEthereumScaffoldRequest, @CurrentUser user: User): CompiledScaffoldDto =
+            service.compile(request, user)
 
     @PreAuthorize("hasRole('MASTER')")
     @PostMapping("/doDeploy")
     fun deploy(@Valid @RequestBody request: DeployEthereumScaffoldRequest, @CurrentUser user: User): EthereumScaffoldDto {
-        val scaffold = service.deploy(request)
+        val scaffold = service.deploy(request, user)
         return EthereumScaffoldDto(scaffold)
     }
 
     @PostMapping
-    fun save(@Valid @RequestBody request: SaveEthereumScaffoldRequest): EthereumScaffoldDto {
-        val scaffold = service.save(request)
+    fun save(@Valid @RequestBody request: SaveEthereumScaffoldRequest, @CurrentUser user: User): EthereumScaffoldDto {
+        val scaffold = service.save(request, user)
         return EthereumScaffoldDto(scaffold)
     }
 

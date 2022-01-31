@@ -1,6 +1,5 @@
 package io.openfuture.api.controller.api
 
-import io.openfuture.api.annotation.CurrentToken
 import io.openfuture.api.annotation.CurrentUser
 import io.openfuture.api.domain.auth.CurrentUserDto
 import io.openfuture.api.domain.auth.UserDto
@@ -14,7 +13,8 @@ import org.springframework.web.bind.annotation.RestController
 class UserApiController {
 
     @GetMapping("/current")
-    fun getCurrent(@CurrentUser user: User, @CurrentToken token: String): CurrentUserDto =
-            CurrentUserDto(UserDto(user), token)
+    fun getCurrent(@CurrentUser user: User): CurrentUserDto {
+        return CurrentUserDto(UserDto(user))
+    }
 
 }
