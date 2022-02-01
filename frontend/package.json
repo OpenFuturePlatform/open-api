@@ -42,6 +42,7 @@
     "eject": "react-scripts eject"
   },
   "devDependencies": {
+    "http-proxy-middleware": "^2.0.2",
     "lodash": "^4.17.20"
   },
   "browserslist": {

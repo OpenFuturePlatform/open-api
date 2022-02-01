@@ -1,6 +1,5 @@
 package io.openfuture.api.controller.base
 
-import io.openfuture.api.config.propety.AuthorizationProperties
 import io.openfuture.api.config.propety.WidgetProperties
 import org.springframework.stereotype.Controller
 import org.springframework.ui.ModelMap
@@ -11,16 +10,8 @@ import javax.servlet.http.HttpServletResponse
 
 @Controller
 class MainController(
-        private val properties: AuthorizationProperties,
-        private val widgetProperties: WidgetProperties
+    private val widgetProperties: WidgetProperties
 ) {
-
-    @GetMapping("/logout")
-    fun logout(response: HttpServletResponse): String {
-        val cookie = Cookie(properties.cookieName, null)
-        response.addCookie(cookie)
-        return "redirect:/"
-    }
 
     @GetMapping("/", "/ethereum-scaffold", "/ethereum-scaffolds", "/ethereum-scaffolds/**", "/applications", "/applications/**", "/keys", "/keys/**", "/scaffolds/**")
     fun frontend() = "frontend"

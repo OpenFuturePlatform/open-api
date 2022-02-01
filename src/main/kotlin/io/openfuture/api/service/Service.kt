@@ -9,12 +9,10 @@ import io.openfuture.api.domain.key.KeyWalletDto
 import io.openfuture.api.domain.key.WalletApiCreateRequest
 import io.openfuture.api.domain.scaffold.*
 import io.openfuture.api.entity.application.Application
-import io.openfuture.api.entity.auth.OpenKey
 import io.openfuture.api.entity.auth.User
 import io.openfuture.api.entity.scaffold.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
-import javax.servlet.http.HttpServletRequest
 
 interface EthereumScaffoldService {
 
@@ -24,11 +22,11 @@ interface EthereumScaffoldService {
 
     fun get(address: String): EthereumScaffold
 
-    fun compile(request: CompileEthereumScaffoldRequest): CompiledScaffoldDto
+    fun compile(request: CompileEthereumScaffoldRequest, user: User): CompiledScaffoldDto
 
-    fun deploy(request: DeployEthereumScaffoldRequest): EthereumScaffold
+    fun deploy(request: DeployEthereumScaffoldRequest, user: User): EthereumScaffold
 
-    fun save(request: SaveEthereumScaffoldRequest): EthereumScaffold
+    fun save(request: SaveEthereumScaffoldRequest, user: User): EthereumScaffold
 
     fun update(address: String, user: User, request: UpdateEthereumScaffoldRequest): EthereumScaffold
 
@@ -69,24 +67,6 @@ interface EthereumScaffoldTemplateService {
     fun save(request: SaveEthereumScaffoldTemplateRequest): EthereumScaffoldTemplate
 
     fun delete(id: Long): EthereumScaffoldTemplate
-
-}
-
-interface OpenKeyService {
-
-    fun getAll(user: User): List<OpenKey>
-
-    fun get(key: String): OpenKey
-
-    fun find(key: String): OpenKey?
-
-    fun generate(request: GenerateOpenKeyRequest, user: User): OpenKey
-
-    fun generate(user: User): OpenKey
-
-    fun disable(key: String): OpenKey
-
-    fun update(openKey: OpenKey): OpenKey
 
 }
 

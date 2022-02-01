@@ -2,7 +2,6 @@ package io.openfuture.api.service
 
 import io.openfuture.api.config.UnitTest
 import io.openfuture.api.config.any
-import io.openfuture.api.entity.auth.OpenKey
 import io.openfuture.api.entity.auth.User
 import io.openfuture.api.entity.scaffold.EthereumScaffold
 import io.openfuture.api.entity.scaffold.EthereumTransaction
@@ -68,9 +67,8 @@ internal class DefaultEthereumTransactionServiceTests : UnitTest() {
     private fun createTransaction(): EthereumTransaction = EthereumTransaction("hash", "index", createScaffold(), "data binary")
 
     private fun createScaffold(): EthereumScaffold {
-        val openKey = OpenKey(User("104113085667282103363"))
 
-        return EthereumScaffold("address", "abi", "fiatAmount", 1, "conversionAmount", Collections.emptyList(), V1.getId(), openKey, "developerAddress", "description", "webHook").apply { id = 1L }
+        return EthereumScaffold("address", "abi", "fiatAmount", 1, "conversionAmount", Collections.emptyList(), V1.getId(), "developerAddress", "description", "webHook").apply { id = 1L }
     }
 
 }

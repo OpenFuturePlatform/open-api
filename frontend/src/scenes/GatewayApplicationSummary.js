@@ -7,8 +7,6 @@ import {fetchGatewayApplicationDetails} from "../actions/gateways";
 
 import {GatewayApplicationWallet} from "../components/GatewayApplicationWallet";
 import {getGatewayApplicationWallet} from "../actions/gateway-wallet";
-import {KeyGenerate} from "../components/KeyGenerate";
-import {WalletGenerate} from "../components/GatewayApplicationWalletGenerate";
 import {GatewayKeyGenerate} from "../components/GatewayApplicationKeyGenerate";
 
 class GatewayApplicationSummary extends Component {

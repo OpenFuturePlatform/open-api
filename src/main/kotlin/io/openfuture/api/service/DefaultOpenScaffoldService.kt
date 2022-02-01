@@ -11,18 +11,15 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 class DefaultOpenScaffoldService(
-        private val openKeyService: OpenKeyService,
         private val openScaffoldRepository: OpenScaffoldRepository
 ) : OpenScaffoldService {
 
     @Transactional
     override fun save(request: SaveOpenScaffoldRequest): OpenScaffold {
-        val openKey = openKeyService.get(request.openKey)
-
-        return openScaffoldRepository.save(OpenScaffold.of(request, openKey))
+        return openScaffoldRepository.save(OpenScaffold.of(request))
     }
 
     @Transactional(readOnly = true)
     override fun getAll(user: User, pageRequest: Pageable): Page<OpenScaffold> =
-            openScaffoldRepository.findAllByOpenKeyUserOrderByIdDesc(user, pageRequest)
+            openScaffoldRepository.findAll(pageRequest)
 }

@@ -8,7 +8,6 @@ import javax.validation.constraints.NotNull
 import javax.validation.constraints.Size
 
 data class CompileEthereumScaffoldRequest(
-        @field:NotBlank var openKey: String? = null,
         @field:NotEmpty @field:Size(max = 9) @field:Valid var properties: List<EthereumScaffoldPropertyDto> = listOf(),
         @field:NotNull var version: ScaffoldVersion = ScaffoldVersion.last()
 )

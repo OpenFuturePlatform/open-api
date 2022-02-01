@@ -17,12 +17,10 @@ import {MIN_BALANCE} from '../const/index';
 import {getMetaMaskErrorMessage} from '../selectors/getMetaMaskError';
 import {TemplateSelect} from '../components/TemplateSelect';
 import {WalletSelect} from '../components/WalletSelect';
-import {fetchKeys} from '../actions/keys';
 import {t} from '../utils/messageTexts';
 
 class EthereumScaffoldForm extends Component {
   componentDidMount() {
-    this.props.actions.fetchKeys();
     if (!this.props.byApiMethod) {
       this.props.actions.subscribeEthAccount();
       this.initDeveloperAddressValidation();
@@ -93,8 +91,8 @@ class EthereumScaffoldForm extends Component {
   };
 
   render() {
-    const { formValues, invalid, scaffoldFieldsErrors, openKeyOptions, byApiMethod } = this.props;
-    const fieldErrors = _.flatten(scaffoldFieldsErrors).length !== 0 ? true : false;
+    const { formValues, invalid, scaffoldFieldsErrors, byApiMethod } = this.props;
+    const fieldErrors = _.flatten(scaffoldFieldsErrors).length !== 0;
     const disableSubmit = invalid || fieldErrors;
     const developerAddressValidations = !byApiMethod ? [this.validateBalance] : [];
 
@@ -106,17 +104,6 @@ class EthereumScaffoldForm extends Component {
             <Grid.Row>
               <Grid.Column width={16} style={{ paddingTop: '10px' }}>
                 <TemplateSelect />
-              </Grid.Column>
-              <Grid.Column width={16} style={{ paddingTop: '10px' }}>
-                <Field
-                  key={1}
-                  className="ui selection fluid dropdown"
-                  placeholder="Choose Developer API Key"
-                  component={DropdownField}
-                  options={openKeyOptions}
-                  type="text"
-                  name="openKey"
-                />
               </Grid.Column>
               <Grid.Column width={16}>
                 <Field
@@ -257,9 +244,7 @@ const getValues = getFormValues('scaffoldCreationForm');
 const mapStateToProps = state => {
   const formValues = getValues(state) || {};
   const initialValues = state.scaffoldFeilds;
-  const openKey = state.auth ? state.auth.openKeys : undefined;
   const scaffoldFieldsErrors = validateScaffoldProperties(formValues.properties || []);
-  const openKeyOptions = state.keys.filter(it => it.enabled).map(it => ({ text: it.value, value: it.value }));
   const ethAccount = state.ethAccount;
   const byApiMethod = state.auth.byApiMethod;
   const metaMaskError = getMetaMaskErrorMessage(state);
@@ -270,9 +255,7 @@ const mapStateToProps = state => {
     byApiMethod,
     ethAccount,
     formValues,
-    openKey,
-    scaffoldFieldsErrors,
-    openKeyOptions
+    scaffoldFieldsErrors
   };
 };
 
@@ -282,8 +265,7 @@ const mapDispatchToProps = dispatch => ({
       convertCurrencies,
       deployEthereumContract,
       subscribeEthAccount,
-      unsubscribeEthAccount,
-      fetchKeys
+      unsubscribeEthAccount
     },
     dispatch
   )
