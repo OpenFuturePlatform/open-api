@@ -41,6 +41,7 @@ class SecurityConfig(
                     .antMatchers("/static/**").permitAll()
                     .antMatchers("**.js").permitAll()
                     .antMatchers("/widget/**").permitAll()
+                    .antMatchers("/iframe").permitAll()
                     //.antMatchers("/**").access("hasIpAddress('${properties.cidr}')")
                     .anyRequest().authenticated()
 

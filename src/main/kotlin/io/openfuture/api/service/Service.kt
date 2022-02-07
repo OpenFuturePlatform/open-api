@@ -8,6 +8,7 @@ import io.openfuture.api.domain.key.GenerateWalletRequest
 import io.openfuture.api.domain.key.KeyWalletDto
 import io.openfuture.api.domain.key.WalletApiCreateRequest
 import io.openfuture.api.domain.scaffold.*
+import io.openfuture.api.domain.transaction.TransactionDto
 import io.openfuture.api.entity.application.Application
 import io.openfuture.api.entity.auth.OpenKey
 import io.openfuture.api.entity.auth.User
@@ -116,8 +117,6 @@ interface ApplicationService {
 
     fun getByAccessKey(accessKey: String): Application
 
-    fun getByAccessAndSecretKey(accessKey: String, secretKey: String): Application
-
     fun save(request: ApplicationRequest, user: User, applicationAccessKey: ApplicationAccessKey): Application
 
     fun delete(id: Long)
@@ -132,6 +131,7 @@ interface ApplicationWalletService {
 
     fun deleteWallet(applicationId: String, address: String)
 
+    fun getAddressTransactions(address: String) : Array<TransactionDto>
 }
 
 interface WalletApiService {

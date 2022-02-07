@@ -69,6 +69,7 @@ sourceSets {
     main.kotlin.srcDirs += 'src/main/kotlin'
     main.resources.srcDirs += 'frontend/build/resources'
     main.resources.srcDirs += 'widget/build/resources'
+    main.resources.srcDirs += 'tracker/build/resources'
 }
 
 // Kotlin
@@ -109,3 +110,4 @@ check.dependsOn jacocoTestReport
 // Front
 processResources.dependsOn(':frontend:assemble')
 processResources.dependsOn(':widget:assemble')
+processResources.dependsOn(':tracker:assemble')

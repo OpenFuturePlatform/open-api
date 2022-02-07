@@ -20,7 +20,11 @@ class WalletApiController(
 
     @PreAuthorize(value = "hasAnyRole('ROLE_APPLICATION')")
     @PostMapping("/generate")
-    fun generateWallet(@RequestBody walletApiCreateRequest: WalletApiCreateRequest, @RequestHeader("X-API-KEY") accessKey: String, @CurrentUser user: User): KeyWalletDto? {
+    fun generateWallet(
+        @RequestBody walletApiCreateRequest: WalletApiCreateRequest,
+        @RequestHeader("X-API-KEY") accessKey: String,
+        @CurrentUser user: User): KeyWalletDto?
+    {
 
         val application = applicationService.getByAccessKey(accessKey)
 

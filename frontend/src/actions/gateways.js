@@ -1,11 +1,10 @@
 import {apiDelete, apiGet, apiPost} from "./apiRequest";
 import {
     getGatewayApplicationsPath,
-    getGatewayApplicationWalletsPath,
 } from "../utils/apiPathes";
 import {
-    FETCH_GATEWAY_APPLICATION_WALLET,
-    FETCH_GATEWAY_APPLICATIONS, SET_ETHEREUM_SCAFFOLD_SET, SET_GATEWAY_APPLICATION_SET,
+    FETCH_GATEWAY_APPLICATIONS,
+    SET_GATEWAY_APPLICATION_SET,
     SHOW_MODAL
 } from "./types";
 import {parseApiError} from "../utils/parseApiError";

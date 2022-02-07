@@ -32,4 +32,11 @@ class MainController(
         return "widget"
     }
 
+    @GetMapping("/widget/transactions/address/{address}")
+    fun payment(@PathVariable address: String, model: ModelMap): String {
+        model["address"] = address
+        model["host"] = widgetProperties.host
+        return "tracker"
+    }
+
 }

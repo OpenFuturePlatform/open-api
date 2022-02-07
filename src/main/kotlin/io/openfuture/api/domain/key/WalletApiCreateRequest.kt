@@ -7,7 +7,9 @@ data class WalletApiCreateRequest(
     @JsonProperty("blockchain")
     val blockchain: BlockchainType,
     @JsonProperty("timestamp")
-    var timestamp: String
+    var timestamp: String,
+    @JsonProperty("metadata")
+    var metadata: WalletMetaDto?
 ){
     override fun toString(): String {
         return "blockchain='$blockchain'&timestamp='$timestamp'"
