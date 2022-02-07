@@ -19,7 +19,7 @@ class PublicApiAuthorizationFilter(
     private val applicationService: ApplicationService,
     private val mapper: ObjectMapper,
     private val properties: AuthorizationProperties
-): Filter {
+) : Filter {
 
     override fun init(filterConfig: FilterConfig?) {
         // Do nothing
@@ -36,7 +36,8 @@ class PublicApiAuthorizationFilter(
             val expirePeriod = properties.expireApi!!
 
             val requestWrapper = CustomHttpRequestWrapper(request)
-            val walletApiCreateRequest = mapper.readValue(requestWrapper.bodyInStringFormat, WalletApiCreateRequest::class.java)
+            val walletApiCreateRequest =
+                mapper.readValue(requestWrapper.bodyInStringFormat, WalletApiCreateRequest::class.java)
 
             val diffMinutes = differenceEpochs(currentEpochs(), walletApiCreateRequest.timestamp.toLong())
 

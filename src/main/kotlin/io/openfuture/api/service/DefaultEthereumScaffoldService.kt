@@ -81,7 +81,7 @@ class DefaultEthereumScaffoldService(
         val properties = request.properties.map { propertyRepository.save(EthereumScaffoldProperty.of(scaffold, it)) }
         scaffold.property.addAll(properties)
         getScaffoldSummary(scaffold.address, user, true)
-        request.webHook?.let { stateApi.createWallet(scaffold.developerAddress, it, Blockchain.Ethereum) }
+        request.webHook?.let { stateApi.createWallet(scaffold.developerAddress, it, Blockchain.Ethereum, null) }
         return scaffold
     }
 
