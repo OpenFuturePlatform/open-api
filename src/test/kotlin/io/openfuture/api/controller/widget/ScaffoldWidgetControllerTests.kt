@@ -1,7 +1,6 @@
 package io.openfuture.api.controller.widget
 
 import io.openfuture.api.config.ControllerTests
-import io.openfuture.api.entity.auth.OpenKey
 import io.openfuture.api.entity.auth.User
 import io.openfuture.api.entity.scaffold.Currency.USD
 import io.openfuture.api.entity.scaffold.EthereumScaffold
@@ -47,6 +46,6 @@ class ScaffoldWidgetControllerTests : ControllerTests() {
                     }
     """.trimIndent()
 
-    private fun createScaffold() = EthereumScaffold("address", "abi", "2", USD.getId(), "0.00023", mutableListOf(), V1.getId(), OpenKey(User("")), "developerAddress", "description")
+    private fun createScaffold() = EthereumScaffold("address", "abi", "2", USD.getId(), "0.00023", mutableListOf(), V1.getId(), "developerAddress", "description")
 
 }
