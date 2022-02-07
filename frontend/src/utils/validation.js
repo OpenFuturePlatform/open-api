@@ -87,9 +87,6 @@ export const validate = values => {
   const errors = {};
   errors.properties = [];
 
-  if (!values.openKey) {
-    errors.openKey = t('open key is required');
-  }
   if (!values.developerAddress) {
     errors.developerAddress = t('dev address is required');
   }

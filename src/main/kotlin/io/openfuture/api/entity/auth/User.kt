@@ -14,9 +14,6 @@ class User(
         @Column(name = "credits", nullable = false)
         val credits: Int = 0,
 
-        @OneToMany(mappedBy = "user", fetch = EAGER)
-        val openKeys: MutableSet<OpenKey> = mutableSetOf(),
-
         @ManyToMany(fetch = EAGER)
         @JoinTable(
                 name = "users2roles",

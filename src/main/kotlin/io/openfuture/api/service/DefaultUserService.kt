@@ -7,8 +7,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 class DefaultUserService(
-        private val repository: UserRepository,
-        private val openKeyService: OpenKeyService
+        private val repository: UserRepository
 ) : UserService {
 
     @Transactional(readOnly = true)
@@ -16,13 +15,7 @@ class DefaultUserService(
 
     @Transactional
     override fun save(user: User): User {
-        val persistUser = repository.save(user)
-
-        val openKey = openKeyService.generate(persistUser)
-
-        persistUser.openKeys.add(openKey)
-
-        return persistUser
+        return repository.save(user)
     }
 
 }

@@ -31,16 +31,15 @@ class DefaultEthereumScaffoldService(
         private val propertyRepository: EthereumScaffoldPropertyRepository,
         private val ethereumScaffoldSummaryRepository: EthereumScaffoldSummaryRepository,
         private val shareHolderRepository: ShareHolderRepository,
-        private val openKeyService: OpenKeyService,
         private val stateApi: StateApi
 ) : EthereumScaffoldService {
 
     @Transactional(readOnly = true)
     override fun getAll(user: User, pageRequest: Pageable): Page<EthereumScaffold> =
-            ethereumScaffoldRepository.findAllByOpenKeyUserOrderByIdDesc(user, pageRequest)
+            ethereumScaffoldRepository.findAll(pageRequest)
 
     @Transactional(readOnly = true)
-    override fun get(address: String, user: User): EthereumScaffold = ethereumScaffoldRepository.findByAddressAndOpenKeyUser(address, user)
+    override fun get(address: String, user: User): EthereumScaffold = ethereumScaffoldRepository.findByAddress(address)
             ?: throw NotFoundException("Not found scaffold with address $address")
 
     @Transactional(readOnly = true)
@@ -48,9 +47,8 @@ class DefaultEthereumScaffoldService(
             ?: throw NotFoundException("Not found scaffold with address $address")
 
     @Transactional(readOnly = true)
-    override fun compile(request: CompileEthereumScaffoldRequest): CompiledScaffoldDto {
-        val openKey = openKeyService.get(request.openKey!!)
-        if (ethereumScaffoldSummaryRepository.countByEnabledIsFalseAndEthereumScaffoldOpenKeyUser(openKey.user) >= properties.allowedDisabledContracts) {
+    override fun compile(request: CompileEthereumScaffoldRequest, user: User): CompiledScaffoldDto {
+        if (ethereumScaffoldSummaryRepository.countByEnabledIsFalse() >= properties.allowedDisabledContracts) {
             throw IllegalStateException("Disabled scaffold count is more than allowed")
         }
 
@@ -58,31 +56,31 @@ class DefaultEthereumScaffoldService(
     }
 
     @Transactional
-    override fun deploy(request: DeployEthereumScaffoldRequest): EthereumScaffold {
-        val compiledScaffold = compile(CompileEthereumScaffoldRequest(request.openKey, request.properties, request.version))
+    override fun deploy(request: DeployEthereumScaffoldRequest, user: User): EthereumScaffold {
+        val compiledScaffold = compile(CompileEthereumScaffoldRequest(request.properties, request.version), user)
         val contractAddress = processor.deploy(compiledScaffold.bin, request)
-        return save(SaveEthereumScaffoldRequest(
-                contractAddress,
-                compiledScaffold.abi,
-                request.openKey,
-                request.developerAddress,
-                request.description,
-                request.fiatAmount,
-                request.currency,
-                request.conversionAmount,
-                request.webHook,
-                request.properties,
-                request.version
-        ))
+        return save(
+            SaveEthereumScaffoldRequest(
+                    contractAddress,
+                    compiledScaffold.abi,
+                    request.developerAddress,
+                    request.description,
+                    request.fiatAmount,
+                    request.currency,
+                    request.conversionAmount,
+                    request.webHook,
+                    request.properties,
+                    request.version
+            ), user
+        )
     }
 
     @Transactional
-    override fun save(request: SaveEthereumScaffoldRequest): EthereumScaffold {
-        val openKey = openKeyService.get(request.openKey!!)
-        val scaffold = ethereumScaffoldRepository.save(EthereumScaffold.of(request, openKey))
+    override fun save(request: SaveEthereumScaffoldRequest, user: User): EthereumScaffold {
+        val scaffold = ethereumScaffoldRepository.save(EthereumScaffold.of(request))
         val properties = request.properties.map { propertyRepository.save(EthereumScaffoldProperty.of(scaffold, it)) }
         scaffold.property.addAll(properties)
-        getScaffoldSummary(scaffold.address, openKey.user, true)
+        getScaffoldSummary(scaffold.address, user, true)
         request.webHook?.let { stateApi.createWallet(scaffold.developerAddress, it, Blockchain.Ethereum) }
         return scaffold
     }
@@ -107,7 +105,7 @@ class DefaultEthereumScaffoldService(
 
     @Transactional(readOnly = true)
     override fun getQuota(user: User): EthereumScaffoldQuotaDto {
-        val scaffoldCount = ethereumScaffoldSummaryRepository.countByEnabledIsFalseAndEthereumScaffoldOpenKeyUser(user)
+        val scaffoldCount = ethereumScaffoldSummaryRepository.countByEnabledIsFalse()
         return EthereumScaffoldQuotaDto(scaffoldCount, properties.allowedDisabledContracts)
     }
 

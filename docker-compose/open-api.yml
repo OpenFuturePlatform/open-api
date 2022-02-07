@@ -1,0 +1,18 @@
+version: '3.1'
+
+services:
+
+  open-api-postgres:
+    image: postgres
+    container_name: open-api-postgres
+    restart: always
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+    volumes:
+      - open-api-postgres-data:/var/lib/postgres
+
+volumes:
+  open-api-postgres-data:

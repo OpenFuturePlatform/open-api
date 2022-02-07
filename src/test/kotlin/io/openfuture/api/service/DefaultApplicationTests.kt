@@ -57,7 +57,7 @@ class DefaultApplicationTests : UnitTest() {
 
     }
 
-    private fun createUser(): User = User("104113085667282103363", 0, Collections.emptySet(), Collections.emptySet())
+    private fun createUser(): User = User("104113085667282103363", 0, Collections.emptySet())
 
     private fun createApplication(user: User): Application =
         Application("Gateway 1",user, "https://openfuture.io/webhook",true,"access","key")

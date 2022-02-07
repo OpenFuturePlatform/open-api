@@ -7,7 +7,6 @@ import javax.validation.Valid
 import javax.validation.constraints.*
 
 data class DeployEthereumScaffoldRequest(
-        @field:NotBlank var openKey: String,
         @field:NotBlank @field:Address var developerAddress: String? = null,
         @field:NotBlank var description: String? = null,
         @field:NotBlank @field:Digits(integer = Int.MAX_VALUE, fraction = Int.MAX_VALUE) var fiatAmount: String? = null,
