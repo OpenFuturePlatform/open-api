@@ -7,7 +7,9 @@ import io.openfuture.api.entity.state.Blockchain
 
 interface StateApi {
 
-    fun createWallet(address: String, webHook: String, blockchain: Blockchain, walletMetaDto: WalletMetaDto?): StateWalletDto
+    fun createWallet(address: String, webHook: String, blockchain: Blockchain): StateWalletDto
+
+    fun createWalletWithMetadata(address: String, webHook: String, blockchain: Blockchain, walletMetaDto: WalletMetaDto?): StateWalletDto
 
     fun deleteWallet(address: String, blockchain: Blockchain)
 
