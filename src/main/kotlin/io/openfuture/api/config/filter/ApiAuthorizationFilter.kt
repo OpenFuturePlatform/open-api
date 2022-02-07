@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse
 class ApiAuthorizationFilter(
     private val mapper: ObjectMapper,
     private val properties: AuthorizationProperties
-): Filter {
+) : Filter {
 
     private val ipV4LoopBack = "127.0.0.1"
     private val ipV6LoopBack = "0:0:0:0:0:0:0:1"
@@ -47,7 +47,7 @@ class ApiAuthorizationFilter(
             return true
         }
 
-        if (properties.cidr !=  null) {
+        if (properties.cidr != null) {
             val matcher = IpAddressMatcher(properties.cidr)
 
             if (matcher.matches(request.getHeader("X-Forwarded-For"))) {

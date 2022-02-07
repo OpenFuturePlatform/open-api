@@ -1,5 +1,6 @@
 package io.openfuture.api.component.state
 
+import io.openfuture.api.domain.key.WalletMetaDto
 import io.openfuture.api.domain.state.CreateStateWalletRequest
 import io.openfuture.api.domain.state.StateWalletDto
 import io.openfuture.api.domain.transaction.TransactionDto
@@ -10,8 +11,8 @@ import org.springframework.web.client.RestTemplate
 @Component
 class DefaultStateApi(private val stateRestTemplate: RestTemplate) : StateApi {
 
-    override fun createWallet(address: String, webHook: String, blockchain: Blockchain): StateWalletDto {
-        val request = CreateStateWalletRequest(address, webHook, blockchain)
+    override fun createWallet(address: String, webHook: String, blockchain: Blockchain, walletMetaDto: WalletMetaDto?): StateWalletDto {
+        val request = CreateStateWalletRequest(address, webHook, blockchain, walletMetaDto)
         val response = stateRestTemplate.postForEntity("/wallets", request, StateWalletDto::class.java)
         return response.body!!
     }
@@ -23,7 +24,7 @@ class DefaultStateApi(private val stateRestTemplate: RestTemplate) : StateApi {
 
     override fun getAddressTransactions(address: String): Array<TransactionDto> {
         val url = "/wallets/transactions/address/${address}"
-        return stateRestTemplate.getForEntity(url, Array<TransactionDto>::class.java ).body!!
+        return stateRestTemplate.getForEntity(url, Array<TransactionDto>::class.java).body!!
     }
 
 }
