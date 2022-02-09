@@ -4,16 +4,18 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import io.openfuture.api.entity.application.BlockchainType
 
 data class WalletMetaDto(
-    @JsonProperty("order_id")
+    @JsonProperty("orderId")
     var orderId: String,
-    @JsonProperty("order_key")
+    @JsonProperty("orderKey")
     var orderKey: String,
     @JsonProperty("amount")
     var amount: String,
-    @JsonProperty("product_currency")
+    @JsonProperty("productCurrency")
     var productCurrency: String,
     @JsonProperty("source")
     var source: String,
-    @JsonProperty("payment_currency")
-    val paymentCurrency: BlockchainType
+    @JsonProperty("paymentCurrency")
+    val paymentCurrency: BlockchainType,
+    @JsonProperty("test")
+    var test: Boolean
 )

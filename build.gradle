@@ -60,6 +60,8 @@ dependencies {
     implementation('commons-io:commons-io:2.8.0')
     implementation 'org.apache.commons:commons-lang3:3.6'
 
+    implementation('org.apache.httpcomponents:httpclient:4.5.12')
+
     // Test
     testImplementation('org.springframework.boot:spring-boot-starter-test')
     testImplementation("org.mockito:mockito-core:2.22.0")

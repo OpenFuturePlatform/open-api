@@ -6,6 +6,7 @@ import io.openfuture.api.domain.key.CreateKeyRequest
 import io.openfuture.api.domain.key.GenerateWalletRequest
 import io.openfuture.api.domain.key.KeyWalletDto
 import io.openfuture.api.domain.key.WalletApiCreateRequest
+import io.openfuture.api.domain.state.CreateStateWalletRequestMetadata
 import io.openfuture.api.entity.application.Application
 import io.openfuture.api.entity.application.BlockchainType
 import io.openfuture.api.entity.auth.User
@@ -19,7 +20,7 @@ import javax.servlet.http.HttpServletRequest
 class DefaultWalletApiService(
     private val keyApi: KeyApi,
     private val stateApi: StateApi
-) : WalletApiService{
+) : WalletApiService {
 
     override fun generateWallet(
         walletApiCreateRequest: WalletApiCreateRequest,
@@ -27,10 +28,22 @@ class DefaultWalletApiService(
         user: User
     ): KeyWalletDto {
         // Generate address on open key
-        val keyWalletDto  = keyApi.generateKey(CreateKeyRequest(application.id.toString(), user.id.toString(), walletApiCreateRequest.blockchain))
+        val keyWalletDto = keyApi.generateKey(
+            CreateKeyRequest(
+                application.id.toString(),
+                user.id.toString(),
+                walletApiCreateRequest.blockchain
+            )
+        )
 
+        val request = CreateStateWalletRequestMetadata(
+            keyWalletDto.address,
+            application.webHook.toString(),
+            if (walletApiCreateRequest.metadata?.test == true) Blockchain.Ropsten else Blockchain.Ethereum,
+            walletApiCreateRequest.metadata
+        )
         // Save webhook on open state
-        stateApi.createWalletWithMetadata(keyWalletDto.address, application.webHook.toString(), Blockchain.Ethereum, walletApiCreateRequest.metadata)
+        stateApi.createWalletWithMetadata(request)
 
         return keyWalletDto
     }

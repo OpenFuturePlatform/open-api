@@ -3,6 +3,7 @@ package io.openfuture.api.controller.api
 import io.openfuture.api.annotation.CurrentUser
 import io.openfuture.api.domain.key.GenerateWalletRequest
 import io.openfuture.api.domain.key.KeyWalletDto
+import io.openfuture.api.domain.state.StateSignRequest
 import io.openfuture.api.entity.auth.User
 import io.openfuture.api.service.ApplicationWalletService
 import org.springframework.web.bind.annotation.*
@@ -27,6 +28,11 @@ class ApplicationWalletApiController(
     @GetMapping("/{applicationId}")
     fun getAll(@PathVariable("applicationId") applicationId: Long): Array<KeyWalletDto> {
         return service.getAllWallets(applicationId)
+    }
+
+    @GetMapping("/sign/address/{address}")
+    fun generateSignature(@PathVariable("address") address: String, @Valid @RequestBody request: StateSignRequest): String {
+        return service.generateSignature(address, request)
     }
 
 }
