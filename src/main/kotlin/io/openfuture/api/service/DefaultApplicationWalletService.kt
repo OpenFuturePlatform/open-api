@@ -1,5 +1,6 @@
 package io.openfuture.api.service
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.openfuture.api.component.key.KeyApi
 import io.openfuture.api.component.state.StateApi
 import io.openfuture.api.domain.key.CreateKeyRequest
@@ -49,9 +50,10 @@ class DefaultApplicationWalletService(
     override fun generateSignature(address: String, request: StateSignRequest): String {
         val walletAddressResponse = keyApi.getApplicationByAddress(address)
         val application = applicationService.getById(walletAddressResponse.applicationId.toLong())
-
+        val mapper = jacksonObjectMapper()
+        val str = mapper.writeValueAsString(request)
         val hmacSha256 = application.let {
-            KeyGeneratorUtils.calcHmacSha256(it.apiSecretKey, request.toString())
+            KeyGeneratorUtils.calcHmacSha256(it.apiSecretKey, str)
         }
         return hmacSha256
     }

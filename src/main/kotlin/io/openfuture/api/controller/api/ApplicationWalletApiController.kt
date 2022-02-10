@@ -30,7 +30,7 @@ class ApplicationWalletApiController(
         return service.getAllWallets(applicationId)
     }
 
-    @GetMapping("/sign/address/{address}")
+    @PostMapping("/sign/address/{address}")
     fun generateSignature(@PathVariable("address") address: String, @Valid @RequestBody request: StateSignRequest): String {
         return service.generateSignature(address, request)
     }
