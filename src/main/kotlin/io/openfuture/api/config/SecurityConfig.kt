@@ -29,15 +29,16 @@ class SecurityConfig(
 
         // @formatter:off
         http
-            .authorizeRequests()
-            .antMatchers("/").permitAll()
-            .antMatchers("/css/**").permitAll()
-            .antMatchers("/img/**").permitAll()
-            .antMatchers("/static/**").permitAll()
-            .antMatchers("**.js").permitAll()
-            .antMatchers("/widget/**").permitAll()
-            //.antMatchers("/**").access("hasIpAddress('${properties.cidr}')")
-            .anyRequest().authenticated()
+                .authorizeRequests()
+                    .antMatchers("/").permitAll()
+                    .antMatchers("/css/**").permitAll()
+                    .antMatchers("/img/**").permitAll()
+                    .antMatchers("/static/**").permitAll()
+                    .antMatchers("**.js").permitAll()
+                    .antMatchers("/widget/**").permitAll()
+                    .antMatchers("/api/application/wallet/**").access("hasIpAddress('${properties.cidr}') or hasIpAddress('${properties.openState}') or hasIpAddress('127.0.0.1') or hasIpAddress('0:0:0:0:0:0:0:1')")
+                    //.antMatchers("/api/application/wallet/**").access("hasIpAddress('127.0.0.1') or hasIpAddress('0:0:0:0:0:0:0:1')")
+                    .anyRequest().authenticated()
 
             .and()
 

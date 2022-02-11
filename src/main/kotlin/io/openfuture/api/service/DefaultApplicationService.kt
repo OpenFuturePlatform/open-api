@@ -28,10 +28,6 @@ class DefaultApplicationService(
         return applicationRepository.findFirstByApiAccessKey(accessKey).orElseThrow {  throw NotFoundException("Not found application with key : $accessKey")}
     }
 
-    override fun getByAccessAndSecretKey(accessKey: String, secretKey: String): Application {
-        return applicationRepository.findFirstByApiAccessKeyAndApiSecretKey(accessKey, secretKey).orElseThrow {  throw NotFoundException("Not found application with key : $accessKey")}
-    }
-
     override fun save(request: ApplicationRequest, user: User, applicationAccessKey: ApplicationAccessKey): Application {
         return applicationRepository.save(Application.of(request, user, applicationAccessKey))
     }

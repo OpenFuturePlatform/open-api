@@ -10,5 +10,6 @@ import org.springframework.validation.annotation.Validated
 class AuthorizationProperties(
         var expireApi: Long? = 10,
         var cidr: String? = null,
+        var openState: String? = null,
         var allowLocalHost: Boolean = false
 )
