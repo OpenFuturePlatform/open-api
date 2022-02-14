@@ -213,6 +213,7 @@ jobs:
                            -e "STATE_API_URL=${{ secrets.STATE_API_URL_PROD }}" \
                            -e "OPEN_KEY_URL=${{ secrets.OPEN_KEY_URL_PROD }}" \
                            -e "PUBLIC_IP_SUBNET=${{ secrets.PUBLIC_IP_SUBNET }}" \
+                           -e "OPEN_STATE_IP_ADDRESS=${{ secrets.OPEN_STATE_IP_ADDRESS_PROD }}" \
                            ${{ env.DEPLOY_IMAGE_NAME }}:${{ env.DEPLOY_IMAGE_TAG }}
               "
 
