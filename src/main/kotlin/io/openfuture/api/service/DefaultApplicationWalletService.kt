@@ -20,11 +20,11 @@ class DefaultApplicationWalletService(
     private val keyApi: KeyApi,
     private val stateApi: StateApi,
     private val applicationService: ApplicationService
-): ApplicationWalletService {
+) : ApplicationWalletService {
 
     override fun generateWallet(request: GenerateWalletRequest, user: User): KeyWalletDto {
         // Generate address on open key
-        val keyWalletDto  = keyApi.generateKey(CreateKeyRequest(request.applicationId, user.id.toString(), request.blockchainType))
+        val keyWalletDto = keyApi.generateKey(CreateKeyRequest(request.applicationId, user.id.toString(), request.blockchainType))
 
         // Save webhook on open state
         request.webHook.let { stateApi.createWallet(keyWalletDto.address, it, Blockchain.Ethereum) }
