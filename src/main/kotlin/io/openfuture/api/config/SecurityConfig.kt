@@ -36,8 +36,8 @@ class SecurityConfig(
                     .antMatchers("/static/**").permitAll()
                     .antMatchers("**.js").permitAll()
                     .antMatchers("/widget/**").permitAll()
-                    .antMatchers("/api/application/wallet/**").access("hasIpAddress('${properties.cidr}') or hasIpAddress('${properties.openState}') or hasIpAddress('127.0.0.1') or hasIpAddress('0:0:0:0:0:0:0:1')")
-                    //.antMatchers("/api/application/wallet/**").access("hasIpAddress('127.0.0.1') or hasIpAddress('0:0:0:0:0:0:0:1')")
+                    .antMatchers("/api/application/**").permitAll()
+                    //.antMatchers("/api/**").access("hasIpAddress('${properties.cidr}') or hasIpAddress('${properties.openState}') or hasIpAddress('127.0.0.1') or hasIpAddress('0:0:0:0:0:0:0:1')")
                     .anyRequest().authenticated()
 
             .and()
