@@ -50,7 +50,7 @@ class ApiAuthorizationFilter(
         if (properties.cidr != null) {
             val matcher = IpAddressMatcher(properties.cidr)
 
-            if (matcher.matches(request.getHeader("X-Forwarded-For"))) {
+            if (matcher.matches(request)) {
                 return true
             }
         }
