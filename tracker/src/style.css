@@ -41,3 +41,12 @@ div, input.card-input, select.card-input {
 .card {
   padding: 10px;
 }
+
+.table td, .table th {
+  max-width:100px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #3498db;
+  background-color: transparent;
+}
