@@ -16,8 +16,8 @@ async function getTransactionData(URI){
 }
 
 async function paymentWidget(){
-  const walletAddress = await document.body.dataset.address;
-  const host = await document.body.dataset.host;
+  const walletAddress = document.body.dataset.address;
+  const host = document.body.dataset.host;
   const OPEN_URL  = `${host}/widget/transactions/${walletAddress}`;
   windgetData = await getTransactionData(OPEN_URL);
 
@@ -51,11 +51,14 @@ async function paymentWidget(){
   let heading_2 = document.createElement('th');
   heading_2.innerHTML = "From";
   let heading_3 = document.createElement('th');
-  heading_3.innerHTML = "Value";
+  heading_3.innerHTML = "To";
+  let heading_4 = document.createElement('th');
+  heading_4.innerHTML = "Value";
 
   row_1.appendChild(heading_1);
   row_1.appendChild(heading_2);
   row_1.appendChild(heading_3);
+  row_1.appendChild(heading_4);
   thead.appendChild(row_1);
 
   // Creating and adding data to second row of the table
@@ -66,11 +69,14 @@ async function paymentWidget(){
     let row_2_data_2 = document.createElement('td');
     row_2_data_2.innerHTML = `<b>${prop.from}</b>`;
     let row_2_data_3 = document.createElement('td');
-    row_2_data_3.innerHTML = `<b>${prop.amount}</b>`;
+    row_2_data_3.innerHTML = `<b>${prop.to}</b>`;
+    let row_2_data_4 = document.createElement('td');
+    row_2_data_4.innerHTML = `<b>${prop.amount}</b>`;
 
     row_2.appendChild(row_2_data_1);
     row_2.appendChild(row_2_data_2);
     row_2.appendChild(row_2_data_3);
+    row_2.appendChild(row_2_data_4);
     tbody.appendChild(row_2);
   }
 
