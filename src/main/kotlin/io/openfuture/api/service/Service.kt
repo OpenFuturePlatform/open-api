@@ -9,6 +9,7 @@ import io.openfuture.api.domain.key.KeyWalletDto
 import io.openfuture.api.domain.key.WalletApiCreateRequest
 import io.openfuture.api.domain.scaffold.*
 import io.openfuture.api.domain.state.StateSignRequest
+import io.openfuture.api.domain.state.StateWalletTransactionDetail
 import io.openfuture.api.domain.transaction.TransactionDto
 import io.openfuture.api.entity.application.Application
 import io.openfuture.api.entity.auth.User
@@ -112,7 +113,9 @@ interface ApplicationWalletService {
 
     fun deleteWallet(applicationId: String, address: String)
 
-    fun getAddressTransactions(address: String) : Array<TransactionDto>
+    fun getAddressTransactionsByAddress(address: String) : StateWalletTransactionDetail
+
+    fun getAddressTransactionsByOrder(orderKey: String) : StateWalletTransactionDetail
 
     fun generateSignature(address: String, request: StateSignRequest): String
 }

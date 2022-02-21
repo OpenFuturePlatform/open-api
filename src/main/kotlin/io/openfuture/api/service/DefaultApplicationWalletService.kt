@@ -7,6 +7,7 @@ import io.openfuture.api.domain.key.CreateKeyRequest
 import io.openfuture.api.domain.key.GenerateWalletRequest
 import io.openfuture.api.domain.key.KeyWalletDto
 import io.openfuture.api.domain.state.StateSignRequest
+import io.openfuture.api.domain.state.StateWalletTransactionDetail
 import io.openfuture.api.domain.transaction.TransactionDto
 import io.openfuture.api.entity.auth.User
 import io.openfuture.api.entity.state.Blockchain
@@ -43,8 +44,12 @@ class DefaultApplicationWalletService(
         stateApi.deleteWallet(address, Blockchain.Ethereum)
     }
 
-    override fun getAddressTransactions(address: String): Array<TransactionDto> {
-        return stateApi.getAddressTransactions(address)
+    override fun getAddressTransactionsByAddress(address: String): StateWalletTransactionDetail {
+        return stateApi.getAddressTransactionsByAddress(address)
+    }
+
+    override fun getAddressTransactionsByOrder(orderKey: String): StateWalletTransactionDetail {
+        return stateApi.getAddressTransactionsByOrder(orderKey)
     }
 
     override fun generateSignature(address: String, request: StateSignRequest): String {

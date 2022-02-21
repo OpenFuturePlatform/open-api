@@ -4,6 +4,7 @@ import io.openfuture.api.domain.key.WalletMetaDto
 import io.openfuture.api.domain.state.CreateStateWalletRequest
 import io.openfuture.api.domain.state.CreateStateWalletRequestMetadata
 import io.openfuture.api.domain.state.StateWalletDto
+import io.openfuture.api.domain.state.StateWalletTransactionDetail
 import io.openfuture.api.domain.transaction.TransactionDto
 import io.openfuture.api.entity.state.Blockchain
 import org.springframework.stereotype.Component
@@ -28,9 +29,14 @@ class DefaultStateApi(private val stateRestTemplate: RestTemplate) : StateApi {
         stateRestTemplate.delete(url)
     }
 
-    override fun getAddressTransactions(address: String): Array<TransactionDto> {
+    override fun getAddressTransactionsByAddress(address: String): StateWalletTransactionDetail {
         val url = "/wallets/transactions/address/${address}"
-        return stateRestTemplate.getForEntity(url, Array<TransactionDto>::class.java).body!!
+        return stateRestTemplate.getForEntity(url, StateWalletTransactionDetail::class.java).body!!
+    }
+
+    override fun getAddressTransactionsByOrder(orderKey: String): StateWalletTransactionDetail {
+        val url = "/wallets/transactions/order/${orderKey}"
+        return stateRestTemplate.getForEntity(url, StateWalletTransactionDetail::class.java).body!!
     }
 
 }

@@ -1,92 +1,64 @@
-
 import * as style from './style.css';
 
-let   windgetData;
+const walletValue = document.body.dataset.value;
+const host = document.body.dataset.host;
+const type = document.body.dataset.type;
+const OPEN_URL = type === "address" ? `${host}/widget/transactions/${walletValue}` : `${host}/widget/transactions/order-key/${walletValue}`;
 
-//get data from server
-async function getTransactionData(URI){
-  let response = await fetch(URI, {
-    method: 'GET',
-    headers: new Headers({
-      'Content-Type': 'application/json;charset=utf-8;'
-    })
-  });
+const spinner = document.getElementById("spinner");
 
-  return await response.json();
+function fetchData() {
+    spinner.setAttribute('hidden', '');
+    $.ajax({
+        url: OPEN_URL,
+        type: 'get',
+        success: function (data) {
+
+            setTimeout(function () {
+                spinner.removeAttribute('hidden');
+
+            }, 3000);
+
+            loadData(data);
+        },
+        complete: function (data) {
+            setTimeout(fetchData, 10000);
+        }
+    });
 }
 
-async function paymentWidget(){
-  const walletAddress = document.body.dataset.address;
-  const host = document.body.dataset.host;
-  const OPEN_URL  = `${host}/widget/transactions/${walletAddress}`;
-  windgetData = await getTransactionData(OPEN_URL);
+function loadData(result) {
+    console.log(result);
+    /// Overview Information
+    const amount = document.querySelector(".amount");
+    const remaining = document.querySelector(".remaining");
+    amount.innerHTML = `${result.amount}`;
+    remaining.innerHTML = `${result.amount - result.totalPaid}`;
 
-  let widgetEl = document.createElement('div');
-      widgetEl.setAttribute('class','card');
+    //// Transactions
+    const tableBody = document.querySelector("tbody");
+    tableBody.innerHTML = "";
+    for (let tx of result.transactions) {
 
-  let cardHeader = document.createElement('div');
-  cardHeader.setAttribute('class','card-header');
-  cardHeader.innerHTML = "Transactions";
-  widgetEl.appendChild(cardHeader);
+        let row = document.createElement('tr');
+        let row_data_1 = document.createElement('td');
+        row_data_1.innerHTML = `<b>${tx.blockHash}</b>`;
+        let row_data_2 = document.createElement('td');
+        row_data_2.innerHTML = `<b>${tx.from}</b>`;
+        let row_data_3 = document.createElement('td');
+        row_data_3.innerHTML = `<b>${tx.to}</b>`;
+        let row_data_4 = document.createElement('td');
+        row_data_4.innerHTML = `<b>${tx.amount}</b>`;
+        let row_data_5 = document.createElement('td');
+        row_data_5.innerHTML = `<b>${tx.walletIdentity.blockchain}</b>`;
 
-  let cardBody = document.createElement('div');
-  cardBody.setAttribute('class','card-body');
-  widgetEl.appendChild(cardBody);
-
-  let container = document.body.appendChild(widgetEl);
-
-  let form = document.createElement('div');
-  form.setAttribute('class','table-responsive mb-2 mb-md-0');
-
-  let table = document.createElement('table');
-  table.setAttribute('class','table table-hover');
-  let thead = document.createElement('thead');
-  thead.setAttribute('class','thead-light');
-  let tbody = document.createElement('tbody');
-
-  // Creating and adding data to first row of the table
-  let row_1 = document.createElement('tr');
-  let heading_1 = document.createElement('th');
-  heading_1.innerHTML = "Txn Hash";
-  let heading_2 = document.createElement('th');
-  heading_2.innerHTML = "From";
-  let heading_3 = document.createElement('th');
-  heading_3.innerHTML = "To";
-  let heading_4 = document.createElement('th');
-  heading_4.innerHTML = "Value";
-
-  row_1.appendChild(heading_1);
-  row_1.appendChild(heading_2);
-  row_1.appendChild(heading_3);
-  row_1.appendChild(heading_4);
-  thead.appendChild(row_1);
-
-  // Creating and adding data to second row of the table
-  for(let prop of windgetData){
-    let row_2 = document.createElement('tr');
-    let row_2_data_1 = document.createElement('td');
-    row_2_data_1.innerHTML = `<b>${prop.blockHash}</b>`;
-    let row_2_data_2 = document.createElement('td');
-    row_2_data_2.innerHTML = `<b>${prop.from}</b>`;
-    let row_2_data_3 = document.createElement('td');
-    row_2_data_3.innerHTML = `<b>${prop.to}</b>`;
-    let row_2_data_4 = document.createElement('td');
-    row_2_data_4.innerHTML = `<b>${prop.amount}</b>`;
-
-    row_2.appendChild(row_2_data_1);
-    row_2.appendChild(row_2_data_2);
-    row_2.appendChild(row_2_data_3);
-    row_2.appendChild(row_2_data_4);
-    tbody.appendChild(row_2);
-  }
-
-  table.appendChild(thead);
-  table.appendChild(tbody);
-
-  form.appendChild(table);
-
-  cardBody.appendChild(form);
-
+        row.appendChild(row_data_1);
+        row.appendChild(row_data_2);
+        row.appendChild(row_data_3);
+        row.appendChild(row_data_4);
+        row.appendChild(row_data_5);
+        tableBody.appendChild(row);
+    }
 }
 
-paymentWidget()
+fetchData();
