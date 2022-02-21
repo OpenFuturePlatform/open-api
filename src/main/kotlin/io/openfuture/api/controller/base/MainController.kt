@@ -24,8 +24,17 @@ class MainController(
     }
 
     @GetMapping("/widget/transactions/address/{address}")
-    fun payment(@PathVariable address: String, model: ModelMap): String {
-        model["address"] = address
+    fun transactionByAddress(@PathVariable address: String, model: ModelMap): String {
+        model["value"] = address
+        model["type"] = "address"
+        model["host"] = widgetProperties.host
+        return "tracker"
+    }
+
+    @GetMapping("/widget/transactions/order/{orderKey}")
+    fun transactionByOrder(@PathVariable orderKey: String, model: ModelMap): String {
+        model["value"] = orderKey
+        model["type"] = "order"
         model["host"] = widgetProperties.host
         return "tracker"
     }
