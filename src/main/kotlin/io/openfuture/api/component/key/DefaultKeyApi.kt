@@ -1,6 +1,7 @@
 package io.openfuture.api.component.key
 
 import io.openfuture.api.domain.key.CreateKeyRequest
+import io.openfuture.api.domain.key.CreateMultipleKeyRequest
 import io.openfuture.api.domain.key.KeyWalletDto
 import io.openfuture.api.domain.key.WalletAddressResponse
 import org.springframework.stereotype.Component
@@ -14,8 +15,19 @@ class DefaultKeyApi(private val keyRestTemplate: RestTemplate): KeyApi {
         return response.body!!
     }
 
+    override fun generateMultipleKey(createMultipleKeyRequest: CreateMultipleKeyRequest): Array<KeyWalletDto> {
+        val response = keyRestTemplate.postForEntity("/key/multiple", createMultipleKeyRequest, Array<KeyWalletDto>::class.java)
+        return response.body!!
+    }
+
     override fun getAllKeysByApplication(applicationId: String): Array<KeyWalletDto> {
         val response = keyRestTemplate.getForEntity("/key?applicationId={applicationId}", Array<KeyWalletDto>::class.java, applicationId)
+        return response.body!!
+    }
+
+    override fun getAllKeysByOrderKey(orderKey: String): Array<KeyWalletDto> {
+        val url = "/key/order/${orderKey}"
+        val response = keyRestTemplate.getForEntity(url, Array<KeyWalletDto>::class.java)
         return response.body!!
     }
 

@@ -1,0 +1,115 @@
+/* latin */
+@font-face {
+  font-family: 'Bitter';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Bitter Regular'), local('Bitter-Regular'), url(./Bitter-Regular.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Montserrat Regular'), local('Montserrat-Regular'), url(./Montserrat-Regular.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+*,
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: transparent;
+  font-family: 'Montserrat', sans-serif;
+  height: 100%;
+  text-align: center;
+  line-height: 1.15;
+}
+
+div, input.card-input, select.card-input {
+  display: block;
+  width: 100%;
+}
+
+.card-header:first-child {
+  border-radius: calc(0.5rem - 1px) calc(0.5rem - 1px) 0 0;
+}
+
+.card {
+  padding: 10px;
+}
+
+.table td, .table th {
+  max-width:100px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #3498db;
+  background-color: transparent;
+}
+
+.amount, .remaining{
+  color: #007bff;
+}
+
+#spinner:not([hidden]) {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+#spinner::after {
+  content: "";
+  width: 80px;
+  height: 80px;
+  border: 2px solid #f3f3f3;
+  border-top: 3px solid #007bff;
+  border-radius: 100%;
+  will-change: transform;
+  animation: spin 1s infinite linear
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.blockchain-icon {
+  max-width: 32px;
+  height: 32px;
+  margin-top: 2px;
+  margin-right: 8px;
+}
+.address {
+  margin-top: 5%;
+  padding: 7px 8px;
+  border: 1px dashed #aaa;
+  border-radius: 2px;
+  background-color: #f8f8f8;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+}
+#countdown{
+  padding: 7px 8px;
+  background-color: #f7f7f7;
+  font-size: 16px;
+  font-weight: 700;
+  text-align: center;
+}
+h5.mb-0{
+  text-align: left;
+}

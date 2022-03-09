@@ -1,6 +1,7 @@
 package io.openfuture.api.config.filter
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.openfuture.api.config.propety.AuthorizationProperties
 import org.springframework.http.HttpStatus.UNAUTHORIZED
 import io.openfuture.api.domain.exception.ExceptionResponse
@@ -43,8 +44,11 @@ class PublicApiAuthorizationFilter(
 
             val application = applicationService.getByAccessKey(accessKey)
 
+            val mapper = jacksonObjectMapper()
+            val str = mapper.writeValueAsString(walletApiCreateRequest)
+
             val hmacSha256 = application.let {
-                KeyGeneratorUtils.calcHmacSha256(it.apiSecretKey, walletApiCreateRequest.toString())
+                KeyGeneratorUtils.calcHmacSha256(it.apiSecretKey, str)
             }
 
             if (hmacSha256 != signature || diffMinutes > expirePeriod) {

@@ -4,7 +4,6 @@ import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 fun Long.toLocalDateTime(): LocalDateTime {
     return LocalDateTime.ofInstant(
@@ -35,3 +34,7 @@ fun differenceEpochs(startTime: Long, endTime: Long): Long{
 }
 
 fun currentEpochs(): Long = System.currentTimeMillis() / 1000L
+
+fun get7hFromCurrent(): LocalDateTime {
+    return LocalDateTime.now().plusHours(7)
+}
