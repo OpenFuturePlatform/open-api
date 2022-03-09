@@ -11,7 +11,7 @@ data class WalletMetaDto(
     @JsonProperty("orderKey")
     var orderKey: String,
     @JsonProperty("paymentCurrency")
-    val paymentCurrency: BlockchainType,
+    val paymentCurrency: List<BlockchainType>,
     @JsonProperty("productCurrency")
     var productCurrency: String,
     @JsonProperty("source")

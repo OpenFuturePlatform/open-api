@@ -11,6 +11,7 @@ import io.openfuture.api.domain.scaffold.*
 import io.openfuture.api.domain.state.StateSignRequest
 import io.openfuture.api.domain.state.StateWalletTransactionDetail
 import io.openfuture.api.domain.transaction.TransactionDto
+import io.openfuture.api.domain.widget.PaymentWidgetResponse
 import io.openfuture.api.entity.application.Application
 import io.openfuture.api.entity.auth.User
 import io.openfuture.api.entity.scaffold.*
@@ -122,6 +123,8 @@ interface ApplicationWalletService {
 
 interface WalletApiService {
 
-    fun generateWallet(walletApiCreateRequest: WalletApiCreateRequest, application: Application, user: User): KeyWalletDto
+    fun generateWallet(walletApiCreateRequest: WalletApiCreateRequest, application: Application, user: User): Array<KeyWalletDto>
+
+    fun getAddressesByOrderKey(orderKey: String): PaymentWidgetResponse
 
 }

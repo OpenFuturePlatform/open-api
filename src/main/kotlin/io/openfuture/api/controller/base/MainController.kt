@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller
 import org.springframework.ui.ModelMap
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestParam
 import javax.servlet.http.Cookie
 import javax.servlet.http.HttpServletResponse
 
@@ -39,4 +40,13 @@ class MainController(
         return "tracker"
     }
 
+    @GetMapping("/widget/payment/order/{orderKey}")
+    fun paymentChoose(@PathVariable orderKey: String, @RequestParam("orderId", required = false) orderId: String,  @RequestParam("amount", required = false) amount: String, @RequestParam("currency", required = false) currency: String, model: ModelMap): String {
+        model["orderKey"] = orderKey
+        model["orderId"] = orderId
+        model["amount"] = amount
+        model["currency"] = currency
+        model["host"] = widgetProperties.host
+        return "payment-chooser"
+    }
 }

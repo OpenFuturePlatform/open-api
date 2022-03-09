@@ -1,11 +1,9 @@
 package io.openfuture.api.component.state
 
-import io.openfuture.api.domain.key.WalletMetaDto
 import io.openfuture.api.domain.state.CreateStateWalletRequest
 import io.openfuture.api.domain.state.CreateStateWalletRequestMetadata
 import io.openfuture.api.domain.state.StateWalletDto
 import io.openfuture.api.domain.state.StateWalletTransactionDetail
-import io.openfuture.api.domain.transaction.TransactionDto
 import io.openfuture.api.entity.state.Blockchain
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestTemplate
@@ -19,9 +17,8 @@ class DefaultStateApi(private val stateRestTemplate: RestTemplate) : StateApi {
         return response.body!!
     }
 
-    override fun createWalletWithMetadata(request: CreateStateWalletRequestMetadata): StateWalletDto {
-        val response = stateRestTemplate.postForEntity("/wallets", request, StateWalletDto::class.java)
-        return response.body!!
+    override fun createWalletWithMetadata(request: CreateStateWalletRequestMetadata) {
+        stateRestTemplate.postForEntity("/wallets", request, Void::class.java)
     }
 
     override fun deleteWallet(address: String, blockchain: Blockchain) {

@@ -3,4 +3,5 @@ rootProject.name = 'open-api'
 include 'frontend'
 include 'widget'
 include 'tracker'
+include 'payment-chooser'
 

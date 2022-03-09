@@ -1,0 +1,38 @@
+plugins {
+    id("com.github.node-gradle.node") version "2.2.0"
+}
+
+apply plugin: 'com.github.node-gradle.node'
+
+node {
+    version = '12.20.1'
+    download = true
+}
+
+task assemble(type: NpmTask) {
+    args = ['run', 'build']
+}
+
+assemble.doLast {
+    println "Merging payment chooser"
+
+    def destinationDir = mkdir "$project.buildDir/resources"
+
+    // copying index.html
+    copy {
+        from project.buildDir
+        include 'index.html'
+        rename 'index.html', "payment-chooser.ftl"
+        into "$destinationDir/templates"
+    }
+    // copying resources
+    copy {
+        from project.buildDir
+        exclude 'index.html', 'resources'
+        into "$destinationDir/static"
+    }
+}
+
+assemble.dependsOn npmInstall
+npmInstall.dependsOn npmSetup
+npmSetup.dependsOn nodeSetup

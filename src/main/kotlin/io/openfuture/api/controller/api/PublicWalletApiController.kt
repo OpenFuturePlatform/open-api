@@ -20,7 +20,7 @@ class PublicWalletApiController(
     fun generateWallet(
         @RequestBody walletApiCreateRequest: WalletApiCreateRequest,
         @RequestHeader("X-API-KEY") accessKey: String
-    ): KeyWalletDto? {
+    ): Array<KeyWalletDto> {
 
         val application = applicationService.getByAccessKey(accessKey)
 
