@@ -10,7 +10,7 @@ interface StateApi {
 
     fun createWallet(address: String, webHook: String, blockchain: Blockchain): StateWalletDto
 
-    fun createWalletWithMetadata(request: CreateStateWalletRequestMetadata): StateWalletDto
+    fun createWalletWithMetadata(request: CreateStateWalletRequestMetadata)
 
     fun deleteWallet(address: String, blockchain: Blockchain)
 

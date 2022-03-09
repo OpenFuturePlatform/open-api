@@ -4,6 +4,7 @@ import io.openfuture.api.component.key.KeyApi
 import io.openfuture.api.component.state.StateApi
 import io.openfuture.api.domain.key.*
 import io.openfuture.api.domain.state.CreateStateWalletRequestMetadata
+import io.openfuture.api.domain.state.WalletMetaData
 import io.openfuture.api.domain.widget.PaymentWidgetResponse
 import io.openfuture.api.entity.application.Application
 import io.openfuture.api.entity.application.BlockchainType
@@ -37,16 +38,39 @@ class DefaultWalletApiService(
             )
         )
 
-        /*for (keyWalletDto in keyWallets) {
-            val request = CreateStateWalletRequestMetadata(
-                keyWalletDto.address,
-                application.webHook.toString(),
-                if (walletApiCreateRequest.metadata?.test == true) Blockchain.Ropsten else Blockchain.Ethereum,
-                walletApiCreateRequest.metadata
+        val blockchains = mutableListOf<KeyWalletDto>()
+
+        for (keyWalletDto in keyWallets) {
+            if (walletApiCreateRequest.metadata?.test == true) {
+                blockchains.add(KeyWalletDto(keyWalletDto.address, Blockchain.Ropsten.getValue()))
+            } else {
+                when (keyWalletDto.blockchain) {
+                    "ETH" -> {
+                        blockchains.add(KeyWalletDto(keyWalletDto.address, Blockchain.Ethereum.getValue()))
+                    }
+                    "BTC" -> {
+                        blockchains.add(KeyWalletDto(keyWalletDto.address, Blockchain.Bitcoin.getValue()))
+                    }
+                    else -> {
+                        blockchains.add(KeyWalletDto(keyWalletDto.address, Blockchain.Binance.getValue()))
+                    }
+                }
+            }
+        }
+        val request = CreateStateWalletRequestMetadata(
+            application.webHook.toString(),
+            blockchains,
+            WalletMetaData(
+                walletApiCreateRequest.metadata!!.amount,
+                walletApiCreateRequest.metadata!!.orderId,
+                walletApiCreateRequest.metadata!!.orderKey,
+                walletApiCreateRequest.metadata!!.productCurrency,
+                walletApiCreateRequest.metadata!!.source,
+                walletApiCreateRequest.metadata!!.test
             )
-            // Save webhook on open state
-            stateApi.createWalletWithMetadata(request)
-        }*/
+        )
+        // Save webhook on open state
+        stateApi.createWalletWithMetadata(request)
 
         return keyWallets
     }
