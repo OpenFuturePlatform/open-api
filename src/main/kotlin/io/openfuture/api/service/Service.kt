@@ -9,6 +9,7 @@ import io.openfuture.api.domain.key.KeyWalletDto
 import io.openfuture.api.domain.key.WalletApiCreateRequest
 import io.openfuture.api.domain.scaffold.*
 import io.openfuture.api.domain.state.StateSignRequest
+import io.openfuture.api.domain.state.StateWalletTransaction
 import io.openfuture.api.domain.state.StateWalletTransactionDetail
 import io.openfuture.api.domain.transaction.TransactionDto
 import io.openfuture.api.domain.widget.PaymentWidgetResponse
@@ -116,7 +117,7 @@ interface ApplicationWalletService {
 
     fun getAddressTransactionsByAddress(address: String) : StateWalletTransactionDetail
 
-    fun getAddressTransactionsByOrder(orderKey: String) : StateWalletTransactionDetail
+    fun getAddressTransactionsByOrder(orderKey: String) : StateWalletTransaction
 
     fun generateSignature(address: String, request: StateSignRequest): String
 }

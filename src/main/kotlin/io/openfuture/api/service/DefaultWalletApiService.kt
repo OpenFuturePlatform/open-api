@@ -12,9 +12,11 @@ import io.openfuture.api.entity.auth.User
 import io.openfuture.api.entity.state.Blockchain
 import io.openfuture.api.exception.NotFoundException
 import io.openfuture.api.util.KeyGeneratorUtils
-import io.openfuture.api.util.get7hFromCurrent
+
+import io.openfuture.api.util.get7hFromDate
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
+import java.time.LocalDateTime
 import javax.servlet.http.HttpServletRequest
 
 @Service
@@ -57,6 +59,7 @@ class DefaultWalletApiService(
                 }
             }
         }
+
         val request = CreateStateWalletRequestMetadata(
             application.webHook.toString(),
             blockchains,
@@ -76,7 +79,6 @@ class DefaultWalletApiService(
     }
 
     override fun getAddressesByOrderKey(orderKey: String): PaymentWidgetResponse {
-        val wallets = keyApi.getAllKeysByOrderKey(orderKey)
-        return PaymentWidgetResponse(get7hFromCurrent().toString(), BigDecimal.ZERO, wallets.toList())
+        return stateApi.getPaymentDetailByOrder(orderKey)
     }
 }
