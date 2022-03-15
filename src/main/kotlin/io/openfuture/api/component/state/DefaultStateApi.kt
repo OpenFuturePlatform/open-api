@@ -19,8 +19,8 @@ class DefaultStateApi(private val stateRestTemplate: RestTemplate) : StateApi {
             listOf(KeyWalletDto(address, blockchain.getValue())),
             WalletMetaData(
                 "0",
-                getRandomNumber(1000, 9999).toString(),
-                getOrderKey("op_"),
+                "1000",
+                "op_UxQr1LLdREboF",
                 "USD",
                 "open",
                 false
