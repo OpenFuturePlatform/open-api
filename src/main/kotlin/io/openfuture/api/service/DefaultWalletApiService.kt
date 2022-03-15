@@ -43,8 +43,10 @@ class DefaultWalletApiService(
         val blockchains = mutableListOf<KeyWalletDto>()
 
         for (keyWalletDto in keyWallets) {
-            if (walletApiCreateRequest.metadata?.test == true) {
+            if (walletApiCreateRequest.metadata?.test == true && keyWalletDto.blockchain == "ETH") {
                 blockchains.add(KeyWalletDto(keyWalletDto.address, Blockchain.Ropsten.getValue()))
+            } else if (walletApiCreateRequest.metadata?.test == true && keyWalletDto.blockchain == "BNB") {
+                blockchains.add(KeyWalletDto(keyWalletDto.address, Blockchain.BinanceTestnetBlockchain.getValue()))
             } else {
                 when (keyWalletDto.blockchain) {
                     "ETH" -> {

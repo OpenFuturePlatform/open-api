@@ -27,7 +27,7 @@ class ApplicationApiController(
     }
 
     @PostMapping
-    fun save(@Valid @RequestBody request: ApplicationRequest, @CurrentUser user: User): Application  =
+    fun save(@Valid @RequestBody request: ApplicationRequest, @CurrentUser user: User): Application =
         service.save(request, user, digitalKeyGenerator.generateApplicationAccessKey())
 
     @DeleteMapping

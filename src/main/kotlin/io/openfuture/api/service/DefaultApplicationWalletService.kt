@@ -29,7 +29,7 @@ class DefaultApplicationWalletService(
         val keyWalletDto = keyApi.generateKey(CreateKeyRequest(request.applicationId, user.id.toString(), request.blockchainType))
 
         // Save webhook on open state
-        request.webHook.let { stateApi.createWallet(keyWalletDto.address, it, Blockchain.Ethereum) }
+        stateApi.createWallet(keyWalletDto.address, request.webHook, Blockchain.Ethereum)
 
         return keyWalletDto
     }

@@ -15,9 +15,14 @@ class CurrentUserArgumentResolver(
 ) : HandlerMethodArgumentResolver {
 
     override fun supportsParameter(parameter: MethodParameter): Boolean =
-            parameter.hasParameterAnnotation(CurrentUser::class.java)
+        parameter.hasParameterAnnotation(CurrentUser::class.java)
 
-    override fun resolveArgument(parameter: MethodParameter, mavContainer: ModelAndViewContainer?, webRequest: NativeWebRequest, binderFactory: WebDataBinderFactory?): Any? {
+    override fun resolveArgument(
+        parameter: MethodParameter,
+        mavContainer: ModelAndViewContainer?,
+        webRequest: NativeWebRequest,
+        binderFactory: WebDataBinderFactory?
+    ): Any? {
         val authentication = SecurityContextHolder.getContext().authentication
         val user = authentication.principal as OidcUser
         return userService.findByGoogleId(user.subject)

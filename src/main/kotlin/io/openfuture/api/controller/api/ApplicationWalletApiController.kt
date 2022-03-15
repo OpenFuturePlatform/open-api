@@ -20,7 +20,10 @@ class ApplicationWalletApiController(
         service.generateWallet(request, user)
 
     @DeleteMapping
-    fun delete(@RequestParam("applicationId") applicationId: String, @RequestParam("address") address: String): Boolean {
+    fun delete(
+        @RequestParam("applicationId") applicationId: String,
+        @RequestParam("address") address: String
+    ): Boolean {
         service.deleteWallet(applicationId, address)
         return true
     }
@@ -31,7 +34,10 @@ class ApplicationWalletApiController(
     }
 
     @PostMapping("/sign/address/{address}")
-    fun generateSignature(@PathVariable("address") address: String, @Valid @RequestBody request: StateSignRequest): String {
+    fun generateSignature(
+        @PathVariable("address") address: String,
+        @Valid @RequestBody request: StateSignRequest
+    ): String {
         return service.generateSignature(address, request)
     }
 

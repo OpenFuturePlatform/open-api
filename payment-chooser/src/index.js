@@ -5,7 +5,9 @@ let   widgetData;
 const spinner = document.getElementById("spinner");
 const orderKey = document.body.dataset.order;
 const host = document.body.dataset.host;
+const currency = document.body.dataset.currency;
 const OPEN_URL = `${host}/widget/payment/addresses/order/${orderKey}`;
+let timerId = 1;
 
 async function getAddressData(URI){
     let response = await fetch(URI, {
@@ -37,11 +39,20 @@ function fetchTransactionData() {
 }
 
 function loadTransactionData(result) {
-    console.log(result);
+
     const amount = document.querySelector(".amount");
     const remaining = document.querySelector(".remaining");
     amount.innerHTML = `${result.orderAmount}`;
-    remaining.innerHTML = `${result.orderAmount - result.paid}`;
+    //let leftAmount = Math.ceil(result.orderAmount - result.paid);
+    let leftAmount = result.orderAmount - result.paid;
+    remaining.innerHTML = `${leftAmount}`;
+
+    if ( result.orderAmount <= result.paid){
+        clearInterval(timerId);
+        const counter = document.getElementById("countdown");
+        counter.setAttribute('class','completed')
+        counter.innerHTML = "Order Completed";
+    }
 
     for (let blockchain of result.wallets) {
         const tbody = document.querySelector("."+`${blockchain.blockchain+blockchain.address}`);
@@ -74,9 +85,11 @@ async function openPaymentWidget(){
     const amount = document.querySelector(".amount");
     const remaining = document.querySelector(".remaining");
     amount.innerHTML = `${widgetData.orderAmount}`;
-    remaining.innerHTML = `${widgetData.orderAmount - widgetData.paid}`;
+    //let leftAmount = Math.ceil(widgetData.orderAmount - widgetData.paid);
+    let leftAmount = widgetData.orderAmount - widgetData.paid;
+    remaining.innerHTML = `${leftAmount}` ;
 
-    countdownTimer(new Date(`${widgetData.orderDate}`).getTime())
+    countdownTimer(new Date(`${widgetData.orderDate}`).getTime(), widgetData.orderAmount, widgetData.paid);
 
     const accordion = document.querySelector(".accordion");
     let i = 1;
@@ -189,6 +202,9 @@ function getBlockchainObject(blockchain){
     } else if (blockchain.blockchain === "RopstenBlockchain"){
         IDs['imgSrc'] = "/static/images/ETH.png";
         IDs['title']  = "Ropsten";
+    } else if(blockchain.blockchain === "BinanceTestnetBlockchain") {
+        IDs['imgSrc'] = "/static/images/BNB.png";
+        IDs['title']  = "Binance Test";
     } else {
         IDs['imgSrc'] = "/static/images/BNB.png";
         IDs['title']  = "Binance";
@@ -197,9 +213,9 @@ function getBlockchainObject(blockchain){
     return IDs;
 }
 
-function countdownTimer(countDownDate){
+function countdownTimer(countDownDate, amount, paid){
 
-        let x = setInterval(function() {
+        timerId = setInterval(function() {
 
             let now = new Date().getTime();
             let distance = countDownDate - now;
@@ -208,11 +224,17 @@ function countdownTimer(countDownDate){
             let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             let seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-            document.getElementById("countdown").innerHTML = hours + "h:" + minutes + "m:" + seconds+"s";
+            const counter = document.getElementById("countdown");
+            counter.innerHTML = hours + "h:" + minutes + "m:" + seconds+"s";
 
             if (distance < 0) {
-                clearInterval(x);
-                document.getElementById("countdown").innerHTML = "EXPIRED";
+                clearInterval(timerId);
+                counter.innerHTML = "EXPIRED";
+            }
+            if (amount <= paid){
+                clearInterval(timerId);
+                counter.setAttribute('class','completed')
+                counter.innerHTML = "Order Completed";
             }
         }, 1000);
 }

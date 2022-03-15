@@ -21,12 +21,13 @@ import java.util.concurrent.CopyOnWriteArrayList
 @RestController
 @RequestMapping("/api/ethereum-scaffolds/{address}/transactions")
 class EthereumTransactionApiController(
-        private val service: EthereumTransactionService,
-        private val ethereumScaffoldService: EthereumScaffoldService,
-        private val eventDecoder: ProcessorEventDecoder
+    private val service: EthereumTransactionService,
+    private val ethereumScaffoldService: EthereumScaffoldService,
+    private val eventDecoder: ProcessorEventDecoder
 ) : ApplicationListener<AddTransactionEvent> {
 
-    private val promises = ConcurrentHashMap<String, CopyOnWriteArrayList<DeferredResult<PageResponse<EthereumTransactionDto>>>>()
+    private val promises =
+        ConcurrentHashMap<String, CopyOnWriteArrayList<DeferredResult<PageResponse<EthereumTransactionDto>>>>()
 
     companion object {
         private const val RESULT_TIMEOUT = 30000L
@@ -34,17 +35,22 @@ class EthereumTransactionApiController(
 
 
     @GetMapping
-    fun getAll(@CurrentUser user: User, @PathVariable address: String,
-               pageRequest: PageRequest): PageResponse<EthereumTransactionDto> {
+    fun getAll(
+        @CurrentUser user: User, @PathVariable address: String,
+        pageRequest: PageRequest
+    ): PageResponse<EthereumTransactionDto> {
         val scaffold = ethereumScaffoldService.get(address, user)
         val transactions = service.getAll(scaffold, pageRequest)
-                .map { EthereumTransactionDto(it, eventDecoder.getEvent(it.ethereumScaffold.address, it.data)) }
+            .map { EthereumTransactionDto(it, eventDecoder.getEvent(it.ethereumScaffold.address, it.data)) }
         return PageResponse(transactions)
     }
 
     @GetMapping("/updates")
     fun getUpdates(@PathVariable address: String): DeferredResult<PageResponse<EthereumTransactionDto>> {
-        val promise = DeferredResult<PageResponse<EthereumTransactionDto>>(RESULT_TIMEOUT, PageResponse<EthereumTransactionDto>(listOf()))
+        val promise = DeferredResult<PageResponse<EthereumTransactionDto>>(
+            RESULT_TIMEOUT,
+            PageResponse<EthereumTransactionDto>(listOf())
+        )
         promise.onCompletion { promises[address]?.remove(promise) }
 
         if (null == promises[address]) {
