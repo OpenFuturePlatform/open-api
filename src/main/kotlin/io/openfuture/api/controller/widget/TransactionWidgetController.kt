@@ -14,9 +14,4 @@ class TransactionWidgetController(
     fun getTransactionsByAddress(@PathVariable address: String): StateWalletTransactionDetail {
         return service.getAddressTransactionsByAddress(address)
     }
-
-    @GetMapping("/order-key/{orderKey}")
-    fun getTransactionsByOrder(@PathVariable orderKey: String): StateWalletTransactionDetail {
-        return service.getAddressTransactionsByOrder(orderKey)
-    }
 }

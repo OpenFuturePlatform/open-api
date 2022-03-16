@@ -7,6 +7,7 @@ import io.openfuture.api.domain.key.CreateKeyRequest
 import io.openfuture.api.domain.key.GenerateWalletRequest
 import io.openfuture.api.domain.key.KeyWalletDto
 import io.openfuture.api.domain.state.StateSignRequest
+import io.openfuture.api.domain.state.StateWalletTransaction
 import io.openfuture.api.domain.state.StateWalletTransactionDetail
 import io.openfuture.api.domain.transaction.TransactionDto
 import io.openfuture.api.entity.auth.User
@@ -28,7 +29,7 @@ class DefaultApplicationWalletService(
         val keyWalletDto = keyApi.generateKey(CreateKeyRequest(request.applicationId, user.id.toString(), request.blockchainType))
 
         // Save webhook on open state
-        request.webHook.let { stateApi.createWallet(keyWalletDto.address, it, Blockchain.Ropsten) }
+        stateApi.createWallet(keyWalletDto.address, request.webHook, Blockchain.Ethereum)
 
         return keyWalletDto
     }
@@ -48,7 +49,7 @@ class DefaultApplicationWalletService(
         return stateApi.getAddressTransactionsByAddress(address)
     }
 
-    override fun getAddressTransactionsByOrder(orderKey: String): StateWalletTransactionDetail {
+    override fun getAddressTransactionsByOrder(orderKey: String): StateWalletTransaction {
         return stateApi.getAddressTransactionsByOrder(orderKey)
     }
 

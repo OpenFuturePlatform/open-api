@@ -35,6 +35,6 @@ fun differenceEpochs(startTime: Long, endTime: Long): Long{
 
 fun currentEpochs(): Long = System.currentTimeMillis() / 1000L
 
-fun get7hFromCurrent(): LocalDateTime {
-    return LocalDateTime.now().plusHours(7)
+fun get7hFromDate(date: LocalDateTime): LocalDateTime {
+    return date.plusHours(7)
 }

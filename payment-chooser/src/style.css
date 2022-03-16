@@ -53,6 +53,11 @@ div, input.card-input, select.card-input {
 
 .amount, .remaining{
   color: #007bff;
+  text-align: left;
+}
+.completed{
+  background: #28a745!important;
+  color: #fff;
 }
 
 #spinner:not([hidden]) {
@@ -111,5 +116,9 @@ div, input.card-input, select.card-input {
   text-align: center;
 }
 h5.mb-0{
+  text-align: left;
+}
+
+.align-items-center{
   text-align: left;
 }
