@@ -9,11 +9,13 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 class AuthenticationSuccessHandler(
-        private val userService: UserService
+    private val userService: UserService
 ) : SavedRequestAwareAuthenticationSuccessHandler() {
 
-    override fun onAuthenticationSuccess(request: HttpServletRequest, response: HttpServletResponse,
-                                         authentication: Authentication) {
+    override fun onAuthenticationSuccess(
+        request: HttpServletRequest, response: HttpServletResponse,
+        authentication: Authentication
+    ) {
         val principal = authentication.principal as OidcUser
         userService.findByGoogleId(principal.subject) ?: userService.save(User(principal.subject))
         response.sendRedirect("/ethereum-scaffolds")

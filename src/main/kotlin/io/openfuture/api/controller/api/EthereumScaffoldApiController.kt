@@ -13,7 +13,7 @@ import javax.validation.Valid
 @RestController
 @RequestMapping("/api/ethereum-scaffolds")
 class EthereumScaffoldApiController(
-        private val service: EthereumScaffoldService
+    private val service: EthereumScaffoldService
 ) {
 
     @GetMapping
@@ -29,12 +29,18 @@ class EthereumScaffoldApiController(
     }
 
     @PostMapping("/doCompile")
-    fun compile(@Valid @RequestBody request: CompileEthereumScaffoldRequest, @CurrentUser user: User): CompiledScaffoldDto =
-            service.compile(request, user)
+    fun compile(
+        @Valid @RequestBody request: CompileEthereumScaffoldRequest,
+        @CurrentUser user: User
+    ): CompiledScaffoldDto =
+        service.compile(request, user)
 
     @PreAuthorize("hasRole('MASTER')")
     @PostMapping("/doDeploy")
-    fun deploy(@Valid @RequestBody request: DeployEthereumScaffoldRequest, @CurrentUser user: User): EthereumScaffoldDto {
+    fun deploy(
+        @Valid @RequestBody request: DeployEthereumScaffoldRequest,
+        @CurrentUser user: User
+    ): EthereumScaffoldDto {
         val scaffold = service.deploy(request, user)
         return EthereumScaffoldDto(scaffold)
     }
@@ -46,15 +52,19 @@ class EthereumScaffoldApiController(
     }
 
     @PutMapping("/{address}")
-    fun update(@Valid @RequestBody request: UpdateEthereumScaffoldRequest, @CurrentUser user: User,
-               @PathVariable address: String): EthereumScaffoldDto {
+    fun update(
+        @Valid @RequestBody request: UpdateEthereumScaffoldRequest, @CurrentUser user: User,
+        @PathVariable address: String
+    ): EthereumScaffoldDto {
         val scaffold = service.update(address, user, request)
         return EthereumScaffoldDto(scaffold)
     }
 
     @PatchMapping("/{address}")
-    fun setWebHook(@Valid @RequestBody request: SetWebHookRequest, @CurrentUser user: User,
-                   @PathVariable address: String): EthereumScaffoldDto {
+    fun setWebHook(
+        @Valid @RequestBody request: SetWebHookRequest, @CurrentUser user: User,
+        @PathVariable address: String
+    ): EthereumScaffoldDto {
         val scaffold = service.setWebHook(address, request, user)
         return EthereumScaffoldDto(scaffold)
     }

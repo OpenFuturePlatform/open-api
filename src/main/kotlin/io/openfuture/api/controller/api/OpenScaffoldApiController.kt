@@ -13,7 +13,7 @@ import javax.validation.Valid
 @RestController
 @RequestMapping("/api/open-scaffolds")
 class OpenScaffoldApiController(
-        private val service: OpenScaffoldService
+    private val service: OpenScaffoldService
 ) {
 
     @GetMapping

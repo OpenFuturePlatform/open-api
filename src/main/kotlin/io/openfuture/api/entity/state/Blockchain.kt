@@ -7,7 +7,8 @@ enum class Blockchain(private val value: String) {
     Ethereum("EthereumBlockchain"),
     Ropsten("RopstenBlockchain"),
     Bitcoin("BitcoinBlockchain"),
-    Binance("BinanceBlockchain");
+    Binance("BinanceBlockchain"),
+    BinanceTestnetBlockchain("BinanceTestnetBlockchain");
 
     @JsonValue
     fun getValue(): String = value

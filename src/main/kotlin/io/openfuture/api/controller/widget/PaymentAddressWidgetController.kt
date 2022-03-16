@@ -1,6 +1,5 @@
 package io.openfuture.api.controller.widget
 
-import io.openfuture.api.domain.key.KeyWalletDto
 import io.openfuture.api.domain.widget.PaymentWidgetResponse
 import io.openfuture.api.service.WalletApiService
 import org.springframework.web.bind.annotation.*

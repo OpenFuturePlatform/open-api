@@ -16,29 +16,35 @@ import javax.validation.Valid
 @RequestMapping("/api/ethereum-scaffolds/{address}/holders")
 @Validated
 class EthereumShareHolderApiController(
-        private val service: EthereumScaffoldService
+    private val service: EthereumScaffoldService
 ) {
 
     @PreAuthorize("hasRole('MASTER')")
     @PostMapping
-    fun addShareHolder(@Valid @RequestBody request: AddEthereumShareHolderRequest, @CurrentUser user: User,
-                       @PathVariable address: String): EthereumScaffoldSummaryDto {
+    fun addShareHolder(
+        @Valid @RequestBody request: AddEthereumShareHolderRequest, @CurrentUser user: User,
+        @PathVariable address: String
+    ): EthereumScaffoldSummaryDto {
         val summary = service.addShareHolder(address, user, request)
         return EthereumScaffoldSummaryDto(summary)
     }
 
     @PreAuthorize("hasRole('MASTER')")
     @PutMapping("/{holderAddress}")
-    fun updateShareHolder(@Valid @RequestBody request: UpdateEthereumShareHolderRequest, @CurrentUser user: User,
-                          @PathVariable address: String, @Address @PathVariable holderAddress: String): EthereumScaffoldSummaryDto {
+    fun updateShareHolder(
+        @Valid @RequestBody request: UpdateEthereumShareHolderRequest, @CurrentUser user: User,
+        @PathVariable address: String, @Address @PathVariable holderAddress: String
+    ): EthereumScaffoldSummaryDto {
         val summary = service.updateShareHolder(address, user, holderAddress, request)
         return EthereumScaffoldSummaryDto(summary)
     }
 
     @PreAuthorize("hasRole('MASTER')")
     @DeleteMapping("/{holderAddress}")
-    fun removeShareHolder(@CurrentUser user: User, @PathVariable address: String,
-                          @PathVariable @Address holderAddress: String): EthereumScaffoldSummaryDto {
+    fun removeShareHolder(
+        @CurrentUser user: User, @PathVariable address: String,
+        @PathVariable @Address holderAddress: String
+    ): EthereumScaffoldSummaryDto {
         val summary = service.removeShareHolder(address, user, holderAddress)
         return EthereumScaffoldSummaryDto(summary)
     }

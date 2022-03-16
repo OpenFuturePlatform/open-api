@@ -11,16 +11,18 @@ import org.web3j.spring.autoconfigure.Web3jProperties
 @RestController
 @RequestMapping("/api/properties")
 class FrontendPropertiesApiController(
-        private val web3: Web3Wrapper,
-        private val properties: EthereumProperties,
-        private val web3Properties: Web3jProperties
+    private val web3: Web3Wrapper,
+    private val properties: EthereumProperties,
+    private val web3Properties: Web3jProperties
 ) {
 
     @GetMapping
     fun get(): FrontendPropertiesDto {
         val version = web3.getNetVersion()
-        return FrontendPropertiesDto(web3Properties.clientAddress, version, properties.openTokenAddress!!,
-                properties.getCredentials().address)
+        return FrontendPropertiesDto(
+            web3Properties.clientAddress, version, properties.openTokenAddress!!,
+            properties.getCredentials().address
+        )
     }
 
 }

@@ -48,7 +48,7 @@ class DefaultApplicationWalletService(
         return stateApi.getAddressTransactionsByAddress(address)
     }
 
-    override fun getAddressTransactionsByOrder(orderKey: String): StateWalletTransactionDetail {
+    override fun getAddressTransactionsByOrder(orderKey: String): StateWalletTransaction {
         return stateApi.getAddressTransactionsByOrder(orderKey)
     }
 

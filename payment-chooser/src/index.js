@@ -2,8 +2,13 @@ import * as style from './style.css';
 
 let   widgetData;
 
+const spinner = document.getElementById("spinner");
+const orderKey = document.body.dataset.order;
+const host = document.body.dataset.host;
+const currency = document.body.dataset.currency;
+const OPEN_URL = `${host}/widget/payment/addresses/order/${orderKey}`;
+let timerId = 1;
 
-//get data from server
 async function getAddressData(URI){
     let response = await fetch(URI, {
         method: 'GET',
@@ -15,14 +20,76 @@ async function getAddressData(URI){
     return await response.json();
 }
 
+function fetchTransactionData() {
+    spinner.setAttribute('hidden', '');
+    $.ajax({
+        url: OPEN_URL,
+        type: 'get',
+        success: function (data) {
+            setTimeout(function () {
+                spinner.removeAttribute('hidden');
+
+            }, 20000);
+            loadTransactionData(data);
+        },
+        complete: function (data) {
+            setTimeout(fetchTransactionData, 10000);
+        }
+    });
+}
+
+function loadTransactionData(result) {
+
+    const amount = document.querySelector(".amount");
+    const remaining = document.querySelector(".remaining");
+    amount.innerHTML = `${result.orderAmount}`;
+    //let leftAmount = Math.ceil(result.orderAmount - result.paid);
+    let leftAmount = result.orderAmount - result.paid;
+    remaining.innerHTML = `${leftAmount}`;
+
+    if ( result.orderAmount <= result.paid){
+        clearInterval(timerId);
+        const counter = document.getElementById("countdown");
+        counter.setAttribute('class','completed')
+        counter.innerHTML = "Order Completed";
+    }
+
+    for (let blockchain of result.wallets) {
+        const tbody = document.querySelector("."+`${blockchain.blockchain+blockchain.address}`);
+        tbody.innerHTML = '';
+        for (let trx of blockchain.transactions){
+            let rowBody = document.createElement('tr');
+            let td_1 = document.createElement('td');
+            td_1.innerHTML = `${trx.hash}`;
+            let td_2 = document.createElement('td');
+            td_2.innerHTML = `${trx.from}`;
+            let td_3 = document.createElement('td');
+            td_3.innerHTML = `${trx.amount}`;
+            let td_4 = document.createElement('td');
+            td_4.innerHTML = `${trx.rate}`;
+
+            rowBody.appendChild(td_1);
+            rowBody.appendChild(td_2);
+            rowBody.appendChild(td_3);
+            rowBody.appendChild(td_4);
+            tbody.appendChild(rowBody);
+        }
+    }
+}
+
 async function openPaymentWidget(){
-    const orderKey = document.body.dataset.order;
-    const host = document.body.dataset.host;
-    const OPEN_URL = `${host}/widget/payment/addresses/order/${orderKey}`;
 
     widgetData = await getAddressData(OPEN_URL);
     console.log(widgetData.orderDate);
-    countdownTimer(new Date(`${widgetData.orderDate}`).getTime())
+
+    const amount = document.querySelector(".amount");
+    const remaining = document.querySelector(".remaining");
+    amount.innerHTML = `${widgetData.orderAmount}`;
+    //let leftAmount = Math.ceil(widgetData.orderAmount - widgetData.paid);
+    let leftAmount = widgetData.orderAmount - widgetData.paid;
+    remaining.innerHTML = `${leftAmount}` ;
+
+    countdownTimer(new Date(`${widgetData.orderDate}`).getTime(), widgetData.orderAmount, widgetData.paid);
 
     const accordion = document.querySelector(".accordion");
     let i = 1;
@@ -61,6 +128,7 @@ async function openPaymentWidget(){
         cardDiv.setAttribute('data-parent','#accordionExample');
         let cardDivBody = document.createElement('div');
         cardDivBody.setAttribute('class','card-body');
+        cardDivBody.setAttribute('id',`${blockchain.address}`);
         let cardDivBodyQrCode = document.createElement('div');
 
         let qrCodeId = 'qrcode'+i+'b';
@@ -76,11 +144,39 @@ async function openPaymentWidget(){
         cardDivBodyAddressHref.innerHTML = blockchain.address;
         cardDivBodyAddress.appendChild(cardDivBodyAddressHref);
         cardDivBody.appendChild(cardDivBodyAddress);
+
+        ////// Transactions /////
+        let cardDivBodyAddressTrx = document.createElement('div');
+        cardDivBodyAddressTrx.setAttribute('class','table-responsive mb-2 mb-md-0');
+        let cardDivBodyAddressTrxTable = document.createElement('table');
+        cardDivBodyAddressTrxTable.setAttribute('class','table table-hover');
+        let cardDivBodyAddressTrxTableHead = document.createElement('thead');
+        cardDivBodyAddressTrxTableHead.setAttribute('class','thead-light');
+        let row = document.createElement('tr');
+        let heading_1 = document.createElement('th');
+        heading_1.innerHTML = "Txn Hash";
+        let heading_2 = document.createElement('th');
+        heading_2.innerHTML = "From";
+        let heading_3 = document.createElement('th');
+        heading_3.innerHTML = "Value";
+        let heading_4 = document.createElement('th');
+        heading_4.innerHTML = "Rate";
+        row.appendChild(heading_1);
+        row.appendChild(heading_2);
+        row.appendChild(heading_3);
+        row.appendChild(heading_4);
+        cardDivBodyAddressTrxTableHead.appendChild(row);
+        let cardDivBodyAddressTrxTableBody = document.createElement('tbody');
+        cardDivBodyAddressTrxTableBody.setAttribute('class',`${blockchain.blockchain+blockchain.address}`);
+        cardDivBodyAddressTrxTable.appendChild(cardDivBodyAddressTrxTableHead);
+        cardDivBodyAddressTrxTable.appendChild(cardDivBodyAddressTrxTableBody);
+        cardDivBodyAddressTrx.appendChild(cardDivBodyAddressTrxTable);
+        cardDivBody.appendChild(cardDivBodyAddressTrx);
+        ////////////////////////////////////////////////////
         cardDiv.appendChild(cardDivBody);
         card.appendChild(cardDiv);
 
         accordion.appendChild(card);
-        console.log(blockchain);
 
         new QRCode(qrCodeId, {
             text: blockchain.address,
@@ -91,16 +187,24 @@ async function openPaymentWidget(){
         i++;
 
     }
+
+    fetchTransactionData();
 }
 
 function getBlockchainObject(blockchain){
     let IDs = {};
-    if (blockchain.blockchain === "BTC"){
+    if (blockchain.blockchain === "BitcoinBlockchain"){
         IDs['imgSrc'] = "/static/images/BTC.png";
         IDs['title']  = "Bitcoin";
-    } else if (blockchain.blockchain === "ETH"){
+    } else if (blockchain.blockchain === "EthereumBlockchain"){
         IDs['imgSrc'] = "/static/images/ETH.png";
         IDs['title']  = "Ethereum";
+    } else if (blockchain.blockchain === "RopstenBlockchain"){
+        IDs['imgSrc'] = "/static/images/ETH.png";
+        IDs['title']  = "Ropsten";
+    } else if(blockchain.blockchain === "BinanceTestnetBlockchain") {
+        IDs['imgSrc'] = "/static/images/BNB.png";
+        IDs['title']  = "Binance Test";
     } else {
         IDs['imgSrc'] = "/static/images/BNB.png";
         IDs['title']  = "Binance";
@@ -109,9 +213,9 @@ function getBlockchainObject(blockchain){
     return IDs;
 }
 
-function countdownTimer(countDownDate){
+function countdownTimer(countDownDate, amount, paid){
 
-        let x = setInterval(function() {
+        timerId = setInterval(function() {
 
             let now = new Date().getTime();
             let distance = countDownDate - now;
@@ -120,11 +224,17 @@ function countdownTimer(countDownDate){
             let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             let seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-            document.getElementById("countdown").innerHTML = hours + ":" + minutes + ":" + seconds;
+            const counter = document.getElementById("countdown");
+            counter.innerHTML = hours + "h:" + minutes + "m:" + seconds+"s";
 
             if (distance < 0) {
-                clearInterval(x);
-                document.getElementById("countdown").innerHTML = "EXPIRED";
+                clearInterval(timerId);
+                counter.innerHTML = "EXPIRED";
+            }
+            if (amount <= paid){
+                clearInterval(timerId);
+                counter.setAttribute('class','completed')
+                counter.innerHTML = "Order Completed";
             }
         }, 1000);
 }

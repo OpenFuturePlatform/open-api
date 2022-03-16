@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/ethereum-scaffolds/templates")
 class EthereumScaffoldTemplateApiController(
-        private val service: EthereumScaffoldTemplateService
+    private val service: EthereumScaffoldTemplateService
 ) {
 
     @GetMapping
