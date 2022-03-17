@@ -25,10 +25,10 @@ class Application(
     var active: Boolean = true,
 
     @Column(name = "api_access_key")
-    val apiAccessKey: String,
+    var apiAccessKey: String,
 
     @Column(name = "api_secret_key")
-    val apiSecretKey: String
+    var apiSecretKey: String
 
 ):BaseModel() {
 

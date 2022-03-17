@@ -34,18 +34,14 @@
                     <h2 class="card-header-title">Your Order</h2>
                 </div>
                 <div class="card-body">
-                    <!--<ul class="list-inline">
-                        <li class="list-inline-item"><h4>Order ${orderId}</h4></li>
-                        <li class="list-inline-item">${amount} ${currency}</li>
-                    </ul>-->
                     <div class="row align-items-left">
                         <div class="col-md-6 mb-1 mb-md-0">Amount:</div>
-                        <div class="col-md-6 amount">`${currency}`</div>
+                        <div class="col-md-6 amount"></div>
                     </div>
                     <hr class="hr-space">
                     <div class="row align-items-left">
                         <div class="col-md-6 mb-1 mb-md-0">Remaining:</div>
-                        <div class="col-md-6 remaining">`${currency}`</div>
+                        <div class="col-md-6 remaining"></div>
                     </div>
                 </div>
                 <div id="countdown"></div>

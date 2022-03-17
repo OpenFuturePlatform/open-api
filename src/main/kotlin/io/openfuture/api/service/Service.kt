@@ -103,6 +103,8 @@ interface ApplicationService {
 
     fun save(request: ApplicationRequest, user: User, applicationAccessKey: ApplicationAccessKey): Application
 
+    fun update(id: Long, applicationAccessKey: ApplicationAccessKey): Application
+
     fun delete(id: Long)
 
 }

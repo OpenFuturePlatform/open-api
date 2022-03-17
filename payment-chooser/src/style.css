@@ -59,6 +59,10 @@ div, input.card-input, select.card-input {
   background: #28a745!important;
   color: #fff;
 }
+.expired{
+  background: #a72841 !important;
+  color: #fff;
+}
 
 #spinner:not([hidden]) {
   position: fixed;

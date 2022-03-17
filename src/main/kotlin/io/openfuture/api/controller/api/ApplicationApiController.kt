@@ -30,6 +30,10 @@ class ApplicationApiController(
     fun save(@Valid @RequestBody request: ApplicationRequest, @CurrentUser user: User): Application =
         service.save(request, user, digitalKeyGenerator.generateApplicationAccessKey())
 
+    @PostMapping("/{id}")
+    fun update(@PathVariable id: Long): Application =
+        service.update(id, digitalKeyGenerator.generateApplicationAccessKey())
+
     @DeleteMapping
     fun delete(@RequestParam id: Long): Boolean {
         service.delete(id)
