@@ -31,6 +31,14 @@ export const saveGatewayApplication = formValues => async (dispatch) => {
     await dispatch(apiPost(getGatewayApplicationsPath(), formValues));
 };
 
+export const updateGatewayApplication = (id) => async (dispatch) => {
+    const gateway = await dispatch(apiPost(getGatewayApplicationsPath(id)));
+    const error = '';
+    const payload = { id, gateway, error, loading: false };
+
+    dispatch({ type: SET_GATEWAY_APPLICATION_SET, payload });
+};
+
 export const fetchGatewayApplicationDetailsFromApi = (id) => async dispatch => {
     dispatch({ type: SET_GATEWAY_APPLICATION_SET, payload: { id, loading: true } });
 

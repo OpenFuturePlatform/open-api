@@ -9,6 +9,7 @@ import io.openfuture.api.repository.ApplicationRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import java.util.*
 import javax.transaction.Transactional
 
 @Service
@@ -30,6 +31,13 @@ class DefaultApplicationService(
 
     override fun save(request: ApplicationRequest, user: User, applicationAccessKey: ApplicationAccessKey): Application {
         return applicationRepository.save(Application.of(request, user, applicationAccessKey))
+    }
+
+    override fun update(id: Long, applicationAccessKey: ApplicationAccessKey): Application {
+        val application = applicationRepository.findById(id).orElseThrow()
+        application.apiAccessKey =  applicationAccessKey.accessKey
+        application.apiSecretKey = applicationAccessKey.secretKey
+        return applicationRepository.save(application)
     }
 
     override fun delete(id: Long) {

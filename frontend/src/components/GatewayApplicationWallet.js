@@ -8,7 +8,6 @@ import {Table} from "../components-ui/Table";
 import {WalletGenerate} from "./GatewayApplicationWalletGenerate";
 import {
   generateGatewayApplicationWallet,
-  getGatewayApplicationWallet,
   removeGatewayApplicationWallet
 } from "../actions/gateway-wallet";
 

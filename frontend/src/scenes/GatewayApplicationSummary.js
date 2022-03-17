@@ -3,7 +3,7 @@ import {Card, Grid} from "semantic-ui-react";
 import {WordWrap} from "../components-ui/WordWrap";
 import {bindActionCreators} from "redux";
 import {connect} from "react-redux";
-import {fetchGatewayApplicationDetails} from "../actions/gateways";
+import {fetchGatewayApplicationDetails, updateGatewayApplication} from "../actions/gateways";
 
 import {GatewayApplicationWallet} from "../components/GatewayApplicationWallet";
 import {getGatewayApplicationWallet} from "../actions/gateway-wallet";
@@ -28,8 +28,10 @@ class GatewayApplicationSummary extends Component {
 
     getGatewayId = () => this.props.match.params.id;
 
-    onKeyGenerate = () => {
+    onKeyGenerate = expiredDate => {
       const { gateway } = this.props;
+      this.props.actions.updateGatewayApplication(gateway.id);
+
     }
 
     render() {
@@ -52,7 +54,7 @@ class GatewayApplicationSummary extends Component {
                                     </div>
                                 </Card.Content>
                                 <Card.Content>
-                                    <GatewayKeyGenerate  gateway={gateway} onSubmit={this.onKeyGenerate()} />
+                                    <GatewayKeyGenerate  gateway={gateway} onSubmit={this.onKeyGenerate} />
                                     <div className="table-key"><strong>Access Key</strong></div>
                                     <div className="table-value table-value-background-color access-key selectable"
                                          id="credentials-sb">{gateway.apiAccessKey}
@@ -95,7 +97,8 @@ const mapDispatchToProps = dispatch => ({
     actions: bindActionCreators(
         {
             fetchGatewayApplicationDetails,
-            getGatewayApplicationWallet
+            getGatewayApplicationWallet,
+            updateGatewayApplication
         },
         dispatch
     )

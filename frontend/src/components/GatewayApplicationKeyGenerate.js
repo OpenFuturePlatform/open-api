@@ -38,10 +38,10 @@ class GatewayApplicationKeyGenerateComponent extends Component {
 
   onSubmit = async () => {
     const { submitWithSaving } = this.props;
-    const { expiredDate, gatewayId } = this.state;
+    const { expiredDate } = this.state;
     this.setState({ isSaving: true });
 
-    submitWithSaving({ expiredDate: expiredDate, gatewayId: gatewayId });
+    submitWithSaving({ expiredDate });
   };
 
   render() {
@@ -50,7 +50,7 @@ class GatewayApplicationKeyGenerateComponent extends Component {
     return (
       <KeyGenerateContainer>
         <Button primary type="button" floated="right" onClick={this.onShow}>
-          Generate New Key
+          Generate New Keys
         </Button>
         <Modal size="tiny" open={isVisible} onClose={this.onBackgroundClick}>
           <Modal.Header>Generate Application Key</Modal.Header>
