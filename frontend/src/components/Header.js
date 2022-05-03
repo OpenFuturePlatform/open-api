@@ -33,6 +33,9 @@ class Header extends Component {
         <Link className="item" to={'/applications'}>
           Applications
         </Link>
+        <Link className="item" to={'/tokens'}>
+          Tokens
+        </Link>
         <a className="item" href="/logout">
           Log Out
         </a>

@@ -3,9 +3,7 @@ package io.openfuture.api.service
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.openfuture.api.component.key.KeyApi
 import io.openfuture.api.component.state.StateApi
-import io.openfuture.api.domain.key.CreateKeyRequest
-import io.openfuture.api.domain.key.GenerateWalletRequest
-import io.openfuture.api.domain.key.KeyWalletDto
+import io.openfuture.api.domain.key.*
 import io.openfuture.api.domain.state.StateSignRequest
 import io.openfuture.api.domain.state.StateWalletTransaction
 import io.openfuture.api.domain.state.StateWalletTransactionDetail
@@ -34,6 +32,11 @@ class DefaultApplicationWalletService(
         return keyWalletDto
     }
 
+    override fun importWallet(request: ImportWalletRequest, user: User) {
+
+        keyApi.importWallet(ImportKeyRequest(request.applicationId, user.id.toString(), request.blockchainType, request.address))
+    }
+
     override fun getAllWallets(id: Long): Array<KeyWalletDto> {
         return keyApi.getAllKeysByApplication(id.toString())
     }
@@ -49,8 +52,8 @@ class DefaultApplicationWalletService(
         return stateApi.getAddressTransactionsByAddress(address)
     }
 
-    override fun getAddressTransactionsByOrder(orderKey: String): StateWalletTransaction {
-        return stateApi.getAddressTransactionsByOrder(orderKey)
+    override fun getTransactionsByAddress(address: String): Array<TransactionDto> {
+       return stateApi.getTransactionsByAddress(address)
     }
 
     override fun generateSignature(address: String, request: StateSignRequest): String {
@@ -62,5 +65,9 @@ class DefaultApplicationWalletService(
             KeyGeneratorUtils.calcHmacSha256(it.apiSecretKey, str)
         }
         return hmacSha256
+    }
+
+    override fun exportPrivateKey(keyWalletDto: KeyWalletDto): String {
+        return keyApi.exportPrivateKey(keyWalletDto)
     }
 }

@@ -4,6 +4,7 @@ import {connect} from 'react-redux';
 import GatewayApplicationForm from './GatewayApplicationForm';
 import GatewayApplicationDashboard from "./GatewayApplicationDashboard";
 import {GatewayApplicationSummaryContainer} from "./GatewayApplicationSummary";
+import {GatewayApplicationAddressTransactionContainer} from "./GatewayApplicationAddressTransaction";
 
 
 class GatewayApplication extends Component {
@@ -21,6 +22,7 @@ class GatewayApplication extends Component {
                     <Route exact path={`${url}`} component={GatewayApplicationDashboard} />
                     <Route path={`${url}/new`} component={GatewayApplicationForm} />
                     <Route path={`${url}/:id`} component={GatewayApplicationSummaryContainer}/>
+                    <Route path={`${url}/address/:address`} component={GatewayApplicationAddressTransactionContainer}/>
                     <Redirect from="*" to={`${url}/application`} />
                 </Switch>
             </div>

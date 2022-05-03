@@ -5,5 +5,6 @@ import io.openfuture.api.domain.transaction.TransactionDto
 data class StateWalletTransaction(
     val address: String,
     val blockchain: String,
+    val rate: String,
     val transactions: List<TransactionDto>
 )

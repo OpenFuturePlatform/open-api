@@ -8,7 +8,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css" />
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -22,8 +23,17 @@
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container-fluid">
                 <a href="https://www.openfuture.io/">
-                    <img src="https://api.openfuture.io/img/landing_new/logo.svg">
+                    <img src="https://api.openfuture.io/img/landing_new/logo.svg" alt="OpenPlatform Logo">
                 </a>
+            </div>
+            <div class="container-fluid">
+                <div class="pull-right" style="text-align: right">
+                    <img src="/static/images/metamask-fox.svg" alt="Metamask Logo" id="metaicon">
+                    <span id="metamask-status"></span>
+                    <button id="enableMetamask" class="btn alert alert-primary">Connect with Metamask</button>
+                    <span id="account-balance"  class="btn alert alert-secondary"></span>
+                    <span id="tether-balance"  class="btn alert alert-success"></span>
+                </div>
             </div>
         </nav>
     </header>
@@ -56,6 +66,93 @@
         </div>
     </div>
 
+</div>
+<div class="modal fade" id="paymentNativeModal" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span><span
+                        class="sr-only">Close</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                    <div class="form-group">
+                        <label for="payment-address">Payment Address </label>
+                        <input type="text" class="form-control" id="payment-address" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="rate">Current Rate</label>
+                        <input type="text" class="form-control" id="rate" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="cryptoAmount">Amount</label>
+                        <input type="text" class="form-control" id="cryptoAmount">
+                    </div>
+                    <div class="form-group">
+                        <label for="cryptoTotal">Total Amount</label>
+                        <input type="text" class="form-control" id="cryptoTotal" readonly>
+                    </div>
+                    <input type="hidden" class="form-control" id="cryptoNetwork">
+                    <button class="btn btn-success btn-block pay-metamask">
+                        Pay
+                    </button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="paymentTypeChooseModal" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Choose payment type</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                    <button class="btn btn-primary btn-block native-option">
+                        Pay
+                    </button>
+                    <button class="btn btn-success btn-block asset-option">
+                        Pay with Tokens
+                    </button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="paymentAssetModal" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span><span
+                        class="sr-only">Close</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="assetAddress">Custom Tokens(ERC20)</label>
+                    <select class="form-control selectpicker" data-live-search="true" id="assetAddress">
+                        <option data-tokens="HSCn" value="0x6Bf8526b51D4A1601Fed1046f13Dbf5aC663028E">House Coin</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="assetAmount">Amount</label>
+                    <input type="text" class="form-control" id="assetAmount">
+                </div>
+                <button class="btn btn-success btn-block pay-token">
+                    Pay with Token
+                </button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script src="${host}/static/js/payment-chooser.js"></script>

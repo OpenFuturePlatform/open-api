@@ -34,6 +34,11 @@ div, input.card-input, select.card-input {
   width: 100%;
 }
 
+.card-body  img{
+  display: inline!important;
+  margin-bottom: 5px;
+}
+
 .card-header:first-child {
   border-radius: calc(0.5rem - 1px) calc(0.5rem - 1px) 0 0;
 }
@@ -49,6 +54,14 @@ div, input.card-input, select.card-input {
   text-overflow: ellipsis;
   color: #3498db;
   background-color: transparent;
+}
+
+.metamask{
+  width: 100%;
+}
+
+.blockchain-icon{
+  width: 50px;
 }
 
 .amount, .remaining{
@@ -125,4 +138,30 @@ h5.mb-0{
 
 .align-items-center{
   text-align: left;
+}
+
+#enableMetamask{
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 117px;
+  /*background-color: #f18220;
+  color: #763e1a;*/
+  font-weight: 700;
+}
+
+.meta-gray {
+  -webkit-filter: grayscale(1);
+}
+.meta-normal {
+  -webkit-filter: grayscale(0);
+}
+.alert {
+  padding: 3px !important;
+  margin-bottom: 0!important;
+}
+
+.pay-now {
+  background-color: #e88436;
+  border-color: #e88436;
 }
