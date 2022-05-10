@@ -17,7 +17,7 @@ const amountSelector = document.querySelector(".amount");
 const remainingSelector = document.querySelector(".remaining");
 let leftAmount;
 
-const ERC20_ABI = require("../src/contract-abi.json") //[{ 'constant': true, 'inputs': [{ 'name': '_owner', 'type': 'address' }], 'name': 'balanceOf', 'outputs': [{ 'name': 'balance', 'type': 'uint256' }], 'payable': false, 'type': 'function' }]
+const ERC20_ABI = require("../src/contract-abi.json") ;
 const {STABLE_COIN_ADDRESS} = require("../src/constants.js");
 
 let paymentAddress;
@@ -81,7 +81,7 @@ function loadTransactionData(result) {
             if (blockchain.native)
                 td_4.innerHTML = `${trx.rate}` + ` ${currency}`;
             else
-                td_4.innerHTML = "Token";
+                td_4.innerHTML =  `${trx.token}`;
             rowBody.appendChild(td_1);
             rowBody.appendChild(td_2);
             rowBody.appendChild(td_3);
@@ -316,12 +316,10 @@ function connectMetamask() {
         $("#paymentTypeChooseModal").modal()
     });
 
-    $('.pay-metamask').click(function (e) {
-
+    $('.pay-native').click(function (e) {
         const address = $("#payment-address").val();
         const amount = $("#cryptoAmount").val();
         const network = $("#cryptoNetwork").val();
-
         console.log(leftAmount);
         let rate = $('#rate').val();
         let finalAmount = parseFloat(rate) * parseFloat(amount);
@@ -344,12 +342,9 @@ function connectMetamask() {
             checkMetamaskNetwork(network);
             makeMetamaskTransaction(address, amount, network);
         }
-
-        sendToken(address, amount);
     });
 
     $('.pay-token').click(function (e) {
-        console.log(paymentAddress);
         const amount = $("#assetAmount").val();
         const tokenAddress = $("#assetAddress").val();
         if (amount === '') {
@@ -357,9 +352,18 @@ function connectMetamask() {
             Swal.fire(
                 'Error',
                 'Amount field required',
-                'error')
+                'error').then(r => console.log(r));
         }
-        sendToken(paymentAddress, amount, tokenAddress);
+        if (amount > leftAmount){
+            e.preventDefault();
+            Swal.fire(
+                'Error',
+                'Over draft',
+                'error').then(r => console.log(r));
+        }
+        if (amount <= leftAmount && amount !== ''){
+            sendToken(paymentAddress, amount, tokenAddress);
+        }
     });
 
     $('#cryptoAmount').on('input', function (e) {
@@ -384,18 +388,18 @@ function connectMetamask() {
         $("#paymentAssetModal").modal();
     });
 
-    const tokensToDetect = []
-    const assetNameSelector = document.querySelector("#assetAddress");
+
+    /*const assetNameSelector = document.querySelector("#assetAddress");
     for (const contractAddress in contracts) {
         let option = document.createElement("option");
         if (contracts[contractAddress].erc20) {
             option.value = contractAddress;
             option.text = contracts[contractAddress].symbol + "-" + contracts[contractAddress].name;
+            //console.log(contractAddress + "-"+contracts[contractAddress].symbol);
             option.setAttribute('data-tokens', contracts[contractAddress].symbol);
             assetNameSelector.appendChild(option);
-            tokensToDetect.push(contractAddress)
         }
-    }
+    }*/
 }
 
 function detectMetaMask() {
@@ -427,7 +431,6 @@ function getBalance(address) {
                     $('#account-balance').html(accountBalance.toFixed(4));
                 }
             }
-            getContractBalance(address);
         }
     }).then(r  => console.log("Result ", r));
 
@@ -439,8 +442,10 @@ async function getContractBalance(address) {
     $('#tether-balance').html("HSCn " + parseFloat(balance) / 100);
 }
 
-function sendToken(address, value, tokenAddress) {
+async function sendToken(address, value, tokenAddress) {
     const contract = new web3.eth.Contract(ERC20_ABI, tokenAddress);
+    const tokenDecimal = await contract.methods.decimals().call();
+    let amount = value * Math.pow(10, tokenDecimal);
 
     ethereum
         .request({
@@ -449,7 +454,7 @@ function sendToken(address, value, tokenAddress) {
                 {
                     from: currentAccount,
                     to: tokenAddress,
-                    data: contract.methods.transfer(address, value).encodeABI()
+                    data: contract.methods.transfer(address, amount).encodeABI()
                 },
             ],
         })

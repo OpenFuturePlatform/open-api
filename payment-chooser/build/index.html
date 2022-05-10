@@ -32,7 +32,9 @@
                     <span id="metamask-status"></span>
                     <button id="enableMetamask" class="btn alert alert-primary">Connect with Metamask</button>
                     <span id="account-balance"  class="btn alert alert-secondary"></span>
-                    <span id="tether-balance"  class="btn alert alert-success"></span>
+                    <!--<span id="tether-balance"  class="btn alert alert-success"></span>
+                    <span id="usdc-balance"  class="btn alert alert-success"></span>
+                    <span id="busd-balance"  class="btn alert alert-success"></span>-->
                 </div>
             </div>
         </nav>
@@ -95,7 +97,7 @@
                         <input type="text" class="form-control" id="cryptoTotal" readonly>
                     </div>
                     <input type="hidden" class="form-control" id="cryptoNetwork">
-                    <button class="btn btn-success btn-block pay-metamask">
+                    <button class="btn btn-success btn-block pay-native">
                         Pay
                     </button>
 
@@ -141,6 +143,9 @@
                     <label for="assetAddress">Custom Tokens(ERC20)</label>
                     <select class="form-control selectpicker" data-live-search="true" id="assetAddress">
                         <option data-tokens="HSCn" value="0x6Bf8526b51D4A1601Fed1046f13Dbf5aC663028E">House Coin</option>
+                        <option data-tokens="USDT" value="0xdAC17F958D2ee523a2206206994597C13D831ec7">Tether USD</option>
+                        <option data-tokens="USDC" value="0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48">USD Coin</option>
+                        <option data-tokens="BUSD" value="0x4Fabb145d64652a948d72533023f6E7A623C7C53">Binance USD</option>
                     </select>
                 </div>
                 <div class="form-group">
