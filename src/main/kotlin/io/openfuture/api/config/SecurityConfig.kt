@@ -37,6 +37,7 @@ class SecurityConfig(
                     .antMatchers("**.js").permitAll()
                     .antMatchers("/widget/**").permitAll()
                     .antMatchers("/api/application/**").permitAll()
+                    .antMatchers("/api/token/**").permitAll()
                     //.antMatchers("/api/**").access("hasIpAddress('${properties.cidr}') or hasIpAddress('${properties.openState}') or hasIpAddress('127.0.0.1') or hasIpAddress('0:0:0:0:0:0:0:1')")
                     .anyRequest().authenticated()
 

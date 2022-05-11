@@ -5,17 +5,20 @@ import io.openfuture.api.domain.application.ApplicationRequest
 import io.openfuture.api.domain.holder.AddEthereumShareHolderRequest
 import io.openfuture.api.domain.holder.UpdateEthereumShareHolderRequest
 import io.openfuture.api.domain.key.GenerateWalletRequest
+import io.openfuture.api.domain.key.ImportWalletRequest
 import io.openfuture.api.domain.key.KeyWalletDto
 import io.openfuture.api.domain.key.WalletApiCreateRequest
 import io.openfuture.api.domain.scaffold.*
 import io.openfuture.api.domain.state.StateSignRequest
 import io.openfuture.api.domain.state.StateWalletTransaction
 import io.openfuture.api.domain.state.StateWalletTransactionDetail
+import io.openfuture.api.domain.token.UserTokenRequest
 import io.openfuture.api.domain.transaction.TransactionDto
 import io.openfuture.api.domain.widget.PaymentWidgetResponse
 import io.openfuture.api.entity.application.Application
 import io.openfuture.api.entity.auth.User
 import io.openfuture.api.entity.scaffold.*
+import io.openfuture.api.entity.token.UserCustomToken
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
@@ -113,15 +116,19 @@ interface ApplicationWalletService {
 
     fun generateWallet(request: GenerateWalletRequest, user: User): KeyWalletDto
 
+    fun importWallet(request: ImportWalletRequest, user: User)
+
     fun getAllWallets(id: Long): Array<KeyWalletDto>
 
     fun deleteWallet(applicationId: String, address: String)
 
     fun getAddressTransactionsByAddress(address: String) : StateWalletTransactionDetail
 
-    fun getAddressTransactionsByOrder(orderKey: String) : StateWalletTransaction
+    fun getTransactionsByAddress(address: String): Array<TransactionDto>
 
     fun generateSignature(address: String, request: StateSignRequest): String
+
+    fun exportPrivateKey(keyWalletDto: KeyWalletDto): String
 }
 
 interface WalletApiService {
@@ -130,4 +137,10 @@ interface WalletApiService {
 
     fun getAddressesByOrderKey(orderKey: String): PaymentWidgetResponse
 
+}
+
+interface TokenService {
+    fun getAll(pageRequest: Pageable): Page<UserCustomToken>
+    fun save(request: UserTokenRequest, user: User): UserCustomToken
+    fun getAll(): List<UserCustomToken>
 }

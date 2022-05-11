@@ -1,8 +1,9 @@
-import { SET_CURRENT_ETH_ACCOUNT } from './types';
+import {SET_CURRENT_ETH_ACCOUNT} from './types';
 import web3 from '../utils/web3';
 import eth from '../utils/eth';
 import ethUnit from 'ethjs-unit';
-import { openTokenSelectorEth } from '../selectors/open-token';
+import {openTokenSelectorEth} from '../selectors/open-token';
+import {ERC20_ABI} from "../const";
 
 const setNetworkId = () => async dispatch => {
   const activeNetworkId = await web3.eth.net.getId();
@@ -50,6 +51,19 @@ export const subscribeEthAccount = () => async dispatch => {
     });
   }, 1000);
   return dispatch(setNetworkId());
+};
+
+export const getErc20Token = address => async dispatch => {
+  if (!web3 || address === undefined) {
+    return;
+  }
+
+  const tokenContract = new web3.eth.Contract(ERC20_ABI, address);
+  const symbol = await tokenContract.methods.symbol().call();
+  const decimals = await tokenContract.methods.decimals().call();
+  const name = await tokenContract.methods.name().call();
+
+  return {address: address, name: name, symbol: symbol, decimal: decimals};
 };
 
 export const unsubscribeEthAccount = () => () => {

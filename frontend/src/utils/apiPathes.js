@@ -14,3 +14,5 @@ export const getEthereumShareHoldersPath = (scaffoldAddress = '', holderAddress 
 export const getOpenScaffoldsPath = () => '/api/open-scaffolds';
 export const getGatewayApplicationsPath = (id='') => `/api/application/${id}`;
 export const getGatewayApplicationWalletsPath = (gatewayId='') => `/api/application/wallet/${gatewayId}`;
+export const getGatewayApplicationWalletExport = () => '/api/application/wallet/export/private';
+export const getUserTokenPath = (id='') => `/api/token/${id}`;

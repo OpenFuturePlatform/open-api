@@ -3,6 +3,7 @@ package io.openfuture.api.repository
 import io.openfuture.api.entity.application.Application
 import io.openfuture.api.entity.auth.User
 import io.openfuture.api.entity.scaffold.*
+import io.openfuture.api.entity.token.UserCustomToken
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
@@ -68,6 +69,13 @@ interface ApplicationRepository : BaseRepository<Application> {
     fun findFirstByApiAccessKey(apiAccessKey : String): Optional<Application>
 
     fun findFirstByApiAccessKeyAndApiSecretKey(apiAccessKey : String, apiSecretKey : String): Optional<Application>
+
+}
+
+@Repository
+interface UserTokenRepository : BaseRepository<UserCustomToken> {
+
+    fun findAllByUser(user: User, pageable: Pageable): Page<UserCustomToken>
 
 }
 

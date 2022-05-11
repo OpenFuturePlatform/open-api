@@ -2,6 +2,7 @@ package io.openfuture.api.component.state
 
 import io.openfuture.api.domain.key.KeyWalletDto
 import io.openfuture.api.domain.state.*
+import io.openfuture.api.domain.transaction.TransactionDto
 import io.openfuture.api.domain.widget.PaymentWidgetResponse
 import io.openfuture.api.entity.state.Blockchain
 import io.openfuture.api.util.getOrderKey
@@ -43,9 +44,9 @@ class DefaultStateApi(private val stateRestTemplate: RestTemplate) : StateApi {
         return stateRestTemplate.getForEntity(url, StateWalletTransactionDetail::class.java).body!!
     }
 
-    override fun getAddressTransactionsByOrder(orderKey: String): StateWalletTransaction {
-        val url = "/wallets/transactions/order/${orderKey}"
-        return stateRestTemplate.getForEntity(url, StateWalletTransaction::class.java).body!!
+    override fun getTransactionsByAddress(address: String): Array<TransactionDto> {
+        val url = "/wallets/transactions/${address}"
+        return stateRestTemplate.getForEntity(url, Array<TransactionDto>::class.java).body!!
     }
 
     override fun getPaymentDetailByOrder(orderKey: String): PaymentWidgetResponse {

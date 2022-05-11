@@ -117,3 +117,22 @@ export const validate = values => {
 
   return errors;
 };
+
+export const validateToken = values => {
+  const errors = {};
+
+  if (!values.address) {
+    errors.address = t('address is required');
+  }
+  if (!values.name) {
+    errors.name = t('name is required');
+  }
+  if (!values.symbol) {
+    errors.symbol = t('symbol is required');
+  }
+  if (!values.decimal) {
+    errors.decimal = t('decimal is required');
+  }
+
+  return errors;
+};

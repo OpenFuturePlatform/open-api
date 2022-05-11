@@ -1,9 +1,6 @@
 package io.openfuture.api.component.key
 
-import io.openfuture.api.domain.key.CreateKeyRequest
-import io.openfuture.api.domain.key.CreateMultipleKeyRequest
-import io.openfuture.api.domain.key.KeyWalletDto
-import io.openfuture.api.domain.key.WalletAddressResponse
+import io.openfuture.api.domain.key.*
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestTemplate
 
@@ -12,6 +9,11 @@ import org.springframework.web.client.RestTemplate
 class DefaultKeyApi(private val keyRestTemplate: RestTemplate): KeyApi {
     override fun generateKey(createKeyRequest: CreateKeyRequest): KeyWalletDto {
         val response = keyRestTemplate.postForEntity("/key", createKeyRequest, KeyWalletDto::class.java)
+        return response.body!!
+    }
+
+    override fun importWallet(request: ImportKeyRequest): KeyWalletDto {
+        val response = keyRestTemplate.postForEntity("/key/import", request, KeyWalletDto::class.java)
         return response.body!!
     }
 
@@ -39,5 +41,10 @@ class DefaultKeyApi(private val keyRestTemplate: RestTemplate): KeyApi {
     override fun deleteAllKeysByApplicationAddress(applicationId: String, address: String) {
         val url = "/key?applicationId=${applicationId}&address=${address}"
         keyRestTemplate.delete(url)
+    }
+
+    override fun exportPrivateKey(keyWalletDto: KeyWalletDto): String {
+        val response = keyRestTemplate.postForEntity("/key/export/private", keyWalletDto, String::class.java)
+        return response.body!!
     }
 }

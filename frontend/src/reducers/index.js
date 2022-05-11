@@ -16,6 +16,7 @@ import scaffoldTemplates from './scaffoldTemplates';
 import keys from './keys';
 import gatewayReducer from "./gatewayReducer";
 import gatewayById from "./gatewayById";
+import token from "./tokens";
 
 export default combineReducers({
   form: reduxForm,
@@ -34,5 +35,6 @@ export default combineReducers({
   shareHolders,
   keys,
   gatewayById,
-  gateways: gatewayReducer
+  gateways: gatewayReducer,
+  ercTokens: token
 });

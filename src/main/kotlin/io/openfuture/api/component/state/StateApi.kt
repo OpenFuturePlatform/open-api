@@ -13,9 +13,9 @@ interface StateApi {
 
     fun deleteWallet(address: String, blockchain: Blockchain)
 
-    fun getAddressTransactionsByAddress(address: String) : StateWalletTransactionDetail
+    fun getAddressTransactionsByAddress(address: String): StateWalletTransactionDetail
 
-    fun getAddressTransactionsByOrder(orderKey: String) : StateWalletTransaction
+    fun getTransactionsByAddress(address: String): Array<TransactionDto>
 
     fun getPaymentDetailByOrder(orderKey: String): PaymentWidgetResponse
 }

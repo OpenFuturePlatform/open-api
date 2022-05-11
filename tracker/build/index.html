@@ -11,7 +11,7 @@
 
     <title></title>
 </head>
-<body data-value="${address}" data-host="${host}" data-type="${type}">
+<body data-value="${address}" data-host="${host}">
 
 <div class="container">
     <header class="mb-4">
@@ -21,26 +21,6 @@
             </div>
         </nav>
     </header>
-    <div class="row mb-4">
-        <div class="col-md-6 mb-3 mb-md-0">
-            <div class="card h-100">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h2 class="card-header-title">Overview</h2>
-                </div>
-                <div class="card-body">
-                    <div class="row align-items-center">
-                        <div class="col-md-4 mb-1 mb-md-0">Amount:</div>
-                        <div class="col-md-8 amount">0.677271</div>
-                    </div>
-                    <hr class="hr-space">
-                    <div class="row">
-                        <div class="col-md-4 mb-1 mb-md-0">Remaining:</div>
-                        <div class="col-md-8 remaining">0.677171</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
     <div hidden id="spinner"></div>
     <div class="card">
         <div class="card-header">Transactions</div>
@@ -53,7 +33,8 @@
                             <th>From</th>
                             <th>To</th>
                             <th>Value</th>
-                            <th>Blockchain</th>
+                            <th>Native</th>
+                            <th>Token Name</th>
                         </tr>
                     </thead>
                     <tbody class="transactions">

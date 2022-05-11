@@ -14,7 +14,7 @@ class MainController(
     private val widgetProperties: WidgetProperties
 ) {
 
-    @GetMapping("/", "/ethereum-scaffold", "/ethereum-scaffolds", "/ethereum-scaffolds/**", "/applications", "/applications/**", "/keys", "/keys/**", "/scaffolds/**")
+    @GetMapping("/", "/ethereum-scaffold", "/ethereum-scaffolds", "/ethereum-scaffolds/**", "/applications", "/applications/**", "/tokens", "/tokens/**","/keys", "/keys/**", "/scaffolds/**")
     fun frontend() = "frontend"
 
     @GetMapping("/widget/{address}")
@@ -22,22 +22,6 @@ class MainController(
         model["address"] = address
         model["host"] = widgetProperties.host
         return "widget"
-    }
-
-    @GetMapping("/widget/transactions/address/{address}")
-    fun transactionByAddress(@PathVariable address: String, model: ModelMap): String {
-        model["value"] = address
-        model["type"] = "address"
-        model["host"] = widgetProperties.host
-        return "tracker"
-    }
-
-    @GetMapping("/widget/transactions/order/{orderKey}")
-    fun transactionByOrder(@PathVariable orderKey: String, model: ModelMap): String {
-        model["value"] = orderKey
-        model["type"] = "order"
-        model["host"] = widgetProperties.host
-        return "tracker"
     }
 
     @GetMapping("/widget/payment/order/{orderKey}")
@@ -48,5 +32,12 @@ class MainController(
         model["currency"] = currency
         model["host"] = widgetProperties.host
         return "payment-chooser"
+    }
+
+    @GetMapping("/widget/trx/address/{address}")
+    fun paymentChoose(@PathVariable address: String, model: ModelMap): String {
+        model["address"] = address
+        model["host"] = widgetProperties.host
+        return "tracker"
     }
 }

@@ -10,6 +10,7 @@ import { Container } from 'semantic-ui-react';
 import './css/main.css';
 import { t } from './utils/messageTexts';
 import styled from 'styled-components';
+import UserToken from "./scenes/UserToken";
 
 const UnAuthorizeMessage = styled.div`
   font-size: 18px;
@@ -39,6 +40,7 @@ class App extends Component {
       <Switch>
         <Route path="/scaffolds" component={Scaffolds} />
         <Route path="/applications" component={GatewayApplication} />
+        <Route path="/tokens" component={UserToken} />
         <Redirect from="*" to="/scaffolds" />
       </Switch>
     );
