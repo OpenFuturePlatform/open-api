@@ -111,7 +111,7 @@ jacocoTestReport {
 check.dependsOn jacocoTestReport
 
 // Front
-//processResources.dependsOn(':frontend:assemble')
-//processResources.dependsOn(':widget:assemble')
-//processResources.dependsOn(':tracker:assemble')
-//processResources.dependsOn(':payment-chooser:assemble')
+processResources.dependsOn(':frontend:assemble')
+processResources.dependsOn(':widget:assemble')
+processResources.dependsOn(':tracker:assemble')
+processResources.dependsOn(':payment-chooser:assemble')
