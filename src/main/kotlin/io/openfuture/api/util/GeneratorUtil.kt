@@ -8,7 +8,7 @@ fun getRandomNumber(from: Int, to: Int): Int {
     return (if (a - b > 0.5) 1 else 0) + b
 }
 
-fun getOrderKey(prefix:String):String{
+fun getRandomKey(prefix:String):String{
     val body = System.currentTimeMillis().toString()
     return prefix + body + getRandomNumber(10, 99)
 }

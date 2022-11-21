@@ -6,8 +6,11 @@ import org.springframework.web.client.RestTemplate
 
 
 @Component
-class DefaultKeyApi(private val keyRestTemplate: RestTemplate): KeyApi {
-    override fun generateKey(createKeyRequest: CreateKeyRequest): KeyWalletDto {
+class DefaultKeyApi(
+    private val keyRestTemplate: RestTemplate
+    ): KeyApi {
+
+    override fun generateWallet(createKeyRequest: CreateKeyRequest): KeyWalletDto {
         val response = keyRestTemplate.postForEntity("/key", createKeyRequest, KeyWalletDto::class.java)
         return response.body!!
     }
@@ -17,17 +20,22 @@ class DefaultKeyApi(private val keyRestTemplate: RestTemplate): KeyApi {
         return response.body!!
     }
 
-    override fun generateMultipleKey(createMultipleKeyRequest: CreateMultipleKeyRequest): Array<KeyWalletDto> {
+    override fun generateMultipleWallets(createMultipleKeyRequest: CreateMultipleKeyRequest): Array<KeyWalletDto> {
         val response = keyRestTemplate.postForEntity("/key/multiple", createMultipleKeyRequest, Array<KeyWalletDto>::class.java)
         return response.body!!
     }
 
-    override fun getAllKeysByApplication(applicationId: String): Array<KeyWalletDto> {
+    override fun updateWallets(createMultipleKeyRequest: CreateMultipleKeyRequest): Array<KeyWalletDto> {
+        val response = keyRestTemplate.postForEntity("/key/update", createMultipleKeyRequest, Array<KeyWalletDto>::class.java)
+        return response.body!!
+    }
+
+    override fun getAllWalletsByApplication(applicationId: String): Array<KeyWalletDto> {
         val response = keyRestTemplate.getForEntity("/key?applicationId={applicationId}", Array<KeyWalletDto>::class.java, applicationId)
         return response.body!!
     }
 
-    override fun getAllKeysByOrderKey(orderKey: String): Array<KeyWalletDto> {
+    override fun getAllWalletsByOrderKey(orderKey: String): Array<KeyWalletDto> {
         val url = "/key/order/${orderKey}"
         val response = keyRestTemplate.getForEntity(url, Array<KeyWalletDto>::class.java)
         return response.body!!
@@ -38,7 +46,7 @@ class DefaultKeyApi(private val keyRestTemplate: RestTemplate): KeyApi {
         return response.body!!
     }
 
-    override fun deleteAllKeysByApplicationAddress(applicationId: String, address: String) {
+    override fun deleteAllWalletsByApplicationAddress(applicationId: String, address: String) {
         val url = "/key?applicationId=${applicationId}&address=${address}"
         keyRestTemplate.delete(url)
     }

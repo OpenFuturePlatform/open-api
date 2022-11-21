@@ -1,6 +1,5 @@
 import React from "react";
-import {Button, Divider, Grid, Icon, Input, Modal, Segment} from "semantic-ui-react";
-import {EtherscanLink} from "../components-ui/EtherscanLink";
+import {Segment} from "semantic-ui-react";
 import {connect} from "react-redux";
 
 
@@ -15,11 +14,17 @@ import {
 import {getGatewayWalletSelector} from "../selectors/getGatewayWalletsSelector";
 
 import {GatewayApplicationWalletRemove} from "./GatewayApplicationWalletRemove";
-import {GatewayApplicationWalletPrivateKey} from "./GatewayApplicationWalletPrivateKey";
 import {WalletImport} from "./GatewayApplicationWalletImport";
 import {OpenScanLink} from "../components-ui/OpenScanLink";
 
 const getColumns = (wallets, onRemove, onExport) => [
+    {
+      Header: 'Wallet Type',
+      accessor: 'walletType',
+      width: 200,
+      Cell: ({ value }) => <span>{value}</span>,
+      sortable: false
+    },
     {
         Header: 'Wallet Address',
         accessor: 'address',
@@ -44,7 +49,7 @@ const getColumns = (wallets, onRemove, onExport) => [
         ),
         sortable: false
     },
-    {
+    /*{
       Header: '',
       accessor: 'address',
       width: 150,
@@ -54,7 +59,7 @@ const getColumns = (wallets, onRemove, onExport) => [
         </span>
       ),
       sortable: false
-    }
+    }*/
 ];
 
 class GatewayApplicationWalletComponent extends React.Component {
@@ -85,7 +90,7 @@ class GatewayApplicationWalletComponent extends React.Component {
         return (
             <div className="table-with-add">
                 <WalletGenerate  gateway={gateway} onSubmit={this.onGenerateWallet} />
-                <WalletImport  gateway={gateway} onSubmit={this.onImportWallet} />
+
                 <Segment attached styles={{ padding: 0 }}>
                     <Table data={wallets.list} columns={columns} noDataText={noDataText} />
                 </Segment>

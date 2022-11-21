@@ -6,7 +6,6 @@ data class ImportKeyRequest(
     val applicationId: String,
     val userId: String,
     val blockchainType: BlockchainType,
-    val address: String
-){
-
-}
+    val address: String,
+    val hex: String
+)

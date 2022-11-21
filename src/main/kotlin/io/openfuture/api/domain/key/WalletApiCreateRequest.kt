@@ -7,7 +7,5 @@ data class WalletApiCreateRequest(
     @JsonProperty("timestamp")
     var timestamp: String,
     @JsonProperty("metadata")
-    var metadata: WalletMetaDto?
-){
-
-}
+    var metadata: WalletMetaDto
+)

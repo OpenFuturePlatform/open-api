@@ -5,7 +5,6 @@ import io.openfuture.api.component.key.KeyApi
 import io.openfuture.api.component.state.StateApi
 import io.openfuture.api.domain.key.*
 import io.openfuture.api.domain.state.StateSignRequest
-import io.openfuture.api.domain.state.StateWalletTransaction
 import io.openfuture.api.domain.state.StateWalletTransactionDetail
 import io.openfuture.api.domain.transaction.TransactionDto
 import io.openfuture.api.entity.auth.User
@@ -24,28 +23,27 @@ class DefaultApplicationWalletService(
 
     override fun generateWallet(request: GenerateWalletRequest, user: User): KeyWalletDto {
         // Generate address on open key
-        val keyWalletDto = keyApi.generateKey(CreateKeyRequest(request.applicationId, user.id.toString(), request.blockchainType))
+        val keyWalletDto = keyApi.generateWallet(CreateKeyRequest(request.applicationId, user.id.toString(), request.blockchainType))
 
         // Save webhook on open state
-        stateApi.createWallet(keyWalletDto.address, request.webHook, Blockchain.Ethereum)
+        //stateApi.createWallet(keyWalletDto.address, request.webHook, Blockchain.getBlockchainBySymbol(request.blockchainType.getValue()))
 
         return keyWalletDto
     }
 
     override fun importWallet(request: ImportWalletRequest, user: User) {
-
-        keyApi.importWallet(ImportKeyRequest(request.applicationId, user.id.toString(), request.blockchainType, request.address))
+        keyApi.importWallet(ImportKeyRequest(request.applicationId, user.id.toString(), request.blockchainType, request.address, ""))
     }
 
     override fun getAllWallets(id: Long): Array<KeyWalletDto> {
-        return keyApi.getAllKeysByApplication(id.toString())
+        return keyApi.getAllWalletsByApplication(id.toString())
     }
 
     override fun deleteWallet(applicationId: String, address: String) {
         // Delete from Open Key
-        keyApi.deleteAllKeysByApplicationAddress(applicationId, address)
+        keyApi.deleteAllWalletsByApplicationAddress(applicationId, address)
         // Delete from Open State
-        stateApi.deleteWallet(address, Blockchain.Ethereum)
+        //stateApi.deleteWallet(address, Blockchain.Ethereum)
     }
 
     override fun getAddressTransactionsByAddress(address: String): StateWalletTransactionDetail {
