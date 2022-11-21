@@ -26,7 +26,7 @@ class DefaultApplicationWalletService(
         val keyWalletDto = keyApi.generateWallet(CreateKeyRequest(request.applicationId, user.id.toString(), request.blockchainType))
 
         // Save webhook on open state
-        //stateApi.createWallet(keyWalletDto.address, request.webHook, Blockchain.getBlockchainBySymbol(request.blockchainType.getValue()))
+        stateApi.createWallet(keyWalletDto.address, request.webHook, Blockchain.getBlockchainBySymbol(request.blockchainType.getValue()), request.applicationId)
 
         return keyWalletDto
     }
@@ -43,7 +43,7 @@ class DefaultApplicationWalletService(
         // Delete from Open Key
         keyApi.deleteAllWalletsByApplicationAddress(applicationId, address)
         // Delete from Open State
-        //stateApi.deleteWallet(address, Blockchain.Ethereum)
+        stateApi.deleteWallet(address, Blockchain.Ethereum)
     }
 
     override fun getAddressTransactionsByAddress(address: String): StateWalletTransactionDetail {
