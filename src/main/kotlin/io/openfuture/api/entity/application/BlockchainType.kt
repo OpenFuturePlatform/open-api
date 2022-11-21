@@ -8,8 +8,7 @@ enum class BlockchainType(
 ): Dictionary {
     ETH(1, "ETH"),
     BTC(2, "BTC"),
-    BNB(3, "BNB")
-    ;
+    BNB(3, "BNB");
 
     override fun getId(): Int = id
 

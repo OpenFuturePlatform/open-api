@@ -1,42 +1,39 @@
 package io.openfuture.api.component.state
 
-import io.openfuture.api.domain.key.KeyWalletDto
+import io.openfuture.api.domain.state.WalletApiStateResponse
 import io.openfuture.api.domain.state.*
 import io.openfuture.api.domain.transaction.TransactionDto
 import io.openfuture.api.domain.widget.PaymentWidgetResponse
 import io.openfuture.api.entity.state.Blockchain
-import io.openfuture.api.util.getOrderKey
-import io.openfuture.api.util.getRandomNumber
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestTemplate
-import java.math.BigDecimal
 
 @Component
 class DefaultStateApi(private val stateRestTemplate: RestTemplate) : StateApi {
 
-    override fun createWallet(address: String, webHook: String, blockchain: Blockchain): CreateStateWalletResponse {
-        val request = CreateStateWalletRequestMetadata(
-            webHook,
-            listOf(KeyWalletDto(address, blockchain.getValue())),
-            WalletMetaData(
-                "0",
-                "1000",
-                "op_UxQr1LLdREboF",
-                "USD",
-                "open",
-                false
-            )
-        )
-        return stateRestTemplate.postForEntity("/wallets", request, CreateStateWalletResponse::class.java).body!!
+    override fun createWallet(address: String, webHook: String, blockchain: Blockchain, applicationId: String): StateWalletDto {
+        val request = CreateStateWalletRequest(address, webHook, blockchain.getValue(), applicationId)
+        println("Blockchain : $blockchain")
+        val response = stateRestTemplate.postForEntity("/wallets/single", request, StateWalletDto::class.java)
+        return response.body!!
     }
 
     override fun createWalletWithMetadata(request: CreateStateWalletRequestMetadata): CreateStateWalletResponse {
         return stateRestTemplate.postForEntity("/wallets", request, CreateStateWalletResponse::class.java).body!!
     }
 
+    override fun updateWalletWithMetadata(request: UpdateStateWalletMetadata) {
+        stateRestTemplate.postForEntity("/wallets/update", request, Void::class.java)
+    }
+
     override fun deleteWallet(address: String, blockchain: Blockchain) {
         val url = "/wallets/blockchain/${blockchain.getValue()}/address/${address}"
         stateRestTemplate.delete(url)
+    }
+
+    override fun getWallet(address: String, blockchain: Blockchain): WalletApiStateResponse {
+        val url = "/wallets/blockchain/${blockchain.getValue()}/address/${address}"
+        return stateRestTemplate.getForEntity(url, WalletApiStateResponse::class.java).body!!
     }
 
     override fun getAddressTransactionsByAddress(address: String): StateWalletTransactionDetail {

@@ -69,9 +69,18 @@ class Web3Wrapper(
 
     fun getNetVersion(): String = web3j.netVersion().send().netVersion
 
+    fun broadcastTransaction(signedTransaction: String): TransactionReceipt {
+        return sendRawTransaction("0x$signedTransaction")
+    }
+
     private fun executeTransaction(transaction: RawTransaction, credentials: Credentials): TransactionReceipt {
         val encodedTransaction = signMessage(transaction, credentials)
-        val result = web3j.ethSendRawTransaction(toHexString(encodedTransaction)).send()
+
+        return sendRawTransaction(toHexString(encodedTransaction))
+    }
+
+    private fun sendRawTransaction(signedTransaction: String): TransactionReceipt {
+        val result = web3j.ethSendRawTransaction(signedTransaction).send()
 
         if (result.hasError()) {
             throw ExecuteTransactionException(result.error.message)

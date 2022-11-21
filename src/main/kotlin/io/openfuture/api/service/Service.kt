@@ -4,23 +4,21 @@ import io.openfuture.api.domain.application.ApplicationAccessKey
 import io.openfuture.api.domain.application.ApplicationRequest
 import io.openfuture.api.domain.holder.AddEthereumShareHolderRequest
 import io.openfuture.api.domain.holder.UpdateEthereumShareHolderRequest
-import io.openfuture.api.domain.key.GenerateWalletRequest
-import io.openfuture.api.domain.key.ImportWalletRequest
-import io.openfuture.api.domain.key.KeyWalletDto
-import io.openfuture.api.domain.key.WalletApiCreateRequest
+import io.openfuture.api.domain.key.*
 import io.openfuture.api.domain.scaffold.*
-import io.openfuture.api.domain.state.StateSignRequest
-import io.openfuture.api.domain.state.StateWalletTransaction
-import io.openfuture.api.domain.state.StateWalletTransactionDetail
+import io.openfuture.api.domain.state.*
 import io.openfuture.api.domain.token.UserTokenRequest
 import io.openfuture.api.domain.transaction.TransactionDto
 import io.openfuture.api.domain.widget.PaymentWidgetResponse
 import io.openfuture.api.entity.application.Application
+import io.openfuture.api.entity.application.BlockchainType
 import io.openfuture.api.entity.auth.User
 import io.openfuture.api.entity.scaffold.*
 import io.openfuture.api.entity.token.UserCustomToken
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.web3j.protocol.core.methods.response.TransactionReceipt
+import java.math.BigInteger
 
 interface EthereumScaffoldService {
 
@@ -134,6 +132,16 @@ interface ApplicationWalletService {
 interface WalletApiService {
 
     fun generateWallet(walletApiCreateRequest: WalletApiCreateRequest, application: Application, user: User): Array<KeyWalletDto>
+
+    fun processWalletSDK(walletApiCreateRequest: WalletApiCreateRequest, application: Application, user: User): Array<KeyWalletDto>
+
+    fun saveWalletSDK(walletApiStateRequest: WalletApiStateRequest, application: Application, user: User): Boolean
+
+    fun getWallet(address: String, blockchainType: BlockchainType): WalletApiStateResponse
+
+    fun getNonce(address: String): BigInteger
+
+    fun broadcastTransaction(signature: String, blockchainType: BlockchainType): TransactionReceipt
 
     fun getAddressesByOrderKey(orderKey: String): PaymentWidgetResponse
 

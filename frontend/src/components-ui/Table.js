@@ -6,8 +6,8 @@ export const Table = ({ data, columns, noDataText }) => (
     data={data}
     columns={columns}
     className="-striped"
-    showPagination={false}
-    resizable={false}
+    showPagination={true}
+    resizable={true}
     minRows={1}
     pageSize={data.length}
     noDataText={noDataText}

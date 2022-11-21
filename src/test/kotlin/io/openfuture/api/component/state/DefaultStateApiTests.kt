@@ -4,8 +4,6 @@ import io.openfuture.api.config.UnitTest
 import io.openfuture.api.domain.key.KeyWalletDto
 import io.openfuture.api.domain.state.*
 import io.openfuture.api.entity.state.Blockchain
-import io.openfuture.api.util.getOrderKey
-import io.openfuture.api.util.getRandomNumber
 import org.assertj.core.api.Assertions
 import org.junit.Before
 import org.junit.Test
@@ -33,19 +31,19 @@ class DefaultStateApiTests : UnitTest() {
     fun createWalletTest() {
         val request = CreateStateWalletRequestMetadata(
             "webhook",
-            listOf(KeyWalletDto("address", Blockchain.Ethereum.getValue())),
+            "applicationId",
+            listOf(KeyWalletDto("address", Blockchain.Ethereum.getValue(), "CUSTODIAL")),
             WalletMetaData(
                 "0",
-                "1000",
                 "op_UxQr1LLdREboF",
                 "USD",
                 "open",
+                false,
                 false
             )
         )
         val response = CreateStateWalletResponse(
             "webhook",
-            "100",
             "op_UxQr1LLdREboF",
             BigDecimal.ZERO,
             listOf(WalletCreateResponse(Blockchain.Ethereum.getValue(),"address", BigDecimal.ZERO))
@@ -53,7 +51,7 @@ class DefaultStateApiTests : UnitTest() {
 
         given(restTemplate.postForEntity("/wallets", request, CreateStateWalletResponse::class.java)).willReturn(ResponseEntity(response, HttpStatus.OK))
 
-        val result = stateApi.createWallet("address", "webhook", Blockchain.Ethereum)
+        val result = stateApi.createWallet("address", "webhook", Blockchain.Ethereum, "applicationId")
 
         Assertions.assertThat(result).isEqualTo(response)
     }

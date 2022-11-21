@@ -16,6 +16,7 @@ import io.openfuture.api.repository.EthereumScaffoldPropertyRepository
 import io.openfuture.api.repository.EthereumScaffoldRepository
 import io.openfuture.api.repository.EthereumScaffoldSummaryRepository
 import io.openfuture.api.repository.ShareHolderRepository
+import io.openfuture.api.util.getRandomKey
 import org.apache.commons.lang3.time.DateUtils.addMinutes
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -81,7 +82,7 @@ class DefaultEthereumScaffoldService(
         val properties = request.properties.map { propertyRepository.save(EthereumScaffoldProperty.of(scaffold, it)) }
         scaffold.property.addAll(properties)
         getScaffoldSummary(scaffold.address, user, true)
-        request.webHook?.let { stateApi.createWallet(scaffold.developerAddress, it, Blockchain.Ethereum) }
+        request.webHook?.let { stateApi.createWallet(scaffold.developerAddress, it, Blockchain.Ethereum, getRandomKey("scaffold_")) }
         return scaffold
     }
 

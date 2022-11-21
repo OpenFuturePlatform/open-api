@@ -6,8 +6,6 @@ import io.openfuture.api.entity.application.BlockchainType
 data class WalletMetaDto(
     @JsonProperty("amount")
     var amount: String,
-    @JsonProperty("orderId")
-    var orderId: String,
     @JsonProperty("orderKey")
     var orderKey: String,
     @JsonProperty("paymentCurrency")
@@ -17,5 +15,7 @@ data class WalletMetaDto(
     @JsonProperty("source")
     var source: String,
     @JsonProperty("test")
-    var test: Boolean
+    var test: Boolean,
+    @JsonProperty("clientManaged")
+    var clientManaged: Boolean
 )
