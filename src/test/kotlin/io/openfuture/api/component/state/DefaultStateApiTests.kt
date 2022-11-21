@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.client.RestTemplate
 import java.math.BigDecimal
 import java.time.LocalDateTime
+import java.util.*
 
 class DefaultStateApiTests : UnitTest() {
 
@@ -29,27 +30,16 @@ class DefaultStateApiTests : UnitTest() {
 
     @Test
     fun createWalletTest() {
-        val request = CreateStateWalletRequestMetadata(
+        val request = CreateStateWalletRequest(
+            "address",
             "webhook",
-            "applicationId",
-            listOf(KeyWalletDto("address", Blockchain.Ethereum.getValue(), "CUSTODIAL")),
-            WalletMetaData(
-                "0",
-                "op_UxQr1LLdREboF",
-                "USD",
-                "open",
-                false,
-                false
-            )
+            Blockchain.Ethereum.getValue(),
+            "applicationId"
         )
-        val response = CreateStateWalletResponse(
-            "webhook",
-            "op_UxQr1LLdREboF",
-            BigDecimal.ZERO,
-            listOf(WalletCreateResponse(Blockchain.Ethereum.getValue(),"address", BigDecimal.ZERO))
-        )
+        val response = StateWalletDto(
+            UUID.randomUUID().toString(), "address", "webhook", Blockchain.Ethereum, LocalDateTime.now())
 
-        given(restTemplate.postForEntity("/wallets", request, CreateStateWalletResponse::class.java)).willReturn(ResponseEntity(response, HttpStatus.OK))
+        given(restTemplate.postForEntity("/wallets/single", request, StateWalletDto::class.java)).willReturn(ResponseEntity(response, HttpStatus.OK))
 
         val result = stateApi.createWallet("address", "webhook", Blockchain.Ethereum, "applicationId")
 
