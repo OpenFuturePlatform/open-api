@@ -36,26 +36,41 @@ class PublicApiAuthorizationFilter(
             val accessKey = request.getHeader("X-API-KEY")
             val signature = request.getHeader("X-API-SIGNATURE")
 
-            val requestWrapper = CustomHttpRequestWrapper(request)
-            val walletApiCreateRequest =
-                mapper.readValue(requestWrapper.bodyInStringFormat, WalletApiCreateRequest::class.java)
-            val mapper = jacksonObjectMapper()
-            val str = mapper.writeValueAsString(walletApiCreateRequest)
-
             val application = applicationService.getByAccessKey(accessKey)
 
-            if (!checkHash(accessKey, signature, walletApiCreateRequest.timestamp.toLong(), str)) {
-                val exceptionResponse = ExceptionResponse(UNAUTHORIZED.value(), "Signature mismatch or request timeout")
-                response.status = exceptionResponse.status
-                response.writer.write(mapper.writeValueAsString(exceptionResponse))
+            if (request.method == "POST") {
+
+                val requestWrapper = CustomHttpRequestWrapper(request)
+                val walletApiCreateRequest =
+                    mapper.readValue(requestWrapper.bodyInStringFormat, WalletApiCreateRequest::class.java)
+                val mapper = jacksonObjectMapper()
+                val str = mapper.writeValueAsString(walletApiCreateRequest)
+
+                if (!checkHash(accessKey, signature, walletApiCreateRequest.timestamp.toLong(), str)) {
+                    val exceptionResponse =
+                        ExceptionResponse(UNAUTHORIZED.value(), "Signature mismatch or request timeout")
+                    response.status = exceptionResponse.status
+                    response.writer.write(mapper.writeValueAsString(exceptionResponse))
+                    return
+                }
+
+                val token = UsernamePasswordAuthenticationToken(
+                    application.user,
+                    null,
+                    listOf(SimpleGrantedAuthority("ROLE_APPLICATION"))
+                )
+                SecurityContextHolder.getContext().authentication = token
+
+                chain.doFilter(requestWrapper, response)
                 return
             }
+            else {
+                val token = UsernamePasswordAuthenticationToken(application.user, null, listOf(SimpleGrantedAuthority("ROLE_APPLICATION")))
+                SecurityContextHolder.getContext().authentication = token
 
-            val token = UsernamePasswordAuthenticationToken(application.user, null, listOf(SimpleGrantedAuthority("ROLE_APPLICATION")))
-            SecurityContextHolder.getContext().authentication = token
-
-            chain.doFilter(requestWrapper, response)
-            return
+                chain.doFilter(request, response)
+                return
+            }
         }
 
         else if (request.requestURI.startsWith("/public") && request.getHeader("OPEN-API-KEY") != null) {

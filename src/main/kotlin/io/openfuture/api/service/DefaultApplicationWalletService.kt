@@ -35,7 +35,7 @@ class DefaultApplicationWalletService(
         keyApi.importWallet(ImportKeyRequest(request.applicationId, user.id.toString(), request.blockchainType, request.address, ""))
     }
 
-    override fun getAllWallets(id: Long): Array<KeyWalletDto> {
+    override fun getAllWallets(id: Long): Array<KeyWalletEncryptedDto> {
         return keyApi.getAllWalletsByApplication(id.toString())
     }
 

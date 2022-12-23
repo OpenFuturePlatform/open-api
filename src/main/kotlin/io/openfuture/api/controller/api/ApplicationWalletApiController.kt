@@ -4,6 +4,7 @@ import io.openfuture.api.annotation.CurrentUser
 import io.openfuture.api.domain.key.GenerateWalletRequest
 import io.openfuture.api.domain.key.ImportWalletRequest
 import io.openfuture.api.domain.key.KeyWalletDto
+import io.openfuture.api.domain.key.KeyWalletEncryptedDto
 import io.openfuture.api.domain.state.StateSignRequest
 import io.openfuture.api.domain.state.StateWalletTransactionDetail
 import io.openfuture.api.entity.auth.User
@@ -31,7 +32,7 @@ class ApplicationWalletApiController(
     }
 
     @GetMapping("/{applicationId}")
-    fun getAll(@PathVariable("applicationId") applicationId: Long): Array<KeyWalletDto> {
+    fun getAll(@PathVariable("applicationId") applicationId: Long): Array<KeyWalletEncryptedDto> {
         return service.getAllWallets(applicationId)
     }
 

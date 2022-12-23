@@ -13,7 +13,6 @@ class DefaultStateApi(private val stateRestTemplate: RestTemplate) : StateApi {
 
     override fun createWallet(address: String, webHook: String, blockchain: Blockchain, applicationId: String): StateWalletDto {
         val request = CreateStateWalletRequest(address, webHook, blockchain.getValue(), applicationId)
-        println("Blockchain : $blockchain")
         val response = stateRestTemplate.postForEntity("/wallets/single", request, StateWalletDto::class.java)
         return response.body!!
     }
@@ -48,6 +47,7 @@ class DefaultStateApi(private val stateRestTemplate: RestTemplate) : StateApi {
 
     override fun getPaymentDetailByOrder(orderKey: String): PaymentWidgetResponse {
         val url = "/orders/${orderKey}"
+        println("Order key : $orderKey")
         return stateRestTemplate.getForEntity(url, PaymentWidgetResponse::class.java).body!!
     }
 

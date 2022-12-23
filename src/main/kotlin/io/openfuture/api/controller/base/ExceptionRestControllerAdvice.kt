@@ -4,6 +4,7 @@ import io.openfuture.api.domain.exception.ErrorDto
 import io.openfuture.api.domain.exception.ExceptionResponse
 import io.openfuture.api.exception.*
 import org.springframework.http.HttpStatus.BAD_REQUEST
+import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.validation.FieldError
 import org.springframework.web.bind.MethodArgumentNotValidException
@@ -72,6 +73,17 @@ class ExceptionRestControllerAdvice {
     @ExceptionHandler(IllegalArgumentException::class)
     fun illegalArgumentExceptionHandler(exception: IllegalArgumentException): ExceptionResponse =
             ExceptionResponse(BAD_REQUEST.value(), exception.message ?: """Something went wrong. Please read the
+                |documentation https://docs.openfuture.io/ or contact us openplatform@zensoft.io""".trimMargin())
+
+    @ResponseStatus(code = NOT_FOUND)
+    @ExceptionHandler(NotFoundException::class)
+    fun notFoundExceptionHandler(exception: NotFoundException): ExceptionResponse =
+        ExceptionResponse(NOT_FOUND.value(), exception.message!!)
+
+    @ResponseStatus(code = BAD_REQUEST)
+    @ExceptionHandler(RuntimeException::class)
+    fun runtimeExceptionHandler(exception: RuntimeException): ExceptionResponse =
+        ExceptionResponse(BAD_REQUEST.value(), exception.message ?: """Something went wrong. Please read the
                 |documentation https://docs.openfuture.io/ or contact us openplatform@zensoft.io""".trimMargin())
 
 }

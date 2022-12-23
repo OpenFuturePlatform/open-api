@@ -43,7 +43,13 @@ class DefaultWalletApiService(
             if (walletApiCreateRequest.metadata.test && keyWalletDto.blockchain == "ETH") {
                 blockchains.add(KeyWalletDto(keyWalletDto.address, Blockchain.Ropsten.getValue(), "CUSTODIAL"))
             } else if (walletApiCreateRequest.metadata.test && keyWalletDto.blockchain == "BNB") {
-                blockchains.add(KeyWalletDto(keyWalletDto.address, Blockchain.BinanceTestnetBlockchain.getValue(), "CUSTODIAL"))
+                blockchains.add(
+                    KeyWalletDto(
+                        keyWalletDto.address,
+                        Blockchain.BinanceTestnetBlockchain.getValue(),
+                        "CUSTODIAL"
+                    )
+                )
             } else {
                 when (keyWalletDto.blockchain) {
                     "ETH" -> {
@@ -84,7 +90,7 @@ class DefaultWalletApiService(
         user: User
     ): Array<KeyWalletDto> {
 
-        if (!walletApiCreateRequest.metadata.clientManaged){ // SHOULD BE USED CUSTODIAL WALLET
+        if (!walletApiCreateRequest.metadata.clientManaged) { // SHOULD BE USED CUSTODIAL WALLET
             return generateWallet(walletApiCreateRequest, application, user)
         }
 
@@ -120,25 +126,16 @@ class DefaultWalletApiService(
         user: User
     ): Boolean {
 
-        // Save webhook on open state
-        application.webHook?.let {
-            stateApi.createWallet(
+        // Save Address on Open Key
+        keyApi.importWallet(
+            ImportKeyRequest(
+                application.id.toString(),
+                user.id.toString(),
+                walletApiStateRequest.blockchain,
                 walletApiStateRequest.address,
-                it,
-                Blockchain.getBlockchainBySymbol(walletApiStateRequest.blockchain.getValue()),
-                applicationId = application.id.toString()
+                walletApiStateRequest.encrypted
             )
-            keyApi.importWallet(
-                ImportKeyRequest(
-                    application.id.toString(),
-                    user.id.toString(),
-                    walletApiStateRequest.blockchain,
-                    walletApiStateRequest.address,
-                    walletApiStateRequest.encrypted
-                )
-            )
-        }
-
+        )
         return true
     }
 

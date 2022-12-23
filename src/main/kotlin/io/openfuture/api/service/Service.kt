@@ -116,7 +116,7 @@ interface ApplicationWalletService {
 
     fun importWallet(request: ImportWalletRequest, user: User)
 
-    fun getAllWallets(id: Long): Array<KeyWalletDto>
+    fun getAllWallets(id: Long): Array<KeyWalletEncryptedDto>
 
     fun deleteWallet(applicationId: String, address: String)
 
