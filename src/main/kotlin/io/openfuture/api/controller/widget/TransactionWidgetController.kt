@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/widget/transactions")
 class TransactionWidgetController(
-    private val service : ApplicationWalletService
+    private val service: ApplicationWalletService
 ) {
 
     @GetMapping("/address/{address}")

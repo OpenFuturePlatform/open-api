@@ -23,4 +23,6 @@ interface StateApi {
     fun getTransactionsByAddress(address: String): Array<TransactionDto>
 
     fun getPaymentDetailByOrder(orderKey: String): PaymentWidgetResponse
+
+    fun getOrderDetailsByApplication(applicationId: String): Array<StateOrderDetail>
 }

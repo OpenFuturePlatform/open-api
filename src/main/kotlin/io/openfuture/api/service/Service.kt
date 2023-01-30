@@ -137,6 +137,8 @@ interface WalletApiService {
 
     fun saveWalletSDK(walletApiStateRequest: WalletApiStateRequest, application: Application, user: User): Boolean
 
+    fun getOrderDetails(applicationId: String): Array<StateOrderDetail>
+
     fun getWallet(address: String, blockchainType: BlockchainType): WalletApiStateResponse
 
     fun getNonce(address: String): BigInteger

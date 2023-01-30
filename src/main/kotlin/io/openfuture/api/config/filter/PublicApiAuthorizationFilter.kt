@@ -3,12 +3,14 @@ package io.openfuture.api.config.filter
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.openfuture.api.config.propety.AuthorizationProperties
-import org.springframework.http.HttpStatus.UNAUTHORIZED
 import io.openfuture.api.domain.exception.ExceptionResponse
 import io.openfuture.api.domain.key.WalletApiCreateRequest
 import io.openfuture.api.domain.state.WalletApiStateRequest
+import io.openfuture.api.entity.application.Application
 import io.openfuture.api.service.ApplicationService
 import io.openfuture.api.util.*
+import org.springframework.http.HttpStatus.NOT_FOUND
+import org.springframework.http.HttpStatus.UNAUTHORIZED
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
@@ -36,44 +38,54 @@ class PublicApiAuthorizationFilter(
             val accessKey = request.getHeader("X-API-KEY")
             val signature = request.getHeader("X-API-SIGNATURE")
 
-            val application = applicationService.getByAccessKey(accessKey)
+            try {
+                val application = applicationService.getByAccessKey(accessKey)
 
-            if (request.method == "POST") {
+                if (request.method == "POST") {
 
-                val requestWrapper = CustomHttpRequestWrapper(request)
-                val walletApiCreateRequest =
-                    mapper.readValue(requestWrapper.bodyInStringFormat, WalletApiCreateRequest::class.java)
-                val mapper = jacksonObjectMapper()
-                val str = mapper.writeValueAsString(walletApiCreateRequest)
+                    val requestWrapper = CustomHttpRequestWrapper(request)
+                    val walletApiCreateRequest =
+                        mapper.readValue(requestWrapper.bodyInStringFormat, WalletApiCreateRequest::class.java)
+                    val mapper = jacksonObjectMapper()
+                    val str = mapper.writeValueAsString(walletApiCreateRequest)
 
-                if (!checkHash(accessKey, signature, walletApiCreateRequest.timestamp.toLong(), str)) {
-                    val exceptionResponse =
-                        ExceptionResponse(UNAUTHORIZED.value(), "Signature mismatch or request timeout")
-                    response.status = exceptionResponse.status
-                    response.writer.write(mapper.writeValueAsString(exceptionResponse))
+                    if (!checkHash(application, signature, str, walletApiCreateRequest.timestamp.toLong())) {
+                        println("Signature mismatch or request timeout")
+                        val exceptionResponse =
+                            ExceptionResponse(UNAUTHORIZED.value(), "Signature mismatch or request timeout")
+                        response.status = exceptionResponse.status
+                        response.writer.write(mapper.writeValueAsString(exceptionResponse))
+                        return
+                    }
+
+                    val token = UsernamePasswordAuthenticationToken(
+                        application.user,
+                        null,
+                        listOf(SimpleGrantedAuthority("ROLE_APPLICATION"))
+                    )
+                    SecurityContextHolder.getContext().authentication = token
+
+                    chain.doFilter(requestWrapper, response)
+                    return
+                } else {
+                    val token = UsernamePasswordAuthenticationToken(
+                        application.user,
+                        null,
+                        listOf(SimpleGrantedAuthority("ROLE_APPLICATION"))
+                    )
+                    SecurityContextHolder.getContext().authentication = token
+
+                    chain.doFilter(request, response)
                     return
                 }
 
-                val token = UsernamePasswordAuthenticationToken(
-                    application.user,
-                    null,
-                    listOf(SimpleGrantedAuthority("ROLE_APPLICATION"))
-                )
-                SecurityContextHolder.getContext().authentication = token
-
-                chain.doFilter(requestWrapper, response)
-                return
+            } catch (exception: RuntimeException) {
+                println("Exception thrown")
+                response.setContentType("application/json")
+                response.setStatus(NOT_FOUND.value())
             }
-            else {
-                val token = UsernamePasswordAuthenticationToken(application.user, null, listOf(SimpleGrantedAuthority("ROLE_APPLICATION")))
-                SecurityContextHolder.getContext().authentication = token
 
-                chain.doFilter(request, response)
-                return
-            }
-        }
-
-        else if (request.requestURI.startsWith("/public") && request.getHeader("OPEN-API-KEY") != null) {
+        } /*else if (request.requestURI.startsWith("/public") && request.getHeader("OPEN-API-KEY") != null) {
 
             val accessKey = request.getHeader("OPEN-API-KEY")
             val signature = request.getHeader("OPEN-API-SIGNATURE")
@@ -86,19 +98,23 @@ class PublicApiAuthorizationFilter(
 
             val application = applicationService.getByAccessKey(accessKey)
 
-            if (!checkHash(accessKey, signature, walletApiStateRequest.timestamp.toLong(), str)) {
+            if (!checkHash(application, signature, str, walletApiStateRequest.timestamp.toLong())) {
                 val exceptionResponse = ExceptionResponse(UNAUTHORIZED.value(), "Signature mismatch or request timeout")
                 response.status = exceptionResponse.status
                 response.writer.write(mapper.writeValueAsString(exceptionResponse))
                 return
             }
 
-            val token = UsernamePasswordAuthenticationToken(application.user, null, listOf(SimpleGrantedAuthority("ROLE_APPLICATION")))
+            val token = UsernamePasswordAuthenticationToken(
+                application.user,
+                null,
+                listOf(SimpleGrantedAuthority("ROLE_APPLICATION"))
+            )
             SecurityContextHolder.getContext().authentication = token
 
             chain.doFilter(requestWrapper, response)
             return
-        }
+        }*/
 
         chain.doFilter(request, response)
     }
@@ -107,16 +123,18 @@ class PublicApiAuthorizationFilter(
         // Do nothing
     }
 
-    private fun checkHash(accessKey: String, signature: String, timestamp: Long, str: String): Boolean{
+    private fun checkHash(application: Application, signature: String, str: String, timestamp: Long): Boolean {
+
         val diffMinutes = differenceEpochs(currentEpochs(), timestamp)
         val expirePeriod = properties.expireApi!!
-
-        val application = applicationService.getByAccessKey(accessKey)
 
         val hmacSha256 = application.let {
             KeyGeneratorUtils.calcHmacSha256(it.apiSecretKey, str)
         }
-
+        println(hmacSha256)
+        println(signature)
+        println("HASH ${hmacSha256 != signature}")
+        println("PERIOD ${diffMinutes > expirePeriod}")
         if (hmacSha256 != signature || diffMinutes > expirePeriod) {
             return false
         }

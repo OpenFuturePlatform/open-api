@@ -11,7 +11,12 @@ import org.springframework.web.client.RestTemplate
 @Component
 class DefaultStateApi(private val stateRestTemplate: RestTemplate) : StateApi {
 
-    override fun createWallet(address: String, webHook: String, blockchain: Blockchain, applicationId: String): StateWalletDto {
+    override fun createWallet(
+        address: String,
+        webHook: String,
+        blockchain: Blockchain,
+        applicationId: String
+    ): StateWalletDto {
         val request = CreateStateWalletRequest(address, webHook, blockchain.getValue(), applicationId)
         val response = stateRestTemplate.postForEntity("/wallets/single", request, StateWalletDto::class.java)
         return response.body!!
@@ -49,6 +54,11 @@ class DefaultStateApi(private val stateRestTemplate: RestTemplate) : StateApi {
         val url = "/orders/${orderKey}"
         println("Order key : $orderKey")
         return stateRestTemplate.getForEntity(url, PaymentWidgetResponse::class.java).body!!
+    }
+
+    override fun getOrderDetailsByApplication(applicationId: String): Array<StateOrderDetail> {
+        val url = "/wallets/application/${applicationId}"
+        return stateRestTemplate.getForEntity(url, Array<StateOrderDetail>::class.java).body!!
     }
 
 }

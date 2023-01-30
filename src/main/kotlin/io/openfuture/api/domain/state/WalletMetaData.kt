@@ -5,6 +5,5 @@ data class WalletMetaData(
     var orderKey: String,
     var productCurrency: String,
     var source: String,
-    var test: Boolean,
-    var clientManaged: Boolean
+    var test: Boolean
 )

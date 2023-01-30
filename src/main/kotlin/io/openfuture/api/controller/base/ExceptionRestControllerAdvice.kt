@@ -16,6 +16,11 @@ import javax.validation.ConstraintViolationException
 @RestControllerAdvice
 class ExceptionRestControllerAdvice {
 
+    @ResponseStatus(code = NOT_FOUND)
+    @ExceptionHandler(NotFoundException::class)
+    fun notFoundExceptionHandler(exception: NotFoundException): ExceptionResponse =
+        ExceptionResponse(NOT_FOUND.value(), exception.message!!)
+
     @ResponseStatus(code = BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException::class)
     fun methodArgumentNotValidExceptionHandler(exception: MethodArgumentNotValidException): ExceptionResponse {
@@ -74,11 +79,6 @@ class ExceptionRestControllerAdvice {
     fun illegalArgumentExceptionHandler(exception: IllegalArgumentException): ExceptionResponse =
             ExceptionResponse(BAD_REQUEST.value(), exception.message ?: """Something went wrong. Please read the
                 |documentation https://docs.openfuture.io/ or contact us openplatform@zensoft.io""".trimMargin())
-
-    @ResponseStatus(code = NOT_FOUND)
-    @ExceptionHandler(NotFoundException::class)
-    fun notFoundExceptionHandler(exception: NotFoundException): ExceptionResponse =
-        ExceptionResponse(NOT_FOUND.value(), exception.message!!)
 
     @ResponseStatus(code = BAD_REQUEST)
     @ExceptionHandler(RuntimeException::class)
