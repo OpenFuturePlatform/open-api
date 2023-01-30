@@ -30,8 +30,8 @@ class DefaultKeyApi(
         return response.body!!
     }
 
-    override fun getAllWalletsByApplication(applicationId: String): Array<KeyWalletDto> {
-        val response = keyRestTemplate.getForEntity("/key?applicationId={applicationId}", Array<KeyWalletDto>::class.java, applicationId)
+    override fun getAllWalletsByApplication(applicationId: String): Array<KeyWalletEncryptedDto> {
+        val response = keyRestTemplate.getForEntity("/key?applicationId={applicationId}", Array<KeyWalletEncryptedDto>::class.java, applicationId)
         return response.body!!
     }
 

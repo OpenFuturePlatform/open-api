@@ -116,7 +116,7 @@ interface ApplicationWalletService {
 
     fun importWallet(request: ImportWalletRequest, user: User)
 
-    fun getAllWallets(id: Long): Array<KeyWalletDto>
+    fun getAllWallets(id: Long): Array<KeyWalletEncryptedDto>
 
     fun deleteWallet(applicationId: String, address: String)
 
@@ -136,6 +136,8 @@ interface WalletApiService {
     fun processWalletSDK(walletApiCreateRequest: WalletApiCreateRequest, application: Application, user: User): Array<KeyWalletDto>
 
     fun saveWalletSDK(walletApiStateRequest: WalletApiStateRequest, application: Application, user: User): Boolean
+
+    fun getOrderDetails(applicationId: String): Array<StateOrderDetail>
 
     fun getWallet(address: String, blockchainType: BlockchainType): WalletApiStateResponse
 

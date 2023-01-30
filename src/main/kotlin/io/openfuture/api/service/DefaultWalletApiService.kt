@@ -5,6 +5,7 @@ import io.openfuture.api.component.state.StateApi
 import io.openfuture.api.component.web3.Web3Wrapper
 import io.openfuture.api.domain.key.*
 import io.openfuture.api.domain.state.*
+import io.openfuture.api.domain.wallet.WalletType
 import io.openfuture.api.domain.widget.PaymentWidgetResponse
 import io.openfuture.api.entity.application.Application
 import io.openfuture.api.entity.application.BlockchainType
@@ -41,19 +42,25 @@ class DefaultWalletApiService(
 
         for (keyWalletDto in keyWallets) {
             if (walletApiCreateRequest.metadata.test && keyWalletDto.blockchain == "ETH") {
-                blockchains.add(KeyWalletDto(keyWalletDto.address, Blockchain.Ropsten.getValue(), "CUSTODIAL"))
+                blockchains.add(KeyWalletDto(keyWalletDto.address, Blockchain.Ropsten.getValue(), WalletType.CUSTODIAL.getValue()))
             } else if (walletApiCreateRequest.metadata.test && keyWalletDto.blockchain == "BNB") {
-                blockchains.add(KeyWalletDto(keyWalletDto.address, Blockchain.BinanceTestnetBlockchain.getValue(), "CUSTODIAL"))
+                blockchains.add(
+                    KeyWalletDto(
+                        keyWalletDto.address,
+                        Blockchain.BinanceTestnetBlockchain.getValue(),
+                        WalletType.CUSTODIAL.getValue()
+                    )
+                )
             } else {
                 when (keyWalletDto.blockchain) {
                     "ETH" -> {
-                        blockchains.add(KeyWalletDto(keyWalletDto.address, Blockchain.Ethereum.getValue(), "CUSTODIAL"))
+                        blockchains.add(KeyWalletDto(keyWalletDto.address, Blockchain.Ethereum.getValue(), WalletType.CUSTODIAL.getValue()))
                     }
                     "BTC" -> {
-                        blockchains.add(KeyWalletDto(keyWalletDto.address, Blockchain.Bitcoin.getValue(), "CUSTODIAL"))
+                        blockchains.add(KeyWalletDto(keyWalletDto.address, Blockchain.Bitcoin.getValue(), WalletType.CUSTODIAL.getValue()))
                     }
                     else -> {
-                        blockchains.add(KeyWalletDto(keyWalletDto.address, Blockchain.Binance.getValue(), "CUSTODIAL"))
+                        blockchains.add(KeyWalletDto(keyWalletDto.address, Blockchain.Binance.getValue(), WalletType.CUSTODIAL.getValue()))
                     }
                 }
             }
@@ -68,8 +75,7 @@ class DefaultWalletApiService(
                 walletApiCreateRequest.metadata.orderKey,
                 walletApiCreateRequest.metadata.productCurrency,
                 walletApiCreateRequest.metadata.source,
-                walletApiCreateRequest.metadata.test,
-                walletApiCreateRequest.metadata.clientManaged
+                walletApiCreateRequest.metadata.test
             )
         )
         // Save webhook on open state
@@ -84,7 +90,7 @@ class DefaultWalletApiService(
         user: User
     ): Array<KeyWalletDto> {
 
-        if (!walletApiCreateRequest.metadata.clientManaged){ // SHOULD BE USED CUSTODIAL WALLET
+        /*if (!walletApiCreateRequest.metadata.clientManaged) { // SHOULD BE USED CUSTODIAL WALLET
             return generateWallet(walletApiCreateRequest, application, user)
         }
 
@@ -111,7 +117,9 @@ class DefaultWalletApiService(
         )
         stateApi.updateWalletWithMetadata(request)
 
-        return keyWallets
+        return keyWallets*/
+
+        return generateWallet(walletApiCreateRequest, application, user)
     }
 
     override fun saveWalletSDK(
@@ -120,26 +128,21 @@ class DefaultWalletApiService(
         user: User
     ): Boolean {
 
-        // Save webhook on open state
-        application.webHook?.let {
-            stateApi.createWallet(
+        // Save Address on Open Key
+        keyApi.importWallet(
+            ImportKeyRequest(
+                application.id.toString(),
+                user.id.toString(),
+                walletApiStateRequest.blockchain,
                 walletApiStateRequest.address,
-                it,
-                Blockchain.getBlockchainBySymbol(walletApiStateRequest.blockchain.getValue()),
-                applicationId = application.id.toString()
+                walletApiStateRequest.encrypted
             )
-            keyApi.importWallet(
-                ImportKeyRequest(
-                    application.id.toString(),
-                    user.id.toString(),
-                    walletApiStateRequest.blockchain,
-                    walletApiStateRequest.address,
-                    walletApiStateRequest.encrypted
-                )
-            )
-        }
-
+        )
         return true
+    }
+
+    override fun getOrderDetails(applicationId: String): Array<StateOrderDetail> {
+        return stateApi.getOrderDetailsByApplication(applicationId)
     }
 
     override fun getWallet(address: String, blockchainType: BlockchainType): WalletApiStateResponse {

@@ -7,7 +7,7 @@ interface KeyApi {
     fun importWallet(request: ImportKeyRequest): KeyWalletDto
     fun generateMultipleWallets(createMultipleKeyRequest: CreateMultipleKeyRequest): Array<KeyWalletDto>
     fun updateWallets(createMultipleKeyRequest: CreateMultipleKeyRequest): Array<KeyWalletDto>
-    fun getAllWalletsByApplication(applicationId: String): Array<KeyWalletDto>
+    fun getAllWalletsByApplication(applicationId: String): Array<KeyWalletEncryptedDto>
     fun getAllWalletsByOrderKey(orderKey: String): Array<KeyWalletDto>
     fun getApplicationByAddress(address: String): WalletAddressResponse
     fun deleteAllWalletsByApplicationAddress(applicationId: String, address: String)

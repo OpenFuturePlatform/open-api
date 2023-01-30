@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/widget/payment/addresses")
 class PaymentAddressWidgetController(
-    private val service : WalletApiService
+    private val service: WalletApiService
 ) {
     @GetMapping("/order/{orderKey}")
     fun getAllAddressesByOrder(@PathVariable orderKey: String): PaymentWidgetResponse {
