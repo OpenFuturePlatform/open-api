@@ -44,15 +44,10 @@ class PublicApiAuthorizationFilter(
                 if (request.method == "POST") {
 
                     val requestWrapper = CustomHttpRequestWrapper(request)
-                    val walletApiCreateRequest =
-                        mapper.readValue(requestWrapper.bodyInStringFormat, WalletApiCreateRequest::class.java)
-                    val mapper = jacksonObjectMapper()
-                    val str = mapper.writeValueAsString(walletApiCreateRequest)
 
-                    if (!checkHash(application, signature, str, walletApiCreateRequest.timestamp.toLong())) {
+                    if (!checkRequestType(request, response, application, signature, requestWrapper)) {
                         println("Signature mismatch or request timeout")
-                        val exceptionResponse =
-                            ExceptionResponse(UNAUTHORIZED.value(), "Signature mismatch or request timeout")
+                        val exceptionResponse = ExceptionResponse(UNAUTHORIZED.value(), "Signature mismatch or request timeout")
                         response.status = exceptionResponse.status
                         response.writer.write(mapper.writeValueAsString(exceptionResponse))
                         return
@@ -85,42 +80,31 @@ class PublicApiAuthorizationFilter(
                 response.setStatus(NOT_FOUND.value())
             }
 
-        } /*else if (request.requestURI.startsWith("/public") && request.getHeader("OPEN-API-KEY") != null) {
-
-            val accessKey = request.getHeader("OPEN-API-KEY")
-            val signature = request.getHeader("OPEN-API-SIGNATURE")
-
-            val requestWrapper = CustomHttpRequestWrapper(request)
-            val walletApiStateRequest =
-                mapper.readValue(requestWrapper.bodyInStringFormat, WalletApiStateRequest::class.java)
-            val mapper = jacksonObjectMapper()
-            val str = mapper.writeValueAsString(walletApiStateRequest)
-
-            val application = applicationService.getByAccessKey(accessKey)
-
-            if (!checkHash(application, signature, str, walletApiStateRequest.timestamp.toLong())) {
-                val exceptionResponse = ExceptionResponse(UNAUTHORIZED.value(), "Signature mismatch or request timeout")
-                response.status = exceptionResponse.status
-                response.writer.write(mapper.writeValueAsString(exceptionResponse))
-                return
-            }
-
-            val token = UsernamePasswordAuthenticationToken(
-                application.user,
-                null,
-                listOf(SimpleGrantedAuthority("ROLE_APPLICATION"))
-            )
-            SecurityContextHolder.getContext().authentication = token
-
-            chain.doFilter(requestWrapper, response)
-            return
-        }*/
-
+        }
         chain.doFilter(request, response)
     }
 
     override fun destroy() {
         // Do nothing
+    }
+
+    private fun checkRequestType(request: ServletRequest, response: ServletResponse, application: Application, signature: String, requestWrapper: CustomHttpRequestWrapper): Boolean {
+        request as HttpServletRequest
+        response as HttpServletResponse
+
+        val walletApiUrls = listOf("wallet/save", "wallet/fetch", "wallet/broadcast")
+        val mapper = jacksonObjectMapper()
+
+        val sign: Boolean = if (walletApiUrls.any{request.requestURI.contains(it)}){
+            val walletApiRequest = mapper.readValue(requestWrapper.bodyInStringFormat, WalletApiStateRequest::class.java)
+            val str = mapper.writeValueAsString(walletApiRequest)
+            checkHash(application, signature, str, walletApiRequest.timestamp.toLong())
+        } else {
+            val walletApiRequest = mapper.readValue(requestWrapper.bodyInStringFormat, WalletApiCreateRequest::class.java)
+            val str = mapper.writeValueAsString(walletApiRequest)
+            checkHash(application, signature, str, walletApiRequest.timestamp.toLong())
+        }
+        return sign
     }
 
     private fun checkHash(application: Application, signature: String, str: String, timestamp: Long): Boolean {

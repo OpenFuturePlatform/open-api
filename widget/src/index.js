@@ -44,7 +44,7 @@ const isMainNetwork = (windgetData) => {
         return;
       }
       currentNetwork = netId;
-      netId === '4' || netId === '1' ? resolve() : reject('selesc main (or renkiby network for tests)');
+      netId === '4' || netId === '1' ? resolve() : reject('select main (or renkiby network for tests)');
     });
   }).then(()=>{
     sendToContract(cntrData);
@@ -96,7 +96,7 @@ function validateForm(){
       document.getElementsByClassName('form__label')[i].className = 'form__label required-field';
       valid = false;
     }
-  };
+  }
 
   if(!valid) userInputData = [];
 

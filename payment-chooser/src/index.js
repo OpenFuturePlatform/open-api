@@ -446,7 +446,8 @@ async function sendToken(address, value, tokenAddress) {
     const contract = new web3.eth.Contract(ERC20_ABI, tokenAddress);
     const tokenDecimal = await contract.methods.decimals().call();
     let amount = value * Math.pow(10, tokenDecimal);
-
+    console.log("Amount: ", amount)
+    console.log("TokenDecimal: ", tokenDecimal)
     ethereum
         .request({
             method: 'eth_sendTransaction',
