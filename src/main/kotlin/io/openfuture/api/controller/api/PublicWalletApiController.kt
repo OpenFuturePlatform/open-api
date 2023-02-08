@@ -25,7 +25,6 @@ class PublicWalletApiController(
 
     @PostMapping("/process")
     fun generateWallet(@RequestBody walletApiCreateRequest: WalletApiCreateRequest, @RequestHeader("X-API-KEY") accessKey: String): Array<KeyWalletDto> {
-        println("ACCESS KEY: $accessKey")
         val application = applicationService.getByAccessKey(accessKey)
         return walletApiService.processWalletSDK(walletApiCreateRequest, application, application.user)
     }
@@ -43,7 +42,7 @@ class PublicWalletApiController(
     }
 
     @PostMapping("/save")
-    fun saveWallet(@RequestBody walletApiStateRequest: WalletApiStateRequest, @RequestHeader("OPEN-API-KEY") accessKey: String): Boolean {
+    fun saveWallet(@RequestBody walletApiStateRequest: WalletApiStateRequest, @RequestHeader("X-API-KEY") accessKey: String): Boolean {
         val application = applicationService.getByAccessKey(accessKey)
         return walletApiService.saveWalletSDK(walletApiStateRequest, application, application.user)
     }
