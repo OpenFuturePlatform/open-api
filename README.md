@@ -83,5 +83,5 @@ Before working in the app you need to create a **smart contract** within Ethereu
 
 * `OPEN_STATE_URL`
 
-You will need to set this variable in order to tract wallet state and get notifications to your webhook on transaction events.
+You will need to set this variable in order to track wallet state and get notifications to your webhook on transaction events.
 **NOTE:** At the end of Open State IP address should be added /api path. For example, `http://localhost:8545/api`
