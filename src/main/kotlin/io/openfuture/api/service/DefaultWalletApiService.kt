@@ -60,7 +60,7 @@ class DefaultWalletApiService(
                     }
                     "BTC" -> {
                         blockchains.add(KeyWalletDto(keyWalletDto.address, Blockchain.Bitcoin.getValue(), WalletType.CUSTODIAL.getValue(), ""))
-                    }
+                    }//todo: add trx
                     else -> {
                         blockchains.add(KeyWalletDto(keyWalletDto.address, Blockchain.Binance.getValue(), WalletType.CUSTODIAL.getValue(), ""))
                     }

@@ -1,20 +1,29 @@
 package io.openfuture.api.controller.api
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import io.openfuture.api.domain.key.ImportWalletRequest
+import io.openfuture.api.domain.key.WalletApiCreateRequest
+import io.openfuture.api.domain.key.WalletMetaDto
 import io.openfuture.api.entity.application.BlockchainType
-import io.openfuture.api.service.DefaultApplicationWalletService
+import io.openfuture.api.entity.auth.User
+import io.openfuture.api.service.ApplicationService
+import io.openfuture.api.service.ApplicationWalletService
+import io.openfuture.api.service.WalletApiService
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/public/api/v2/wallet")
 class WalletTrackerController(
-    val walletService: DefaultApplicationWalletService
+    private val walletApiService: WalletApiService,
+    private val applicationService: ApplicationService,
+    private val service: ApplicationWalletService
 ) {
 
     @PostMapping("user/generate")
-    fun generateWalletForUser(request: GenerateWalletForUserRequest): Array<WallerResponse> {
+    fun generateWalletForUser(request: GenerateWalletForUserRequest): Array<WalletResponse> {
         return emptyArray()
     }
 
@@ -24,8 +33,23 @@ class WalletTrackerController(
     }
 
     @PostMapping("order/generate")
-    fun generateWalletWithOrder(request: GenerateWalletWithOrderRequest): Array<WallerResponse> {
-        return emptyArray()
+    fun generateWalletWithOrder(request: GenerateWalletWithOrderRequest, @RequestHeader("X-API-KEY") accessKey: String): List<WalletResponse> {
+        val application = applicationService.getByAccessKey(accessKey)
+        val walletApiCreateRequest = WalletApiCreateRequest(
+            request.timestamp, WalletMetaDto(
+                request.amount,
+                request.orderId,
+                request.blockchains,
+                request.orderCurrency,
+                "WOOCOMMERCE",
+                request.test,
+                false,
+                request.masterPassword
+            )
+        )
+        val walletSDK = walletApiService.processWalletSDK(walletApiCreateRequest, application, application.user)
+
+        return walletSDK.map { WalletResponse(it.address, it.blockchain, it.walletType, it.encrypted) }
     }
 
     @PostMapping("order/import")
@@ -34,24 +58,30 @@ class WalletTrackerController(
     }
 
     @PostMapping("generate")
-    fun generateWallet(request: GenerateWalletRequest): Array<WallerResponse> {
+    fun generateWallet(request: GenerateWalletRequest): Array<WalletResponse> {
         return emptyArray()
     }
 
     @PostMapping("import")
-    fun importWallet(request: ImportWalletRequest): ImportWalletResponse {
+    fun importWallet(request: io.openfuture.api.controller.api.ImportWalletRequest): ImportWalletResponse {
         return ImportWalletResponse("Accepted")
+    }
+
+    fun getAddressByUserId() {
+        
     }
 
 }
 
 data class GenerateWalletForUserRequest(
-    val userId: String,
-    var webhook: String,
-    var test: Boolean,
     val blockchains: List<BlockchainType>,
+    @JsonProperty("master_password")
     val masterPassword: String,
-    var timestamp: String
+    var test: Boolean,
+    var timestamp: String,
+    @JsonProperty("user_id")
+    val userId: String,
+    var webhook: String
 )
 
 data class GenerateWalletWithOrderRequest(
@@ -75,7 +105,7 @@ data class GenerateWalletRequest(
     var metadata: Map<String, String>
 )
 
-data class WallerResponse(
+data class WalletResponse(
     val address: String,
     val blockchain: String,
     val walletType: String,
@@ -84,7 +114,7 @@ data class WallerResponse(
 
 data class ImportWalletForUserRequest(
     val userId: String,
-    val encryptedPrivateKey: String,
+    val encryptedData: String,
     val masterPassword: String,
     val webhook: String,
     var timestamp: String
@@ -94,7 +124,7 @@ data class ImportWalletWithOrderRequest(
     val orderId: String,
     var amount: String,
     var orderCurrency: String,//TODO: make enum
-    val encryptedPrivateKey: String,
+    val encryptedData: String,
     val masterPassword: String,
     val webhook: String,
     var timestamp: String
@@ -102,7 +132,7 @@ data class ImportWalletWithOrderRequest(
 
 data class ImportWalletRequest(
     val uniqueId: String,
-    val encryptedPrivateKey: String,
+    val encryptedData: String,
     val masterPassword: String,
     val webhook: String,
     var timestamp: String,
