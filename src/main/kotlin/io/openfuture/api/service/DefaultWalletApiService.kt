@@ -43,7 +43,14 @@ class DefaultWalletApiService(
 
         for (keyWalletDto in keyWallets) {
             if (walletApiCreateRequest.metadata.test && keyWalletDto.blockchain == "ETH") {
-                blockchains.add(KeyWalletDto(keyWalletDto.address, Blockchain.Ropsten.getValue(), WalletType.CUSTODIAL.getValue(), ""))
+                blockchains.add(
+                    KeyWalletDto(
+                        keyWalletDto.address,
+                        Blockchain.Ropsten.getValue(),
+                        WalletType.CUSTODIAL.getValue(),
+                        ""
+                    )
+                )
             } else if (walletApiCreateRequest.metadata.test && keyWalletDto.blockchain == "BNB") {
                 blockchains.add(
                     KeyWalletDto(
@@ -56,13 +63,34 @@ class DefaultWalletApiService(
             } else {
                 when (keyWalletDto.blockchain) {
                     "ETH" -> {
-                        blockchains.add(KeyWalletDto(keyWalletDto.address, Blockchain.Ethereum.getValue(), WalletType.CUSTODIAL.getValue(), ""))
+                        blockchains.add(
+                            KeyWalletDto(
+                                keyWalletDto.address,
+                                Blockchain.Ethereum.getValue(),
+                                WalletType.CUSTODIAL.getValue(),
+                                ""
+                            )
+                        )
                     }
                     "BTC" -> {
-                        blockchains.add(KeyWalletDto(keyWalletDto.address, Blockchain.Bitcoin.getValue(), WalletType.CUSTODIAL.getValue(), ""))
+                        blockchains.add(
+                            KeyWalletDto(
+                                keyWalletDto.address,
+                                Blockchain.Bitcoin.getValue(),
+                                WalletType.CUSTODIAL.getValue(),
+                                ""
+                            )
+                        )
                     }//todo: add trx
                     else -> {
-                        blockchains.add(KeyWalletDto(keyWalletDto.address, Blockchain.Binance.getValue(), WalletType.CUSTODIAL.getValue(), ""))
+                        blockchains.add(
+                            KeyWalletDto(
+                                keyWalletDto.address,
+                                Blockchain.Binance.getValue(),
+                                WalletType.CUSTODIAL.getValue(),
+                                ""
+                            )
+                        )
                     }
                 }
             }
@@ -100,7 +128,7 @@ class DefaultWalletApiService(
         application: Application,
         user: User
     ): Boolean {
-
+        println("WalletApiStateRequest :$walletApiStateRequest")
         // Save Address on Open Key
         keyApi.importWallet(
             ImportKeyRequest(
@@ -113,7 +141,12 @@ class DefaultWalletApiService(
         )
 
         // Save address on open state
-        stateApi.createWallet(walletApiStateRequest.address, application.webHook!!, getBlockchainBySymbol(walletApiStateRequest.blockchain.getValue()), application.id.toString() )
+        stateApi.createWallet(
+            walletApiStateRequest.address,
+            application.webHook!!,
+            getBlockchainBySymbol(walletApiStateRequest.blockchain.getValue()),
+            application.id.toString()
+        )
 
         return true
     }

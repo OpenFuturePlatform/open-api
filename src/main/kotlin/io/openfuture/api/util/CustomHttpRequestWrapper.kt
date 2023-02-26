@@ -7,10 +7,10 @@ import javax.servlet.ServletInputStream
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletRequestWrapper
 
-
+@SuppressWarnings
 class CustomHttpRequestWrapper(request: HttpServletRequest) : HttpServletRequestWrapper(request) {
     val bodyInStringFormat: String
-    @Throws(IOException::class)
+
     private fun readInputStreamInStringFormat(stream: InputStream, charset: Charset): String {
         var stream = stream
         val maxBodySize = 1024
@@ -31,12 +31,10 @@ class CustomHttpRequestWrapper(request: HttpServletRequest) : HttpServletRequest
         return bodyStringBuilder.toString()
     }
 
-    @Throws(IOException::class)
     override fun getReader(): BufferedReader {
         return BufferedReader(InputStreamReader(inputStream))
     }
 
-    @Throws(IOException::class)
     override fun getInputStream(): ServletInputStream {
         val byteArrayInputStream = ByteArrayInputStream(bodyInStringFormat.toByteArray())
         return object : ServletInputStream() {
@@ -45,12 +43,10 @@ class CustomHttpRequestWrapper(request: HttpServletRequest) : HttpServletRequest
                 return finished
             }
 
-            @Throws(IOException::class)
             override fun available(): Int {
                 return byteArrayInputStream.available()
             }
 
-            @Throws(IOException::class)
             override fun close() {
                 super.close()
                 byteArrayInputStream.close()
@@ -64,7 +60,6 @@ class CustomHttpRequestWrapper(request: HttpServletRequest) : HttpServletRequest
                 throw UnsupportedOperationException()
             }
 
-            @Throws(IOException::class)
             override fun read(): Int {
                 val data = byteArrayInputStream.read()
                 if (data == -1) {
