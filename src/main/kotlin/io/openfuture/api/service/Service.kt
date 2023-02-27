@@ -112,11 +112,11 @@ interface ApplicationService {
 
 interface ApplicationWalletService {
 
-    fun generateWallet(request: GenerateWalletRequest, user: User): KeyWalletDto
+    fun generateWallet(request: GenerateWalletRequest, userId: String): KeyWalletDto
 
-    fun importWallet(request: ImportWalletRequest, user: User)
+    fun importWallet(request: ImportWalletRequest, userId: String)
 
-    fun getAllWallets(id: Long): Array<KeyWalletEncryptedDto>
+    fun getAllWallets(id: Long): Array<KeyWalletDto>
 
     fun deleteWallet(applicationId: String, address: String)
 
@@ -131,15 +131,19 @@ interface ApplicationWalletService {
 
 interface WalletApiService {
 
-    fun generateWallet(walletApiCreateRequest: WalletApiCreateRequest, application: Application, user: User): Array<KeyWalletDto>
+    fun generateWallet(walletApiCreateRequest: WalletApiCreateRequest, applicationId: Application, userId: String): Array<KeyWalletDto>
 
-    fun processWalletSDK(walletApiCreateRequest: WalletApiCreateRequest, application: Application, user: User): Array<KeyWalletDto>
+    fun processWalletSDK(walletApiCreateRequest: WalletApiCreateRequest, application: Application, userId: String): Array<KeyWalletDto>
 
     fun saveWalletSDK(walletApiStateRequest: WalletApiStateRequest, application: Application, user: User): Boolean
 
     fun getOrderDetails(applicationId: String): Array<StateOrderDetail>
 
     fun getWallet(address: String, blockchainType: BlockchainType): WalletApiStateResponse
+
+    fun getWalletsByApplicationAndUser(applicationId: String, userId: String): Array<KeyWalletDto>
+
+    fun getWalletsByApplicationAndOrder(applicationId: String, orderId: String): Array<KeyWalletDto>
 
     fun getNonce(address: String): BigInteger
 

@@ -20,7 +20,7 @@ class ApplicationWalletApiController(
 
     @PostMapping
     fun generateWallet(@Valid @RequestBody request: GenerateWalletRequest, @CurrentUser user: User): KeyWalletDto =
-        service.generateWallet(request, user)
+        service.generateWallet(request, user.id.toString())
 
     @DeleteMapping
     fun delete(
@@ -32,7 +32,7 @@ class ApplicationWalletApiController(
     }
 
     @GetMapping("/{applicationId}")
-    fun getAll(@PathVariable("applicationId") applicationId: Long): Array<KeyWalletEncryptedDto> {
+    fun getAll(@PathVariable("applicationId") applicationId: Long): Array<KeyWalletDto> {
         return service.getAllWallets(applicationId)
     }
 
@@ -50,7 +50,7 @@ class ApplicationWalletApiController(
 
     @PostMapping("/import")
     fun importWallet(@Valid @RequestBody request: ImportWalletRequest, @CurrentUser user: User){
-        service.importWallet(request, user)
+        service.importWallet(request, user.id.toString())
     }
 
     @GetMapping("/address/{address}")

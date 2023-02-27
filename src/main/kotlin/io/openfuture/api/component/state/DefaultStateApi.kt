@@ -52,7 +52,6 @@ class DefaultStateApi(private val stateRestTemplate: RestTemplate) : StateApi {
 
     override fun getPaymentDetailByOrder(orderKey: String): PaymentWidgetResponse {
         val url = "/orders/${orderKey}"
-        println("Order key : $orderKey")
         return stateRestTemplate.getForEntity(url, PaymentWidgetResponse::class.java).body!!
     }
 

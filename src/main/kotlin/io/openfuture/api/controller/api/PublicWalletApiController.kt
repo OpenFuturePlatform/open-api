@@ -26,11 +26,11 @@ class PublicWalletApiController(
     @PostMapping("/process")
     fun generateWallet(@RequestBody request: WalletApiCreateRequest, @RequestHeader("X-API-KEY") accessKey: String): Array<KeyWalletDto> {
         val application = applicationService.getByAccessKey(accessKey)
-        return walletApiService.processWalletSDK(request, application, application.user)
+        return walletApiService.processWalletSDK(request, application, application.user.id.toString())
     }
 
     @GetMapping
-    fun getWallets(@RequestHeader("X-API-KEY") accessKey: String): Array<KeyWalletEncryptedDto> {
+    fun getWallets(@RequestHeader("X-API-KEY") accessKey: String): Array<KeyWalletDto> {
         val application = applicationService.getByAccessKey(accessKey)
         return applicationWalletService.getAllWallets(application.id)
     }

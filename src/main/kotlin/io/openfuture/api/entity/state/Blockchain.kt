@@ -8,13 +8,14 @@ enum class Blockchain(private val value: String) {
     Ropsten("RopstenBlockchain"),
     Bitcoin("BitcoinBlockchain"),
     Binance("BinanceBlockchain"),
-    BinanceTestnetBlockchain("BinanceTestnetBlockchain");
+    BinanceTestnet("BinanceTestnetBlockchain");
 
     companion object {
+        //TODO
         fun getBlockchainBySymbol(symbol: String): Blockchain {
             return when (symbol) {
                 "ETH" -> Ropsten
-                "BNB" -> Binance
+                "BNB" -> BinanceTestnet
                 "BTC" -> Bitcoin
                 else -> Ropsten
             }

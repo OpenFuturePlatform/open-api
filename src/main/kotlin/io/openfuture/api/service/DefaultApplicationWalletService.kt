@@ -11,6 +11,7 @@ import io.openfuture.api.entity.auth.User
 import io.openfuture.api.entity.state.Blockchain
 import io.openfuture.api.util.KeyGeneratorUtils
 import org.springframework.stereotype.Service
+import java.util.*
 import javax.transaction.Transactional
 
 @Service
@@ -21,9 +22,9 @@ class DefaultApplicationWalletService(
     private val applicationService: ApplicationService
 ) : ApplicationWalletService {
 
-    override fun generateWallet(request: GenerateWalletRequest, user: User): KeyWalletDto {
+    override fun generateWallet(request: GenerateWalletRequest, userId: String): KeyWalletDto {
         // Generate address on open key
-        val keyWalletDto = keyApi.generateWallet(CreateKeyRequest(request.applicationId, user.id.toString(), request.blockchainType))
+        val keyWalletDto = keyApi.generateWallet(CreateKeyRequest(request.applicationId, userId, request.blockchainType))
 
         // Save webhook on open state
         stateApi.createWallet(keyWalletDto.address, request.webHook, Blockchain.getBlockchainBySymbol(request.blockchainType.getValue()), request.applicationId)
@@ -31,12 +32,12 @@ class DefaultApplicationWalletService(
         return keyWalletDto
     }
 
-    override fun importWallet(request: ImportWalletRequest, user: User) {
-        keyApi.importWallet(ImportKeyRequest(request.applicationId, user.id.toString(), request.blockchainType, request.address, ""))
+    override fun importWallet(request: ImportWalletRequest, userId: String) {
+        keyApi.importWallet(ImportKeyRequest(request.applicationId, userId, request.blockchainType, request.address, ""))
     }
 
-    override fun getAllWallets(id: Long): Array<KeyWalletEncryptedDto> {
-        return keyApi.getAllWalletsByApplication(id.toString())
+    override fun getAllWallets(id: Long): Array<KeyWalletDto> {
+        return keyApi.getAllWalletsByApplication(id.toString(), Optional.empty(), Optional.empty())
     }
 
     override fun deleteWallet(applicationId: String, address: String) {

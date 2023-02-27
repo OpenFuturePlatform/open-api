@@ -1,9 +1,8 @@
 package io.openfuture.api.controller.api
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import io.openfuture.api.domain.key.*
 import io.openfuture.api.domain.key.ImportWalletRequest
-import io.openfuture.api.domain.key.WalletApiCreateRequest
-import io.openfuture.api.domain.key.WalletMetaDto
 import io.openfuture.api.entity.application.BlockchainType
 import io.openfuture.api.entity.auth.User
 import io.openfuture.api.service.ApplicationService
@@ -21,8 +20,18 @@ class WalletTrackerController(
 ) {
 
     @PostMapping("user/generate")
-    fun generateWalletForUser(@RequestBody request: GenerateWalletForUserRequest): Array<WalletResponse> {
-        return emptyArray()
+    fun generateWalletForUser(@RequestBody request: GenerateWalletForUserRequest, @RequestHeader("X-API-KEY") accessKey: String): List<KeyWalletDto> {
+        val application = applicationService.getByAccessKey(accessKey)
+        val blockchains = mutableListOf<KeyWalletDto>()
+        for (blockchainType in request.blockchains){
+            val generateWalletRequest = GenerateWalletRequest(
+                applicationId = application.id.toString(),
+                webHook = application.webHook!!,
+                blockchainType = blockchainType
+            )
+            blockchains.add(service.generateWallet(generateWalletRequest, request.userId))
+        }
+        return blockchains
     }
 
     @PostMapping("user/import")
@@ -30,24 +39,30 @@ class WalletTrackerController(
         return ImportWalletResponse("Accepted")
     }
 
+    @GetMapping("user")
+    fun getUserWallets(@RequestParam("userId") userId: String, @RequestHeader("X-API-KEY") accessKey: String): Array<KeyWalletDto> {
+        val application = applicationService.getByAccessKey(accessKey)
+        return walletApiService.getWalletsByApplicationAndUser(application.id.toString(), userId)
+    }
+
     @PostMapping("order/generate")
-    fun generateWalletWithOrder(@RequestBody request: GenerateWalletWithOrderRequest, @RequestHeader("X-API-KEY") accessKey: String, @RequestHeader("X-API-TIMESTAMP") timestamp: Long): List<WalletResponse> {
+    fun generateWalletWithOrder(@RequestBody request: GenerateWalletWithOrderRequest, @RequestHeader("X-API-KEY") accessKey: String): List<KeyWalletDto> {
         val application = applicationService.getByAccessKey(accessKey)
         val walletApiCreateRequest = WalletApiCreateRequest(
             WalletMetaDto(
-                request.amount,
-                request.orderId,
-                request.blockchains,
-                request.orderCurrency,
-                "WOOCOMMERCE",
+                amount = request.amount,
+                orderKey = request.orderId,
+                paymentCurrency = request.blockchains,
+                productCurrency = request.orderCurrency,
+                source = "ORDER_SDK",
                 test = false,
                 clientManaged = false,
                 clientPassword = request.masterPassword!!
             )
         )
-        val walletSDK = walletApiService.processWalletSDK(walletApiCreateRequest, application, application.user)
+        val walletSDK = walletApiService.processWalletSDK(walletApiCreateRequest, application, application.user.id.toString())
 
-        return walletSDK.map { WalletResponse(it.address, it.blockchain, it.walletType, it.encrypted) }
+        return walletSDK.map { KeyWalletDto(it.address, it.blockchain, it.walletType, it.encrypted) }
     }
 
     @PostMapping("order/import")
@@ -55,27 +70,25 @@ class WalletTrackerController(
         return ImportWalletResponse("Accepted")
     }
 
-    @PostMapping("generate")
-    fun generateWallet(@RequestBody request: GenerateWalletRequest): Array<WalletResponse> {
-        return emptyArray()
+    @GetMapping("order")
+    fun getOrderWallets(@RequestParam("orderId") orderId: String, @RequestHeader("X-API-KEY") accessKey: String): Array<KeyWalletDto> {
+        val application = applicationService.getByAccessKey(accessKey)
+        return walletApiService.getWalletsByApplicationAndOrder(application.id.toString(), orderId)
     }
 
     @PostMapping("import")
     fun importWallet(@RequestBody request: io.openfuture.api.controller.api.ImportWalletRequest): ImportWalletResponse {
         return ImportWalletResponse("Accepted")
     }
-
-    fun getAddressByUserId() {
-        
-    }
-
 }
 
 data class GenerateWalletForUserRequest(
+    @JsonProperty("blockchains")
     val blockchains: List<BlockchainType>,
+    @JsonProperty("master_password")
     val masterPassword: String,
     var test: Boolean,
-    var timestamp: String,
+    @JsonProperty("user_id")
     val userId: String,
     var webhook: String
 )
@@ -93,23 +106,6 @@ data class GenerateWalletWithOrderRequest(
     val orderId: String,
     @JsonProperty("webhook")
     var webhook: String?
-)
-
-data class GenerateWalletRequest(
-    val uniqueId: String,
-    var test: Boolean,
-    var webhook: String,
-    val blockchains: List<BlockchainType>,
-    val masterPassword: String,
-    var timestamp: String,
-    var metadata: Objects
-)
-
-data class WalletResponse(
-    val address: String,
-    val blockchain: String,
-    val walletType: String,
-    val encrypted: String
 )
 
 data class ImportWalletForUserRequest(

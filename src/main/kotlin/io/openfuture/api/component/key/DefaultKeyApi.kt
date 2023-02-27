@@ -3,6 +3,7 @@ package io.openfuture.api.component.key
 import io.openfuture.api.domain.key.*
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestTemplate
+import java.util.*
 
 
 @Component
@@ -30,9 +31,23 @@ class DefaultKeyApi(
         return response.body!!
     }
 
-    override fun getAllWalletsByApplication(applicationId: String): Array<KeyWalletEncryptedDto> {
-        val response = keyRestTemplate.getForEntity("/key?applicationId={applicationId}", Array<KeyWalletEncryptedDto>::class.java, applicationId)
-        return response.body!!
+    override fun getAllWalletsByApplication(applicationId: String, userId: Optional<String>, orderKey: Optional<String>): Array<KeyWalletDto> {
+        if (userId.isPresent){
+            val response = keyRestTemplate.getForEntity("/key?applicationId={applicationId}&userId={userId}", Array<KeyWalletDto>::class.java, applicationId, userId.get())
+            return response.body!!
+        } else if (orderKey.isPresent){
+            val url = "/key/order/${orderKey.get()}"
+            val response = keyRestTemplate.getForEntity(url, Array<KeyWalletDto>::class.java)
+            return response.body!!
+
+        } else {
+            val response = keyRestTemplate.getForEntity(
+                "/key?applicationId={applicationId}",
+                Array<KeyWalletDto>::class.java,
+                applicationId
+            )
+            return response.body!!
+        }
     }
 
     override fun getAllWalletsByOrderKey(orderKey: String): Array<KeyWalletDto> {

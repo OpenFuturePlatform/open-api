@@ -16,6 +16,7 @@ import io.openfuture.api.entity.state.Blockchain.Companion.getBlockchainBySymbol
 import org.springframework.stereotype.Service
 import org.web3j.protocol.core.methods.response.TransactionReceipt
 import java.math.BigInteger
+import java.util.*
 
 @Service
 class DefaultWalletApiService(
@@ -26,14 +27,14 @@ class DefaultWalletApiService(
 
     override fun generateWallet(
         walletApiCreateRequest: WalletApiCreateRequest,
-        application: Application,
-        user: User
+        applicationId: Application,
+        userId: String
     ): Array<KeyWalletDto> {
         // Generate address on open key
         val keyWallets = keyApi.generateMultipleWallets(
             CreateMultipleKeyRequest(
-                application.id.toString(),
-                user.id.toString(),
+                applicationId.id.toString(),
+                userId,
                 walletApiCreateRequest.metadata.orderKey,
                 walletApiCreateRequest.metadata.paymentCurrency
             )
@@ -55,7 +56,7 @@ class DefaultWalletApiService(
                 blockchains.add(
                     KeyWalletDto(
                         keyWalletDto.address,
-                        Blockchain.BinanceTestnetBlockchain.getValue(),
+                        Blockchain.BinanceTestnet.getValue(),
                         WalletType.CUSTODIAL.getValue(),
                         ""
                     )
@@ -97,8 +98,8 @@ class DefaultWalletApiService(
         }
 
         val request = CreateStateWalletRequestMetadata(
-            application.webHook.toString(),
-            application.id.toString(),
+            applicationId.webHook.toString(),
+            applicationId.id.toString(),
             blockchains,
             WalletMetaData(
                 walletApiCreateRequest.metadata.amount,
@@ -117,10 +118,10 @@ class DefaultWalletApiService(
     override fun processWalletSDK(
         walletApiCreateRequest: WalletApiCreateRequest,
         application: Application,
-        user: User
+        userId: String
     ): Array<KeyWalletDto> {
 
-        return generateWallet(walletApiCreateRequest, application, user)
+        return generateWallet(walletApiCreateRequest, application, userId)
     }
 
     override fun saveWalletSDK(
@@ -157,6 +158,14 @@ class DefaultWalletApiService(
 
     override fun getWallet(address: String, blockchainType: BlockchainType): WalletApiStateResponse {
         return stateApi.getWallet(address, getBlockchainBySymbol(blockchainType.getValue()))
+    }
+
+    override fun getWalletsByApplicationAndUser(applicationId: String, userId: String): Array<KeyWalletDto> {
+        return keyApi.getAllWalletsByApplication(applicationId, Optional.of(userId), Optional.empty())
+    }
+
+    override fun getWalletsByApplicationAndOrder(applicationId: String, orderId: String): Array<KeyWalletDto> {
+        return keyApi.getAllWalletsByApplication(applicationId, Optional.empty(), Optional.of(orderId))
     }
 
     override fun getNonce(address: String): BigInteger {
