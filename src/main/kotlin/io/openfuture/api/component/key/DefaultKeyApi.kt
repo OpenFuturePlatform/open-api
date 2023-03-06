@@ -1,6 +1,9 @@
 package io.openfuture.api.component.key
 
 import io.openfuture.api.domain.key.*
+import io.openfuture.keymanagementservice.dto.GenerateMultipleWalletForOrderRequest
+import io.openfuture.keymanagementservice.dto.GenerateMultipleWalletForUserRequest
+import io.openfuture.keymanagementservice.dto.GenerateMultipleWalletRequest
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestTemplate
 import java.util.*
@@ -21,8 +24,18 @@ class DefaultKeyApi(
         return response.body!!
     }
 
-    override fun generateMultipleWallets(createMultipleKeyRequest: CreateMultipleKeyRequest): Array<KeyWalletDto> {
-        val response = keyRestTemplate.postForEntity("/key/multiple", createMultipleKeyRequest, Array<KeyWalletDto>::class.java)
+    override fun generateMultipleWallets(request: GenerateMultipleWalletRequest): Array<KeyWalletDto> {
+        val response = keyRestTemplate.postForEntity("/key/generateMultiple", request, Array<KeyWalletDto>::class.java)
+        return response.body!!
+    }
+
+    override fun generateMultipleWalletsWithOrder(request: GenerateMultipleWalletForOrderRequest): Array<KeyWalletDto> {
+        val response = keyRestTemplate.postForEntity("/key/generateMultipleForOrder", request, Array<KeyWalletDto>::class.java)
+        return response.body!!
+    }
+
+    override fun generateMultipleWalletsWithUser(request: GenerateMultipleWalletForUserRequest): Array<KeyWalletDto> {
+        val response = keyRestTemplate.postForEntity("/key/generateMultipleForUser", request, Array<KeyWalletDto>::class.java)
         return response.body!!
     }
 

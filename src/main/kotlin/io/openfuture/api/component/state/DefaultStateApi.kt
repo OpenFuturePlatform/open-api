@@ -26,6 +26,10 @@ class DefaultStateApi(private val stateRestTemplate: RestTemplate) : StateApi {
         return stateRestTemplate.postForEntity("/wallets", request, CreateStateWalletResponse::class.java).body!!
     }
 
+    override fun createWallet(request: CreateStateWithUserRequest): AddWatchResponse {
+        return stateRestTemplate.postForEntity("/api/wallets/v2/add", request, AddWatchResponse::class.java).body!!
+    }
+
     override fun updateWalletWithMetadata(request: UpdateStateWalletMetadata) {
         stateRestTemplate.postForEntity("/wallets/update", request, Void::class.java)
     }

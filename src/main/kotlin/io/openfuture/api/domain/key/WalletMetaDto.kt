@@ -19,5 +19,6 @@ data class WalletMetaDto(
     @JsonProperty("clientManaged")
     var clientManaged: Boolean,
     @JsonProperty("clientPassword")
-    var clientPassword: String
+    var clientPassword: String,
+    var metadata: Any?
 )

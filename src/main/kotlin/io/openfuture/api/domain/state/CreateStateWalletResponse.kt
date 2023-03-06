@@ -14,3 +14,15 @@ data class WalletCreateResponse(
     val address: String,
     val rate: BigDecimal
 )
+
+data class AddWatchResponse(
+    val id: String,
+    val webhook: String,
+    val metadata: Any,
+    val wallets: List<WatchWalletResponse>
+)
+
+data class WatchWalletResponse(
+    val blockchain: String,
+    val address: String
+)

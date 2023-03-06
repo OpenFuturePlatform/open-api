@@ -25,4 +25,6 @@ interface StateApi {
     fun getPaymentDetailByOrder(orderKey: String): PaymentWidgetResponse
 
     fun getOrderDetailsByApplication(applicationId: String): Array<StateOrderDetail>
+
+    fun createWallet(request: CreateStateWithUserRequest): AddWatchResponse
 }

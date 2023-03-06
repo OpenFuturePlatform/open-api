@@ -1,5 +1,6 @@
 package io.openfuture.api.service
 
+import io.openfuture.api.controller.api.GenerateWalletWithMetadataRequest
 import io.openfuture.api.domain.application.ApplicationAccessKey
 import io.openfuture.api.domain.application.ApplicationRequest
 import io.openfuture.api.domain.holder.AddEthereumShareHolderRequest
@@ -131,9 +132,11 @@ interface ApplicationWalletService {
 
 interface WalletApiService {
 
-    fun generateWallet(walletApiCreateRequest: WalletApiCreateRequest, applicationId: Application, userId: String): Array<KeyWalletDto>
+    fun generateWalletForOrder(walletApiCreateRequest: WalletApiCreateRequest, applicationId: Application, userId: String): Array<KeyWalletDto>
 
-    fun processWalletSDK(walletApiCreateRequest: WalletApiCreateRequest, application: Application, userId: String): Array<KeyWalletDto>
+    fun processOrder(walletApiCreateRequest: WalletApiCreateRequest, application: Application, userId: String): Array<KeyWalletDto>
+
+    fun processUser(request: GenerateWalletWithMetadataRequest, application: Application): Array<KeyWalletDto>
 
     fun saveWalletSDK(walletApiStateRequest: WalletApiStateRequest, application: Application, user: User): Boolean
 

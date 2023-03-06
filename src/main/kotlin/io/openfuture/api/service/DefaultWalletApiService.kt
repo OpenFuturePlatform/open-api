@@ -3,7 +3,10 @@ package io.openfuture.api.service
 import io.openfuture.api.component.key.KeyApi
 import io.openfuture.api.component.state.StateApi
 import io.openfuture.api.component.web3.Web3Wrapper
-import io.openfuture.api.domain.key.*
+import io.openfuture.api.controller.api.GenerateWalletWithMetadataRequest
+import io.openfuture.api.domain.key.ImportKeyRequest
+import io.openfuture.api.domain.key.KeyWalletDto
+import io.openfuture.api.domain.key.WalletApiCreateRequest
 import io.openfuture.api.domain.state.*
 import io.openfuture.api.domain.wallet.WalletType
 import io.openfuture.api.domain.widget.PaymentWidgetResponse
@@ -12,7 +15,8 @@ import io.openfuture.api.entity.application.BlockchainType
 import io.openfuture.api.entity.auth.User
 import io.openfuture.api.entity.state.Blockchain
 import io.openfuture.api.entity.state.Blockchain.Companion.getBlockchainBySymbol
-
+import io.openfuture.keymanagementservice.dto.GenerateMultipleWalletForOrderRequest
+import io.openfuture.keymanagementservice.dto.GenerateMultipleWalletRequest
 import org.springframework.stereotype.Service
 import org.web3j.protocol.core.methods.response.TransactionReceipt
 import java.math.BigInteger
@@ -25,14 +29,9 @@ class DefaultWalletApiService(
     private val web3: Web3Wrapper
 ) : WalletApiService {
 
-    override fun generateWallet(
-        walletApiCreateRequest: WalletApiCreateRequest,
-        applicationId: Application,
-        userId: String
-    ): Array<KeyWalletDto> {
-        // Generate address on open key
-        val keyWallets = keyApi.generateMultipleWallets(
-            CreateMultipleKeyRequest(
+    override fun generateWalletForOrder(walletApiCreateRequest: WalletApiCreateRequest, applicationId: Application, userId: String): Array<KeyWalletDto> {
+        val keyWallets = keyApi.generateMultipleWalletsWithOrder(
+            GenerateMultipleWalletForOrderRequest(
                 applicationId.id.toString(),
                 userId,
                 walletApiCreateRequest.metadata.orderKey,
@@ -40,10 +39,32 @@ class DefaultWalletApiService(
             )
         )
 
+        val blockchains = extractAddresses(keyWallets, walletApiCreateRequest.metadata.test)
+
+        val request = CreateStateWalletRequestMetadata(
+            applicationId.webHook.toString(),
+            applicationId.id.toString(),
+            blockchains,
+            WalletMetaData(
+                walletApiCreateRequest.metadata.amount,
+                walletApiCreateRequest.metadata.orderKey,
+                walletApiCreateRequest.metadata.productCurrency,
+                walletApiCreateRequest.metadata.source,
+                walletApiCreateRequest.metadata.test,
+                walletApiCreateRequest.metadata
+            )
+        )
+        // Save webhook on open state
+        stateApi.createWalletWithMetadata(request)
+
+        return keyWallets
+    }
+
+    private fun extractAddresses(keyWallets: Array<KeyWalletDto>, isTest: Boolean): MutableList<KeyWalletDto> {
         val blockchains = mutableListOf<KeyWalletDto>()
 
         for (keyWalletDto in keyWallets) {
-            if (walletApiCreateRequest.metadata.test && keyWalletDto.blockchain == "ETH") {
+            if (isTest && keyWalletDto.blockchain == "ETH") {
                 blockchains.add(
                     KeyWalletDto(
                         keyWalletDto.address,
@@ -52,7 +73,7 @@ class DefaultWalletApiService(
                         ""
                     )
                 )
-            } else if (walletApiCreateRequest.metadata.test && keyWalletDto.blockchain == "BNB") {
+            } else if (isTest && keyWalletDto.blockchain == "BNB") {
                 blockchains.add(
                     KeyWalletDto(
                         keyWalletDto.address,
@@ -73,6 +94,7 @@ class DefaultWalletApiService(
                             )
                         )
                     }
+
                     "BTC" -> {
                         blockchains.add(
                             KeyWalletDto(
@@ -96,33 +118,40 @@ class DefaultWalletApiService(
                 }
             }
         }
-
-        val request = CreateStateWalletRequestMetadata(
-            applicationId.webHook.toString(),
-            applicationId.id.toString(),
-            blockchains,
-            WalletMetaData(
-                walletApiCreateRequest.metadata.amount,
-                walletApiCreateRequest.metadata.orderKey,
-                walletApiCreateRequest.metadata.productCurrency,
-                walletApiCreateRequest.metadata.source,
-                walletApiCreateRequest.metadata.test
-            )
-        )
-        // Save webhook on open state
-        stateApi.createWalletWithMetadata(request)
-
-        return keyWallets
+        return blockchains
     }
 
-    override fun processWalletSDK(
+    override fun processOrder(
         walletApiCreateRequest: WalletApiCreateRequest,
         application: Application,
         userId: String
     ): Array<KeyWalletDto> {
 
-        return generateWallet(walletApiCreateRequest, application, userId)
+        return generateWalletForOrder(walletApiCreateRequest, application, userId)
     }
+
+    override fun processUser(request: GenerateWalletWithMetadataRequest, application: Application): Array<KeyWalletDto> {
+        println("Sending request to Open Key $request")
+        val keyWallets = keyApi.generateMultipleWallets(
+            GenerateMultipleWalletRequest(
+                application.id.toString(),
+                request.userId,
+                request.id,
+                request.blockchains
+            )
+        )
+        println("Response from Open Key $keyWallets")
+
+        val blockchains = extractAddresses(keyWallets, request.test)
+
+        val createStateRequest = CreateStateWithUserRequest(request.id, request.webhook, blockchains, application.id.toString(), request.userId, request.test, request.metadata)
+        println("Sending request to Open State $createStateRequest")
+        val createWallet = stateApi.createWallet(createStateRequest)
+        println("Response from Open State $createWallet")
+
+        return keyWallets
+    }
+
 
     override fun saveWalletSDK(
         walletApiStateRequest: WalletApiStateRequest,

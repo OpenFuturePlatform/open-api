@@ -1,7 +1,6 @@
 package io.openfuture.api.controller.api
 
 import io.openfuture.api.domain.key.KeyWalletDto
-import io.openfuture.api.domain.key.KeyWalletEncryptedDto
 import io.openfuture.api.domain.key.WalletApiCreateRequest
 import io.openfuture.api.domain.state.StateOrderDetail
 import io.openfuture.api.domain.state.WalletApiStateRequest
@@ -26,7 +25,7 @@ class PublicWalletApiController(
     @PostMapping("/process")
     fun generateWallet(@RequestBody request: WalletApiCreateRequest, @RequestHeader("X-API-KEY") accessKey: String): Array<KeyWalletDto> {
         val application = applicationService.getByAccessKey(accessKey)
-        return walletApiService.processWalletSDK(request, application, application.user.id.toString())
+        return walletApiService.processOrder(request, application, application.user.id.toString())
     }
 
     @GetMapping
