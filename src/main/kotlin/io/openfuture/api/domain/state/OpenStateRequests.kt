@@ -10,13 +10,12 @@ data class CreateStateWithOrderRequest(
 )
 
 data class CreateStateWithUserRequest(
-    val id: String,
     val webhook: String,
     val blockchains: List<KeyWalletDto>,
     val applicationId: String,
     val userId: String,
     val test: Boolean,
-    val metadata: Any
+    val metadata: Any? = null
 )
 
 data class OrderMetaDataV2(

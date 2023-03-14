@@ -35,8 +35,9 @@ class WalletTrackerController(
     }
 
     @PostMapping("user/import")
-    fun importWalletForUser(@RequestBody request: ImportWalletForUserRequest): ImportWalletResponse {
-        return ImportWalletResponse("Accepted")
+    fun importWalletForUser(@RequestBody request: ImportWalletForUserRequest, @RequestHeader("X-API-KEY") accessKey: String): KeyWalletDto {
+        val application = applicationService.getByAccessKey(accessKey)
+        return walletApiService.importWalletForUser(request, application)
     }
 
     @GetMapping("user")
@@ -57,7 +58,6 @@ class WalletTrackerController(
                 source = "ORDER_SDK",
                 test = false,
                 clientManaged = false,
-                clientPassword = request.masterPassword!!,
                 metadata = request.metadata
             )
         )
@@ -67,8 +67,9 @@ class WalletTrackerController(
     }
 
     @PostMapping("order/import")
-    fun importWalletWithOrder(@RequestBody request: ImportWalletWithOrderRequest): ImportWalletResponse {
-        return ImportWalletResponse("Accepted")
+    fun importWalletWithOrder(@RequestBody request: ImportWalletWithOrderRequest, @RequestHeader("X-API-KEY") accessKey: String): KeyWalletDto {
+        val application = applicationService.getByAccessKey(accessKey)
+        return walletApiService.importWalletForOrder(request, application)
     }
 
     @GetMapping("order")
@@ -79,14 +80,21 @@ class WalletTrackerController(
 
     @PostMapping("generate")
     fun generateWallet(@RequestBody request: GenerateWalletWithMetadataRequest, @RequestHeader("X-API-KEY") accessKey: String): Array<KeyWalletDto> {
-//        val application = applicationService.getByAccessKey(accessKey)
-        val application = Application("app", User("12"), "http://webhhook.com/", apiAccessKey = "123", apiSecretKey = "321")
+        val application = applicationService.getByAccessKey(accessKey)
         return walletApiService.processUser(request, application)
     }
 
     @PostMapping("import")
-    fun importWallet(@RequestBody request: io.openfuture.api.controller.api.ImportWalletRequest): ImportWalletResponse {
-        return ImportWalletResponse("Accepted")
+    fun importWallet(@RequestBody request: ImportWalletRequest): KeyWalletDto {
+        val application = applicationService.getByAccessKey(request.address)
+        val importWalletForUserRequest = ImportWalletForUserRequest(
+            request.address,
+            request.blockchainType,
+            request.encryptedData,
+            request.metadata,
+            application.user.id.toString()
+        )
+        return walletApiService.importWalletForUser(importWalletForUserRequest, application)
     }
 }
 
@@ -94,12 +102,10 @@ data class GenerateWalletForUserRequest(
     @JsonProperty("blockchains")
     val blockchains: List<BlockchainType>,
     @JsonProperty("master_password")
-    val masterPassword: String,
     var metadata: Any,// TODO: Optional
     var test: Boolean,
     @JsonProperty("user_id")
-    val userId: String,
-    var webhook: String
+    val userId: String
 )
 
 data class GenerateWalletWithOrderRequest(
@@ -107,57 +113,42 @@ data class GenerateWalletWithOrderRequest(
     val amount: String,
     @JsonProperty("blockchains")
     val blockchains: List<BlockchainType>,
-    @JsonProperty("master_password")
-    val masterPassword: String?,
     @JsonProperty("metadata")
-    var metadata: Any?, //Optional
+    var metadata: Any? = null, //Optional
+    var test: Boolean,
     @JsonProperty("order_currency")
     var orderCurrency: String,//TODO: make enum
     @JsonProperty("order_id")
-    val orderId: String,
-    @JsonProperty("webhook")
-    var webhook: String?
+    val orderId: String
 )
 
 data class GenerateWalletWithMetadataRequest(
     val blockchains: List<BlockchainType>,
-    val id: String,
-    @JsonProperty("master_password")
-    val masterPassword: String,
-    var metadata: Any,
-    var test: Boolean,
-    val userId: String,
-    var webhook: String
+    var metadata: Any? = null,
+    var test: Boolean
 )
 
 data class ImportWalletForUserRequest(
-    val userId: String,
+    var address: String,
+    val blockchainType: BlockchainType,
     val encryptedData: String,
-    val masterPassword: String,
-    val webhook: String,
-    var timestamp: String
+    val metadata: Any?,
+    val userId: String
 )
 
 data class ImportWalletWithOrderRequest(
-    val orderId: String,
+    var address: String,
     var amount: String,
-    var orderCurrency: String,//TODO: make enum
+    val blockchainType: BlockchainType,
     val encryptedData: String,
-    val masterPassword: String,
-    val metadata: Any?,//TODO: optional
-    val webhook: String,
-    var timestamp: String
+    var orderCurrency: String,//TODO: make enum (USD, EUR, etc.)
+    val orderId: String,
+    val metadata: Any?
 )
 
 data class ImportWalletRequest(
-    val uniqueId: String,
+    var address: String,
+    val blockchainType: BlockchainType,
     val encryptedData: String,
-    val masterPassword: String,
-    val webhook: String,
-    var timestamp: String,
-    var metadata: Map<String, String>
-)
-
-data class ImportWalletResponse(
-    val status: String
+    var metadata: Any?
 )

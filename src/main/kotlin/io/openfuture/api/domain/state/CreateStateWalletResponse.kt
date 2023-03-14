@@ -18,7 +18,7 @@ data class WalletCreateResponse(
 data class AddWatchResponse(
     val id: String,
     val webhook: String,
-    val metadata: Any,
+    val metadata: Any?,
     val wallets: List<WatchWalletResponse>
 )
 

@@ -1,6 +1,8 @@
 package io.openfuture.api.service
 
 import io.openfuture.api.controller.api.GenerateWalletWithMetadataRequest
+import io.openfuture.api.controller.api.ImportWalletForUserRequest
+import io.openfuture.api.controller.api.ImportWalletWithOrderRequest
 import io.openfuture.api.domain.application.ApplicationAccessKey
 import io.openfuture.api.domain.application.ApplicationRequest
 import io.openfuture.api.domain.holder.AddEthereumShareHolderRequest
@@ -153,6 +155,10 @@ interface WalletApiService {
     fun broadcastTransaction(signature: String, blockchainType: BlockchainType): TransactionReceipt
 
     fun getAddressesByOrderKey(orderKey: String): PaymentWidgetResponse
+
+    fun importWalletForOrder(request: ImportWalletWithOrderRequest, application: Application): KeyWalletDto
+
+    fun importWalletForUser(request: ImportWalletForUserRequest, application: Application): KeyWalletDto
 
 }
 

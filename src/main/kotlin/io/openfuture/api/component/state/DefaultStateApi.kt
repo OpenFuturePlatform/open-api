@@ -23,7 +23,7 @@ class DefaultStateApi(private val stateRestTemplate: RestTemplate) : StateApi {
     }
 
     override fun createWalletWithMetadata(request: CreateStateWalletRequestMetadata): CreateStateWalletResponse {
-        return stateRestTemplate.postForEntity("/wallets", request, CreateStateWalletResponse::class.java).body!!
+        return stateRestTemplate.postForEntity("/api/wallets", request, CreateStateWalletResponse::class.java).body!!
     }
 
     override fun createWallet(request: CreateStateWithUserRequest): AddWatchResponse {
