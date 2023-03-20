@@ -2,7 +2,7 @@ package io.openfuture.api.domain.key
 
 import io.openfuture.api.entity.application.BlockchainType
 
-class ImportWalletDataRequest(
+data class ImportWalletOpenKeyRequest(
     val applicationId: String,
     val userId: String,
     val orderId: String,

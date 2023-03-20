@@ -9,7 +9,7 @@ import java.util.*
 interface KeyApi {
     fun generateWallet(createKeyRequest: CreateKeyRequest): KeyWalletDto
     fun importWallet(request: ImportKeyRequest): KeyWalletDto
-    fun importWalletV2(request: ImportWalletDataRequest): KeyWalletDto
+    fun importWalletV2(request: ImportWalletOpenKeyRequest): KeyWalletDto
     fun generateMultipleWallets(request: GenerateMultipleWalletRequest): Array<KeyWalletDto>
     fun generateMultipleWalletsWithOrder(request: GenerateMultipleWalletForOrderRequest): Array<KeyWalletDto>
     fun generateMultipleWalletsWithUser(request: GenerateMultipleWalletForUserRequest): Array<KeyWalletDto>

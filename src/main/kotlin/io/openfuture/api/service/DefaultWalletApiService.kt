@@ -7,7 +7,7 @@ import io.openfuture.api.controller.api.GenerateWalletWithMetadataRequest
 import io.openfuture.api.controller.api.ImportWalletForUserRequest
 import io.openfuture.api.controller.api.ImportWalletWithOrderRequest
 import io.openfuture.api.domain.key.ImportKeyRequest
-import io.openfuture.api.domain.key.ImportWalletDataRequest
+import io.openfuture.api.domain.key.ImportWalletOpenKeyRequest
 import io.openfuture.api.domain.key.KeyWalletDto
 import io.openfuture.api.domain.key.WalletApiCreateRequest
 import io.openfuture.api.domain.state.*
@@ -73,18 +73,16 @@ class DefaultWalletApiService(
     }
 
     override fun processUser(request: GenerateWalletWithMetadataRequest, application: Application): Array<KeyWalletDto> {
-        println("Sending request to Open Key $request")
+        val userId = application.user.id.toString()
+
         val keyWallets = keyApi.generateMultipleWalletsWithUser(
-            GenerateMultipleWalletForUserRequest(application.id.toString(), request.userId, request.blockchains)
+            GenerateMultipleWalletForUserRequest(application.id.toString(), userId, request.blockchains)
         )
-        println("Response from Open Key $keyWallets")
 
         val blockchains = extractAddresses(keyWallets, request.test)
 
-        val createStateRequest = CreateStateWithUserRequest(request.webhook, blockchains, application.id.toString(), request.userId, request.test, request.metadata)
-        println("Sending request to Open State $createStateRequest")
-        val createWallet = stateApi.createWallet(createStateRequest)
-        println("Response from Open State $createWallet")
+        val createStateRequest = CreateStateWithUserRequest(request.webhook, blockchains, application.id.toString(), userId, request.test, request.metadata)
+        stateApi.createWallet(createStateRequest)
 
         return keyWallets
     }
@@ -146,56 +144,59 @@ class DefaultWalletApiService(
         return stateApi.getPaymentDetailByOrder(orderKey)
     }
 
-    override fun importWalletForOrder(request: ImportWalletWithOrderRequest, application: Application): KeyWalletDto {
-        val keyWalletDto = keyApi.importWalletV2(
-            ImportWalletDataRequest(
-                application.id.toString(),
-                application.user.id.toString(),
-                request.orderId,
-                request.address,
-                request.encryptedData,
-                request.blockchainType
+    override fun importWalletForOrder(request: ImportWalletWithOrderRequest, application: Application): List<KeyWalletDto> {
+        val wallets: List<KeyWalletDto> = request.wallets.map { walletIdentity ->
+            keyApi.importWalletV2(
+                ImportWalletOpenKeyRequest(
+                    application.id.toString(),
+                    application.user.id.toString(),
+                    request.orderId,
+                    walletIdentity.address,
+                    walletIdentity.encryptedData,
+                    walletIdentity.blockchainType
+                )
             )
-        )
+        }
 
         val stateRequest = CreateStateWalletRequestMetadata(
-            application.webHook.toString(),
+            request.webhook,
             application.id.toString(),
-            extractAddresses(arrayOf(keyWalletDto), true),
-            WalletMetaData(request.amount, request.orderId, request.orderCurrency, "", true, request.metadata)
+            extractAddresses(wallets.toTypedArray(), request.test),
+            WalletMetaData(request.amount, request.orderId, request.orderCurrency, "", request.test, request.metadata)
         )
 
         // Save webhook on open state
         stateApi.createWalletWithMetadata(stateRequest)
 
-        return keyWalletDto
+        return wallets
     }
 
-    override fun importWalletForUser(request: ImportWalletForUserRequest, application: Application): KeyWalletDto {
-        val keyWalletDto = keyApi.importWalletV2(
-            ImportWalletDataRequest(
-                application.id.toString(),
-                application.user.id.toString(),
-                request.userId,
-                request.address,
-                request.encryptedData,
-                request.blockchainType
+    override fun importWalletForUser(request: ImportWalletForUserRequest, application: Application): List<KeyWalletDto> {
+        val wallets: List<KeyWalletDto> = request.wallets.map { walletIdentity ->
+            keyApi.importWalletV2(
+                ImportWalletOpenKeyRequest(
+                    application.id.toString(),
+                    application.user.id.toString(),
+                    request.userId,
+                    walletIdentity.address,
+                    walletIdentity.encryptedData,
+                    walletIdentity.blockchainType
+                )
             )
-        )
+        }
 
         val stateRequest = CreateStateWithUserRequest(
-            application.webHook.toString(),
-            extractAddresses(arrayOf(keyWalletDto), true),
+            request.webhook,
+            extractAddresses(wallets.toTypedArray(), request.test),
             application.id.toString(),
             request.userId,
-            true,
+            request.test,
             request.metadata
         )
 
-        // Save webhook on open state
         stateApi.createWallet(stateRequest)
 
-        return keyWalletDto
+        return wallets
     }
 
     private fun extractAddresses(keyWallets: Array<KeyWalletDto>, isTest: Boolean): MutableList<KeyWalletDto> {
@@ -206,7 +207,7 @@ class DefaultWalletApiService(
                 blockchains.add(
                     KeyWalletDto(
                         keyWalletDto.address,
-                        Blockchain.Ropsten.getValue(),
+                        Blockchain.Goerli.getValue(),
                         WalletType.CUSTODIAL.getValue(),
                         ""
                     )

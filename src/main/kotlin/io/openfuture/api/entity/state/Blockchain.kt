@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonValue
 enum class Blockchain(private val value: String) {
 
     Ethereum("EthereumBlockchain"),
-    Ropsten("RopstenBlockchain"),
+    Goerli("GoerliBlockchain"),
     Bitcoin("BitcoinBlockchain"),
     Binance("BinanceBlockchain"),
     BinanceTestnet("BinanceTestnetBlockchain");
@@ -14,10 +14,10 @@ enum class Blockchain(private val value: String) {
         //TODO
         fun getBlockchainBySymbol(symbol: String): Blockchain {
             return when (symbol) {
-                "ETH" -> Ropsten
+                "ETH" -> Goerli
                 "BNB" -> BinanceTestnet
                 "BTC" -> Bitcoin
-                else -> Ropsten
+                else -> Goerli
             }
         }
     }

@@ -7,7 +7,10 @@ import io.openfuture.api.domain.application.ApplicationAccessKey
 import io.openfuture.api.domain.application.ApplicationRequest
 import io.openfuture.api.domain.holder.AddEthereumShareHolderRequest
 import io.openfuture.api.domain.holder.UpdateEthereumShareHolderRequest
-import io.openfuture.api.domain.key.*
+import io.openfuture.api.domain.key.GenerateWalletRequest
+import io.openfuture.api.domain.key.ImportWalletRequest
+import io.openfuture.api.domain.key.KeyWalletDto
+import io.openfuture.api.domain.key.WalletApiCreateRequest
 import io.openfuture.api.domain.scaffold.*
 import io.openfuture.api.domain.state.*
 import io.openfuture.api.domain.token.UserTokenRequest
@@ -156,9 +159,9 @@ interface WalletApiService {
 
     fun getAddressesByOrderKey(orderKey: String): PaymentWidgetResponse
 
-    fun importWalletForOrder(request: ImportWalletWithOrderRequest, application: Application): KeyWalletDto
+    fun importWalletForOrder(request: ImportWalletWithOrderRequest, application: Application): List<KeyWalletDto>
 
-    fun importWalletForUser(request: ImportWalletForUserRequest, application: Application): KeyWalletDto
+    fun importWalletForUser(request: ImportWalletForUserRequest, application: Application): List<KeyWalletDto>
 
 }
 
