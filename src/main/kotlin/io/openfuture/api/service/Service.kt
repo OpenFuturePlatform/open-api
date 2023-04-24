@@ -126,9 +126,9 @@ interface ApplicationWalletService {
 
     fun deleteWallet(applicationId: String, address: String)
 
-    fun getAddressTransactionsByAddress(address: String) : StateWalletTransactionDetail
+    fun getOrderTransactionsByAddress(address: String) : OrderTransactionDetail
 
-    fun getTransactionsByAddress(address: String): Array<TransactionDto>
+    fun getAllTransactionsByAddress(address: String): Array<TransactionDto>
 
     fun generateSignature(address: String, request: StateSignRequest): String
 
@@ -145,7 +145,7 @@ interface WalletApiService {
 
     fun saveWalletSDK(walletApiStateRequest: WalletApiStateRequest, application: Application, user: User): Boolean
 
-    fun getOrderDetails(applicationId: String): Array<StateOrderDetail>
+    fun getOrderDetails(applicationId: String): List<StatePaymentDetail>
 
     fun getWallet(address: String, blockchainType: BlockchainType): WalletApiStateResponse
 

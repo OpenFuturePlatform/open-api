@@ -17,17 +17,17 @@ class DefaultStateApi(private val stateRestTemplate: RestTemplate) : StateApi {
         blockchain: Blockchain,
         applicationId: String
     ): StateWalletDto {
-        val request = CreateStateWalletRequest(address, webHook, blockchain.getValue(), applicationId)
+        val request = CreateStateWalletRequest(address, applicationId, blockchain.getValue(), webHook)
         val response = stateRestTemplate.postForEntity("/wallets/single", request, StateWalletDto::class.java)
         return response.body!!
     }
 
     override fun createWalletWithMetadata(request: CreateStateWalletRequestMetadata): CreateStateWalletResponse {
-        return stateRestTemplate.postForEntity("/api/wallets", request, CreateStateWalletResponse::class.java).body!!
+        return stateRestTemplate.postForEntity("/wallets", request, CreateStateWalletResponse::class.java).body!!
     }
 
     override fun createWallet(request: CreateStateWithUserRequest): AddWatchResponse {
-        return stateRestTemplate.postForEntity("/api/wallets/v2/add", request, AddWatchResponse::class.java).body!!
+        return stateRestTemplate.postForEntity("/wallets/v2/add", request, AddWatchResponse::class.java).body!!
     }
 
     override fun updateWalletWithMetadata(request: UpdateStateWalletMetadata) {
@@ -44,9 +44,9 @@ class DefaultStateApi(private val stateRestTemplate: RestTemplate) : StateApi {
         return stateRestTemplate.getForEntity(url, WalletApiStateResponse::class.java).body!!
     }
 
-    override fun getAddressTransactionsByAddress(address: String): StateWalletTransactionDetail {
+    override fun getOrderTransactionsByAddress(address: String): OrderTransactionDetail {
         val url = "/wallets/transactions/address/${address}"
-        return stateRestTemplate.getForEntity(url, StateWalletTransactionDetail::class.java).body!!
+        return stateRestTemplate.getForEntity(url, OrderTransactionDetail::class.java).body!!
     }
 
     override fun getTransactionsByAddress(address: String): Array<TransactionDto> {
@@ -59,7 +59,7 @@ class DefaultStateApi(private val stateRestTemplate: RestTemplate) : StateApi {
         return stateRestTemplate.getForEntity(url, PaymentWidgetResponse::class.java).body!!
     }
 
-    override fun getOrderDetailsByApplication(applicationId: String): Array<StateOrderDetail> {
+    override fun getOrdersByApplication(applicationId: String): Array<StateOrderDetail> {
         val url = "/wallets/application/${applicationId}"
         return stateRestTemplate.getForEntity(url, Array<StateOrderDetail>::class.java).body!!
     }

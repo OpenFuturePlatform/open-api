@@ -23,9 +23,6 @@ object KeyGeneratorUtils {
         val privateKey = pair.private
         val publicKey = pair.public
 
-        println("Private key format: " + privateKey.format);
-        println("Public key format: " + publicKey.format);
-
         val accessKeyId = Base64.getEncoder().encodeToString(publicKey.encoded)
         val secretAccessKey = Base64.getEncoder().encodeToString(privateKey.encoded)
 

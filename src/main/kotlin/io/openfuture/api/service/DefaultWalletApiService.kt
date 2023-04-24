@@ -6,12 +6,8 @@ import io.openfuture.api.component.web3.Web3Wrapper
 import io.openfuture.api.controller.api.GenerateWalletWithMetadataRequest
 import io.openfuture.api.controller.api.ImportWalletForUserRequest
 import io.openfuture.api.controller.api.ImportWalletWithOrderRequest
-import io.openfuture.api.domain.key.ImportKeyRequest
-import io.openfuture.api.domain.key.ImportWalletOpenKeyRequest
-import io.openfuture.api.domain.key.KeyWalletDto
-import io.openfuture.api.domain.key.WalletApiCreateRequest
+import io.openfuture.api.domain.key.*
 import io.openfuture.api.domain.state.*
-import io.openfuture.api.domain.wallet.WalletType
 import io.openfuture.api.domain.widget.PaymentWidgetResponse
 import io.openfuture.api.entity.application.Application
 import io.openfuture.api.entity.application.BlockchainType
@@ -45,17 +41,17 @@ class DefaultWalletApiService(
         val blockchains = extractAddresses(keyWallets, walletApiCreateRequest.metadata.test)
 
         val request = CreateStateWalletRequestMetadata(
-            applicationId.webHook.toString(),
-            applicationId.id.toString(),
-            blockchains,
-            WalletMetaData(
-                walletApiCreateRequest.metadata.amount,
-                walletApiCreateRequest.metadata.orderKey,
-                walletApiCreateRequest.metadata.productCurrency,
-                walletApiCreateRequest.metadata.source,
-                walletApiCreateRequest.metadata.test,
-                walletApiCreateRequest.metadata
-            )
+            applicationId = applicationId.id.toString(),
+            blockchains = blockchains,
+            metadata = WalletMetaData(
+                amount = walletApiCreateRequest.metadata.amount,
+                orderKey = walletApiCreateRequest.metadata.orderKey,
+                productCurrency = walletApiCreateRequest.metadata.productCurrency,
+                source = walletApiCreateRequest.metadata.source,
+                test = walletApiCreateRequest.metadata.test,
+                metadata = walletApiCreateRequest.metadata.metadata
+            ),
+            webhook = applicationId.webHook.toString()
         )
         // Save webhook on open state
         stateApi.createWalletWithMetadata(request)
@@ -68,7 +64,6 @@ class DefaultWalletApiService(
         application: Application,
         userId: String
     ): Array<KeyWalletDto> {
-
         return generateWalletForOrder(walletApiCreateRequest, application, userId)
     }
 
@@ -93,7 +88,6 @@ class DefaultWalletApiService(
         application: Application,
         user: User
     ): Boolean {
-        println("WalletApiStateRequest :$walletApiStateRequest")
         // Save Address on Open Key
         keyApi.importWallet(
             ImportKeyRequest(
@@ -116,8 +110,21 @@ class DefaultWalletApiService(
         return true
     }
 
-    override fun getOrderDetails(applicationId: String): Array<StateOrderDetail> {
-        return stateApi.getOrderDetailsByApplication(applicationId)
+    override fun getOrderDetails(applicationId: String): List<StatePaymentDetail> {
+        val keyWallets = keyApi.getAllWalletsByApplication(applicationId, Optional.empty(), Optional.empty())
+        val orderWallets =  stateApi.getOrdersByApplication(applicationId)
+        val result = mutableListOf<StatePaymentDetail>()
+
+        orderWallets.forEach { o ->
+            val bWallets = mutableListOf<BlockchainWallet>()
+            val blockchainWallets = o.blockchains
+            blockchainWallets.forEach { w ->
+                val encrypted = keyWallets.find { k -> k.address.equals(w.address, true) }?.encrypted
+                bWallets.add(BlockchainWallet(w.address, w.blockchain, w.rate, encrypted))
+            }
+            result.add(StatePaymentDetail(o.orderKey, o.amount, o.totalPaid, o.currency, bWallets))
+        }
+        return result
     }
 
     override fun getWallet(address: String, blockchainType: BlockchainType): WalletApiStateResponse {
@@ -159,10 +166,10 @@ class DefaultWalletApiService(
         }
 
         val stateRequest = CreateStateWalletRequestMetadata(
-            request.webhook,
-            application.id.toString(),
-            extractAddresses(wallets.toTypedArray(), request.test),
-            WalletMetaData(request.amount, request.orderId, request.orderCurrency, "", request.test, request.metadata)
+            webhook = request.webhook,
+            applicationId = application.id.toString(),
+            blockchains = extractAddresses(wallets.toTypedArray(), request.test),
+            metadata = WalletMetaData(request.amount, request.orderId, request.orderCurrency, "order_sdk", request.test, request.metadata)
         )
 
         // Save webhook on open state
@@ -199,58 +206,48 @@ class DefaultWalletApiService(
         return wallets
     }
 
-    private fun extractAddresses(keyWallets: Array<KeyWalletDto>, isTest: Boolean): MutableList<KeyWalletDto> {
-        val blockchains = mutableListOf<KeyWalletDto>()
+    private fun extractAddresses(keyWallets: Array<KeyWalletDto>, isTest: Boolean): MutableList<BlockchainData> {
+        val blockchains = mutableListOf<BlockchainData>()
 
         for (keyWalletDto in keyWallets) {
             if (isTest && keyWalletDto.blockchain == "ETH") {
                 blockchains.add(
-                    KeyWalletDto(
+                    BlockchainData(
                         keyWalletDto.address,
-                        Blockchain.Goerli.getValue(),
-                        WalletType.CUSTODIAL.getValue(),
-                        ""
+                        Blockchain.Goerli.getValue()
                     )
                 )
             } else if (isTest && keyWalletDto.blockchain == "BNB") {
                 blockchains.add(
-                    KeyWalletDto(
+                    BlockchainData(
                         keyWalletDto.address,
-                        Blockchain.BinanceTestnet.getValue(),
-                        WalletType.CUSTODIAL.getValue(),
-                        ""
+                        Blockchain.BinanceTestnet.getValue()
                     )
                 )
             } else {
                 when (keyWalletDto.blockchain) {
                     "ETH" -> {
                         blockchains.add(
-                            KeyWalletDto(
+                            BlockchainData(
                                 keyWalletDto.address,
-                                Blockchain.Ethereum.getValue(),
-                                WalletType.CUSTODIAL.getValue(),
-                                ""
+                                Blockchain.Ethereum.getValue()
                             )
                         )
                     }
 
                     "BTC" -> {
                         blockchains.add(
-                            KeyWalletDto(
+                            BlockchainData(
                                 keyWalletDto.address,
-                                Blockchain.Bitcoin.getValue(),
-                                WalletType.CUSTODIAL.getValue(),
-                                ""
+                                Blockchain.Bitcoin.getValue()
                             )
                         )
                     }//todo: add trx
                     else -> {
                         blockchains.add(
-                            KeyWalletDto(
+                            BlockchainData(
                                 keyWalletDto.address,
-                                Blockchain.Binance.getValue(),
-                                WalletType.CUSTODIAL.getValue(),
-                                ""
+                                Blockchain.Binance.getValue()
                             )
                         )
                     }

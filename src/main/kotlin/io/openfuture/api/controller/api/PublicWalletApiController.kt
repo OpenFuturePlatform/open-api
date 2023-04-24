@@ -3,6 +3,7 @@ package io.openfuture.api.controller.api
 import io.openfuture.api.domain.key.KeyWalletDto
 import io.openfuture.api.domain.key.WalletApiCreateRequest
 import io.openfuture.api.domain.state.StateOrderDetail
+import io.openfuture.api.domain.state.StatePaymentDetail
 import io.openfuture.api.domain.state.WalletApiStateRequest
 import io.openfuture.api.domain.state.WalletApiStateResponse
 import io.openfuture.api.service.ApplicationService
@@ -35,7 +36,7 @@ class PublicWalletApiController(
     }
 
     @GetMapping("/details")
-    fun getWalletDetails(@RequestHeader("X-API-KEY") accessKey: String): Array<StateOrderDetail> {
+    fun getWalletDetails(@RequestHeader("X-API-KEY") accessKey: String): List<StatePaymentDetail> {
         val application = applicationService.getByAccessKey(accessKey)
         return walletApiService.getOrderDetails(application.id.toString())
     }

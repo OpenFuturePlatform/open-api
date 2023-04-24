@@ -1,17 +1,17 @@
 package io.openfuture.api.domain.state
 
-import io.openfuture.api.domain.key.KeyWalletDto
+import io.openfuture.api.domain.key.BlockchainData
 
 data class CreateStateWithOrderRequest(
     val webhook: String,
     val applicationId: String,
-    val blockchains: List<KeyWalletDto>,
+    val blockchains: List<BlockchainData>,
     val metadata: OrderMetaDataV2
 )
 
 data class CreateStateWithUserRequest(
     val webhook: String,
-    val blockchains: List<KeyWalletDto>,
+    val blockchains: List<BlockchainData>,
     val applicationId: String,
     val userId: String,
     val test: Boolean,
