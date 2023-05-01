@@ -35,7 +35,7 @@ class MainController(
     }
 
     @GetMapping("/widget/trx/address/{address}")
-    fun paymentChoose(@PathVariable address: String, model: ModelMap): String {
+    fun paymentTracker(@PathVariable address: String, model: ModelMap): String {
         model["address"] = address
         model["host"] = widgetProperties.host
         return "tracker"

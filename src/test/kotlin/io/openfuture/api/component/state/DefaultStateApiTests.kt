@@ -30,14 +30,8 @@ class DefaultStateApiTests : UnitTest() {
 
     @Test
     fun createWalletTest() {
-        val request = CreateStateWalletRequest(
-            "address",
-            "webhook",
-            Blockchain.Ethereum.getValue(),
-            "applicationId"
-        )
-        val response = StateWalletDto(
-            UUID.randomUUID().toString(), "address", "webhook", Blockchain.Ethereum, LocalDateTime.now())
+        val request = CreateStateWalletRequest("address", "applicationId", Blockchain.Ethereum.getValue(), "webhook")
+        val response = StateWalletDto(UUID.randomUUID().toString(), "address", "webhook", Blockchain.Ethereum, LocalDateTime.now())
 
         given(restTemplate.postForEntity("/wallets/single", request, StateWalletDto::class.java)).willReturn(ResponseEntity(response, HttpStatus.OK))
 

@@ -4,9 +4,8 @@ import io.openfuture.api.annotation.CurrentUser
 import io.openfuture.api.domain.key.GenerateWalletRequest
 import io.openfuture.api.domain.key.ImportWalletRequest
 import io.openfuture.api.domain.key.KeyWalletDto
-import io.openfuture.api.domain.key.KeyWalletEncryptedDto
 import io.openfuture.api.domain.state.StateSignRequest
-import io.openfuture.api.domain.state.StateWalletTransactionDetail
+import io.openfuture.api.domain.state.OrderTransactionDetail
 import io.openfuture.api.entity.auth.User
 import io.openfuture.api.service.ApplicationWalletService
 import org.springframework.web.bind.annotation.*
@@ -20,7 +19,7 @@ class ApplicationWalletApiController(
 
     @PostMapping
     fun generateWallet(@Valid @RequestBody request: GenerateWalletRequest, @CurrentUser user: User): KeyWalletDto =
-        service.generateWallet(request, user)
+        service.generateWallet(request, user.id.toString())
 
     @DeleteMapping
     fun delete(
@@ -32,7 +31,7 @@ class ApplicationWalletApiController(
     }
 
     @GetMapping("/{applicationId}")
-    fun getAll(@PathVariable("applicationId") applicationId: Long): Array<KeyWalletEncryptedDto> {
+    fun getAll(@PathVariable("applicationId") applicationId: Long): Array<KeyWalletDto> {
         return service.getAllWallets(applicationId)
     }
 
@@ -50,12 +49,12 @@ class ApplicationWalletApiController(
 
     @PostMapping("/import")
     fun importWallet(@Valid @RequestBody request: ImportWalletRequest, @CurrentUser user: User){
-        service.importWallet(request, user)
+        service.importWallet(request, user.id.toString())
     }
 
     @GetMapping("/address/{address}")
-    fun getAll(@PathVariable("address") address: String): StateWalletTransactionDetail {
-        return service.getAddressTransactionsByAddress(address)
+    fun getAll(@PathVariable("address") address: String): OrderTransactionDetail {
+        return service.getOrderTransactionsByAddress(address)
     }
 
 }

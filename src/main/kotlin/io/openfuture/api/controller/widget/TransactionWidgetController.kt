@@ -13,6 +13,6 @@ class TransactionWidgetController(
 
     @GetMapping("/address/{address}")
     fun getTransactionsByAddress(@PathVariable address: String): Array<TransactionDto> {
-        return service.getTransactionsByAddress(address)
+        return service.getAllTransactionsByAddress(address)
     }
 }

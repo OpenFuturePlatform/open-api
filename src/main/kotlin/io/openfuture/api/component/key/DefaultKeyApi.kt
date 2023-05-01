@@ -1,8 +1,12 @@
 package io.openfuture.api.component.key
 
 import io.openfuture.api.domain.key.*
+import io.openfuture.keymanagementservice.dto.GenerateMultipleWalletForOrderRequest
+import io.openfuture.keymanagementservice.dto.GenerateMultipleWalletForUserRequest
+import io.openfuture.keymanagementservice.dto.GenerateMultipleWalletRequest
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestTemplate
+import java.util.*
 
 
 @Component
@@ -20,8 +24,23 @@ class DefaultKeyApi(
         return response.body!!
     }
 
-    override fun generateMultipleWallets(createMultipleKeyRequest: CreateMultipleKeyRequest): Array<KeyWalletDto> {
-        val response = keyRestTemplate.postForEntity("/key/multiple", createMultipleKeyRequest, Array<KeyWalletDto>::class.java)
+    override fun importWalletV2(request: ImportWalletOpenKeyRequest): KeyWalletDto {
+        val response = keyRestTemplate.postForEntity("/key/importWallet", request, KeyWalletDto::class.java)
+        return response.body!!
+    }
+
+    override fun generateMultipleWallets(request: GenerateMultipleWalletRequest): Array<KeyWalletDto> {
+        val response = keyRestTemplate.postForEntity("/key/generateMultiple", request, Array<KeyWalletDto>::class.java)
+        return response.body!!
+    }
+
+    override fun generateMultipleWalletsWithOrder(request: GenerateMultipleWalletForOrderRequest): Array<KeyWalletDto> {
+        val response = keyRestTemplate.postForEntity("/key/generateMultipleForOrder", request, Array<KeyWalletDto>::class.java)
+        return response.body!!
+    }
+
+    override fun generateMultipleWalletsWithUser(request: GenerateMultipleWalletForUserRequest): Array<KeyWalletDto> {
+        val response = keyRestTemplate.postForEntity("/key/generateMultipleForUser", request, Array<KeyWalletDto>::class.java)
         return response.body!!
     }
 
@@ -30,9 +49,23 @@ class DefaultKeyApi(
         return response.body!!
     }
 
-    override fun getAllWalletsByApplication(applicationId: String): Array<KeyWalletEncryptedDto> {
-        val response = keyRestTemplate.getForEntity("/key?applicationId={applicationId}", Array<KeyWalletEncryptedDto>::class.java, applicationId)
-        return response.body!!
+    override fun getAllWalletsByApplication(applicationId: String, userId: Optional<String>, orderKey: Optional<String>): Array<KeyWalletDto> {
+        if (userId.isPresent){
+            val response = keyRestTemplate.getForEntity("/key?applicationId={applicationId}&userId={userId}", Array<KeyWalletDto>::class.java, applicationId, userId.get())
+            return response.body!!
+        } else if (orderKey.isPresent){
+            val url = "/key/order/${orderKey.get()}"
+            val response = keyRestTemplate.getForEntity(url, Array<KeyWalletDto>::class.java)
+            return response.body!!
+
+        } else {
+            val response = keyRestTemplate.getForEntity(
+                "/key?applicationId={applicationId}",
+                Array<KeyWalletDto>::class.java,
+                applicationId
+            )
+            return response.body!!
+        }
     }
 
     override fun getAllWalletsByOrderKey(orderKey: String): Array<KeyWalletDto> {

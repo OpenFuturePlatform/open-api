@@ -4,16 +4,18 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.openfuture.api.config.propety.AuthorizationProperties
 import io.openfuture.api.domain.exception.ExceptionResponse
-import io.openfuture.api.domain.key.WalletApiCreateRequest
 import io.openfuture.api.domain.state.WalletApiStateRequest
 import io.openfuture.api.entity.application.Application
 import io.openfuture.api.service.ApplicationService
 import io.openfuture.api.util.*
-import org.springframework.http.HttpStatus.NOT_FOUND
+import org.apache.commons.io.IOUtils
 import org.springframework.http.HttpStatus.UNAUTHORIZED
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.web.util.ContentCachingRequestWrapper
+import java.nio.charset.StandardCharsets
+import java.util.*
 import javax.servlet.*
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
@@ -45,9 +47,14 @@ class PublicApiAuthorizationFilter(
 
                     val requestWrapper = CustomHttpRequestWrapper(request)
 
-                    if (!checkRequestType(request, response, application, signature, requestWrapper)) {
+                    val timestamp = request.getHeader("X-API-TIMESTAMP")
+
+                    val str1 = IOUtils.toString(requestWrapper.inputStream, StandardCharsets.UTF_8)
+
+                    if (!checkHash(application, signature, str1, timestamp!!.toLong())) {
                         println("Signature mismatch or request timeout")
-                        val exceptionResponse = ExceptionResponse(UNAUTHORIZED.value(), "Signature mismatch or request timeout")
+                        val exceptionResponse =
+                            ExceptionResponse(UNAUTHORIZED.value(), "Signature mismatch or request timeout")
                         response.status = exceptionResponse.status
                         response.writer.write(mapper.writeValueAsString(exceptionResponse))
                         return
@@ -75,9 +82,11 @@ class PublicApiAuthorizationFilter(
                 }
 
             } catch (exception: RuntimeException) {
-                println("Exception thrown")
+                val exceptionResponse = ExceptionResponse(UNAUTHORIZED.value(), exception.message!!)
                 response.setContentType("application/json")
-                response.setStatus(NOT_FOUND.value())
+                response.status = exceptionResponse.status
+                response.writer.write(mapper.writeValueAsString(exceptionResponse))
+                return
             }
 
         }
@@ -88,25 +97,6 @@ class PublicApiAuthorizationFilter(
         // Do nothing
     }
 
-    private fun checkRequestType(request: ServletRequest, response: ServletResponse, application: Application, signature: String, requestWrapper: CustomHttpRequestWrapper): Boolean {
-        request as HttpServletRequest
-        response as HttpServletResponse
-
-        val walletApiUrls = listOf("wallet/save", "wallet/fetch", "wallet/broadcast")
-        val mapper = jacksonObjectMapper()
-
-        val sign: Boolean = if (walletApiUrls.any{request.requestURI.contains(it)}){
-            val walletApiRequest = mapper.readValue(requestWrapper.bodyInStringFormat, WalletApiStateRequest::class.java)
-            val str = mapper.writeValueAsString(walletApiRequest)
-            checkHash(application, signature, str, walletApiRequest.timestamp.toLong())
-        } else {
-            val walletApiRequest = mapper.readValue(requestWrapper.bodyInStringFormat, WalletApiCreateRequest::class.java)
-            val str = mapper.writeValueAsString(walletApiRequest)
-            checkHash(application, signature, str, walletApiRequest.timestamp.toLong())
-        }
-        return sign
-    }
-
     private fun checkHash(application: Application, signature: String, str: String, timestamp: Long): Boolean {
 
         val diffMinutes = differenceEpochs(currentEpochs(), timestamp)
@@ -115,10 +105,6 @@ class PublicApiAuthorizationFilter(
         val hmacSha256 = application.let {
             KeyGeneratorUtils.calcHmacSha256(it.apiSecretKey, str)
         }
-        println(hmacSha256)
-        println(signature)
-        println("HASH ${hmacSha256 != signature}")
-        println("PERIOD ${diffMinutes > expirePeriod}")
         if (hmacSha256 != signature || diffMinutes > expirePeriod) {
             return false
         }

@@ -1,10 +1,16 @@
 package io.openfuture.api.service
 
+import io.openfuture.api.controller.api.GenerateWalletWithMetadataRequest
+import io.openfuture.api.controller.api.ImportWalletForUserRequest
+import io.openfuture.api.controller.api.ImportWalletWithOrderRequest
 import io.openfuture.api.domain.application.ApplicationAccessKey
 import io.openfuture.api.domain.application.ApplicationRequest
 import io.openfuture.api.domain.holder.AddEthereumShareHolderRequest
 import io.openfuture.api.domain.holder.UpdateEthereumShareHolderRequest
-import io.openfuture.api.domain.key.*
+import io.openfuture.api.domain.key.GenerateWalletRequest
+import io.openfuture.api.domain.key.ImportWalletRequest
+import io.openfuture.api.domain.key.KeyWalletDto
+import io.openfuture.api.domain.key.WalletApiCreateRequest
 import io.openfuture.api.domain.scaffold.*
 import io.openfuture.api.domain.state.*
 import io.openfuture.api.domain.token.UserTokenRequest
@@ -112,17 +118,17 @@ interface ApplicationService {
 
 interface ApplicationWalletService {
 
-    fun generateWallet(request: GenerateWalletRequest, user: User): KeyWalletDto
+    fun generateWallet(request: GenerateWalletRequest, userId: String): KeyWalletDto
 
-    fun importWallet(request: ImportWalletRequest, user: User)
+    fun importWallet(request: ImportWalletRequest, userId: String)
 
-    fun getAllWallets(id: Long): Array<KeyWalletEncryptedDto>
+    fun getAllWallets(id: Long): Array<KeyWalletDto>
 
     fun deleteWallet(applicationId: String, address: String)
 
-    fun getAddressTransactionsByAddress(address: String) : StateWalletTransactionDetail
+    fun getOrderTransactionsByAddress(address: String) : OrderTransactionDetail
 
-    fun getTransactionsByAddress(address: String): Array<TransactionDto>
+    fun getAllTransactionsByAddress(address: String): Array<TransactionDto>
 
     fun generateSignature(address: String, request: StateSignRequest): String
 
@@ -131,21 +137,31 @@ interface ApplicationWalletService {
 
 interface WalletApiService {
 
-    fun generateWallet(walletApiCreateRequest: WalletApiCreateRequest, application: Application, user: User): Array<KeyWalletDto>
+    fun generateWalletForOrder(walletApiCreateRequest: WalletApiCreateRequest, applicationId: Application, userId: String): Array<KeyWalletDto>
 
-    fun processWalletSDK(walletApiCreateRequest: WalletApiCreateRequest, application: Application, user: User): Array<KeyWalletDto>
+    fun processOrder(walletApiCreateRequest: WalletApiCreateRequest, application: Application, userId: String): Array<KeyWalletDto>
+
+    fun processUser(request: GenerateWalletWithMetadataRequest, application: Application): Array<KeyWalletDto>
 
     fun saveWalletSDK(walletApiStateRequest: WalletApiStateRequest, application: Application, user: User): Boolean
 
-    fun getOrderDetails(applicationId: String): Array<StateOrderDetail>
+    fun getOrderDetails(applicationId: String): List<StatePaymentDetail>
 
     fun getWallet(address: String, blockchainType: BlockchainType): WalletApiStateResponse
+
+    fun getWalletsByApplicationAndUser(applicationId: String, userId: String): Array<KeyWalletDto>
+
+    fun getWalletsByApplicationAndOrder(applicationId: String, orderId: String): Array<KeyWalletDto>
 
     fun getNonce(address: String): BigInteger
 
     fun broadcastTransaction(signature: String, blockchainType: BlockchainType): TransactionReceipt
 
     fun getAddressesByOrderKey(orderKey: String): PaymentWidgetResponse
+
+    fun importWalletForOrder(request: ImportWalletWithOrderRequest, application: Application): List<KeyWalletDto>
+
+    fun importWalletForUser(request: ImportWalletForUserRequest, application: Application): List<KeyWalletDto>
 
 }
 

@@ -18,11 +18,13 @@ interface StateApi {
 
     fun getWallet(address: String, blockchain: Blockchain): WalletApiStateResponse
 
-    fun getAddressTransactionsByAddress(address: String): StateWalletTransactionDetail
+    fun getOrderTransactionsByAddress(address: String): OrderTransactionDetail
 
     fun getTransactionsByAddress(address: String): Array<TransactionDto>
 
     fun getPaymentDetailByOrder(orderKey: String): PaymentWidgetResponse
 
-    fun getOrderDetailsByApplication(applicationId: String): Array<StateOrderDetail>
+    fun getOrdersByApplication(applicationId: String): Array<StateOrderDetail>
+
+    fun createWallet(request: CreateStateWithUserRequest): AddWatchResponse
 }
