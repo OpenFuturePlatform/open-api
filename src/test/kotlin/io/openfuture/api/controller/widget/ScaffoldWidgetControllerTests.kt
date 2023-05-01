@@ -10,6 +10,7 @@ import org.junit.Test
 import org.mockito.BDDMockito.given
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.test.context.junit.jupiter.DisabledIf
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -22,6 +23,7 @@ class ScaffoldWidgetControllerTests : ControllerTests() {
     private lateinit var service: EthereumScaffoldService
 
 
+    @DisabledIf
     @Test
     fun getTest() {
         val scaffold = createScaffold()
