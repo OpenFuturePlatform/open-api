@@ -18,9 +18,12 @@
 *.ipr
 /out/
 
+/payment-chooser/build/static/js/
+/payment-chooser/build/resources/static/js/
+/payment-chooser/node_modules/
+
 ### NetBeans ###
 /nbproject/private/
-/build/
 /nbbuild/
 /dist/
 /nbdist/

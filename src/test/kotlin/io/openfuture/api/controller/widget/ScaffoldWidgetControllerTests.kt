@@ -40,9 +40,9 @@ class ScaffoldWidgetControllerTests : ControllerTests() {
                       "address": ${ethereumScaffold.address},
                       "abi": ${ethereumScaffold.abi},
                       "description": ${ethereumScaffold.description},
-                      "fiat_amount": "${ethereumScaffold.fiatAmount}",
+                      "fiatAmount": "${ethereumScaffold.fiatAmount}",
                       "currency": ${ethereumScaffold.getCurrency().name},
-                      "conversion_amount": "${ethereumScaffold.conversionAmount}",
+                      "conversionAmount": "${ethereumScaffold.conversionAmount}",
                       "properties": ${Arrays.toString(ethereumScaffold.property.toTypedArray())}
                     }
     """.trimIndent()
