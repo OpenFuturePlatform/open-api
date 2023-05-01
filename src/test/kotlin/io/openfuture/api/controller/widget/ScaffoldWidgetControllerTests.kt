@@ -23,7 +23,6 @@ class ScaffoldWidgetControllerTests : ControllerTests() {
     private lateinit var service: EthereumScaffoldService
 
 
-    @DisabledIf
     @Test
     fun getTest() {
         val scaffold = createScaffold()
@@ -41,9 +40,9 @@ class ScaffoldWidgetControllerTests : ControllerTests() {
                       "address": ${ethereumScaffold.address},
                       "abi": ${ethereumScaffold.abi},
                       "description": ${ethereumScaffold.description},
-                      "fiatAmount": "${ethereumScaffold.fiatAmount}",
+                      "fiat_amount": "${ethereumScaffold.fiatAmount}",
                       "currency": ${ethereumScaffold.getCurrency().name},
-                      "conversionAmount": "${ethereumScaffold.conversionAmount}",
+                      "conversion_amount": "${ethereumScaffold.conversionAmount}",
                       "properties": ${Arrays.toString(ethereumScaffold.property.toTypedArray())}
                     }
     """.trimIndent()
