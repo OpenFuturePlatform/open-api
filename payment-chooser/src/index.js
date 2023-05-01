@@ -54,9 +54,9 @@ function fetchTransactionData() {
 }
 
 function loadTransactionData(result) {
-    console.log("Load data : " + result.order_amount);
-    amountSelector.innerHTML = `${result.order_amount}` + ` ${currency}`;
-    leftAmount = result.order_amount - result.paid;
+    console.log("Load data : " + result.orderAmount);
+    amountSelector.innerHTML = `${result.orderAmount}` + ` ${currency}`;
+    leftAmount = result.orderAmount - result.paid;
     remainingSelector.innerHTML = `${leftAmount}` + ` ${currency}`;
 
     if (result.orderAmount <= result.paid) {
@@ -130,11 +130,11 @@ async function openPaymentWidget() {
 
     widgetData = await getAddressData(OPEN_URL);
 
-    amountSelector.innerHTML = `${widgetData.order_amount}` + ` ${currency}`;
-    leftAmount = widgetData.order_amount - widgetData.paid;
+    amountSelector.innerHTML = `${widgetData.orderAmount}` + ` ${currency}`;
+    leftAmount = widgetData.orderAmount - widgetData.paid;
     remainingSelector.innerHTML = `${leftAmount}` + ` ${currency}`;
 
-    countdownTimer(new Date(`${widgetData.order_date}`).getTime(), widgetData.order_amount, widgetData.paid);
+    countdownTimer(new Date(`${widgetData.orderDate}`).getTime(), widgetData.orderAmount, widgetData.paid);
 
     const accordion = document.querySelector(".accordion");
     let i = 1;
