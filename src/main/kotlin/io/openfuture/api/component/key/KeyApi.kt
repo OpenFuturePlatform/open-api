@@ -3,7 +3,7 @@ package io.openfuture.api.component.key
 import io.openfuture.api.domain.key.*
 import io.openfuture.keymanagementservice.dto.GenerateMultipleWalletForOrderRequest
 import io.openfuture.keymanagementservice.dto.GenerateMultipleWalletForUserRequest
-import io.openfuture.keymanagementservice.dto.GenerateMultipleWalletRequest
+import io.openfuture.api.domain.key.creation.GenerateMultipleWalletRequest
 import java.util.*
 
 interface KeyApi {
