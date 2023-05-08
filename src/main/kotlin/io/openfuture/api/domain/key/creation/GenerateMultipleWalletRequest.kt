@@ -1,4 +1,4 @@
-package io.openfuture.keymanagementservice.dto
+package io.openfuture.api.domain.key.creation
 
 import io.openfuture.api.entity.application.BlockchainType
 

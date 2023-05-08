@@ -3,7 +3,7 @@ package io.openfuture.api.component.key
 import io.openfuture.api.domain.key.*
 import io.openfuture.keymanagementservice.dto.GenerateMultipleWalletForOrderRequest
 import io.openfuture.keymanagementservice.dto.GenerateMultipleWalletForUserRequest
-import io.openfuture.keymanagementservice.dto.GenerateMultipleWalletRequest
+import io.openfuture.api.domain.key.creation.GenerateMultipleWalletRequest
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestTemplate
 import java.util.*
@@ -25,22 +25,22 @@ class DefaultKeyApi(
     }
 
     override fun importWalletV2(request: ImportWalletOpenKeyRequest): KeyWalletDto {
-        val response = keyRestTemplate.postForEntity("/key/importWallet", request, KeyWalletDto::class.java)
+        val response = keyRestTemplate.postForEntity("/key/wallet", request, KeyWalletDto::class.java)
         return response.body!!
     }
 
     override fun generateMultipleWallets(request: GenerateMultipleWalletRequest): Array<KeyWalletDto> {
-        val response = keyRestTemplate.postForEntity("/key/generateMultiple", request, Array<KeyWalletDto>::class.java)
+        val response = keyRestTemplate.postForEntity("/key/multiple", request, Array<KeyWalletDto>::class.java)
         return response.body!!
     }
 
     override fun generateMultipleWalletsWithOrder(request: GenerateMultipleWalletForOrderRequest): Array<KeyWalletDto> {
-        val response = keyRestTemplate.postForEntity("/key/generateMultipleForOrder", request, Array<KeyWalletDto>::class.java)
+        val response = keyRestTemplate.postForEntity("/key/order", request, Array<KeyWalletDto>::class.java)
         return response.body!!
     }
 
     override fun generateMultipleWalletsWithUser(request: GenerateMultipleWalletForUserRequest): Array<KeyWalletDto> {
-        val response = keyRestTemplate.postForEntity("/key/generateMultipleForUser", request, Array<KeyWalletDto>::class.java)
+        val response = keyRestTemplate.postForEntity("/key/user", request, Array<KeyWalletDto>::class.java)
         return response.body!!
     }
 
