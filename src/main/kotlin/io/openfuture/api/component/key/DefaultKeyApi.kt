@@ -25,7 +25,7 @@ class DefaultKeyApi(
     }
 
     override fun importWalletV2(request: ImportWalletOpenKeyRequest): KeyWalletDto {
-        val response = keyRestTemplate.postForEntity("/key/wallet", request, KeyWalletDto::class.java)
+        val response = keyRestTemplate.postForEntity("/key/import/wallet", request, KeyWalletDto::class.java)
         return response.body!!
     }
 
