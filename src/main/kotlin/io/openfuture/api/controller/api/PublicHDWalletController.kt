@@ -5,6 +5,7 @@ import io.openfuture.api.entity.application.BlockchainType
 import io.openfuture.api.service.ApplicationService
 import io.openfuture.api.service.ApplicationWalletService
 import io.openfuture.api.service.WalletApiService
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 
 @RestController

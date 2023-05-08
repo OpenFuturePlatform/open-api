@@ -31,7 +31,7 @@ class WebMvcConfig(
             .maxAge(3600)
     }
 
-    override fun addInterceptors(registry: InterceptorRegistry) {
+    /*override fun addInterceptors(registry: InterceptorRegistry) {
         registry.addInterceptor(accessKeyInterceptor())
     }
 
@@ -44,6 +44,6 @@ class WebMvcConfig(
     @Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
     fun accessKeyHolder(): AccessKeyHolder {
         return AccessKeyHolder("")
-    }
+    }*/
 
 }
