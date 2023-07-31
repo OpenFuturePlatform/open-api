@@ -78,7 +78,7 @@ function loadTransactionData(result) {
             let td_3 = document.createElement('td');
             td_3.innerHTML = `${trx.amount}`;
             let td_4 = document.createElement('td');
-            if (blockchain.native)
+            if (trx.native)
                 td_4.innerHTML = `${trx.rate}` + ` ${currency}`;
             else
                 td_4.innerHTML =  `${trx.token}`;
