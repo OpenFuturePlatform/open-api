@@ -1,17 +1,10 @@
 package io.openfuture.api.config
 
 import io.openfuture.api.annotation.resolver.CurrentUserArgumentResolver
-import io.openfuture.api.config.interceptor.AccessKeyHolder
-import io.openfuture.api.config.interceptor.AccessKeyInterceptor
 import io.openfuture.api.service.UserService
-import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.Scope
-import org.springframework.context.annotation.ScopedProxyMode
-import org.springframework.web.context.WebApplicationContext
 import org.springframework.web.method.support.HandlerMethodArgumentResolver
 import org.springframework.web.servlet.config.annotation.CorsRegistry
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
 
