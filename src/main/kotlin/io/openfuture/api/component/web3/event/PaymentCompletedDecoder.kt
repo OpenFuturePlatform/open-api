@@ -41,7 +41,7 @@ class PaymentCompletedDecoder(private val ethereumScaffoldPropertyRepository: Et
         val signature = mutableListOf(
                 object : TypeReference<Uint256>() {},
                 object : TypeReference<Address>() {},
-                object : TypeReference<Uint256>() {},
+                object : TypeReference<Bytes32>() {},
                 object : TypeReference<Uint256>() {}
         )
 

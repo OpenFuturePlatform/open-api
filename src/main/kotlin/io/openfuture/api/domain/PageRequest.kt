@@ -16,9 +16,10 @@ open class PageRequest(
 
     override fun getOffset(): Long = offset
 
-    override fun getSort(): Sort = Sort(ASC, "id")
+    override fun getSort(): Sort = Sort.by(ASC, "id")
 
     override fun first(): Pageable = PageRequest(0, limit)
+    override fun withPage(pageNumber: Int): Pageable = PageRequest(pageNumber.toLong(), limit)
 
     override fun previous(): PageRequest {
         return if (offset == 0L) this else {
