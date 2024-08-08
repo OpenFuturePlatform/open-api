@@ -14,13 +14,14 @@ apply plugin: 'io.spring.dependency-management'
 
 group = 'io.openfuture.api'
 sourceCompatibility = 17
+targetCompatibility = 17
 
 repositories {
     mavenCentral()
 }
 
 ext {
-    s3Version = "1.11.333"
+    s3Version = "1.12.261"
 }
 
 dependencies {
@@ -42,7 +43,6 @@ dependencies {
 
     // Ethereum
     implementation("org.web3j:web3j-spring-boot-starter:1.6.0")
-    //implementation('org.web3j:core:4.5.0')
     implementation('org.web3j:core:4.12.0'){
         exclude group : 'org.bouncycastle', module : 'bcprov-jdk18on'
         exclude group : 'com.squareup.okhttp3', module : 'okhttp'
@@ -68,11 +68,20 @@ dependencies {
     implementation('commons-io:commons-io:2.8.0')
     implementation 'org.apache.commons:commons-lang3:3.6'
 
-    implementation('org.apache.httpcomponents:httpclient:4.5.12')
+    implementation('org.apache.httpcomponents:httpclient:4.5.13')
 
     // Test
     testImplementation('org.springframework.boot:spring-boot-starter-test')
     testImplementation("org.mockito:mockito-core:2.22.0")
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.3'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.3'
+    testImplementation("junit:junit:4.13.1")
+
+}
+
+test {
+    useJUnitPlatform()
 }
 
 sourceSets {
@@ -119,7 +128,7 @@ jacocoTestReport {
 check.dependsOn jacocoTestReport
 
 // Front
-processResources.dependsOn(':frontend:assemble')
-processResources.dependsOn(':widget:assemble')
-processResources.dependsOn(':tracker:assemble')
-processResources.dependsOn(':payment-chooser:assemble')
+//processResources.dependsOn(':frontend:assemble')
+//processResources.dependsOn(':widget:assemble')
+//processResources.dependsOn(':tracker:assemble')
+//processResources.dependsOn(':payment-chooser:assemble')
