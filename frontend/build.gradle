@@ -13,6 +13,10 @@ task assemble(type: NpmTask) {
     args = ['run', 'build']
 }
 
+task install(type: NpmTask) {
+    args = ['install', '@babel/core@^7.16.0', '--save-dev']
+}
+
 assemble.doLast {
     println "Merging frontend"
 
@@ -34,8 +38,6 @@ assemble.doLast {
 }
 
 assemble.dependsOn npmInstall
+npmInstall.dependsOn install
 npmInstall.dependsOn npmSetup
 npmSetup.dependsOn nodeSetup
-
-
-
