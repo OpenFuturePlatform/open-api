@@ -4,8 +4,8 @@ on:
   push:
     branches:
       - '*'
-  release:
-    types: [published]
+#  release:
+#    types: [published]
 
 env:
   DEPLOY_IMAGE_NAME: openplatform/api
@@ -102,7 +102,7 @@ jobs:
     runs-on: ubuntu-latest
     continue-on-error: false
     needs: [tests]
-    if: github.event.action == 'published'
+#    if: github.event.action == 'published'
 
     steps:
 
@@ -168,6 +168,7 @@ jobs:
   deploy-production:
     name: Deploy Production
     runs-on: ubuntu-latest
+    environment: PRODUCTION
     continue-on-error: false
     needs: [tests, build, package]
 
@@ -176,26 +177,26 @@ jobs:
       - name: Setup SSH connection
         run: |
           eval $(ssh-agent -s)
-          echo "${{ secrets.DEPLOY_KEY_PROD }}" > deploy_key
+          echo "${{ secrets.OPEN_API_DEPLOY_KEY_AWS }}" > deploy_key
           chmod 600 ./deploy_key
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
-          ssh-keyscan ${{ secrets.DEPLOY_HOST_PROD }} >> ~/.ssh/known_hosts
+          ssh-keyscan ${{ vars.AWS_HOST }} >> ~/.ssh/known_hosts
           chmod 644 ~/.ssh/known_hosts
 
       - name: Deploy image
         run: |
-          ssh -i ./deploy_key ${{ secrets.DEPLOY_USER_PROD }}@${{ secrets.DEPLOY_HOST_PROD }} "
+          ssh -i ./deploy_key ${{ vars.AWS_USER }}@${{ vars.AWS_HOST }} "
                 docker pull ${{ env.DEPLOY_IMAGE_NAME }}:${{ env.DEPLOY_IMAGE_TAG }}
           "
-          ssh -i ./deploy_key ${{ secrets.DEPLOY_USER_PROD }}@${{ secrets.DEPLOY_HOST_PROD }} "
+          ssh -i ./deploy_key ${{ vars.AWS_USER }}@${{ vars.AWS_HOST }} "
                 docker stop ${{ env.CONTAINER_NAME }} && \
                 IMG=\$(docker ps -a --filter='name=^/${{ env.CONTAINER_NAME }}$' --format='{{.Image}}') &&  \
                 docker rm -f ${{ env.CONTAINER_NAME }} && \
                 docker rmi \$IMG; \
                 exit 0
               "
-          ssh -i ./deploy_key ${{ secrets.DEPLOY_USER_PROD }}@${{ secrets.DEPLOY_HOST_PROD }} "
+          ssh -i ./deploy_key ${{ vars.AWS_USER }}@${{ vars.AWS_HOST }} "
                 docker run -d --name '${{ env.CONTAINER_NAME }}' --restart=always \
                            -p 8080:8080 \
                            -e "POSTGRES_HOST=${{ secrets.POSTGRES_HOST_PROD }}" \
@@ -229,16 +230,16 @@ jobs:
       - name: Setup SSH connection
         run: |
           eval $(ssh-agent -s)
-          echo "${{ secrets.DEPLOY_KEY_PROD }}" > deploy_key
+          echo "${{ secrets.OPEN_API_DEPLOY_KEY_AWS }}" > deploy_key
           chmod 600 ./deploy_key
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
-          ssh-keyscan ${{ secrets.DEPLOY_HOST_PROD }} >> ~/.ssh/known_hosts
+          ssh-keyscan ${{ vars.AWS_HOST }} >> ~/.ssh/known_hosts
           chmod 644 ~/.ssh/known_hosts
 
       - name: Update SSL certificate
         run: |
-          ssh -i ./deploy_key ${{ secrets.DEPLOY_USER_PROD }}@${{ secrets.DEPLOY_HOST_PROD }} "
+          ssh -i ./deploy_key ${{ secrets.DEPLOY_USER_PROD }}@${{ vars.AWS_HOST }} "
                 docker run --rm --name certbot  \
                            -v /etc/letsencrypt:/etc/letsencrypt \
                            -v /var/www/certbot:/var/www/certbot \
@@ -248,5 +249,5 @@ jobs:
                            -d ${{ secrets.SERVER_NAME_PROD }} \
                            --renew-by-default -m team@openfuture.io --eff-email --agree-tos --manual-public-ip-logging-ok
               "
-          ssh -i ./deploy_key ${{ secrets.DEPLOY_USER_PROD }}@${{ secrets.DEPLOY_HOST_PROD }} "
+          ssh -i ./deploy_key ${{ vars.AWS_USER }}@${{ vars.AWS_HOST }} "
                 sudo service nginx reload"
