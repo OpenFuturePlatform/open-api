@@ -1,11 +1,11 @@
 plugins {
     id 'jacoco'
     id 'idea'
-    id 'org.jetbrains.kotlin.jvm' version '1.3.72'
-    id 'org.jetbrains.kotlin.kapt' version '1.3.72'
-    id 'org.jetbrains.kotlin.plugin.spring' version '1.3.72'
-    id 'org.jetbrains.kotlin.plugin.jpa' version '1.3.72'
-    id 'org.springframework.boot' version '2.0.4.RELEASE'
+    id 'org.jetbrains.kotlin.jvm' version '1.8.22'
+    id 'org.jetbrains.kotlin.kapt' version '1.8.22'
+    id 'org.jetbrains.kotlin.plugin.spring' version '1.8.22'
+    id 'org.jetbrains.kotlin.plugin.jpa' version '1.8.22'
+    id 'org.springframework.boot' version '2.7.18'
     id 'com.palantir.git-version' version '0.12.0-rc2'
     id 'io.zensoft.versioning' version '1.1.0'
 }
@@ -13,14 +13,15 @@ plugins {
 apply plugin: 'io.spring.dependency-management'
 
 group = 'io.openfuture.api'
-sourceCompatibility = 11
+sourceCompatibility = 17
+targetCompatibility = 17
 
 repositories {
     mavenCentral()
 }
 
 ext {
-    s3Version = "1.11.333"
+    s3Version = "1.12.261"
 }
 
 dependencies {
@@ -30,6 +31,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-freemarker")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
 
     // OAuth
     implementation("org.springframework.security:spring-security-oauth2-client")
@@ -41,8 +43,14 @@ dependencies {
 
     // Ethereum
     implementation("org.web3j:web3j-spring-boot-starter:1.6.0")
-    implementation('org.web3j:core:4.5.0')
-    compile group: 'org.web3j', name: 'web3j-sokt', version: '0.2.1'
+    implementation('org.web3j:core:4.12.0'){
+        exclude group : 'org.bouncycastle', module : 'bcprov-jdk18on'
+        exclude group : 'com.squareup.okhttp3', module : 'okhttp'
+    }
+    implementation('org.bouncycastle:bcprov-jdk18on:1.78.1')
+    implementation('com.squareup.okhttp3:okhttp:4.12.0')
+
+    implementation('org.web3j:web3j-sokt:0.4.0')
     // AWS
     implementation("com.amazonaws:aws-java-sdk-s3:${s3Version}")
 
@@ -60,11 +68,20 @@ dependencies {
     implementation('commons-io:commons-io:2.8.0')
     implementation 'org.apache.commons:commons-lang3:3.6'
 
-    implementation('org.apache.httpcomponents:httpclient:4.5.12')
+    implementation('org.apache.httpcomponents:httpclient:4.5.13')
 
     // Test
     testImplementation('org.springframework.boot:spring-boot-starter-test')
     testImplementation("org.mockito:mockito-core:2.22.0")
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.3'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.3'
+    testImplementation("junit:junit:4.13.1")
+
+}
+
+test {
+    useJUnitPlatform()
 }
 
 sourceSets {
@@ -79,13 +96,13 @@ sourceSets {
 compileKotlin {
     kotlinOptions {
         freeCompilerArgs = ["-Xjsr305=strict"]
-        jvmTarget = "11"
+        jvmTarget = "17"
     }
 }
 compileTestKotlin {
     kotlinOptions {
         freeCompilerArgs = ["-Xjsr305=strict"]
-        jvmTarget = "11"
+        jvmTarget = "17"
     }
 }
 
@@ -111,7 +128,7 @@ jacocoTestReport {
 check.dependsOn jacocoTestReport
 
 // Front
-processResources.dependsOn(':frontend:assemble')
-processResources.dependsOn(':widget:assemble')
-processResources.dependsOn(':tracker:assemble')
-processResources.dependsOn(':payment-chooser:assemble')
+//processResources.dependsOn(':frontend:assemble')
+//processResources.dependsOn(':widget:assemble')
+//processResources.dependsOn(':tracker:assemble')
+//processResources.dependsOn(':payment-chooser:assemble')

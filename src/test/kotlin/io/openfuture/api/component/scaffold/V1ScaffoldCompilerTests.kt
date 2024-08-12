@@ -15,6 +15,8 @@ import org.junit.Test
 import org.mockito.BDDMockito.given
 import org.mockito.Mock
 import java.nio.charset.Charset
+import java.util.*
+import kotlin.collections.HashMap
 
 internal class V1ScaffoldCompilerTests : UnitTest() {
 
@@ -225,7 +227,7 @@ internal class V1ScaffoldCompilerTests : UnitTest() {
 
     private fun createScaffoldContent(): String {
         val resource = javaClass.classLoader
-                .getResource("templates/ethereum/scaffold_${ethereumScaffoldCompiler.getVersion().name.toLowerCase()}.ftl")
+                .getResource("templates/ethereum/scaffold_${ethereumScaffoldCompiler.getVersion().name.lowercase()}.ftl")
         return IOUtils.toString(resource, Charset.defaultCharset())
     }
 
