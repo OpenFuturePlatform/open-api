@@ -1,4 +1,4 @@
-FROM openjdk:11.0.10-jdk
+FROM openjdk:17-jdk-slim
 
 WORKDIR root/
 
